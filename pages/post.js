@@ -2,17 +2,18 @@ import Link from 'next/link';
 
 import Layout from '../components/Layout'
 
-export default (props) => {
+const Content = (props) => (
+  <div>
+    <h1>{ props.url.query.title }</h1>
+    <p>This is the blog post content.</p>
+    <Link href="/">
+      Back
+    </Link>
+  </div>
+);
 
-console.log(props);
-
-  return (
-    <Layout>
-      <h1>{ props.url.query.title }</h1>
-      <p>This is the blog post content.</p>
-      <Link href="/">
-        Back
-      </Link>
-    </Layout>
-  )
-}
+export default (props) => (
+  <Layout>
+    <Content url={props.url} />
+  </Layout>
+)
