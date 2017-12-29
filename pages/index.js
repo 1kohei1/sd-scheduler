@@ -1,13 +1,10 @@
 import Link from 'next/link';
 
+import Header from '../components/Header';
+
 const Index = () => (
   <div>
-    <Link href={{ pathname: '/about', query: {name: 'abc' }}}>
-      <a>About page</a>
-    </Link>
-    <Link href={{ pathname: '/about', query: {name: 'abc' }}}>
-      <button>Go to about page</button>
-    </Link>
+    <Header />
     <p>Hello Next.js</p>
   </div>
 )
