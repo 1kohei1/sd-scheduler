@@ -1,8 +1,7 @@
-import Header from '../components/Header';
+import Layout from '../components/Layout';
 
 export default () => (
-  <div>
-    <Header />
-    <p>This is the about page</p>
-  </div>
+  <Layout>
+    <p>About page</p>
+  </Layout>
 )
