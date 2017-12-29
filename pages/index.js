@@ -8,6 +8,21 @@ const ShowLink = (props) => (
     <Link as={`/p/${props.show.id}`} href={`/post?id=${props.show.id}`}>
       <a>{ props.show.name }</a>
     </Link>
+    <style>{`
+    li {
+        list-style: none;
+        margin: 5px 0;
+      }
+
+      a {
+        text-decoration: none;
+        color: blue;
+      }
+
+      a:hover {
+        opacity: 0.6;
+      }
+    `}</style>
   </li>
 )
 
@@ -19,6 +34,28 @@ const Index = (props) => (
         <ShowLink show={show} key={show.id}></ShowLink>
       ))}
     </ul>
+    <style jsx>{`
+      h1, a {
+        font-family: "Arial";
+      }
+
+      ul {
+        padding: 0;
+      }
+      li {
+        list-style: none;
+        margin: 5px 0;
+      }
+
+      a {
+        text-decoration: none;
+        color: blue;
+      }
+
+      a:hover {
+        opacity: 0.6;
+      }
+    `}</style>
   </Layout>
 )
 
