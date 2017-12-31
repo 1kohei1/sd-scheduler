@@ -14,7 +14,7 @@ const users = [{
 
 export default ({url: {query: { id }}}) => (
   <MyLayout>
-    <p>User page</p>
+    <h1>User page</h1>
     { id ? (
       <h3>{
         users.find(user => {
