@@ -1,5 +1,6 @@
 import MyLayout from '../../components/MyLayout';
 import Link from 'next/link';
+import { List } from 'antd';
 
 const users = [{
   id: 1,
@@ -22,17 +23,18 @@ export default ({url: {query: { id }}}) => (
         }).name
       }</h3>
     ) : (
-      <ul>
-      {
-        users.map(user => (
-          <li key={ user.id }>
+      <List 
+        size="small"
+        bordered
+        dataSource={users}
+        renderItem={user => (
+          <List.Item>
             <Link  as={`/users/${user.id}`} href={`/users?id=${user.id}`}>
               <a>{ user.name }</a>
             </Link>
-          </li>
-        ))
-      }
-    </ul>
+          </List.Item>
+        )}
+      />
     )}
   </MyLayout>
 )

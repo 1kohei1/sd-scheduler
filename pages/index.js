@@ -1,24 +1,24 @@
 import Link from 'next/link';
 import fetch from 'isomorphic-unfetch';
+import { List } from 'antd';
 
 import MyLayout from '../components/MyLayout';
-
-const ShowLink = (props) => (
-  <li>
-    <Link as={`/p/${props.show.id}`} href={`/post?id=${props.show.id}`}>
-      <a>{ props.show.name }</a>
-    </Link>
-  </li>
-)
 
 const Index = (props) => (
   <MyLayout>
     <h1>Batman TV Shows</h1>
-    <ul>
-      {props.shows.map(({show}) => (
-        <ShowLink show={show} key={show.id}></ShowLink>
-      ))}
-    </ul>
+    <List 
+      size="small"
+      bordered
+      dataSource={props.shows}
+      renderItem={({show}) => (
+        <List.Item>
+          <Link as={`/p/${show.id}`} href={`/post?id=${show.id}`}>
+            <a>{ show.name }</a>
+          </Link>
+        </List.Item>
+      )}
+    />
   </MyLayout>
 )
 
