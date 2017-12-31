@@ -1,4 +1,4 @@
-import Layout from '../../components/Layout';
+import MyLayout from '../../components/MyLayout';
 import Link from 'next/link';
 
 const users = [{
@@ -13,7 +13,7 @@ const users = [{
 }]
 
 export default ({url: {query: { id }}}) => (
-  <Layout>
+  <MyLayout>
     <p>User page</p>
     { id ? (
       <h3>{
@@ -34,5 +34,5 @@ export default ({url: {query: { id }}}) => (
       }
     </ul>
     )}
-  </Layout>
+  </MyLayout>
 )
