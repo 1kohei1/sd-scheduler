@@ -19,8 +19,12 @@ const layoutStyle = {
 const Layout = (props) => (
   <div style={ layoutStyle }>
     <Head>
+      <meta name='viewport' content='width=device-width, initial-scale=1' />
+      <meta charSet='utf-8' />
       {/* Import CSS for nprogress */}
       <link rel='stylesheet' type='text/css' href='/static/nprogress.css' />
+      {/* Antd css */}
+      <link rel='stylesheet' href='//cdnjs.cloudflare.com/ajax/libs/antd/2.9.3/antd.min.css' />
     </Head>
     <Header />
     { props.children }
