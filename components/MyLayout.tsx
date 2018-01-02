@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import Link from 'next/link'
-import NProgress from 'nprogress'
+import * as NProgress from 'nprogress'
 import Router from 'next/router'
 
 import { Layout, Menu } from 'antd';
@@ -19,7 +19,7 @@ const layoutStyle = {
   border: '1px solid #DDD'
 };
 
-const MyLayout = (props) => (
+const MyLayout = (props: any) => (
   <Layout>
     <Head>
       <meta name='viewport' content='width=device-width, initial-scale=1' />
