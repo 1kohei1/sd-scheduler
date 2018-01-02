@@ -1,24 +1,35 @@
+import * as React from 'react';
 import Link from 'next/link';
-import fetch from 'isomorphic-unfetch';
+const fetch = require('isomorphic-unfetch');
 
 import MyLayout from '../components/MyLayout'
+import Show from '../models/Show';
+import InitialProps from '../models/InitialProps';
 
-const Post = (props) => (
-  <MyLayout>
-    <h1>{ props.show.name }</h1>
-    <p>{ props.show.summary.replace(/<[/]?p>/g, '') }</p>
-    <img src={ props.show.image.medium } alt="Medium image"/>
-  </MyLayout>
-)
+export interface PostProps {
+  show: Show;
+}
 
-Post.getInitialProps = async function(context) {
-  const { id } = context.query;
-  const res = await fetch(`https://api.tvmaze.com/shows/${id}`);
-  const show = await res.json();
+class Post extends React.Component<PostProps, any> {
+  static async getInitialProps(context:InitialProps) {
+    const { id } = context.query;
+    const res = await fetch(`https://api.tvmaze.com/shows/${id}`);
+    const show = await res.json();
+  
+    console.log(`Fetched show: ${show.name}`)
+  
+    return { show };
+  }
 
-  console.log(`Fetched show: ${show.name}`)
-
-  return { show };
+  render() {
+    return (
+      <MyLayout>
+        <h1>{ this.props.show.name }</h1>
+        <p>{ this.props.show.summary.replace(/<[/]?p>/g, '') }</p>
+        <img src={ this.props.show.image.medium } alt="Medium image"/>
+      </MyLayout>
+    );
+  }
 }
 
 export default Post;

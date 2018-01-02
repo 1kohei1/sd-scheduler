@@ -4,11 +4,7 @@ import { List } from 'antd';
 const fetch = require('isomorphic-unfetch');
 
 import MyLayout from '../components/MyLayout';
-
-interface Show {
-  id: string;
-  name: string;
-}
+import Show from '../models/Show';
 
 interface Props {
   shows: Array<Show>;
