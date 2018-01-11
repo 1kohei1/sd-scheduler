@@ -4,7 +4,7 @@ import { Application, Request, Response } from 'express';
 import { Server } from 'next';
 
 const dev = process.env.NODE_ENV !== 'production';
-const app:Server = next({ dev });
+const app:Server = next({ dir: './front', dev });
 const handle = app.getRequestHandler();
 
 app.prepare()

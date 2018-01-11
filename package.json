@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "concurrently \"tsc --pretty --watch && yarn copy-static-assets\" \"cd .dist && node server.js\"",
+    "dev": "concurrently \"yarn copy-static-assets && tsc --pretty --watch\" \"cd .dist && node server.js\"",
     "prebuild": "tsc && yarn copy-static-assets",
-    "build": "next build .dist",
+    "build": "next build .dist/front",
     "start": "NODE_ENV=production node server.js",
     "copy-static-assets": "node copyStaticAssets.js"
   },
