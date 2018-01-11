@@ -29,7 +29,7 @@ const MyLayout = (props: any) => (
       >
         <Menu.Item>
           <Link href="/">
-            <a>Home 2</a>
+            <a>Home</a>
           </Link>
         </Menu.Item>
         <Menu.Item>
