@@ -9,7 +9,7 @@
     "prebuild": "tsc --outDir .dist && yarn copy-static-assets",
     "build": "next build .dist/front",
     "start": "NODE_ENV=production node server.js",
-    "copy-static-assets": "ts-node copyStaticAssets.js"
+    "copy-static-assets": "ts-node copyStaticAssets.ts"
   },
   "keywords": [],
   "author": "",
