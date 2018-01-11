@@ -26,7 +26,7 @@ const MyLayout = (props: any) => (
       {/* Import CSS for nprogress */}
       <link rel='stylesheet' type='text/css' href='/static/nprogress.css' />
       {/* Antd css */}
-      <link rel='stylesheet' href='//cdnjs.cloudflare.com/ajax/libs/antd/3.1.0/antd.min.css' />
+      <link rel='stylesheet' href='/static/antd.min.css' />
     </Head>
     <Header>
       <Menu
