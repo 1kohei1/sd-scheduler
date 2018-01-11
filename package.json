@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "concurrently \"tsc --pretty --watch && yarn copy-static-assets\" \"next .dist\"",
+    "dev": "concurrently \"tsc --pretty --watch && yarn copy-static-assets\" \"cd .dist && node server.js\"",
     "prebuild": "tsc && yarn copy-static-assets",
     "build": "next build .dist",
     "start": "NODE_ENV=production node server.js",
