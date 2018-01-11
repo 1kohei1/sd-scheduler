@@ -11,6 +11,10 @@ app.prepare()
 .then(() => {
   const server: Application = express();
 
+  // Set up API routes
+  require('./api/routes/sample.route')(server);
+
+  // Set up client side custom routes
   require('./front/custom-routes')(app, server);
 
   server.get('*', (req: Request, res: Response) => {
