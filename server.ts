@@ -11,7 +11,7 @@ app.prepare()
 .then(() => {
   const server: Application = express();
 
-  require('./routes')(app, server);
+  require('./front/custom-routes')(app, server);
 
   server.get('*', (req: Request, res: Response) => {
     return handle(req, res);
