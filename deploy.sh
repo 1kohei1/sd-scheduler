@@ -1,17 +1,11 @@
 # Build the project
 yarn build
 
-# Edit .gitignore to track .next
-# mv .gitignore .original-gitignore
-# cat .original-gitignore > .gitignore
-# cat .gitignore | sed '/.next/g' > .gitignore
-# cat .gitignore | sed '/.dist/g' > .gitignore
-
-# Edit package.json build script
+# Edit package.json not to build in now
 mv package.json original-package.json
-cat original-package.json > package.json
-cat package.json | sed 's/[[:blank:]]*"prebuild"[[:blank:]]*\:[[:blank:]]*".*"/"prebuild": "echo Hello"/g' > package.json
-cat package.json | sed 's/[[:blank:]]*"build"[[:blank:]]*\:[[:blank:]]*".*"/"build": "echo Hello"/g' > package.json
+cat original-package.json | 
+sed '/[[:blank:]]*"prebuild"[[:blank:]]*\:[[:blank:]]*".*"/g' | 
+sed 's/[[:blank:]]*"build"[[:blank:]]*\:[[:blank:]]*".*"/"build": "echo Hello"/g' > package.json
 
 # Copy edited package.json to .dist
 cat package.json > .dist/package.json
@@ -20,11 +14,10 @@ cat package.json > .dist/package.json
 cd .dist
 
 # Deploy to now
-# now --public
+now --public
 
 # Move back to project parent folder
-# cd ../
+cd ../
 
 # Revert change
-# mv original-package.json package.json
-# mv .original-gitignore .gitignore
+mv original-package.json package.json
