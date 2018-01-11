@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prebuild": "tsc",
-    "dev": "concurrently \"tsc --pretty --watch\" \"next\"",
-    "build": "next build",
-    "start": "NODE_ENV=production node server.js"
+    "dev": "concurrently \"tsc --pretty --watch && yarn copy-static-assets\" \"next .dist\"",
+    "prebuild": "tsc && yarn copy-static-assets",
+    "build": "next build .dist",
+    "start": "NODE_ENV=production node ./.dist/server.js",
+    "copy-static-assets": "node copyStaticAssets.js"
   },
   "keywords": [],
   "author": "",
@@ -21,7 +22,8 @@
     "next": "^4.2.1",
     "nprogress": "^0.2.0",
     "react": "^16.2.0",
-    "react-dom": "^16.2.0"
+    "react-dom": "^16.2.0",
+    "shelljs": "^0.7.8"
   },
   "devDependencies": {
     "@types/express": "^4.11.0",
