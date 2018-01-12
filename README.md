@@ -16,4 +16,4 @@ Faculties:
 
 PR is welcome! Please open issues and make PR!
 
-To run locally, install [Yarn](https://yarnpkg.com/en/) and clone the repository. Run `yarn`. After installing the packages, run ``yarn dev
+To run locally, install [Yarn](https://yarnpkg.com/en/) and clone the repository. Run `yarn`. After installing the packages, run `yarn dev`. I recommend using [VSCode](https://code.visualstudio.com/) (it's free!)
