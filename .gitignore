@@ -2,4 +2,5 @@ node_modules
 .next
 .dist
 *.js
+!front/static/*.js
 *.map

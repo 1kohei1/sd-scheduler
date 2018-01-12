@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "antd": "^3.1.0",
+    "auth0-js": "^9.0.2",
     "babel-plugin-import": "^1.6.3",
     "express": "^4.16.2",
     "isomorphic-unfetch": "^2.0.0",
@@ -26,6 +27,7 @@
     "shelljs": "^0.7.8"
   },
   "devDependencies": {
+    "@types/auth0-js": "^8.11.1",
     "@types/express": "^4.11.0",
     "@types/next": "^2.4.7",
     "@types/nprogress": "^0.0.29",
