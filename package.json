@@ -17,10 +17,15 @@
   "dependencies": {
     "antd": "^3.1.0",
     "babel-plugin-import": "^1.6.3",
+    "body-parser": "^1.18.2",
+    "cookie-parser": "^1.4.3",
     "express": "^4.16.2",
+    "express-session": "^1.15.6",
     "isomorphic-unfetch": "^2.0.0",
     "next": "^4.2.1",
     "nprogress": "^0.2.0",
+    "passport": "^0.4.0",
+    "passport-outlook": "^2.1.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "shelljs": "^0.7.8"
