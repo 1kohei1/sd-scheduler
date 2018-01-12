@@ -20,8 +20,6 @@ const MyLayout = (props: any) => (
       <link rel='stylesheet' type='text/css' href='/static/nprogress.css' />
       {/* Antd css */}
       <link rel='stylesheet' href='/static/antd.min.css' />
-      {/* Auth0 script */}
-      <script type="text/javascript" src='/static/auth0.min.js'></script>
     </Head>
     <Header>
       <Row>
