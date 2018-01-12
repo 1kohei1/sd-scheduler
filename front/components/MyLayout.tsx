@@ -3,7 +3,7 @@ import Link from 'next/link'
 import * as NProgress from 'nprogress'
 import Router from 'next/router'
 
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Row, Col } from 'antd';
 const { Header, Content, Footer } = Layout;
 
 // Loading animation
@@ -22,33 +22,52 @@ const MyLayout = (props: any) => (
       <link rel='stylesheet' href='/static/antd.min.css' />
     </Head>
     <Header>
-      <Menu
-        theme="dark"
-        mode="horizontal"
-        style={{ lineHeight: '64px' }}
-      >
-        <Menu.Item>
-          <Link href="/">
-            <a>Home</a>
-          </Link>
-        </Menu.Item>
-        <Menu.Item>
-          <Link href="/about">
-            <a>About</a>
-          </Link>
-        </Menu.Item>
-        <Menu.Item>
-          <Link href="/users">
-            <a>Users</a>
-          </Link>
-        </Menu.Item>
-      </Menu>
+      <Row>
+        <Col span={18}>
+          <Menu
+            theme="dark"
+            mode="horizontal"
+            style={{ lineHeight: '64px' }}
+          >
+            <Menu.Item>
+              <Link href="/">
+                <a>Home</a>
+              </Link>
+            </Menu.Item>
+            <Menu.Item>
+              <Link href="/about">
+                <a>About</a>
+              </Link>
+            </Menu.Item>
+            <Menu.Item>
+              <Link href="/users">
+                <a>Users</a>
+              </Link>
+            </Menu.Item>
+          </Menu>
+        </Col>
+        <Col span={6}>
+          <Row type="flex" justify="end">
+            <Menu
+              theme="dark"
+              mode="horizontal"
+              style={{ lineHeight: '64px' }}
+            >
+              <Menu.Item>
+                <Link href="/api/login">
+                  <a>Login</a>
+                </Link>
+              </Menu.Item>
+            </Menu>
+          </Row>
+        </Col>
+      </Row>
     </Header>
-    <Content style={{ padding: '0 50px'}}>
+    <Content style={{ padding: '0 50px' }}>
       {props.children}
     </Content>
     <Footer>
-      
+
     </Footer>
   </Layout>
 )
