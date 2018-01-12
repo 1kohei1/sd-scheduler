@@ -4,29 +4,29 @@ import { Application, Request, Response } from 'express';
 import { Server } from 'next';
 
 const dev = process.env.NODE_ENV !== 'production';
-const app:Server = next({ dir: './front', dev });
+const app: Server = next({ dir: './front', dev });
 const handle = app.getRequestHandler();
 
 app.prepare()
-.then(() => {
-  const server: Application = express();
+  .then(() => {
+    const server: Application = express();
 
-  // Set up API routes
-  require('./api/routes/sample.route')(server);
+    // Set up API routes
+    require('./api/routes/index.route')(server);
 
-  // Set up client side custom routes
-  require('./front/custom-routes')(app, server);
+    // Set up client side custom routes
+    require('./front/custom-routes')(app, server);
 
-  server.get('*', (req: Request, res: Response) => {
-    return handle(req, res);
-  });
+    server.get('*', (req: Request, res: Response) => {
+      return handle(req, res);
+    });
 
-  server.listen(3000, (err: Error) => {
-    if (err) throw err;
-    console.log('> Ready on http://localhost:3000');
+    server.listen(3000, (err: Error) => {
+      if (err) throw err;
+      console.log('> Ready on http://localhost:3000');
+    })
   })
-})
-.catch((ex: Error) => {
-  console.error(ex.stack);
-  process.exit(1);
-});
+  .catch((ex: Error) => {
+    console.error(ex.stack);
+    process.exit(1);
+  });
