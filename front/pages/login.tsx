@@ -2,49 +2,69 @@ import * as React from 'react';
 import { Form, Icon, Input, Button, Checkbox } from 'antd';
 import MyLayout from '../components/MyLayout';
 import InitialProps from '../models/InitialProps';
+import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 const FormItem = Form.Item;
 
 export interface LoginProps {
+  form: WrappedFormUtils
 }
 
 interface LoginState {
   email: string;
   password: string;
-  rememberMe: boolean
+  remember: boolean
 }
 
-export default class Login extends React.Component<LoginProps, LoginState> {
-  static async getInitialProps(props:InitialProps) {
-    return {};
-  }
-
+class Login extends React.Component<LoginProps, LoginState> {
   constructor(props: LoginProps) {
     super(props);
     this.state = {
       email: '',
       password: '',
-      rememberMe: true
+      remember: true
     }
+
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleSubmit(e: React.FormEvent<any>) {
+    e.preventDefault();
+
+    this.props.form.validateFields((err, values) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(values);
+      }
+    })
   }
 
   render() {
+    const { getFieldDecorator } = this.props.form;
+
     return (
       <MyLayout>
         <div className="form-wrapper">
-          <Form>
+          <Form onSubmit={this.handleSubmit}>
             <FormItem>
-              <Input prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Email" />
+              {getFieldDecorator('email')(
+                <Input prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Email" />
+              )}
             </FormItem>
             <FormItem>
-              <Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Password" />
+              {getFieldDecorator('password')(
+                <Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Password" />
+              )}
             </FormItem>
             <FormItem>
-              <Checkbox>Remember me</Checkbox>
+              {getFieldDecorator('remember')(
+                <Checkbox>Remember me</Checkbox>
+              )}
               <a className="login-form-forgot" href="">Forgot password</a>
             </FormItem>
             <FormItem>
-              <Button style={{ width: '100%' }} type="primary" size="large">Submit</Button>
+              <Button htmlType="submit" style={{ width: '100%' }} type="primary" size="large">Submit</Button>
             </FormItem>
           </Form>
         </div>
@@ -63,3 +83,5 @@ export default class Login extends React.Component<LoginProps, LoginState> {
     );
   }
 }
+
+export default Form.create()(Login);
