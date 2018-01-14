@@ -63,21 +63,12 @@ const MyLayout = (props: any) => (
         </Col>
       </Row>
     </Header>
-    <Content style={{ padding: '0 50px' }} className="ko-content">
+    <Content style={{ padding: '0 50px', backgroundColor: '#fff', minHeight: '500px' }}>
       {props.children}
     </Content>
-    <Footer className="ko-footer">
+    <Footer className="ko-footer" style={{ backgroundColor: '#fff' }}>
 
     </Footer>
-    <style jsx>{`
-      .ko-content, .ko-footer {
-        background-color: #fff;
-      }
-      .ko-content {
-        min-height: 500px;
-      }
-    `}
-    </style>
   </Layout>
 )
 
