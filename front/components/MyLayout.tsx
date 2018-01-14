@@ -54,7 +54,7 @@ const MyLayout = (props: any) => (
               style={{ lineHeight: '64px' }}
             >
               <Menu.Item>
-                <Link href="/api/login">
+                <Link href="/login">
                   <a>Login</a>
                 </Link>
               </Menu.Item>
