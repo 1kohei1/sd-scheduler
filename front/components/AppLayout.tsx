@@ -28,7 +28,7 @@ const AppLayout = (props: any) => (
           </div>
           <div>
             <Link href="/dashboard"><a>/dashboard</a></Link>
-            <Link href="/dashboard?year=d" as="/dashboard/d"><a>/dashboard/d</a></Link>
+            <Link href="/dashboard?year=2017&season=summer&menu=schedule" as="/dashboard/2017/summer/schedule"><a>/dashboard/2017/summer/schedule</a></Link>
           </div>
           <div>
             <Button ghost>Login</Button>
