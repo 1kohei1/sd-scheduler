@@ -23,7 +23,13 @@ const AppLayout = (props: any) => (
     <Layout>
       <Layout.Header style={{ padding: "0 16px" }}>
         <div className="ko-header">
-          <div style={{ color: 'white' }}>LOGO</div>
+          <div>
+            <Link href="/"><a style={{ color: 'white' }}>LOGO</a></Link>
+          </div>
+          <div>
+            <Link href="/dashboard"><a>/dashboard</a></Link>
+            <Link href="/dashboard?year=d" as="/dashboard/d"><a>/dashboard/d</a></Link>
+          </div>
           <div>
             <Button ghost>Login</Button>
           </div>
