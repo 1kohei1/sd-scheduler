@@ -15,6 +15,7 @@ System:
 - [ ] Send notification email when student group deletes the presentation time
 - [ ] Send reminder email a day before and an hour before the presentation time
 - [ ] Send signed PDF to senior design admin faculties when the presentation booking is made (v2)
+- [ ] Cash retrieved data on the client side
 
 Faculties:
 
