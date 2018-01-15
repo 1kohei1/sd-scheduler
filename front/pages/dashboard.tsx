@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import InitialProps from '../../models/InitialProps';
-import DashboardLayout from '../../components/DashboardLayout';
-import DashboardQuery from '../../models/DashboardQuery';
+import InitialProps from '../models/InitialProps';
+import DashboardLayout from '../components/DashboardLayout';
+import DashboardQuery from '../models/DashboardQuery';
 
 export interface DashboardProps {
   query: DashboardQuery
