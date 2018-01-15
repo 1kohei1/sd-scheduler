@@ -11,9 +11,9 @@ export default class DashboardLayout extends React.Component<DashboardLayoutProp
   render() {
     return (
       <AppLayout>
-        <Layout>
-          <Layout.Sider style={{ height: '100vh', position: 'fixed' }}>
-            <Menu style={{ width: '200px', height: "100vh" }}
+        <Layout style={{ backgroundColor: 'white' }}>
+          <Layout.Sider style={{ position: 'fixed' }}>
+            <Menu style={{ width: '200px', height: "calc(100vh - 64px)" }}
               defaultOpenKeys={["2018_spring"]}
               defaultSelectedKeys={["2018_spring_overview"]}
               mode="inline"
@@ -64,7 +64,7 @@ export default class DashboardLayout extends React.Component<DashboardLayoutProp
               </Menu.SubMenu>
             </Menu>
           </Layout.Sider>
-          <Layout.Content style={{ marginLeft: '200px', minHeight: '100vh', backgroundColor: 'white', padding: '0 16px' }}>
+          <Layout.Content style={{ marginLeft: '200px', padding: '0 16px' }}>
             <Overview year={2018} semester="spring" />
           </Layout.Content>
         </Layout>

@@ -3,8 +3,7 @@ import Link from 'next/link'
 import * as NProgress from 'nprogress'
 import Router from 'next/router'
 
-import { Layout, Menu, Row, Col } from 'antd';
-const { Header, Content, Footer } = Layout;
+import { Layout, Button } from 'antd';
 
 // Loading animation
 Router.onRouteChangeStart = (url) => NProgress.start()
@@ -21,7 +20,25 @@ const AppLayout = (props: any) => (
       {/* Antd css */}
       <link rel='stylesheet' href='/static/antd.min.css' />
     </Head>
+    <Layout>
+      <Layout.Header style={{ padding: "0 16px" }}>
+        <div className="ko-header">
+          <div style={{ color: 'white' }}>LOGO</div>
+          <div>
+            <Button ghost>Login</Button>
+          </div>
+        </div>
+      </Layout.Header>
+    </Layout>
     { props.children }
+    <style jsx>{`
+      .ko-header {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+      }
+    `}
+    </style>
   </div>
 )
 
