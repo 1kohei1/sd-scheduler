@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Form, Icon, Input, Button, Checkbox } from 'antd';
-import MyLayout from '../components/MyLayout';
+import AppLayout from '../components/AppLayout';
 import InitialProps from '../models/InitialProps';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
@@ -44,7 +44,7 @@ class Login extends React.Component<LoginProps, LoginState> {
     const { getFieldDecorator } = this.props.form;
 
     return (
-      <MyLayout>
+      <AppLayout>
         <div className="form-wrapper">
           <Form onSubmit={this.handleSubmit}>
             <FormItem>
@@ -79,7 +79,7 @@ class Login extends React.Component<LoginProps, LoginState> {
           }
         `}
         </style>
-      </MyLayout>
+      </AppLayout>
     );
   }
 }

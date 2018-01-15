@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from 'antd';
 const fetch = require('isomorphic-unfetch');
 
-import MyLayout from '../components/MyLayout';
+import AppLayout from '../components/AppLayout';
 
 export default class App extends React.PureComponent<{}, {message: string}> {
   static async getInitialProps() {
@@ -29,11 +29,11 @@ export default class App extends React.PureComponent<{}, {message: string}> {
 
   render() {
     return (
-      <MyLayout>
+      <AppLayout>
         <h1>About page</h1>
         <Button type="primary" onClick={this.onClick}>Get /sample</Button>
         <div>Message: {this.state.message}</div>
-      </MyLayout>
+      </AppLayout>
     );
   }
 }

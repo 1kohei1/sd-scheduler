@@ -1,4 +1,4 @@
-import MyLayout from '../../components/MyLayout';
+import AppLayout from '../../components/AppLayout';
 import Link from 'next/link';
 import { List } from 'antd';
 
@@ -19,7 +19,7 @@ const users: Array<user> = [{
 }]
 
 export default ({url: {query: { id }}}: {url: {query: {id: number}}}) => (
-  <MyLayout>
+  <AppLayout>
     <h1>User page</h1>
     { id ? (
       <h3>{
@@ -41,5 +41,5 @@ export default ({url: {query: { id }}}: {url: {query: {id: number}}}) => (
         )}
       />
     )}
-  </MyLayout>
+  </AppLayout>
 )

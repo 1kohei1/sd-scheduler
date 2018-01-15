@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Menu, Icon } from 'antd';
 
-import MyLayout from '../../components/MyLayout';
+import AppLayout from '../../components/AppLayout';
 import InitialProps from '../../models/InitialProps';
 
 export interface DashboardProps {
@@ -14,7 +14,7 @@ export default class Dashboard extends React.Component<DashboardProps, any> {
 
   render() {
     return (
-      <MyLayout>
+      <AppLayout>
         <Menu style={{ width: '256px' }} defaultSelectedKeys={[""]}>
           <Menu.Item key="presentation">
             <Icon type="pie-chart" />
@@ -29,7 +29,7 @@ export default class Dashboard extends React.Component<DashboardProps, any> {
             <span>Schedule</span>
           </Menu.Item>
         </Menu>
-      </MyLayout>
+      </AppLayout>
     );
   }
 }

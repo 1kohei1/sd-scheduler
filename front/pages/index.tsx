@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { List } from 'antd';
 const fetch = require('isomorphic-unfetch');
 
-import MyLayout from '../components/MyLayout';
+import AppLayout from '../components/AppLayout';
 import Show from '../models/Show';
 
 interface Props {
@@ -24,7 +24,7 @@ class Index extends React.Component<Props, {}> {
 
   render() {
     return (
-      <MyLayout>
+      <AppLayout>
         <h1>Batman TV Shows</h1>
         <List 
           size="small"
@@ -38,7 +38,7 @@ class Index extends React.Component<Props, {}> {
             </List.Item>
           )}
         />
-      </MyLayout>
+      </AppLayout>
     )
   }
 }
