@@ -15,18 +15,20 @@ export default class Dashboard extends React.Component<DashboardProps, any> {
   render() {
     return (
       <AppLayout>
-        <Menu style={{ width: '256px' }} defaultSelectedKeys={[""]}>
-          <Menu.Item key="presentation">
-            <Icon type="pie-chart" />
-            <span>Spring, 2018</span>
+        <Menu style={{ width: '256px', height: "100vh" }}
+          defaultSelectedKeys={["spring_2018"]}
+        >
+          <Menu.Item key="spring_2018">
+            2018 Spring
           </Menu.Item>
-          <Menu.Item key="faculties">
-            <Icon type="pie-chart" />
-            <span>Faculties</span>
+          <Menu.Item key="fall_2017">
+            2017 Fall
           </Menu.Item>
-          <Menu.Item key="schedule">
-            <Icon type="pie-chart" />
-            <span>Schedule</span>
+          <Menu.Item key="summer_2017">
+            2017 Summer
+          </Menu.Item>
+          <Menu.Item key="spring_2017">
+            2017 Spring
           </Menu.Item>
         </Menu>
       </AppLayout>
