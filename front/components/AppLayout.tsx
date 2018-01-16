@@ -27,10 +27,6 @@ const AppLayout = (props: any) => (
             <Link href="/"><a style={{ color: 'white' }}>LOGO</a></Link>
           </div>
           <div>
-            <Link href="/dashboard"><a>/dashboard</a></Link>
-            <Link href="/dashboard?year=2017&season=summer&menu=schedule" as="/dashboard/2017/summer/schedule"><a>/dashboard/2017/summer/schedule</a></Link>
-          </div>
-          <div>
             <Button ghost>Login</Button>
           </div>
         </div>
