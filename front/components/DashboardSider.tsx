@@ -21,18 +21,17 @@ export default class DashboardSider extends React.Component<DashboardSiderProps,
   onMenuItemClick({key}: ClickParam) {
     let year: string, season: string, menu: string;
     [year, season, menu] = key.split("_");
+    const semester = `${year}_${season}`;
     const openKeys = this.props.openKeys.join(',');
 
-    const url = `/dashboard`;
     Router.push({
       pathname: '/dashboard',
       query: {
-        year,
-        season,
+        semester,
         menu,
         openKeys
       }
-    }, `/dashboard/${year}/${season}/${menu}`);
+    }, `/dashboard/${year}_${season}/${menu}`);
   }
 
   render() {

@@ -1,5 +1,5 @@
 export default interface DashboardQuery {
-  year?: string;
-  season?: string;
+  semester?: string;
   menu?: string;
+  openKeys?: string;
 };

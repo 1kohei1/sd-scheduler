@@ -24,16 +24,14 @@ module.exports = (app: Server, server: Application) => {
       url = url.substring(0, url.length - 1);
     }
     // Convert to query. Validation for the value happens on the client side
+    // Remove the first element since it is always dashboard
     const query = url.split('/').slice(1) || [];
     let queryParams:any = { };
     if (query[0]) {
-      queryParams.year = query[0];
+      queryParams.semester = query[0];
     }
     if (query[1]) {
-      queryParams.season = query[1];
-    }
-    if (query[2]) {
-      queryParams.menu = query[2];
+      queryParams.menu = query[1];
     }
 
     const actualPage = '/dashboard';
