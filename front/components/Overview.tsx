@@ -3,8 +3,6 @@ import * as shortid from 'shortid';
 import { Row, Col, Card, Button, Divider } from 'antd';
 
 export interface DashboardContentProps {
-  year: number;
-  semester: string;
 }
 
 const faculties = [{

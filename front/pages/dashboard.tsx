@@ -7,6 +7,7 @@ import InitialProps from '../models/InitialProps';
 import AppLayout from '../components/AppLayout';
 import DashboardSider from '../components/DashboardSider';
 import DashboardQuery from '../models/DashboardQuery';
+import Overview from '../components/Overview';
 import { Semester, Menus } from '../models/Semester';
 import { ClickParam } from 'antd/lib/menu';
 
@@ -105,6 +106,9 @@ export default class Dashboard extends React.Component<DashboardProps, Dashboard
               onSubMenuTitleClick={this.onSubMenuTitleClick}
             />
           </Layout.Sider>
+          <Layout.Content style={{ backgroundColor: 'white', minHeight: "calc(100vh - 64px)", padding: '32px'}}>
+            <Overview />
+          </Layout.Content>
         </Layout>
       </AppLayout>
     );
