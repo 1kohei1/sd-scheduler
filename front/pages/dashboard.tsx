@@ -97,8 +97,8 @@ export default class Dashboard extends React.Component<DashboardProps, Dashboard
   render() {
     return (
       <AppLayout>
-        <Layout>
-          <Layout.Sider style={{ position: 'fixed', overflow: 'auto', backgroundColor: 'white' }}>
+        <Layout style={{ backgroundColor: 'white' }}>
+          <Layout.Sider style={{ backgroundColor: 'white' }}>
             <DashboardSider
               semesters={this.props.semesters}
               openKeys={this.state.openKeys.toArray()}

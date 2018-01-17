@@ -37,7 +37,7 @@ export default class DashboardSider extends React.Component<DashboardSiderProps,
   render() {
     return (
       <Menu 
-        style={{ width: '200px', height: "calc(100vh - 64px)" }}
+        style={{ width: '200px', minHeight: "calc(100vh - 64px)", height: '100%' }}
         openKeys={this.props.openKeys}
         selectedKeys={this.props.selectedKeys}
         onClick={this.onMenuItemClick}
