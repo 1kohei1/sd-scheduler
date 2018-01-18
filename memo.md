@@ -43,3 +43,4 @@ Admin:
 Client:
 
 - [ ] Add validation to the overview date
+- [ ] Use higher order component for Date, Locations, and Faculties component (Low priority)
