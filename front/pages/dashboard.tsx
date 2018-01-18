@@ -2,14 +2,16 @@ import * as React from 'react';
 import * as moment from 'moment';
 import { Set } from 'immutable';
 import { Layout } from 'antd';
+import { ClickParam } from 'antd/lib/menu';
 
 import InitialProps from '../models/InitialProps';
+import DashboardQuery from '../models/DashboardQuery';
+import { Semester, Menus } from '../models/Semester';
 import AppLayout from '../components/AppLayout';
 import DashboardSider from '../components/DashboardSider';
-import DashboardQuery from '../models/DashboardQuery';
 import Overview from '../components/Overview';
-import { Semester, Menus } from '../models/Semester';
-import { ClickParam } from 'antd/lib/menu';
+import Availability from '../components/Availability';
+import Schedule from '../components/Schedule';
 
 export interface DashboardProps {
   url: InitialProps;
@@ -53,6 +55,10 @@ export default class Dashboard extends React.Component<DashboardProps, Dashboard
     this.onSubMenuTitleClick = this.onSubMenuTitleClick.bind(this);
   }
 
+  componentWillReceiveProps(nextProps: DashboardProps) {
+    this.setState(this.stateFromQuery(nextProps.url.query));
+  }
+
   private stateFromQuery(query: DashboardQuery) {
     const state: DashboardState = {
       semester: this.util.defaultSemester(),
@@ -74,10 +80,6 @@ export default class Dashboard extends React.Component<DashboardProps, Dashboard
     }
 
     return state;
-  }
-
-  componentWillReceiveProps(nextProps: DashboardProps) {
-    this.setState(this.stateFromQuery(nextProps.url.query));
   }
 
   onSubMenuTitleClick({ key }: ClickParam) {
@@ -107,7 +109,19 @@ export default class Dashboard extends React.Component<DashboardProps, Dashboard
             />
           </Layout.Sider>
           <Layout.Content style={{ backgroundColor: 'white', minHeight: "calc(100vh - 64px)", padding: '32px'}}>
-            <Overview />
+            {(() => {
+              if (this.state.menu === 'overview') {
+                const semester:Semester = this.props.semesters.find((semester) => semester.key === this.state.semester) as Semester;
+                
+                return <Overview semester={semester} />
+              } else if (this.state.menu === 'availability') {
+                return <Availability />
+              } else if (this.state.menu === 'schedule') {
+                return <Schedule />
+              } else {
+                return <div>Unknow menu is selected</div>
+              }
+            })()}
           </Layout.Content>
         </Layout>
       </AppLayout>
