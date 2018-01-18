@@ -1,8 +1,16 @@
 import * as React from 'react';
-import * as shortid from 'shortid';
-import { Row, Col, Card, Button, Divider } from 'antd';
+import OverviewContent from './OverviewContent';
+import { Semester } from '../models/Semester';
 
-export interface DashboardContentProps {
+export interface OverviewProps {
+  semester: Semester;
+}
+
+interface OverviewState {
+  semester: Semester;
+  isDateEditing: boolean;
+  isLocationEditing: boolean;
+  isFacultiesEditing: boolean;
 }
 
 const faculties = [{
@@ -16,39 +24,39 @@ const faculties = [{
   name: 'CCC CCC'
 }];
 
-export default class DashboardContent extends React.Component<DashboardContentProps, any> {
+export default class Overview extends React.Component<OverviewProps, any> {
+  constructor(props: OverviewProps) {
+    super(props);
+
+    this.state = {
+      semester: props.semester,
+      isDateEditing: false,
+      isLocationEditing: false,
+      isFacultiesEditing: false,
+    };
+
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  
+  handleSubmit(updateObj: any, menu: string) {
+    // Check validation and if everything is fine, call updateSemester
+    // await this.updateSemester()
+    // Depending on menu, change state isDateEditing, isLocationEditing, isFacultiesEditing
+  }
+
+  private async updateSemester(updateObj: any) {
+    // Update DB Semester
+  }
+
   render() {
-    const isAdmin = true;
-    const isArchived = false;
-
-    const dateExtra = isAdmin && !isArchived ? (
-      <Button ghost type="primary" size="small">Edit date</Button>
-    ) : (``);
-    const locationExtra = isAdmin && !isArchived ? (
-      <Button ghost type="primary" size="small">Edit location</Button>
-    ) : (``);
-    const facultyExtra = isAdmin && !isArchived ? (
-      <Button ghost type="primary" size="small">Edit faculties</Button>
-    ) : (``);
-
     return (
-      <div>
-        {/* Overview */}
-        <h1>Overview</h1>
-        <Card title="Date" extra={dateExtra} style={{ marginBottom: '16px' }}>
-          <div>11/28 10:00AM - 6:00PM</div>
-          <div>11/30 10:00AM - 6:00PM</div>
-          <div>12/01 10:00AM - 6:00PM</div>
-        </Card>
-        <Card title="Location" extra={locationExtra} style={{ marginBottom: '16px' }}>
-          <div>HEC 450</div>
-        </Card>
-        <Card title="Faculties" extra={facultyExtra} style={{ marginBottom: '16px' }}>
-          {faculties.map((faculty: any) => (
-            <div key={shortid.generate()}>{faculty.name} | {faculty.email}</div>
-          ))}
-        </Card>
-      </div>
-    );
+      <OverviewContent
+        semester={this.state.semester}
+        isDateEditing={this.state.isDateEditing}
+        isLocationEditing={this.state.isLocationEditing}
+        isFacultiesEditing={this.state.isFacultiesEditing}
+        handleSubmit={this.handleSubmit}
+      />
+    )
   }
 }
