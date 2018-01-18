@@ -1,5 +1,8 @@
 import * as React from 'react';
-import OverviewContent from './OverviewContent';
+
+import Date from './Date';
+import Location from './Location';
+import Faculties from './Faculties';
 import { Semester } from '../models/Semester';
 
 export interface OverviewProps {
@@ -7,10 +10,12 @@ export interface OverviewProps {
 }
 
 interface OverviewState {
-  semester: Semester;
-  isDateEditing: boolean;
-  isLocationEditing: boolean;
-  isFacultiesEditing: boolean;
+  [index: string]: {
+    semester: Semester;
+    isDateEditing: boolean;
+    isLocationEditing: boolean;
+    isFacultiesEditing: boolean;
+  }
 }
 
 const faculties = [{
@@ -35,28 +40,56 @@ export default class Overview extends React.Component<OverviewProps, any> {
       isFacultiesEditing: false,
     };
 
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-  
-  handleSubmit(updateObj: any, menu: string) {
-    // Check validation and if everything is fine, call updateSemester
-    // await this.updateSemester()
-    // Depending on menu, change state isDateEditing, isLocationEditing, isFacultiesEditing
+    this.updateSemester = this.updateSemester.bind(this);
+    this.toggleForm = this.toggleForm.bind(this);
   }
 
-  private async updateSemester(updateObj: any) {
+  toggleForm(menu: string) {
+    this.setState((prevState: OverviewState, props: OverviewProps) => {
+      const key = this.getPropName(menu);
+      return {
+        [key]: !prevState[key]
+      };
+    })
+  }
+
+  async updateSemester(updateObj: any) {
     // Update DB Semester
+  }
+
+  private getPropName(menu: string) {
+    if (menu === 'date') {
+      return 'isDateEditing';
+    } else if (menu === 'location') {
+      return 'isLocationEditing';
+    } else {
+      return 'isFacultiesEditing';
+    }
   }
 
   render() {
     return (
-      <OverviewContent
-        semester={this.state.semester}
-        isDateEditing={this.state.isDateEditing}
-        isLocationEditing={this.state.isLocationEditing}
-        isFacultiesEditing={this.state.isFacultiesEditing}
-        handleSubmit={this.handleSubmit}
-      />
+      <div>
+        <h1>Overview</h1>
+        <Date
+          semester={this.state.semester}
+          editing={this.state.isDateEditing}
+          toggleForm={this.toggleForm}
+          updateSemester={this.updateSemester}
+        />
+        <Location
+          semester={this.state.semester}
+          editing={this.state.isLocationEditing}
+          toggleForm={this.toggleForm}
+          updateSemester={this.updateSemester}
+        />
+        <Faculties
+          semester={this.state.semester}
+          editing={this.state.isFacultiesEditing}
+          toggleForm={this.toggleForm}
+          updateSemester={this.updateSemester}
+        />
+      </div>
     )
   }
 }
