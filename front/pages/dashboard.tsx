@@ -33,7 +33,23 @@ export default class Dashboard extends React.Component<DashboardProps, Dashboard
     return {
       semesters: [{
         key: '2018_spring',
-        displayName: '2018 Spring'
+        displayName: '2018 Spring',
+        dates: [{
+          _id: '5d64df7d-23a1-4932-86a9-e63d8e793b07',
+          date: '2018-04-25',
+          startTime: '9 AM',
+          endTime: '6 PM'
+        }, {
+          _id: '68d27092-89a9-4e51-9918-d8c8d735c939',
+          date: '2018-04-26',
+          startTime: '9 AM',
+          endTime: '6 PM'
+        }, {
+          _id: '45a04eda-61e7-4d9d-ba60-6f1945c2e077',
+          date: '2018-04-27',
+          startTime: '9 AM',
+          endTime: '6 PM'
+        }]
       }, {
         key: '2017_fall',
         displayName: '2017 Fall'
