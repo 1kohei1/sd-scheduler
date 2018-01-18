@@ -27,7 +27,9 @@ const AppLayout = (props: any) => (
             <Link href="/"><a style={{ color: 'white' }}>LOGO</a></Link>
           </div>
           <div>
-            <Button ghost>Login</Button>
+            <Link href="/login">
+              <Button ghost>Login</Button>
+            </Link>
           </div>
         </div>
       </Layout.Header>
