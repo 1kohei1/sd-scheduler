@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as shortid from 'shortid';
 import * as moment from 'moment';
+import { Set } from 'immutable';
 import { Form, Icon, Select, DatePicker, Card, Button } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
@@ -15,7 +16,7 @@ export interface DateProps {
 }
 
 interface DateState {
-  objectIdsInForm: string[]
+  objectIdsInForm: Set<string>
 }
 
 const ampm = ['AM', 'PM'];
@@ -30,7 +31,7 @@ class Date extends React.Component<DateProps, DateState> {
     super(props);
 
     this.state = {
-      objectIdsInForm: this.props.semester.dates.map(date => date._id)
+      objectIdsInForm: Set(this.props.semester.dates.map(date => date._id))
     }
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -42,7 +43,7 @@ class Date extends React.Component<DateProps, DateState> {
   componentWillReceiveProps(nextProps: DateProps) {
     if (this.props.semester !== nextProps.semester) {
       this.setState({
-        objectIdsInForm: nextProps.semester.dates.map(date => date._id)
+        objectIdsInForm: Set(nextProps.semester.dates.map(date => date._id))
       })
     }
   }
@@ -98,7 +99,9 @@ class Date extends React.Component<DateProps, DateState> {
 
   }
 
-  getInitialValue(objectId: string, property: string) {
+  getInitialValue(objectId: string | undefined, property: string) {
+    if (!objectId) return '';
+    
     const date = this.props.semester.dates.find(date => date._id === objectId);
     if (date && property === 'date') {
       return moment(date[property], 'YYYY-MM-DD');
