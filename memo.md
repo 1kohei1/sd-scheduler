@@ -39,3 +39,7 @@ Admin:
 - [ ] Register presentation dates
 - [ ] Register presentation location
 - [ ] Check schedule in the calendar view
+
+Client:
+
+- [ ] Add validation to the overview date
