@@ -18,12 +18,43 @@ class Location extends React.Component<LocationProps, {}> {
     super(props);
 
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.extra = this.extra.bind(this);
     this.info = this.info.bind(this);
     this.form = this.form.bind(this);
   }
 
   handleSubmit(e: React.FormEvent<any>) {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if (err) return;
+      this.props.updateSemester(values, 'location');
+    })
+  }
 
+  extra() {
+    const isAdmin = true;
+    const isArchived = false;
+
+    let extra: string | JSX.Element = '';
+    if (isAdmin && !isArchived && this.props.editing) {
+      return (<Button 
+        icon="close"
+        size="small"
+        onClick={(e) => this.props.toggleForm('location')}
+      >
+        Cancel
+      </Button>);
+    } else if (isAdmin && !isArchived) {
+      return (<Button ghost
+        type="primary"
+        size="small"
+        onClick={(e) => this.props.toggleForm('location')}
+      >
+        Edit location
+      </Button>);
+    } else {
+      return '';
+    }
   }
 
   info() {
@@ -36,7 +67,9 @@ class Location extends React.Component<LocationProps, {}> {
     return (
       <Form onSubmit={this.handleSubmit}>
         <Form.Item>
-          {this.props.form.getFieldDecorator('location')(
+          {this.props.form.getFieldDecorator('location', {
+            rules: [{ required: true, message: 'Please enter the location!' }]
+          })(
             <Input prefix={<Icon type="home" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Presentation location" />
           )}
         </Form.Item>
@@ -50,34 +83,11 @@ class Location extends React.Component<LocationProps, {}> {
         </Form.Item>
       </Form>
     )
-
   }
 
   render() {
-    const isAdmin = true;
-    const isArchived = false;
-
-    let extra: string | JSX.Element = '';
-    if (isAdmin && !isArchived && this.props.editing) {
-      extra = (<Button 
-        icon="close"
-        size="small"
-        onClick={(e) => this.props.toggleForm('location')}
-      >
-        Cancel
-      </Button>)
-    } else if (isAdmin && !isArchived) {
-      extra = (<Button ghost
-        type="primary"
-        size="small"
-        onClick={(e) => this.props.toggleForm('location')}
-      >
-        Edit location
-      </Button>);
-    }
-
     return (
-      <Card title="Location" extra={extra} style={{ marginBottom: '16px' }}>
+      <Card title="Location" extra={this.extra()} style={{ marginBottom: '16px' }}>
         {this.props.editing ? this.form() : this.info()}
       </Card>
     );

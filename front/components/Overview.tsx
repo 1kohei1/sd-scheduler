@@ -53,8 +53,10 @@ export default class Overview extends React.Component<OverviewProps, any> {
     })
   }
 
-  async updateSemester(updateObj: any) {
+  async updateSemester(updateObj: any, menu: string) {
     // Update DB Semester
+    console.log(`Update ${menu}`);
+    // Update state semester and is???Editing
   }
 
   private getPropName(menu: string) {
