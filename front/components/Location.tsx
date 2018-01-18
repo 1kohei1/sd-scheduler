@@ -68,7 +68,8 @@ class Location extends React.Component<LocationProps, {}> {
       <Form onSubmit={this.handleSubmit}>
         <Form.Item>
           {this.props.form.getFieldDecorator('location', {
-            rules: [{ required: true, message: 'Please enter the location!' }]
+            rules: [{ required: true, message: 'Please enter the location!' }],
+            initialValue: 'HEC 450' // This will be replaced with this.props.semester.location
           })(
             <Input prefix={<Icon type="home" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Presentation location" />
           )}
