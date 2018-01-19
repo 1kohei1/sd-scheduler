@@ -43,17 +43,31 @@ class Date extends React.Component<DateProps, DateState> {
   }
 
   componentWillReceiveProps(nextProps: DateProps) {
-    this.setState({
-      objectIdsInForm: List(nextProps.semester.dates.map(date => date._id))
-    })
-}
+    if (!nextProps.editing) {
+      this.setState({
+        objectIdsInForm: List(nextProps.semester.dates.map(date => date._id))
+      })
+    }
+  }
 
   handleSubmit(e: React.FormEvent<any>) {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (err) return;
-      console.log(values)
-      this.props.updateSemester(values, 'date');
+      // Format dates object to be DB format
+      const dates: any = [];
+      for (let id in values.dates) {
+        const dateObj = values.dates[id];
+        // If all data is not given, skip it
+        if (!dateObj.date && !dateObj.startTime && !dateObj.endTime) continue;
+        if (id.indexOf('new') === -1) {
+          dateObj._id = id;
+        }
+        dateObj.date = dateObj.date.format('YYYY-MM-DD');
+        dates.push(dateObj);
+      }
+      console.log(dates);
+      this.props.updateSemester(dates, 'date');
     })
   }
 
