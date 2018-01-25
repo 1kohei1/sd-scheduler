@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Range } from 'immutable';
 
 import { Constants } from './Constants';
 import DatetimeUtil from '../../utils/DatetimeUtil';
@@ -15,7 +14,7 @@ export default class Ruler extends React.Component<RulerProps, any> {
   }
 
   render() {
-    const hours = Range(this.props.startTime, this.props.endTime + 1).toArray();
+    const hours = DatetimeUtil.createHoursArray(this.props.startTime, this.props.endTime);
     
     return (
       <div className="ko-ruler_container">

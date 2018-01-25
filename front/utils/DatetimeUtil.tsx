@@ -1,4 +1,5 @@
 import { Moment } from 'moment-timezone';
+import { Range } from 'immutable';
 
 export default class DatetimeUtil {
   static convertTo12Hr(hour: number) {
@@ -13,5 +14,9 @@ export default class DatetimeUtil {
 
   static convertToFormat(date: Moment, format: string) {
     return date.format(format);
+  }
+
+  static createHoursArray(startTime: number, endTime: number) {
+    return Range(startTime, endTime + 1).toArray();
   }
 }
