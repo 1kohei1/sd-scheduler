@@ -24,13 +24,17 @@ register_at: date; // When the admin adds the faculty
 created_at: date
 updated_at: date
 
-### Schedule
+### AvailableSlots
 
 _id: ObjectId
 facultyId: Ref Faculty ObjectId
 semesterId: Ref Semester ObjectId
-availableTime: [{
-
+availableSlots: [{
+  _id: ObjectId;
+  start: date;
+  end: date;
 }]
+created_at: date;
+updated_at: date;
 // Think later how to store faculty's available/unavailable time. Create another date model?
 // Test how update child object work
