@@ -1302,6 +1302,10 @@ browserslist@^2.1.2:
     caniuse-lite "^1.0.30000784"
     electron-to-chromium "^1.3.30"
 
+bson-objectid@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/bson-objectid/-/bson-objectid-1.2.2.tgz#f7d5dbc0d5fc1e810e4fefc9e0ef08e18534b7f2"
+
 bson@~1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/bson/-/bson-1.0.4.tgz#93c10d39eaa5b58415cbc4052f3e53e562b0b72c"
