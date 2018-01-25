@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as shortid from 'shortid';
-import * as moment from 'moment';
+import * as moment from 'moment-timezone';
 import { List } from 'immutable';
 import { Form, Icon, Select, DatePicker, Card, Button } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';

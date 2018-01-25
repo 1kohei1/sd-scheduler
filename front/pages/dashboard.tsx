@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as moment from 'moment';
+import * as moment from 'moment-timezone';
 import { Set } from 'immutable';
 import { Layout } from 'antd';
 import { ClickParam } from 'antd/lib/menu';
