@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Constants } from './Constants';
+import { KoCalendarConstants } from '../../models/Constants';
 import DatetimeUtil from '../../utils/DatetimeUtil';
 
 export interface RulerProps {
@@ -25,11 +25,11 @@ export default class Ruler extends React.Component<RulerProps, any> {
         ))}
         <style jsx>{`
           .ko-ruler_container {
-            padding-top: ${Constants.dayTitleHeight};
+            padding-top: ${KoCalendarConstants.dayTitleHeight};
           }
           .ko-ruler_cell {
-            width: ${Constants.rulerColumnWidth};
-            height: ${Constants.rulerColumnHeight};
+            width: ${KoCalendarConstants.rulerColumnWidth};
+            height: ${KoCalendarConstants.rulerColumnHeight};
             text-align: right;
           }
         `}

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Moment } from 'moment-timezone';
 
-import { Constants } from './Constants';
+import { KoCalendarConstants } from '../../models/Constants';
 import DatetimeUtil from '../../utils/DatetimeUtil';
 
 export interface DayHeaderProps {
@@ -16,8 +16,8 @@ export default class DayHeader extends React.Component<DayHeaderProps, any> {
         {DatetimeUtil.convertToFormat(this.props.date, this.props.dateFormat)}
         <style jsx>{`
           .ko-day_header {
-            width: ${Constants.dayColumnWidth};
-            height: calc(${Constants.dayTitleHeight} - 1px);
+            width: ${KoCalendarConstants.dayColumnWidth};
+            height: calc(${KoCalendarConstants.dayTitleHeight} - 1px);
             text-align: center;
             border-bottom: 1px solid #ccc;
           }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as shortid from 'shortid';
 
-import { Constants } from './Constants';
+import { KoCalendarConstants } from '../../models/Constants';
 
 export interface HourlinesProps {
   isLastColumn: boolean;
@@ -20,7 +20,7 @@ export default class Hourlines extends React.Component<HourlinesProps, any> {
         ))}
         <style jsx>{`
           .ko-hour_cell {
-            height: calc(${Constants.rulerColumnHeight} / 2 - 1px);
+            height: calc(${KoCalendarConstants.rulerColumnHeight} / 2 - 1px);
             border-left: 1px solid #ccc;
             box-sizing: content-box;
             ${this.props.isLastColumn ? 'border-right: 1px solid #ccc' : null}

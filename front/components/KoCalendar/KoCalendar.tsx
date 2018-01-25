@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Moment } from 'moment-timezone';
 
-import Event from './Event';
+import Event from '../../models/Event';
 import Ruler from './Ruler';
 import Day from './Day';
 

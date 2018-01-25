@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Moment } from 'moment-timezone';
 
-import { Constants } from './Constants';
-import Event from './Event';
+import { KoCalendarConstants } from '../../models/Constants';
+import Event from '../../models/Event';
 import DayHeader from './DayHeader';
 import DatetimeUtil from '../../utils/DatetimeUtil';
 import Hourlines from './Hourlines';
@@ -41,14 +41,14 @@ export default class Day extends React.Component<DayProps, any> {
         <div className="ko-day_mouse_target"></div>
         <style jsx>{`
           .ko-day_container {
-            width: ${Constants.dayColumnWidth};
+            width: ${KoCalendarConstants.dayColumnWidth};
             position: relative;
           }
           .ko-day_mouse_target {
             position: absolute;
             left: 0;
-            top: ${Constants.dayTitleHeight};
-            height: calc(100% - ${Constants.dayTitleHeight});
+            top: ${KoCalendarConstants.dayTitleHeight};
+            height: calc(100% - ${KoCalendarConstants.dayTitleHeight});
             width: 100%;
             z-index: 2;
           }
