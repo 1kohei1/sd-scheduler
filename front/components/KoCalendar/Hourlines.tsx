@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as shortid from 'shortid';
+import ObjectID from 'bson-objectid';
 
 import { KoCalendarConstants } from '../../models/Constants';
 
@@ -13,7 +13,7 @@ export default class Hourlines extends React.Component<HourlinesProps, any> {
     return (
       <div>
         {this.props.hours.map(hour => (
-          <div key={shortid.generate()}>
+          <div key={ObjectID.generate()}>
             <div className="ko-hour_cell ko-hour_cell_top"></div>
             <div className="ko-hour_cell ko-hour_cell_bottom"></div>
           </div>

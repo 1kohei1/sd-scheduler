@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { List } from 'immutable';
-import * as shortid from 'shortid';
+import ObjectID from 'bson-objectid';
 
 import * as moment from 'moment-timezone';
 import KoCalendar from './KoCalendar/KoCalendar';
@@ -42,7 +42,7 @@ export default class Availability extends React.Component<AvailabilityProps, Ava
     } else if (availableSlot._id) {
       // Find one in the state, and replace the value of start and end
     } else {
-      // Generate shortid and assign to _id. Then, add passed availableSlot to the state
+      // Generate objectid and assign to _id. Then, add passed availableSlot to the state
     }
   }
 

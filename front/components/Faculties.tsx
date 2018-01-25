@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as shortid from 'shortid';
 import { Form, Icon, Select, DatePicker, Card, Button, Tooltip } from 'antd';
 
 import { Semester } from '../models/Semester';

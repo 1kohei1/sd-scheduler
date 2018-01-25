@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as shortid from 'shortid';
 import { Form, Icon, Input, Card, Button } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 

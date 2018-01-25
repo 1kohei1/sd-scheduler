@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as shortid from 'shortid';
+import ObjectID from 'bson-objectid';
 import * as moment from 'moment-timezone';
 import { List } from 'immutable';
 import { Form, Icon, Select, DatePicker, Card, Button } from 'antd';
@@ -112,7 +112,7 @@ class Date extends React.Component<DateProps, DateState> {
   addDate() {
     this.setState((prevState: DateState, props: DateProps) => {
       return {
-        objectIdsInForm: prevState.objectIdsInForm.push(`new_${shortid.generate()}`)
+        objectIdsInForm: prevState.objectIdsInForm.push(`${ObjectID.generate()}`)
       }
     });
   }
