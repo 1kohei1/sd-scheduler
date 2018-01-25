@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { Range } from 'immutable';
 
 import { Constants } from './Constants';
+import DatetimeUtil from '../../utils/DatetimeUtil';
 
 export interface RulerProps {
   startTime: number;
@@ -12,23 +14,26 @@ export default class Ruler extends React.Component<RulerProps, any> {
     super(props);
   }
 
-  convertTo12Hr(hour: number) {
-    if (hour < 12) {
-      return `${hour} AM`;
-    } else if (hour === 12) {
-      return `${hour} PM`;
-    } else {
-      return `${hour - 12} PM`;
-    }
-  }
-
   render() {
+    const hours = Range(this.props.startTime, this.props.endTime + 1).toArray();
+    
     return (
       <div className="ko-ruler_container">
-        
+        {hours.map(hour => (
+          <div className="ko-ruler_cell" key={hour}>
+            {DatetimeUtil.convertTo12Hr(hour)}
+          </div>
+        ))}
         <style jsx>{`
           .ko-ruler_container {
             padding-top: ${Constants.dayTitleHeight};
+          }
+          .ko-ruler_cell {
+            width: ${Constants.rulerColumnWidth};
+            height: ${Constants.rulerColumnHeight};
+            text-align: right;
+            color: #666;
+            font-size: 12px;
           }
         `}
         </style>
