@@ -65,18 +65,7 @@ export default class Faculties extends React.Component<FacultiesProps, any> {
   form() {
     return (
       <Form onSubmit={this.handleSubmit}>
-        <h3>
-          Available faculties
-          <Tooltip title="Students can choose them as a committee member">
-            <Icon type="question-circle-o" style={{ marginLeft: '8px', color: 'rgba(0,0,0,.5)'}}/>
-          </Tooltip>
-        </h3>
-        <h3>
-          Registered faculties
-          <Tooltip title="Registered in the system, but students cannot pick them as a committee member">
-            <Icon type="question-circle-o" style={{ marginLeft: '8px', color: 'rgba(0,0,0,.5)'}}/>
-          </Tooltip>
-        </h3>
+      
         <Form.Item>
           <Button htmlType="submit" type="primary" style={{ marginRight: '16px' }}>
             Update
