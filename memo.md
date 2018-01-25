@@ -45,4 +45,8 @@ Client/UI:
 - [ ] Add validation to the overview date
 - [ ] Use higher order component for Date, Locations, and Faculties component (Low priority)
 - [ ] Explore what is the best word for registered/available faculties
-- [ ] Update Date component to handle date object
+- [ ] Update Date.tsx to handle date object
+
+TODO:
+
+- [ ] Change Semester.tsx to store semester's presentation date in Date Object
