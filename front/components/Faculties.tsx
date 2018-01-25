@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as shortid from 'shortid';
-import { Card, Button } from 'antd';
+import { Form, Icon, Select, DatePicker, Card, Button, Tooltip } from 'antd';
 
 import { Semester } from '../models/Semester';
 
@@ -16,12 +16,39 @@ export default class Faculties extends React.Component<FacultiesProps, any> {
     super(props);
 
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.extra = this.extra.bind(this);
     this.info = this.info.bind(this);
     this.form = this.form.bind(this);
   }
 
   handleSubmit(e: React.FormEvent<any>) {
 
+  }
+
+  extra() {
+    const isAdmin = true;
+    const isArchived = false;
+
+    let extra: string | JSX.Element = '';
+    if (isAdmin && !isArchived && this.props.editing) {
+      return (<Button 
+        icon="close"
+        size="small"
+        onClick={(e) => this.props.toggleForm('faculties')}
+      >
+        Cancel
+      </Button>);
+    } else if (isAdmin && !isArchived) {
+      return (<Button ghost
+        type="primary"
+        size="small"
+        onClick={(e) => this.props.toggleForm('faculties')}
+      >
+        Edit faculties
+      </Button>);
+    } else {
+      return '';
+    }
   }
 
   info() {
@@ -37,27 +64,35 @@ export default class Faculties extends React.Component<FacultiesProps, any> {
 
   form() {
     return (
-      <div>Hello</div>
+      <Form onSubmit={this.handleSubmit}>
+        <h3>
+          Available faculties
+          <Tooltip title="Students can choose them as a committee member">
+            <Icon type="question-circle-o" style={{ marginLeft: '8px', color: 'rgba(0,0,0,.5)'}}/>
+          </Tooltip>
+        </h3>
+        <h3>
+          Registered faculties
+          <Tooltip title="Registered in the system, but students cannot pick them as a committee member">
+            <Icon type="question-circle-o" style={{ marginLeft: '8px', color: 'rgba(0,0,0,.5)'}}/>
+          </Tooltip>
+        </h3>
+        <Form.Item>
+          <Button htmlType="submit" type="primary" style={{ marginRight: '16px' }}>
+            Update
+          </Button>
+          <Button onClick={(e) => this.props.toggleForm('faculties')}>
+            Cancel
+          </Button>
+        </Form.Item>
+      </Form>
     )
 
   }
 
   render() {
-    const isAdmin = true;
-    const isArchived = false;
-
-    const extra = isAdmin && !isArchived ? (
-      <Button ghost
-        type="primary"
-        size="small"
-        onClick={(e) => this.props.toggleForm('faculties')}
-      >
-        Edit location
-      </Button>
-    ) : (``);
-
     return (
-      <Card title="Faculty" extra={extra} style={{ marginBottom: '16px' }}>
+      <Card title="Faculty" extra={this.extra()} style={{ marginBottom: '16px' }}>
         {this.props.editing ? this.form() : this.info() }
       </Card>
     );
