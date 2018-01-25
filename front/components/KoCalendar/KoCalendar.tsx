@@ -29,7 +29,7 @@ export default class KoCalendar extends React.Component<KoCalendarProps, KoCalen
           startTime={this.props.startTime}
           endTime={this.props.endTime}
         />
-        {this.props.dates.map(date => (
+        {this.props.dates.map((date, index) => (
           <Day 
             key={date.valueOf()}
             timezone={this.props.timezone}
@@ -38,6 +38,7 @@ export default class KoCalendar extends React.Component<KoCalendarProps, KoCalen
             endTime={this.props.endTime}
             dateFormat={this.props.dateFormat}
             events={this.props.events}
+            isLastColumn={index === this.props.dates.length - 1}
             eventItem={this.props.eventItem}
           />
         ))}
