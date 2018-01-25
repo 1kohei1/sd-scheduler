@@ -5,6 +5,8 @@ import { KoCalendarConstants } from '../../models/Constants';
 import Event from '../../models/Event';
 import DayHeader from './DayHeader';
 import Hourlines from './Hourlines';
+import AvailableSlots from './AvailableSlots';
+import AvailableSlot from '../../models/AvailableSlot';
 
 export interface DayProps {
   timezone: string;
@@ -14,13 +16,13 @@ export interface DayProps {
   events: Event[];
   isLastColumn: boolean;
   eventItem: (event: Event, style: any) => JSX.Element
+  availableSlots: AvailableSlot[]
+  onAvailableSlotChange: (updatedAvailableSlot: AvailableSlot, isDelete: boolean) => void;
 }
 
 export default class Day extends React.Component<DayProps, any> {
   constructor(props: DayProps) {
     super(props);
-
-
   }
   
   render() {
@@ -34,19 +36,14 @@ export default class Day extends React.Component<DayProps, any> {
           isLastColumn={this.props.isLastColumn}
           hours={this.props.hours}
         />
-        <div className="ko-day_mouse_target"></div>
+        <AvailableSlots
+          availableSlots={this.props.availableSlots}
+          onAvailableSlotChange={this.props.onAvailableSlotChange}
+        />
         <style jsx>{`
           .ko-day_container {
             width: ${KoCalendarConstants.dayColumnWidth};
             position: relative;
-          }
-          .ko-day_mouse_target {
-            position: absolute;
-            left: 0;
-            top: ${KoCalendarConstants.dayTitleHeight};
-            height: calc(100% - ${KoCalendarConstants.dayTitleHeight});
-            width: 100%;
-            z-index: 2;
           }
         `}
         </style>

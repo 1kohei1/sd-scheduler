@@ -44,6 +44,8 @@ export default class KoCalendar extends React.Component<KoCalendarProps, KoCalen
             events={this.props.events}
             isLastColumn={index === this.props.dates.length - 1}
             eventItem={this.props.eventItem}
+            availableSlots={this.props.availableSlots}
+            onAvailableSlotChange={this.props.onAvailableSlotChange}
           />
         ))}
         <style jsx>{`
