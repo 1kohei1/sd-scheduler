@@ -5,9 +5,8 @@ key: string; ex) 2018_spring, 2017_fall
 displayName: ex) 2018 Spring, 2017 Fall
 dates: [{
   _id: ObjectId
-  date: string ex) 2018-12-08
-  startTime: string ex) 9 AM
-  endTime: string ex) 5 PM
+  startTime: date
+  endTime: date
 }]
 location: string; ex) HEC 405
 faculties: [Ref Faculty ObjectId]
