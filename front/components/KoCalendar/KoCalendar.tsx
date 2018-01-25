@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Moment } from 'moment-timezone';
 
 import Event from '../../models/Event';
+import AvailableSlot from '../../models/AvailableSlot';
 import Ruler from './Ruler';
 import Day from './Day';
 
@@ -13,6 +14,8 @@ interface KoCalendarProps {
   dateFormat: string;
   events: Event[];
   eventItem: (event: Event, style: any) => JSX.Element
+  availableSlots: AvailableSlot[]
+  onAvailableSlotChange: (updatedAvailableSlot: AvailableSlot, isDelete: boolean) => void;
 }
 interface KoCalendarState { }
 
