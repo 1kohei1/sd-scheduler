@@ -69,6 +69,16 @@ export default class Overview extends React.Component<OverviewProps, any> {
     }
   }
 
+  componentWillReceiveProps(nextProps: OverviewProps) {
+    if (nextProps.semester !== this.state.semester) {
+      this.setState({
+        isDateEditing: false,
+        isLocationEditing: false,
+        isFacultiesEditing: false
+      });
+    }
+  }
+
   render() {
     return (
       <div>
