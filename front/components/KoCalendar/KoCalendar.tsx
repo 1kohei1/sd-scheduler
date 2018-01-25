@@ -3,6 +3,7 @@ import { Moment } from 'moment-timezone';
 
 import Event from './Event';
 import Ruler from './Ruler';
+import Day from './Day';
 
 interface KoCalendarProps {
   timezone: string;
@@ -24,18 +25,35 @@ export default class KoCalendar extends React.Component<KoCalendarProps, KoCalen
   render() {
     return (
       <div className="ko-calendar_wrapper">
-        This is available calendar component
         <Ruler 
           startTime={this.props.startTime}
           endTime={this.props.endTime}
         />
+        {this.props.dates.map(date => (
+          <Day 
+            key={date.valueOf()}
+            timezone={this.props.timezone}
+            date={date}
+            startTime={this.props.startTime}
+            endTime={this.props.endTime}
+            dateFormat={this.props.dateFormat}
+            events={this.props.events}
+            eventItem={this.props.eventItem}
+          />
+        ))}
         <style jsx>{`
           .ko-calendar_wrapper {
             position: relative;
-            display: grid;
-            margin: 0 16px;
+            display: flex;
+            justify-content: flex-start;
             width: 100%;
-            overflow-x: scroll
+            overflow-x: scroll;
+          }
+        `}
+        </style>
+        <style jsx global>{`
+          .ko-calendar_wrapper {
+            color: #666;
           }
         `}
         </style>

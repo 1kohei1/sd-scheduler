@@ -32,8 +32,6 @@ export default class Ruler extends React.Component<RulerProps, any> {
             width: ${Constants.rulerColumnWidth};
             height: ${Constants.rulerColumnHeight};
             text-align: right;
-            color: #666;
-            font-size: 12px;
           }
         `}
         </style>
