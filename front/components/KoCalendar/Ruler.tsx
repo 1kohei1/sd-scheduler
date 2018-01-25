@@ -4,8 +4,7 @@ import { KoCalendarConstants } from '../../models/Constants';
 import DatetimeUtil from '../../utils/DatetimeUtil';
 
 export interface RulerProps {
-  startTime: number;
-  endTime: number;
+  hours: number[];
 }
 
 export default class Ruler extends React.Component<RulerProps, any> {
@@ -14,11 +13,9 @@ export default class Ruler extends React.Component<RulerProps, any> {
   }
 
   render() {
-    const hours = DatetimeUtil.createHoursArray(this.props.startTime, this.props.endTime);
-    
     return (
       <div className="ko-ruler_container">
-        {hours.map(hour => (
+        {this.props.hours.map(hour => (
           <div className="ko-ruler_cell" key={hour}>
             {DatetimeUtil.convertTo12Hr(hour)}
           </div>

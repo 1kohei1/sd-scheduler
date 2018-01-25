@@ -5,6 +5,7 @@ import Event from '../../models/Event';
 import AvailableSlot from '../../models/AvailableSlot';
 import Ruler from './Ruler';
 import Day from './Day';
+import DatetimeUtil from '../../utils/DatetimeUtil';
 
 interface KoCalendarProps {
   timezone: string;
@@ -26,19 +27,19 @@ export default class KoCalendar extends React.Component<KoCalendarProps, KoCalen
   }
 
   render() {
+    const hours = DatetimeUtil.createHoursArray(this.props.startTime, this.props.endTime);
+
     return (
       <div className="ko-calendar_wrapper">
-        <Ruler 
-          startTime={this.props.startTime}
-          endTime={this.props.endTime}
+        <Ruler
+          hours={hours}
         />
         {this.props.dates.map((date, index) => (
           <Day 
             key={date.valueOf()}
             timezone={this.props.timezone}
             date={date}
-            startTime={this.props.startTime}
-            endTime={this.props.endTime}
+            hours={hours}
             dateFormat={this.props.dateFormat}
             events={this.props.events}
             isLastColumn={index === this.props.dates.length - 1}

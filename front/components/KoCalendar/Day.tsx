@@ -4,14 +4,12 @@ import { Moment } from 'moment-timezone';
 import { KoCalendarConstants } from '../../models/Constants';
 import Event from '../../models/Event';
 import DayHeader from './DayHeader';
-import DatetimeUtil from '../../utils/DatetimeUtil';
 import Hourlines from './Hourlines';
 
 export interface DayProps {
   timezone: string;
   date: Moment;
-  startTime: number;
-  endTime: number;
+  hours: number[];
   dateFormat: string;
   events: Event[];
   isLastColumn: boolean;
@@ -26,8 +24,6 @@ export default class Day extends React.Component<DayProps, any> {
   }
   
   render() {
-    const hours = DatetimeUtil.createHoursArray(this.props.startTime, this.props.endTime);
-
     return (
       <div className="ko-day_container">
         <DayHeader
@@ -36,7 +32,7 @@ export default class Day extends React.Component<DayProps, any> {
         />
         <Hourlines
           isLastColumn={this.props.isLastColumn}
-          hours={hours}
+          hours={this.props.hours}
         />
         <div className="ko-day_mouse_target"></div>
         <style jsx>{`
