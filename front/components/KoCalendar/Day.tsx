@@ -38,10 +38,19 @@ export default class Day extends React.Component<DayProps, any> {
           isLastColumn={this.props.isLastColumn}
           hours={hours}
         />
+        <div className="ko-day_mouse_target"></div>
         <style jsx>{`
           .ko-day_container {
             width: ${Constants.dayColumnWidth};
             position: relative;
+          }
+          .ko-day_mouse_target {
+            position: absolute;
+            left: 0;
+            top: ${Constants.dayTitleHeight};
+            height: calc(100% - ${Constants.dayTitleHeight});
+            width: 100%;
+            z-index: 2;
           }
         `}
         </style>
