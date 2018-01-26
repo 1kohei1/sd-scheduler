@@ -1,5 +1,5 @@
 import * as moment from 'moment-timezone';
-import { Moment } from 'moment-timezone';
+import { Moment, unitOfTime } from 'moment-timezone';
 import { Range } from 'immutable';
 import { DateConstants } from '../models/Constants';
 
@@ -40,6 +40,10 @@ export default class DatetimeUtil {
 
   static createHoursArray(startTime: number, endTime: number) {
     return Range(startTime, endTime).toArray();
+  }
+
+  static addToMoment(m: Moment, amount: number, unit: unitOfTime.DurationConstructor) {
+    return m.clone().add(amount, unit);
   }
 
   static getHourOptions() {

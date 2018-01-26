@@ -1,5 +1,6 @@
 import * as React from 'react';
 import ObjectID from 'bson-objectid';
+import { Observable, Subscription } from 'rxjs';
 
 import { KoCalendarConstants, DateConstants } from '../../models/Constants';
 import TimeSlot from '../../models/TimeSlot';
@@ -14,13 +15,21 @@ export interface AvailableSlotsProps {
 }
 
 export default class AvailableSlots extends React.Component<AvailableSlotsProps, any> {
+  private wrapperRef: HTMLDivElement;
+  private subscriptions: Subscription[] = [];
+
   constructor(props: AvailableSlotsProps) {
     super(props);
 
     this.onClick = this.onClick.bind(this);
+    this.onWrapperRef = this.onWrapperRef.bind(this);
+    this.onResizeStart = this.onResizeStart.bind(this);
   }
 
   onClick(event: React.MouseEvent<HTMLDivElement>) {
+    if (true) {
+      return;
+    }
     const targetDOM = event.target as HTMLElement;
     const className = targetDOM.className;
     if (!className.includes('ko-availableslots_wrapper')) {
@@ -37,11 +46,7 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
     const newSlot = this.adjustSlot(slot);
 
     if (newSlot) {
-      console.log(newSlot);
-      console.log('start', DatetimeUtil.formatDate(newSlot.start, `${DateConstants.dateFormat} ${DateConstants.hourFormat}`));
-      console.log('end', DatetimeUtil.formatDate(newSlot.end, `${DateConstants.dateFormat} ${DateConstants.hourFormat}`));
-  
-      this.props.onAvailableSlotChange(newSlot, false);
+      this.props.onAvailableSlotChange(newSlot as TimeSlot, false);
     }
   }
 
@@ -83,11 +88,60 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
     }
   }
 
+  onWrapperRef(ref: HTMLDivElement | null) {
+    if (ref) {
+      this.wrapperRef = ref;
+    }
+  }
+
+  componentWillUnmount() {
+    this.subscriptions.forEach(sub => {
+      sub.unsubscribe();
+    })
+  }
+
+  onResizeStart(slot: TimeSlot) {
+    const sub = Observable.fromEvent<MouseEvent>(this.wrapperRef, 'mousemove')
+      .takeUntil(Observable.fromEvent(window.document, 'mouseup'))
+      // Convert to how many blocks apart from .ko-availableslots_wrapper
+      .map(event => {
+        // clientY gets Y coordinate of the mouse in relate to the window.
+        // this.wrapperRef.getClientRects()[0].top gets how far the top of the elemenet from the top window
+        // Reference: http://javascript.info/coordinates
+        const diff = event.clientY - this.wrapperRef.getClientRects()[0].top;
+        // blockHeight represents how many pixel is for 30 min
+        const blockHeight = KoCalendarConstants.rulerColumnHeightNum / 2;
+        return Math.floor(diff / blockHeight);
+      })
+      .distinctUntilChanged()
+      .subscribe((num30: number) => {
+        const newSlot = {
+          _id: slot._id,
+          start: slot.start,
+          end: DatetimeUtil.addToMoment(this.props.presentationDate.start, num30 * 30, 'm'),
+        }
+
+        // Check if slot overlaps with existing ones
+        this.props.availableSlots.forEach(slotA => {
+          if (slotA._id !== newSlot._id && newSlot.start.isBefore(slotA.start) && newSlot.end.isAfter(slotA.start)) {
+            newSlot.end = slotA.start;
+          }
+        });
+
+        if (newSlot.end.diff(newSlot.start, 'hour') >= 1) {
+          this.props.onAvailableSlotChange(newSlot, false);
+        }
+      });
+
+    this.subscriptions.push(sub);
+  }
+
   render() {
     return (
       <div
         className="ko-availableslots_wrapper"
         onClick={this.onClick}
+        ref={this.onWrapperRef}
       >
         {this.props.availableSlots.map(slot => (
           <AvailableSlotTile
@@ -95,6 +149,7 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
             slot={slot}
             ruler={this.props.ruler}
             onAvailableSlotChange={this.props.onAvailableSlotChange}
+            onResizeStart={this.onResizeStart}
           />
         ))}
         <style jsx>{`
@@ -102,7 +157,7 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
             position: absolute;
             left: 0;
             top: calc(${KoCalendarConstants.dayTitleHeight} - 1px);
-            height: calc(100% - ${KoCalendarConstants.dayTitleHeight});
+            height: calc(100% - ${KoCalendarConstants.dayTitleHeight} + 15px);
             width: 100%;
             z-index: 1;
           }

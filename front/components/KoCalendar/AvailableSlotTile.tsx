@@ -8,6 +8,7 @@ export interface AvailableSlotTileProps {
   ruler: number[];
   slot: TimeSlot;
   onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean) => void;
+  onResizeStart: (slot: TimeSlot) => void;
 }
 
 export default class AvailableSlotTile extends React.Component<AvailableSlotTileProps, any> {
@@ -28,9 +29,9 @@ export default class AvailableSlotTile extends React.Component<AvailableSlotTile
     const height = `${(end - start) * KoCalendarConstants.rulerColumnHeightNum}px`;
 
     return (
-      <div 
-        className="ko-availableslotstile" 
-        style={{ top, height }} 
+      <div
+        className="ko-availableslotstile"
+        style={{ top, height }}
         key={this.props.slot._id}
       >
         <span>
@@ -38,7 +39,11 @@ export default class AvailableSlotTile extends React.Component<AvailableSlotTile
           -
           {DatetimeUtil.formatDate(this.props.slot.end, KoCalendarConstants.tileTimeFormat)}
         </span>
-        <div className="ko-availableslotstile_slider">...</div>
+        <div
+          className="ko-availableslotstile_slider"
+          onMouseDown={(e) => this.props.onResizeStart(this.props.slot)}>
+          ...
+        </div>
         <style jsx>{`
           .ko-availableslotstile {
             position: absolute;

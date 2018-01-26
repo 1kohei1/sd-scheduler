@@ -50,7 +50,7 @@ export default class Availability extends React.Component<AvailabilityProps, Ava
     if (isDelete) {
       // Remove from the state where ._id === availableSlot._id 
     } else if (updatedSlot._id) {
-      const slot: TimeSlot = this.state.availableSlots.find(slot => {
+      const index = this.state.availableSlots.findIndex(slot => {
         if (slot) {
           return slot._id === updatedSlot._id;
         } else {
@@ -58,8 +58,12 @@ export default class Availability extends React.Component<AvailabilityProps, Ava
         }
       });
 
-      if (slot) {
-        // Update existing one
+      if (index >= 0) {
+        this.setState((prevState: AvailabilityState, props: AvailabilityProps) => {
+          return {
+            availableSlots: prevState.availableSlots.set(index, updatedSlot)
+          }
+        })
       } else {
         this.setState((prevState: AvailabilityState, props: AvailabilityProps) => {
           return {
