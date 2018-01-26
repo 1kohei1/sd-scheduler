@@ -9,6 +9,7 @@ export interface AvailableSlotTileProps {
   slot: TimeSlot;
   onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean) => void;
   onResizeStart: (slot: TimeSlot) => void;
+  onMoveStart: (slot: TimeSlot) => void;
 }
 
 export default class AvailableSlotTile extends React.Component<AvailableSlotTileProps, any> {
@@ -33,6 +34,7 @@ export default class AvailableSlotTile extends React.Component<AvailableSlotTile
         className="ko-availableslotstile"
         style={{ top, height }}
         key={this.props.slot._id}
+        onMouseDown={() => this.props.onMoveStart(this.props.slot)}
       >
         <span>
           {DatetimeUtil.formatDate(this.props.slot.start, KoCalendarConstants.tileTimeFormat)}
@@ -55,6 +57,8 @@ export default class AvailableSlotTile extends React.Component<AvailableSlotTile
             font-size: 12px;
             padding: 0 8px;
             z-index: 2;
+            cursor: -webkit-grab;
+            cursor: grab;
           }
           .ko-availableslotstile_slider {
             position: absolute;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import ObjectID from 'bson-objectid';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { KoCalendarConstants, DateConstants } from '../../models/Constants';
 import TimeSlot from '../../models/TimeSlot';
@@ -16,7 +16,7 @@ export interface AvailableSlotsProps {
 
 export default class AvailableSlots extends React.Component<AvailableSlotsProps, any> {
   private wrapperRef: HTMLDivElement;
-  private subscriptions: Subscription[] = [];
+  private isResizing: boolean = false;
 
   constructor(props: AvailableSlotsProps) {
     super(props);
@@ -24,6 +24,7 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
     this.onMouseDown = this.onMouseDown.bind(this);
     this.onWrapperRef = this.onWrapperRef.bind(this);
     this.onResizeStart = this.onResizeStart.bind(this);
+    this.onMoveStart = this.onMoveStart.bind(this);
   }
 
   onMouseDown(event: React.MouseEvent<HTMLDivElement>) {
@@ -93,14 +94,10 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
     }
   }
 
-  componentWillUnmount() {
-    this.subscriptions.forEach(sub => {
-      sub.unsubscribe();
-    })
-  }
-
   onResizeStart(slot: TimeSlot) {
-    const sub = Observable.fromEvent<MouseEvent>(this.wrapperRef, 'mousemove')
+    this.isResizing = true;
+
+    Observable.fromEvent<MouseEvent>(this.wrapperRef, 'mousemove')
       .takeUntil(Observable.fromEvent(window.document, 'mouseup'))
       // Convert to how many blocks apart from .ko-availableslots_wrapper
       .map(event => {
@@ -130,9 +127,15 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
         if (newSlot.end.diff(newSlot.start, 'hour') >= 1) {
           this.props.onAvailableSlotChange(newSlot, false);
         }
+      }, undefined, () => {
+        this.isResizing = false;
       });
+  }
 
-    this.subscriptions.push(sub);
+  onMoveStart(slot: TimeSlot) {
+    if (this.isResizing) {
+      return;
+    }
   }
 
   render() {
@@ -149,6 +152,7 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
             ruler={this.props.ruler}
             onAvailableSlotChange={this.props.onAvailableSlotChange}
             onResizeStart={this.onResizeStart}
+            onMoveStart={this.onMoveStart}
           />
         ))}
         <style jsx>{`
