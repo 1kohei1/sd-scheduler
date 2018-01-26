@@ -139,7 +139,7 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
 
     const startClientY = e.clientY;
     const blockHeight = KoCalendarConstants.rulerColumnHeightNum / 2;
-    
+
     Observable.fromEvent<MouseEvent>(this.wrapperRef, 'mousemove')
       .takeUntil(Observable.fromEvent(window.document, 'mouseup'))
       .map((event: MouseEvent) => Math.floor((event.clientY - startClientY) / blockHeight))
@@ -150,8 +150,20 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
           start: DatetimeUtil.addToMoment(slot.start, blockDiff * 30, 'm'),
           end: DatetimeUtil.addToMoment(slot.end, blockDiff * 30, 'm'),
         };
-        // Check if this gets over the range and overlap with other highlights
-        this.props.onAvailableSlotChange(newSlot, false);
+
+        const doesOverlap = this.props.availableSlots.some(slotA => {
+          return slotA._id !== newSlot._id &&
+            ((slotA.start.isBefore(newSlot.start) && slotA.end.isAfter(newSlot.start)) ||
+              slotA.start.isBefore(newSlot.end) && slotA.end.isAfter(newSlot.end));
+        });
+
+        if (
+          !doesOverlap &&
+          (this.props.presentationDate.start.isBefore(newSlot.start) || this.props.presentationDate.start.isSame(newSlot.start)) &&
+          (this.props.presentationDate.end.isAfter(newSlot.end) || this.props.presentationDate.end.isSame(newSlot.end))
+        ) {
+          this.props.onAvailableSlotChange(newSlot, false);
+        }
       })
   }
 
