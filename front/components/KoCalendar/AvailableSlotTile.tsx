@@ -30,6 +30,7 @@ export default class AvailableSlotTile extends React.Component<AvailableSlotTile
           -
           {DatetimeUtil.formatDate(this.props.slot.end, KoCalendarConstants.tileTimeFormat)}
         </span>
+        <div className="ko-availableslotstile_slider">...</div>
         <style jsx>{`
           .ko-availableslotstile {
             position: absolute;
@@ -41,6 +42,13 @@ export default class AvailableSlotTile extends React.Component<AvailableSlotTile
             font-size: 12px;
             padding: 0 8px;
             z-index: 2;
+          }
+          .ko-availableslotstile_slider {
+            position: absolute;
+            bottom: 0;
+            width: calc(100% - 16px);
+            text-align: center;
+            cursor: ns-resize;
           }
         `}
         </style>
