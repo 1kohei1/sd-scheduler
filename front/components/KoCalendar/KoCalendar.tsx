@@ -66,6 +66,7 @@ export default class KoCalendar extends React.Component<KoCalendarProps, KoCalen
             justify-content: flex-start;
             width: 100%;
             overflow-x: scroll;
+            padding-bottom: 15px;
           }
         `}
         </style>
