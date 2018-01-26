@@ -11,6 +11,10 @@ export interface AvailableSlotTileProps {
 }
 
 export default class AvailableSlotTile extends React.Component<AvailableSlotTileProps, any> {
+  constructor(props: AvailableSlotTileProps) {
+    super(props);
+  }
+
   render() {
     let hour = parseInt(DatetimeUtil.formatDate(this.props.slot.start, 'H'));
     let min = parseInt(DatetimeUtil.formatDate(this.props.slot.start, 'm')) / 60;
@@ -24,7 +28,11 @@ export default class AvailableSlotTile extends React.Component<AvailableSlotTile
     const height = `${(end - start) * KoCalendarConstants.rulerColumnHeightNum}px`;
 
     return (
-      <div className="ko-availableslotstile" style={{ top, height }} key={this.props.slot._id}>
+      <div 
+        className="ko-availableslotstile" 
+        style={{ top, height }} 
+        key={this.props.slot._id}
+      >
         <span>
           {DatetimeUtil.formatDate(this.props.slot.start, KoCalendarConstants.tileTimeFormat)}
           -

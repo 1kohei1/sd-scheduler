@@ -44,8 +44,6 @@ export default class KoCalendar extends React.Component<KoCalendarProps, KoCalen
           const { start, end } = presentationDate;
           const availableSlots = this.props.availableSlots.filter(slot => {
             return (start.isBefore(slot.start) || start.isSame(slot.start)) &&
-            start.isBefore(slot.end) &&
-            end.isAfter(slot.start) &&
             (end.isAfter(slot.end) || end.isSame(slot.end));
           })
           return (

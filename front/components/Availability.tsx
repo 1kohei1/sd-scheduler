@@ -14,12 +14,12 @@ export interface AvailabilityProps {
   semester: Semester;
 }
 
-interface AvailableState {
+interface AvailabilityState {
   events: List<Event>;
   availableSlots: List<TimeSlot>;
 }
 
-export default class Availability extends React.Component<AvailabilityProps, AvailableState> {
+export default class Availability extends React.Component<AvailabilityProps, AvailabilityState> {
   constructor(props: AvailabilityProps) {
     super(props);
 
@@ -33,6 +33,11 @@ export default class Availability extends React.Component<AvailabilityProps, Ava
         _id: ObjectID.generate(),
         start: moment.tz('2018-04-25 1:30 PM', `${DateConstants.dateFormat} h:m A`, DateConstants.timezone),
         end: moment.tz('2018-04-25 3 PM', `${DateConstants.dateFormat} ${DateConstants.hourFormat}`, DateConstants.timezone),
+      }, {
+        _id: ObjectID.generate(),
+        start: moment.tz('2018-04-25 1:00 PM', `${DateConstants.dateFormat} h:m A`, DateConstants.timezone),
+        end: moment.tz('2018-04-25 1:30 PM', `${DateConstants.dateFormat} h:m A`, DateConstants.timezone),
+
       }]),
     };
 
@@ -46,17 +51,32 @@ export default class Availability extends React.Component<AvailabilityProps, Ava
     )
   }
 
-  onAvailableSlotChange(availableSlot: TimeSlot, isDelete: boolean) {
+  onAvailableSlotChange(updatedSlot: TimeSlot, isDelete: boolean) {
     if (isDelete) {
       // Remove from the state where ._id === availableSlot._id 
-    } else if (availableSlot._id) {
-      // Find one in the state, and replace the value of start and end
-    } else {
-      // Generate objectid and assign to _id. Then, add passed availableSlot to the state
+    } else if (updatedSlot._id) {
+      const slot: TimeSlot = this.state.availableSlots.find(slot => {
+        if (slot) {
+          return slot._id === updatedSlot._id;
+        } else {
+          return false;
+        }
+      });
+
+      if (slot) {
+        // Update existing one
+      } else {
+        this.setState((prevState: AvailabilityState, props: AvailabilityProps) => {
+          return {
+            availableSlots: prevState.availableSlots.push(updatedSlot)
+          }
+        });
+      }
     }
   }
 
   render() {
+    // Semester.presentationDates are in string format. So convert them to moment.
     const presentationDates = this.props.semester.presentationDates.map(presentationDate => {
       return {
         _id: presentationDate._id,

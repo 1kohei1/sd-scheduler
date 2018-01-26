@@ -30,6 +30,14 @@ export default class DatetimeUtil {
     return moment.tz(`${date} ${hour}`, `${DateConstants.dateFormat} ${DateConstants.hourFormat}`, timezone).toISOString();
   }
 
+  static getMoment(date: string, hour: string, timezone: string = DateConstants.timezone) {
+    return moment.tz(`${date} ${hour}`, `${DateConstants.dateFormat} ${DateConstants.hourFormat}`, timezone);
+  }
+
+  static getMomentByFormat(str: string, format: string, timezone: string = DateConstants.timezone) {
+    return moment.tz(str, format, timezone);
+  }
+
   static createHoursArray(startTime: number, endTime: number) {
     return Range(startTime, endTime).toArray();
   }

@@ -36,6 +36,7 @@ export default class Day extends React.Component<DayProps, any> {
         <AvailableSlots
           ruler={this.props.ruler}
           availableSlots={this.props.availableSlots}
+          presentationDate={this.props.presentationDate}
           onAvailableSlotChange={this.props.onAvailableSlotChange}
         />
         <style jsx>{`
