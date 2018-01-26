@@ -123,6 +123,8 @@ export default class Dashboard extends React.Component<DashboardProps, Dashboard
   }
 
   render() {
+    const semester:Semester = this.props.semesters.find((semester) => semester.key === this.state.semester) as Semester;
+
     return (
       <AppLayout>
         <Layout style={{ backgroundColor: 'white' }}>
@@ -137,11 +139,9 @@ export default class Dashboard extends React.Component<DashboardProps, Dashboard
           <Layout.Content style={{ backgroundColor: 'white', minHeight: "calc(100vh - 64px)", padding: '32px'}}>
             {(() => {
               if (this.state.menu === 'overview') {
-                const semester:Semester = this.props.semesters.find((semester) => semester.key === this.state.semester) as Semester;
-                
                 return <Overview semester={semester} />
               } else if (this.state.menu === 'availability') {
-                return <Availability />
+                return <Availability semester={semester} />
               } else if (this.state.menu === 'schedule') {
                 return <Schedule />
               } else {

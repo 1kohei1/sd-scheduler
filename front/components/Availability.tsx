@@ -7,8 +7,10 @@ import KoCalendar from './KoCalendar/KoCalendar';
 import Event from '../models/Event';
 import AvailableSlot from '../models/AvailableSlot';
 import { DateConstants } from '../models/Constants';
+import { Semester } from '../models/Semester';
 
 export interface AvailabilityProps {
+  semester: Semester;
 }
 
 interface AvailableState {
