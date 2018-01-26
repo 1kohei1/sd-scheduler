@@ -6,13 +6,10 @@ import AvailableSlot from '../../models/AvailableSlot';
 import Ruler from './Ruler';
 import Day from './Day';
 import DatetimeUtil from '../../utils/DatetimeUtil';
+import PresentationDate from '../../models/PresentationDate';
 
 interface KoCalendarProps {
-  timezone: string;
-  dates: Moment[];
-  startTime: number;
-  endTime: number;
-  dateFormat: string;
+  presentationDates: PresentationDate[];
   events: Event[];
   eventItem: (event: Event, style: any) => JSX.Element
   availableSlots: AvailableSlot[]
@@ -27,13 +24,25 @@ export default class KoCalendar extends React.Component<KoCalendarProps, KoCalen
   }
 
   render() {
-    const hours = DatetimeUtil.createHoursArray(this.props.startTime, this.props.endTime);
+    let startTime = 24;
+    let endTime = -1;
+
+    this.props.presentationDates.forEach(date => {
+      const s = parseInt(DatetimeUtil.formatDate(date.start, 'H'));
+      const e = parseInt(DatetimeUtil.formatDate(date.end, 'H'));
+
+      startTime = Math.min(startTime, s);
+      endTime = Math.max(endTime, e);
+    });
+
+    const ruler = DatetimeUtil.createHoursArray(startTime, endTime);
 
     return (
       <div className="ko-calendar_wrapper">
         <Ruler
-          hours={hours}
+          ruler={ruler}
         />
+        {/* 
         {this.props.dates.map((date, index) => (
           <Day 
             key={date.valueOf()}
@@ -47,7 +56,7 @@ export default class KoCalendar extends React.Component<KoCalendarProps, KoCalen
             availableSlots={this.props.availableSlots}
             onAvailableSlotChange={this.props.onAvailableSlotChange}
           />
-        ))}
+        ))} */}
         <style jsx>{`
           .ko-calendar_wrapper {
             position: relative;

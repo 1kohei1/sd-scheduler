@@ -31,7 +31,7 @@ export default class DatetimeUtil {
   }
 
   static createHoursArray(startTime: number, endTime: number) {
-    return Range(startTime, endTime + 1).toArray();
+    return Range(startTime, endTime).toArray();
   }
 
   static getHourOptions() {

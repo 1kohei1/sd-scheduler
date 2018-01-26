@@ -8,6 +8,7 @@ import Event from '../models/Event';
 import AvailableSlot from '../models/AvailableSlot';
 import { DateConstants } from '../models/Constants';
 import { Semester } from '../models/Semester';
+import DatetimeUtil from '../utils/DatetimeUtil';
 
 export interface AvailabilityProps {
   semester: Semester;
@@ -54,15 +55,19 @@ export default class Availability extends React.Component<AvailabilityProps, Ava
       moment.tz('2017-12-01', DateConstants.dateFormat, DateConstants.timezone),
     ]
 
+    const presentationDates = this.props.semester.presentationDates.map(presentationDate => {
+      return {
+        _id: presentationDate._id,
+        start: DatetimeUtil.getMomentFromISOString(presentationDate.start),
+        end: DatetimeUtil.getMomentFromISOString(presentationDate.end)
+      };
+    })
+
     return (
       <div>
         <h1>Available calendar</h1>
         <KoCalendar
-          timezone={DateConstants.timezone}
-          dates={dates}
-          startTime={9}
-          endTime={18}
-          dateFormat="MM-DD (ddd)"
+          presentationDates={presentationDates}
           events={this.state.events.toArray()}
           eventItem={this.eventItem}
           availableSlots={this.state.availableSlots.toArray()}
