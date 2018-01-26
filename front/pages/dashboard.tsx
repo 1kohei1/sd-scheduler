@@ -3,6 +3,7 @@ import * as moment from 'moment-timezone';
 import { Set } from 'immutable';
 import { Layout } from 'antd';
 import { ClickParam } from 'antd/lib/menu';
+import ObjectID from 'bson-objectid';
 
 import InitialProps from '../models/InitialProps';
 import DashboardQuery from '../models/DashboardQuery';
@@ -32,31 +33,35 @@ export default class Dashboard extends React.Component<DashboardProps, Dashboard
 
     return {
       semesters: [{
+        _id: ObjectID.generate(),
         key: '2018_spring',
         displayName: '2018 Spring',
         dates: [{
-          _id: '5d64df7d-23a1-4932-86a9-e63d8e793b07',
+          _id: ObjectID.generate(),
           date: '2018-04-25',
           startTime: '9 AM',
           endTime: '6 PM'
         }, {
-          _id: '68d27092-89a9-4e51-9918-d8c8d735c939',
+          _id: ObjectID.generate(),
           date: '2018-04-26',
           startTime: '9 AM',
           endTime: '6 PM'
         }, {
-          _id: '45a04eda-61e7-4d9d-ba60-6f1945c2e077',
+          _id: ObjectID.generate(),
           date: '2018-04-27',
           startTime: '9 AM',
           endTime: '6 PM'
         }]
       }, {
+        _id: ObjectID.generate(),
         key: '2017_fall',
         displayName: '2017 Fall'
       }, {
+        _id: ObjectID.generate(),
         key: '2017_summer',
         displayName: '2017 Summer'
       }, {
+        _id: ObjectID.generate(),
         key: '2017_spring',
         displayName: '2017 Spring'
       }]
