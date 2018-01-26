@@ -21,20 +21,18 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
   constructor(props: AvailableSlotsProps) {
     super(props);
 
-    this.onClick = this.onClick.bind(this);
+    this.onMouseDown = this.onMouseDown.bind(this);
     this.onWrapperRef = this.onWrapperRef.bind(this);
     this.onResizeStart = this.onResizeStart.bind(this);
   }
 
-  onClick(event: React.MouseEvent<HTMLDivElement>) {
-    if (true) {
-      return;
-    }
+  onMouseDown(event: React.MouseEvent<HTMLDivElement>) {
     const targetDOM = event.target as HTMLElement;
     const className = targetDOM.className;
     if (!className.includes('ko-availableslots_wrapper')) {
       return;
     }
+
     const start = Math.floor(event.nativeEvent.offsetY / KoCalendarConstants.rulerColumnHeightNum + this.props.ruler[0]);
     const dateStr = DatetimeUtil.formatDate(this.props.presentationDate.start, DateConstants.dateFormat);
 
@@ -47,6 +45,7 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
 
     if (newSlot) {
       this.props.onAvailableSlotChange(newSlot as TimeSlot, false);
+      this.onResizeStart(newSlot as TimeSlot);
     }
   }
 
@@ -140,7 +139,7 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
     return (
       <div
         className="ko-availableslots_wrapper"
-        onClick={this.onClick}
+        onMouseDown={this.onMouseDown}
         ref={this.onWrapperRef}
       >
         {this.props.availableSlots.map(slot => (
