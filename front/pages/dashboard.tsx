@@ -13,6 +13,7 @@ import DashboardSider from '../components/DashboardSider';
 import Overview from '../components/Overview';
 import Availability from '../components/Availability';
 import Schedule from '../components/Schedule';
+import { DateConstants } from '../models/Constants';
 
 export interface DashboardProps {
   url: InitialProps;
@@ -31,39 +32,43 @@ export default class Dashboard extends React.Component<DashboardProps, Dashboard
   static async getInitialProps(context: InitialProps) {
     // Get list of semesters to display in the left column
 
+    const tempFunc = (dateStr: string) => {
+      return moment.tz(dateStr, `${DateConstants.dateFormat} ${DateConstants.hourFormat}`, DateConstants.timezone);
+    }
+
     return {
       semesters: [{
         _id: ObjectID.generate(),
         key: '2018_spring',
         displayName: '2018 Spring',
-        dates: [{
+        presentationDates: [{
           _id: ObjectID.generate(),
-          date: '2018-04-25',
-          startTime: '9 AM',
-          endTime: '6 PM'
+          start: tempFunc('2018-04-25 9 AM'),
+          end:  tempFunc('2018-04-25 6 PM'),
         }, {
           _id: ObjectID.generate(),
-          date: '2018-04-26',
-          startTime: '9 AM',
-          endTime: '6 PM'
+          start: tempFunc('2018-04-26 9 AM'),
+          end:  tempFunc('2018-04-26 6 PM'),
         }, {
           _id: ObjectID.generate(),
-          date: '2018-04-27',
-          startTime: '9 AM',
-          endTime: '6 PM'
-        }]
+          start: tempFunc('2018-04-27 9 AM'),
+          end:  tempFunc('2018-04-27 6 PM'),
+        }],
       }, {
         _id: ObjectID.generate(),
         key: '2017_fall',
-        displayName: '2017 Fall'
+        displayName: '2017 Fall',
+        presentationDates: [],
       }, {
         _id: ObjectID.generate(),
         key: '2017_summer',
-        displayName: '2017 Summer'
+        displayName: '2017 Summer',
+        presentationDates: [],
       }, {
         _id: ObjectID.generate(),
         key: '2017_spring',
-        displayName: '2017 Spring'
+        displayName: '2017 Spring',
+        presentationDates: [],
       }]
     };
   }

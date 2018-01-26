@@ -12,7 +12,7 @@ export interface OverviewProps {
 interface OverviewState {
   [index: string]: {
     semester: Semester;
-    isDateEditing: boolean;
+    isPresentationDatesEditing: boolean;
     isLocationEditing: boolean;
     isFacultiesEditing: boolean;
   }
@@ -35,7 +35,7 @@ export default class Overview extends React.Component<OverviewProps, any> {
 
     this.state = {
       semester: props.semester,
-      isDateEditing: false,
+      isPresentationDatesEditing: false,
       isLocationEditing: false,
       isFacultiesEditing: false,
     };
@@ -60,8 +60,8 @@ export default class Overview extends React.Component<OverviewProps, any> {
   }
 
   private getPropName(menu: string) {
-    if (menu === 'date') {
-      return 'isDateEditing';
+    if (menu === 'presentationDates') {
+      return 'isPresentationDatesEditing';
     } else if (menu === 'location') {
       return 'isLocationEditing';
     } else {
@@ -72,7 +72,7 @@ export default class Overview extends React.Component<OverviewProps, any> {
   componentWillReceiveProps(nextProps: OverviewProps) {
     if (nextProps.semester !== this.state.semester) {
       this.setState({
-        isDateEditing: false,
+        isPresentationDatesEditing: false,
         isLocationEditing: false,
         isFacultiesEditing: false
       });
@@ -85,7 +85,7 @@ export default class Overview extends React.Component<OverviewProps, any> {
         <h1>Overview</h1>
         <Date
           semester={this.state.semester}
-          editing={this.state.isDateEditing}
+          editing={this.state.isPresentationDatesEditing}
           toggleForm={this.toggleForm}
           updateSemester={this.updateSemester}
         />

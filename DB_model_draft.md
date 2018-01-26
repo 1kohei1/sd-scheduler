@@ -3,10 +3,10 @@
 _id: ObjectId;
 key: string; ex) 2018_spring, 2017_fall
 displayName: ex) 2018 Spring, 2017 Fall
-dates: [{
+presentationDates: [{
   _id: ObjectId
-  startTime: date
-  endTime: date
+  start: date
+  end: date
 }]
 location: string; ex) HEC 405
 faculties: [Ref Faculty ObjectId]

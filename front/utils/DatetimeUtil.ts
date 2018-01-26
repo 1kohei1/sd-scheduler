@@ -1,5 +1,7 @@
+import * as moment from 'moment-timezone';
 import { Moment } from 'moment-timezone';
 import { Range } from 'immutable';
+import { DateConstants } from '../models/Constants';
 
 export default class DatetimeUtil {
   static convertTo12Hr(hour: number) {
@@ -14,6 +16,18 @@ export default class DatetimeUtil {
 
   static formatDate(date: Moment, format: string) {
     return date.format(format);
+  }
+
+  static formatISOString(isoString: string, format: string, timezone: string = DateConstants.timezone) {
+    return moment.tz(isoString, timezone).format(format);
+  }
+
+  static getMomentFromISOString(isoString: string, timezone: string = DateConstants.timezone) {
+    return moment.tz(isoString, timezone);
+  }
+
+  static getISOString(date: string, hour: string, timezone: string = DateConstants.timezone) {
+    return moment.tz(`${date} ${hour}`, `${DateConstants.dateFormat} ${DateConstants.hourFormat}`, timezone).toISOString();
   }
 
   static createHoursArray(startTime: number, endTime: number) {

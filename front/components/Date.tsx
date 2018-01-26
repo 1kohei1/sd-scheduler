@@ -1,6 +1,5 @@
 import * as React from 'react';
 import ObjectID from 'bson-objectid';
-import * as moment from 'moment-timezone';
 import { List } from 'immutable';
 import { Form, Icon, Select, DatePicker, Card, Button } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
@@ -28,7 +27,7 @@ class Date extends React.Component<DateProps, DateState> {
     super(props);
 
     this.state = {
-      objectIdsInForm: List(this.props.semester.dates.map(date => date._id))
+      objectIdsInForm: List(this.props.semester.presentationDates.map(date => date._id))
     }
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -42,29 +41,39 @@ class Date extends React.Component<DateProps, DateState> {
   componentWillReceiveProps(nextProps: DateProps) {
     if (!nextProps.editing) {
       this.setState({
-        objectIdsInForm: List(nextProps.semester.dates.map(date => date._id))
+        objectIdsInForm: List(nextProps.semester.presentationDates.map(date => date._id))
       })
     }
   }
 
   handleSubmit(e: React.FormEvent<any>) {
     e.preventDefault();
+
     this.props.form.validateFields((err, values) => {
-      if (err) return;
-      // Format dates object to be DB format
-      const dates: any = [];
-      for (let id in values.dates) {
-        const dateObj = values.dates[id];
-        // If all data is not given, skip it
-        if (!dateObj.date && !dateObj.startTime && !dateObj.endTime) continue;
-        if (id.indexOf('new') === -1) {
-          dateObj._id = id;
-        }
-        dateObj.date = dateObj.date.format(DateConstants.dateFormat);
-        dates.push(dateObj);
+      if (err) {
+        return
       }
-      console.log(dates);
-      this.props.updateSemester(dates, 'date');
+
+      // Format dates object to be DB format
+      const presentationDates: any = [];
+      for (let id in values.presentationDates) {
+        const formValue = values.presentationDates[id];
+
+        // If all data is not given, skip it
+        if (!formValue.date && !formValue.startTime && !formValue.endTime) {
+          continue;
+        }
+
+        const dateString = DatetimeUtil.formatDate(formValue.date, DateConstants.dateFormat);
+
+        presentationDates.push({
+          _id: id,
+          start: DatetimeUtil.getISOString(dateString, formValue.startTime),
+          end: DatetimeUtil.getISOString(dateString, formValue.endTime),
+        });
+      }
+      console.log(presentationDates);
+      this.props.updateSemester(presentationDates, 'presentationDates');
     })
   }
 
@@ -77,7 +86,7 @@ class Date extends React.Component<DateProps, DateState> {
       return (<Button
         icon="close"
         size="small"
-        onClick={(e) => this.props.toggleForm('date')}
+        onClick={(e) => this.props.toggleForm('presentationDates')}
       >
         Cancel
       </Button>);
@@ -85,9 +94,9 @@ class Date extends React.Component<DateProps, DateState> {
       return (<Button ghost
         type="primary"
         size="small"
-        onClick={(e) => this.props.toggleForm('date')}
+        onClick={(e) => this.props.toggleForm('presentationDates')}
       >
-        Edit location
+        Edit presentation dates
       </Button>);
     } else {
       return '';
@@ -97,9 +106,11 @@ class Date extends React.Component<DateProps, DateState> {
   info() {
     return (
       <div>
-        {this.props.semester.dates.map(date => (
+        {this.props.semester.presentationDates.map(date => (
           <div key={date._id}>
-            {date.date} {date.startTime} - {date.endTime}
+            {this.getInitialValue(date._id, 'date')}&nbsp;
+            {this.getInitialValue(date._id, 'startTime')} - 
+            {this.getInitialValue(date._id, 'endTime')}
           </div>
         ))}
       </div>
@@ -115,7 +126,10 @@ class Date extends React.Component<DateProps, DateState> {
   }
 
   deleteDate(objectId: string | undefined) {
-    if (!objectId) return;
+    if (!objectId) {
+      return;
+    }
+
     this.setState((prevState: DateState, props: DateProps) => {
       const index = prevState.objectIdsInForm.indexOf(objectId);
       return {
@@ -125,13 +139,24 @@ class Date extends React.Component<DateProps, DateState> {
   }
 
   getInitialValue(objectId: string | undefined, property: string) {
-    if (!objectId) return undefined;
+    if (!objectId) {
+      return undefined;
+    }
 
-    const date = this.props.semester.dates.find(date => date._id === objectId);
-    if (date && property === 'date') {
-      return moment(date[property], DateConstants.dateFormat);
-    } else if (date) {
-      return date[property];
+    const date = this.props.semester.presentationDates.find(date => date._id === objectId);
+
+    if (!date) {
+      return undefined;
+    }
+
+    if (property === 'date') {
+      return DatetimeUtil.formatISOString(date.start, DateConstants.dateFormat);
+    } else if (property === 'dateMoment') {
+      return DatetimeUtil.getMomentFromISOString(date.start);
+    } else if (property === 'startTime') {
+      return DatetimeUtil.formatISOString(date.start, DateConstants.hourFormat);
+    } else if (property === 'endTime') {
+      return DatetimeUtil.formatISOString(date.end, DateConstants.hourFormat);
     } else {
       return undefined;
     }
@@ -143,14 +168,14 @@ class Date extends React.Component<DateProps, DateState> {
         {this.state.objectIdsInForm.map((id) => (
           <div style={{ display: 'flex', flexDirection: 'row' }} key={id}>
             <Form.Item style={{ marginRight: 8 }}>
-              {this.props.form.getFieldDecorator(`dates[${id}].date`, {
-                initialValue: this.getInitialValue(id, 'date')
+              {this.props.form.getFieldDecorator(`presentationDates[${id}].date`, {
+                initialValue: this.getInitialValue(id, 'dateMoment')
               })(
                 <DatePicker placeholder="Presentation date" />
                 )}
             </Form.Item>
             <Form.Item style={{ marginRight: 8 }}>
-              {this.props.form.getFieldDecorator(`dates[${id}].startTime`, {
+              {this.props.form.getFieldDecorator(`presentationDates[${id}].startTime`, {
                 initialValue: this.getInitialValue(id, 'startTime')
               })(
                 <Select placeholder="Start time" style={{ width: 120 }}>
@@ -161,7 +186,7 @@ class Date extends React.Component<DateProps, DateState> {
                 )}
             </Form.Item>
             <Form.Item style={{ marginRight: 8 }}>
-              {this.props.form.getFieldDecorator(`dates[${id}].endTime`, {
+              {this.props.form.getFieldDecorator(`presentationDates[${id}].endTime`, {
                 initialValue: this.getInitialValue(id, 'endTime')
               })(
                 <Select placeholder="End time" style={{ width: 120 }}>
@@ -185,7 +210,7 @@ class Date extends React.Component<DateProps, DateState> {
           <Button htmlType="submit" type="primary" style={{ marginRight: '16px' }}>
             Update
           </Button>
-          <Button onClick={(e) => this.props.toggleForm('date')}>
+          <Button onClick={(e) => this.props.toggleForm('presentationDates')}>
             Cancel
           </Button>
         </Form.Item>
@@ -195,7 +220,7 @@ class Date extends React.Component<DateProps, DateState> {
 
   render() {
     return (
-      <Card title="Date" extra={this.extra()} style={{ marginBottom: '16px' }}>
+      <Card title="Presentation dates" extra={this.extra()} style={{ marginBottom: '16px' }}>
         {this.props.editing ? this.form() : this.info()}
       </Card>
     );
