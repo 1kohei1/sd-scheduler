@@ -7,6 +7,7 @@ import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import { Semester } from '../models/Semester';
 import { DateConstants } from '../models/Constants';
+import DatetimeUtil from '../utils/DatetimeUtil';
 
 export interface DateProps {
   form: WrappedFormUtils,
@@ -20,12 +21,7 @@ interface DateState {
   objectIdsInForm: List<string>
 }
 
-const ampm = ['AM', 'PM'];
-const hours = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-const temp = ampm.map(val => {
-  return hours.map(h => `${h} ${val}`);
-});
-const timeOptions = [].concat.apply([], temp); // Taken from http://www.jstips.co/en/javascript/flattening-multidimensional-arrays-in-javascript/
+const hourOptions = DatetimeUtil.getHourOptions();
 
 class Date extends React.Component<DateProps, DateState> {
   constructor(props: DateProps) {
@@ -158,7 +154,7 @@ class Date extends React.Component<DateProps, DateState> {
                 initialValue: this.getInitialValue(id, 'startTime')
               })(
                 <Select placeholder="Start time" style={{ width: 120 }}>
-                  {timeOptions.map((val: string) => (
+                  {hourOptions.map((val: string) => (
                     <Select.Option value={val} key={val}>{val}</Select.Option>
                   ))}
                 </Select>
@@ -169,7 +165,7 @@ class Date extends React.Component<DateProps, DateState> {
                 initialValue: this.getInitialValue(id, 'endTime')
               })(
                 <Select placeholder="End time" style={{ width: 120 }}>
-                  {timeOptions.map((val: string) => (
+                  {hourOptions.map((val: string) => (
                     <Select.Option value={val} key={val}>{val}</Select.Option>
                   ))}
                 </Select>

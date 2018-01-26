@@ -19,4 +19,15 @@ export default class DatetimeUtil {
   static createHoursArray(startTime: number, endTime: number) {
     return Range(startTime, endTime + 1).toArray();
   }
+
+  static getHourOptions() {
+    const ampm = ['AM', 'PM'];
+    const hours = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    const temp = ampm.map(val => {
+      return hours.map(h => `${h} ${val}`);
+    });
+    const hourOptions = [].concat.apply([], temp); // Taken from http://www.jstips.co/en/javascript/flattening-multidimensional-arrays-in-javascript/
+
+    return hourOptions;
+  }
 }
