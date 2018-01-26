@@ -1,11 +1,11 @@
 import * as React from 'react';
 
 import { KoCalendarConstants } from '../../models/Constants';
-import AvailableSlot from '../../models/AvailableSlot';
+import TimeSlot from '../../models/TimeSlot';
 
 export interface AvailableSlotsProps {
-  availableSlots: AvailableSlot[];
-  onAvailableSlotChange: (updatedAvailableSlot: AvailableSlot, isDelete: boolean) => void;
+  availableSlots: TimeSlot[];
+  onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean) => void;
 }
 
 export default class AvailableSlots extends React.Component<AvailableSlotsProps, any> {

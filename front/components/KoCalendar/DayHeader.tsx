@@ -3,10 +3,10 @@ import { Moment } from 'moment-timezone';
 
 import { KoCalendarConstants } from '../../models/Constants';
 import DatetimeUtil from '../../utils/DatetimeUtil';
-import PresentationDate from '../../models/PresentationDate';
+import TimeSlot from '../../models/TimeSlot';
 
 export interface DayHeaderProps {
-  presentationDate: PresentationDate;
+  presentationDate: TimeSlot;
 }
 
 export default class DayHeader extends React.Component<DayHeaderProps, any> {

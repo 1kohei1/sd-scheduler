@@ -1,18 +1,17 @@
 import * as React from 'react';
 
 import Event from '../../models/Event';
-import AvailableSlot from '../../models/AvailableSlot';
 import Ruler from './Ruler';
 import Day from './Day';
 import DatetimeUtil from '../../utils/DatetimeUtil';
-import PresentationDate from '../../models/PresentationDate';
+import TimeSlot from '../../models/TimeSlot';
 
 interface KoCalendarProps {
-  presentationDates: PresentationDate[];
+  presentationDates: TimeSlot[];
   events: Event[];
   eventItem: (event: Event, style: any) => JSX.Element
-  availableSlots: AvailableSlot[]
-  onAvailableSlotChange: (updatedAvailableSlot: AvailableSlot, isDelete: boolean) => void;
+  availableSlots: TimeSlot[]
+  onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean) => void;
 }
 interface KoCalendarState { }
 

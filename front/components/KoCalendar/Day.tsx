@@ -6,17 +6,16 @@ import Event from '../../models/Event';
 import DayHeader from './DayHeader';
 import Hourlines from './Hourlines';
 import AvailableSlots from './AvailableSlots';
-import AvailableSlot from '../../models/AvailableSlot';
-import PresentationDate from '../../models/PresentationDate';
+import TimeSlot from '../../models/TimeSlot';
 
 export interface DayProps {
-  presentationDate: PresentationDate;
+  presentationDate: TimeSlot;
   ruler: number[];
   isLastColumn: boolean;
   events: Event[];
   eventItem: (event: Event, style: any) => JSX.Element
-  availableSlots: AvailableSlot[]
-  onAvailableSlotChange: (updatedAvailableSlot: AvailableSlot, isDelete: boolean) => void;
+  availableSlots: TimeSlot[]
+  onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean) => void;
 }
 
 export default class Day extends React.Component<DayProps, any> {

@@ -5,10 +5,10 @@ import ObjectID from 'bson-objectid';
 import * as moment from 'moment-timezone';
 import KoCalendar from './KoCalendar/KoCalendar';
 import Event from '../models/Event';
-import AvailableSlot from '../models/AvailableSlot';
 import { DateConstants } from '../models/Constants';
 import { Semester } from '../models/Semester';
 import DatetimeUtil from '../utils/DatetimeUtil';
+import TimeSlot from '../models/TimeSlot';
 
 export interface AvailabilityProps {
   semester: Semester;
@@ -16,7 +16,7 @@ export interface AvailabilityProps {
 
 interface AvailableState {
   events: List<Event>;
-  availableSlots: List<AvailableSlot>;
+  availableSlots: List<TimeSlot>;
 }
 
 export default class Availability extends React.Component<AvailabilityProps, AvailableState> {
@@ -38,7 +38,7 @@ export default class Availability extends React.Component<AvailabilityProps, Ava
     )
   }
 
-  onAvailableSlotChange(availableSlot: AvailableSlot, isDelete: boolean) {
+  onAvailableSlotChange(availableSlot: TimeSlot, isDelete: boolean) {
     if (isDelete) {
       // Remove from the state where ._id === availableSlot._id 
     } else if (availableSlot._id) {
