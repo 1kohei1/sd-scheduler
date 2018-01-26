@@ -40,13 +40,14 @@ Admin:
 - [ ] Register presentation location
 - [ ] Check schedule in the calendar view
 
-TODO::
+TODO:
 
 - [ ] Add validation to the overview date
 - [ ] Use higher order component for Date, Locations, and Faculties component (Low priority)
 - [ ] Explore what is the best word for registered/available faculties
 - [x] Update Date.tsx to handle date object
 - [ ] Change Semester.tsx to store semester's presentation date in Date Object
+- [ ] Check why initial component layout is broken
 
 NOTES:
 
