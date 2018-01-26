@@ -40,18 +40,27 @@ export default class KoCalendar extends React.Component<KoCalendarProps, KoCalen
         <Ruler
           ruler={ruler}
         />
-        {this.props.presentationDates.map((presentationDate, index) => (
-          <Day
-            key={presentationDate._id}
-            presentationDate={presentationDate}
-            ruler={ruler}
-            isLastColumn={index === this.props.presentationDates.length - 1}
-            events={this.props.events}
-            eventItem={this.props.eventItem}
-            availableSlots={this.props.availableSlots}
-            onAvailableSlotChange={this.props.onAvailableSlotChange}
-          />
-        ))}
+        {this.props.presentationDates.map((presentationDate, index) => {
+          const { start, end } = presentationDate;
+          const availableSlots = this.props.availableSlots.filter(slot => {
+            return (start.isBefore(slot.start) || start.isSame(slot.start)) &&
+            start.isBefore(slot.end) &&
+            end.isAfter(slot.start) &&
+            (end.isAfter(slot.end) || end.isSame(slot.end));
+          })
+          return (
+            <Day
+              key={presentationDate._id}
+              presentationDate={presentationDate}
+              ruler={ruler}
+              isLastColumn={index === this.props.presentationDates.length - 1}
+              events={this.props.events}
+              eventItem={this.props.eventItem}
+              availableSlots={availableSlots}
+              onAvailableSlotChange={this.props.onAvailableSlotChange}
+            />
+          )
+        })}
         <style jsx>{`
           .ko-calendar_wrapper {
             position: relative;
