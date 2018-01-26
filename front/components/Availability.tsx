@@ -29,6 +29,10 @@ export default class Availability extends React.Component<AvailabilityProps, Ava
         _id: ObjectID.generate(),
         start: moment.tz('2018-04-25 9 AM', `${DateConstants.dateFormat} ${DateConstants.hourFormat}`, DateConstants.timezone),
         end: moment.tz('2018-04-25 11 AM', `${DateConstants.dateFormat} ${DateConstants.hourFormat}`, DateConstants.timezone),
+      }, {
+        _id: ObjectID.generate(),
+        start: moment.tz('2018-04-25 1:30 PM', `${DateConstants.dateFormat} h:m A`, DateConstants.timezone),
+        end: moment.tz('2018-04-25 3 PM', `${DateConstants.dateFormat} ${DateConstants.hourFormat}`, DateConstants.timezone),
       }]),
     };
 
