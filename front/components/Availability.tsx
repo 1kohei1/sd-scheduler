@@ -6,8 +6,7 @@ import * as moment from 'moment-timezone';
 import KoCalendar from './KoCalendar/KoCalendar';
 import Event from '../models/Event';
 import AvailableSlot from '../models/AvailableSlot';
-
-const timezone = 'America/New_York';
+import { DateConstants } from '../models/Constants';
 
 export interface AvailabilityProps {
 }
@@ -48,16 +47,16 @@ export default class Availability extends React.Component<AvailabilityProps, Ava
 
   render() {
     const dates = [
-      moment.tz('2017-11-28', 'YYYY-MM-DD', timezone),
-      moment.tz('2017-11-30', 'YYYY-MM-DD', timezone),
-      moment.tz('2017-12-01', 'YYYY-MM-DD', timezone),
+      moment.tz('2017-11-28', DateConstants.dateFormat, DateConstants.timezone),
+      moment.tz('2017-11-30', DateConstants.dateFormat, DateConstants.timezone),
+      moment.tz('2017-12-01', DateConstants.dateFormat, DateConstants.timezone),
     ]
 
     return (
       <div>
         <h1>Available calendar</h1>
         <KoCalendar
-          timezone={timezone}
+          timezone={DateConstants.timezone}
           dates={dates}
           startTime={9}
           endTime={18}

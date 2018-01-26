@@ -6,6 +6,7 @@ import { Form, Icon, Select, DatePicker, Card, Button } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import { Semester } from '../models/Semester';
+import { DateConstants } from '../models/Constants';
 
 export interface DateProps {
   form: WrappedFormUtils,
@@ -63,7 +64,7 @@ class Date extends React.Component<DateProps, DateState> {
         if (id.indexOf('new') === -1) {
           dateObj._id = id;
         }
-        dateObj.date = dateObj.date.format('YYYY-MM-DD');
+        dateObj.date = dateObj.date.format(DateConstants.dateFormat);
         dates.push(dateObj);
       }
       console.log(dates);
@@ -132,7 +133,7 @@ class Date extends React.Component<DateProps, DateState> {
 
     const date = this.props.semester.dates.find(date => date._id === objectId);
     if (date && property === 'date') {
-      return moment(date[property], 'YYYY-MM-DD');
+      return moment(date[property], DateConstants.dateFormat);
     } else if (date) {
       return date[property];
     } else {

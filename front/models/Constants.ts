@@ -4,3 +4,9 @@ export const KoCalendarConstants = {
   dayColumnWidth: '200px',
   dayTitleHeight: '25px'
 }
+
+export const DateConstants = {
+  dateFormat: 'YYYY-MM-DD',
+  hourFormat: 'H A',
+  timezone: 'America/New_York'
+}
