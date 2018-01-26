@@ -3,6 +3,7 @@
     "jsx": "react-native",
     "module": "commonjs",
     "strict": true,
+    "strictFunctionTypes": false,
     "target": "es2017",
     "sourceMap": true
   }
