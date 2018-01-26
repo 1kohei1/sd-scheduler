@@ -21,6 +21,11 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
   }
 
   onClick(event: React.MouseEvent<HTMLDivElement>) {
+    const targetDOM = event.target as HTMLElement;
+    const className = targetDOM.className;
+    if (!className.includes('ko-availableslots_wrapper')) {
+      return;
+    }
     const start = Math.floor(event.nativeEvent.offsetY / KoCalendarConstants.rulerColumnHeightNum + this.props.ruler[0]);
     const dateStr = DatetimeUtil.formatDate(this.props.presentationDate.start, DateConstants.dateFormat);
 
