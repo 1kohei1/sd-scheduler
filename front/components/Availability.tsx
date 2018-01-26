@@ -47,30 +47,34 @@ export default class Availability extends React.Component<AvailabilityProps, Ava
   }
 
   onAvailableSlotChange(updatedSlot: TimeSlot, isDelete: boolean) {
-    if (isDelete) {
-      // Remove from the state where ._id === availableSlot._id 
-    } else if (updatedSlot._id) {
-      const index = this.state.availableSlots.findIndex(slot => {
-        if (slot) {
-          return slot._id === updatedSlot._id;
-        } else {
-          return false;
-        }
-      });
+    const index = this.state.availableSlots.findIndex(slot => {
+      if (slot) {
+        return slot._id === updatedSlot._id;
+      } else {
+        return false;
+      }
+    });
 
+    if (isDelete) {
       if (index >= 0) {
         this.setState((prevState: AvailabilityState, props: AvailabilityProps) => {
           return {
-            availableSlots: prevState.availableSlots.set(index, updatedSlot)
+            availableSlots: prevState.availableSlots.delete(index)
           }
         })
-      } else {
-        this.setState((prevState: AvailabilityState, props: AvailabilityProps) => {
-          return {
-            availableSlots: prevState.availableSlots.push(updatedSlot)
-          }
-        });
       }
+    } else if (index >= 0) {
+      this.setState((prevState: AvailabilityState, props: AvailabilityProps) => {
+        return {
+          availableSlots: prevState.availableSlots.set(index, updatedSlot)
+        }
+      })
+    } else {
+      this.setState((prevState: AvailabilityState, props: AvailabilityProps) => {
+        return {
+          availableSlots: prevState.availableSlots.push(updatedSlot)
+        }
+      });
     }
   }
 

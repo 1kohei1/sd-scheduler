@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Icon } from 'antd';
 
 import { KoCalendarConstants } from '../../models/Constants';
 import TimeSlot from '../../models/TimeSlot';
@@ -9,12 +10,40 @@ export interface AvailableSlotTileProps {
   slot: TimeSlot;
   onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean) => void;
   onResizeStart: (slot: TimeSlot) => void;
-  onMoveStart: (e:React.MouseEvent<HTMLDivElement>, slot: TimeSlot) => void;
+  onMoveStart: (e: React.MouseEvent<HTMLDivElement>, slot: TimeSlot) => void;
+}
+
+interface AvailableslotTileState {
+  isHover: boolean;
 }
 
 export default class AvailableSlotTile extends React.Component<AvailableSlotTileProps, any> {
   constructor(props: AvailableSlotTileProps) {
     super(props);
+
+    this.state = {
+      isHover: false
+    };
+
+    this.onMouseEnter = this.onMouseEnter.bind(this);
+    this.onMouseLeave = this.onMouseLeave.bind(this);
+    this.onClick = this.onClick.bind(this);
+  }
+
+  onClick() {
+    this.props.onAvailableSlotChange(this.props.slot, true);
+  }
+
+  onMouseEnter() {
+    this.setState({
+      isHover: true
+    });
+  }
+
+  onMouseLeave() {
+    this.setState({
+      isHover: false
+    });
   }
 
   render() {
@@ -35,12 +64,22 @@ export default class AvailableSlotTile extends React.Component<AvailableSlotTile
         style={{ top, height }}
         key={this.props.slot._id}
         onMouseDown={(e) => this.props.onMoveStart(e, this.props.slot)}
+        onMouseEnter={this.onMouseEnter}
+        onMouseLeave={this.onMouseLeave}
       >
         <span>
           {DatetimeUtil.formatDate(this.props.slot.start, KoCalendarConstants.tileTimeFormat)}
           -
           {DatetimeUtil.formatDate(this.props.slot.end, KoCalendarConstants.tileTimeFormat)}
         </span>
+        {this.state.isHover && (
+          <div
+            className="ko-availableslotstile_delete"
+            onClick={this.onClick}
+          >
+            <Icon type="close" style={{ color: '#4477BD', fontSize: '20px', padding: '1px' }} />
+          </div>
+        )}
         <div
           className="ko-availableslotstile_slider"
           onMouseDown={(e) => this.props.onResizeStart(this.props.slot)}>
@@ -66,6 +105,13 @@ export default class AvailableSlotTile extends React.Component<AvailableSlotTile
             width: calc(100% - 16px);
             text-align: center;
             cursor: ns-resize;
+          }
+          .ko-availableslotstile_delete {
+            position: absolute;
+            top: 1px;
+            right: 1px;
+            background-color: #fff;
+            cursor: pointer;
           }
         `}
         </style>
