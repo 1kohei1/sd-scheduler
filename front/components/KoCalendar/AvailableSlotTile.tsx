@@ -44,8 +44,8 @@ export default class AvailableSlotTile extends React.Component<AvailableSlotTile
             position: absolute;
             background-color: ${KoCalendarConstants.tileBackgroundColor};
             opacity: 0.8;
-            left: 0;
-            width: 100%;
+            left: 1px;
+            width: calc(100% - 2px);
             color: white;
             font-size: 12px;
             padding: 0 8px;
