@@ -7,14 +7,13 @@ import DayHeader from './DayHeader';
 import Hourlines from './Hourlines';
 import AvailableSlots from './AvailableSlots';
 import AvailableSlot from '../../models/AvailableSlot';
+import PresentationDate from '../../models/PresentationDate';
 
 export interface DayProps {
-  timezone: string;
-  date: Moment;
-  hours: number[];
-  dateFormat: string;
-  events: Event[];
+  presentationDate: PresentationDate;
+  ruler: number[];
   isLastColumn: boolean;
+  events: Event[];
   eventItem: (event: Event, style: any) => JSX.Element
   availableSlots: AvailableSlot[]
   onAvailableSlotChange: (updatedAvailableSlot: AvailableSlot, isDelete: boolean) => void;
@@ -29,12 +28,11 @@ export default class Day extends React.Component<DayProps, any> {
     return (
       <div className="ko-day_container">
         <DayHeader
-          date={this.props.date}
-          dateFormat={this.props.dateFormat}
+          presentationDate={this.props.presentationDate}
         />
         <Hourlines
           isLastColumn={this.props.isLastColumn}
-          hours={this.props.hours}
+          ruler={this.props.ruler}
         />
         <AvailableSlots
           availableSlots={this.props.availableSlots}

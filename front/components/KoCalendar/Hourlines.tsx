@@ -5,14 +5,14 @@ import { KoCalendarConstants } from '../../models/Constants';
 
 export interface HourlinesProps {
   isLastColumn: boolean;
-  hours: number[];
+  ruler: number[];
 }
 
 export default class Hourlines extends React.Component<HourlinesProps, any> {
   render() {
     return (
       <div>
-        {this.props.hours.map(hour => (
+        {this.props.ruler.map(ruler => (
           <div key={ObjectID.generate()}>
             <div className="ko-hour_cell ko-hour_cell_top"></div>
             <div className="ko-hour_cell ko-hour_cell_bottom"></div>

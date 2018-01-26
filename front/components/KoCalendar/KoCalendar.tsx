@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Moment } from 'moment-timezone';
 
 import Event from '../../models/Event';
 import AvailableSlot from '../../models/AvailableSlot';
@@ -42,21 +41,18 @@ export default class KoCalendar extends React.Component<KoCalendarProps, KoCalen
         <Ruler
           ruler={ruler}
         />
-        {/* 
-        {this.props.dates.map((date, index) => (
-          <Day 
-            key={date.valueOf()}
-            timezone={this.props.timezone}
-            date={date}
-            hours={hours}
-            dateFormat={this.props.dateFormat}
+        {this.props.presentationDates.map((presentationDate, index) => (
+          <Day
+            key={presentationDate._id}
+            presentationDate={presentationDate}
+            ruler={ruler}
+            isLastColumn={index === this.props.presentationDates.length - 1}
             events={this.props.events}
-            isLastColumn={index === this.props.dates.length - 1}
             eventItem={this.props.eventItem}
             availableSlots={this.props.availableSlots}
             onAvailableSlotChange={this.props.onAvailableSlotChange}
           />
-        ))} */}
+        ))}
         <style jsx>{`
           .ko-calendar_wrapper {
             position: relative;
