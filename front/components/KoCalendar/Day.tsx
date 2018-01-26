@@ -34,6 +34,7 @@ export default class Day extends React.Component<DayProps, any> {
           ruler={this.props.ruler}
         />
         <AvailableSlots
+          ruler={this.props.ruler}
           availableSlots={this.props.availableSlots}
           onAvailableSlotChange={this.props.onAvailableSlotChange}
         />

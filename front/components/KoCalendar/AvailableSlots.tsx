@@ -4,6 +4,7 @@ import { KoCalendarConstants } from '../../models/Constants';
 import TimeSlot from '../../models/TimeSlot';
 
 export interface AvailableSlotsProps {
+  ruler: number[];
   availableSlots: TimeSlot[];
   onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean) => void;
 }

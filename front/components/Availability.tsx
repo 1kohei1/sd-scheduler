@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { List } from 'immutable';
 import ObjectID from 'bson-objectid';
-
 import * as moment from 'moment-timezone';
+
 import KoCalendar from './KoCalendar/KoCalendar';
 import Event from '../models/Event';
 import { DateConstants } from '../models/Constants';
@@ -24,8 +24,12 @@ export default class Availability extends React.Component<AvailabilityProps, Ava
     super(props);
 
     this.state = {
-      events: List([]),
-      availableSlots: List([])
+      events: List<Event>([]),
+      availableSlots: List<TimeSlot>([{
+        _id: ObjectID.generate(),
+        start: moment.tz('2018-04-25 9 AM', `${DateConstants.dateFormat} ${DateConstants.hourFormat}`, DateConstants.timezone),
+        end: moment.tz('2018-04-25 11 AM', `${DateConstants.dateFormat} ${DateConstants.hourFormat}`, DateConstants.timezone),
+      }]),
     };
 
     this.eventItem = this.eventItem.bind(this);
@@ -49,19 +53,13 @@ export default class Availability extends React.Component<AvailabilityProps, Ava
   }
 
   render() {
-    const dates = [
-      moment.tz('2017-11-28', DateConstants.dateFormat, DateConstants.timezone),
-      moment.tz('2017-11-30', DateConstants.dateFormat, DateConstants.timezone),
-      moment.tz('2017-12-01', DateConstants.dateFormat, DateConstants.timezone),
-    ]
-
     const presentationDates = this.props.semester.presentationDates.map(presentationDate => {
       return {
         _id: presentationDate._id,
         start: DatetimeUtil.getMomentFromISOString(presentationDate.start),
         end: DatetimeUtil.getMomentFromISOString(presentationDate.end)
       };
-    })
+    });
 
     return (
       <div>
