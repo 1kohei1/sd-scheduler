@@ -13,7 +13,7 @@ export default class DayHeader extends React.Component<DayHeaderProps, any> {
   render() {
     return (
       <div className="ko-day_header">
-        {DatetimeUtil.convertToFormat(this.props.date, this.props.dateFormat)}
+        {DatetimeUtil.formatDate(this.props.date, this.props.dateFormat)}
         <style jsx>{`
           .ko-day_header {
             width: ${KoCalendarConstants.dayColumnWidth};

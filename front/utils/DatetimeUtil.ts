@@ -12,7 +12,7 @@ export default class DatetimeUtil {
     }
   }
 
-  static convertToFormat(date: Moment, format: string) {
+  static formatDate(date: Moment, format: string) {
     return date.format(format);
   }
 
