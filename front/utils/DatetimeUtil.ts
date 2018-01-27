@@ -1,7 +1,9 @@
 import * as moment from 'moment-timezone';
 import { Moment, unitOfTime } from 'moment-timezone';
 import { Range } from 'immutable';
+
 import { DateConstants } from '../models/Constants';
+import TimeSlot from '../models/TimeSlot';
 
 export default class DatetimeUtil {
   static convertTo12Hr(hour: number) {
@@ -44,6 +46,34 @@ export default class DatetimeUtil {
 
   static addToMoment(m: Moment, amount: number, unit: unitOfTime.DurationConstructor) {
     return m.clone().add(amount, unit);
+  }
+
+  static doesOverlap(t1: TimeSlot, t2: TimeSlot) {
+    // If it is the same TimeSlot, return false
+    if (t1._id === t2._id) {
+      return false;
+    }
+
+    const start = t1.start.valueOf();
+    const end = t1.end.valueOf();
+    const otherStart = t2.start.valueOf();
+    const otherEnd = t2.end.valueOf();
+
+    // Logic is taken from https://github.com/rotaready/moment-range/blob/master/lib/moment-range.js#L185-L196
+    if ((start <= otherStart) && (otherStart < end) && (end < otherEnd)) {
+      return true;
+    }
+    else if ((otherStart < start) && (start < otherEnd) && (otherEnd <= end)) {
+      return true;
+    }
+    else if ((otherStart < start) && (start <= end) && (end < otherEnd)) {
+      return true;
+    }
+    else if ((start <= otherStart) && (otherStart <= otherEnd) && (otherEnd <= end)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   static getHourOptions() {

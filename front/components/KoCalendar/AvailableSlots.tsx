@@ -143,11 +143,7 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
           end: DatetimeUtil.addToMoment(slot.end, blockDiff * 30, 'm'),
         };
 
-        const doesOverlap = this.props.availableSlots.some(slotA => {
-          return slotA._id !== newSlot._id &&
-            ((slotA.start.isBefore(newSlot.start) && slotA.end.isAfter(newSlot.start)) ||
-              slotA.start.isBefore(newSlot.end) && slotA.end.isAfter(newSlot.end));
-        });
+        const doesOverlap = this.props.availableSlots.some(slotA => DatetimeUtil.doesOverlap(slotA, newSlot));
 
         if (
           !doesOverlap &&
