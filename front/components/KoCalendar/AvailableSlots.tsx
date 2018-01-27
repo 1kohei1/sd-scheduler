@@ -37,7 +37,9 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
       return;
     }
 
-    const start = Math.floor(event.nativeEvent.offsetY / KoCalendarConstants.rulerColumnHeightNum + this.props.ruler[0]);
+    const presentationStart = parseInt(DatetimeUtil.formatDate(this.props.presentationDate.start, 'H'));
+
+    const start = Math.floor(event.nativeEvent.offsetY / KoCalendarConstants.rulerColumnHeightNum + presentationStart);
     const dateStr = DatetimeUtil.formatDate(this.props.presentationDate.start, DateConstants.dateFormat);
 
     const slot = {
@@ -185,6 +187,7 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
             key={slot._id}
             ruler={this.props.ruler}
             slot={slot}
+            presentationDate={this.props.presentationDate}
             onAvailableSlotChange={this.props.onAvailableSlotChange}
             onResizeStart={this.onResizeStart}
             onMoveStart={this.onMoveStart}

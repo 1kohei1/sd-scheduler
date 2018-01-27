@@ -8,6 +8,7 @@ import DatetimeUtil from '../../utils/DatetimeUtil';
 export interface AvailableSlotTileProps {
   ruler: number[];
   slot: TimeSlot;
+  presentationDate: TimeSlot;
   onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean) => void;
   onResizeStart: (slot: TimeSlot) => void;
   onMoveStart: (e: React.MouseEvent<HTMLDivElement>, slot: TimeSlot) => void;
@@ -47,6 +48,8 @@ export default class AvailableSlotTile extends React.Component<AvailableSlotTile
   }
 
   render() {
+    const presentationStart = parseInt(DatetimeUtil.formatDate(this.props.presentationDate.start, 'H'));
+
     let hour = parseInt(DatetimeUtil.formatDate(this.props.slot.start, 'H'));
     let min = parseInt(DatetimeUtil.formatDate(this.props.slot.start, 'm')) / 60;
     const start = hour + min;
@@ -55,7 +58,7 @@ export default class AvailableSlotTile extends React.Component<AvailableSlotTile
     min = parseInt(DatetimeUtil.formatDate(this.props.slot.end, 'm')) / 60;
     const end = hour + min;
 
-    const top = `${(start - this.props.ruler[0]) * KoCalendarConstants.rulerColumnHeightNum}px`;
+    const top = `${(start - presentationStart) * KoCalendarConstants.rulerColumnHeightNum}px`;
     const height = `${(end - start) * KoCalendarConstants.rulerColumnHeightNum}px`;
 
     return (
