@@ -56,19 +56,9 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
   }
 
   /**
-   * Returns adjusted slop that does not overlap with existing props.availableSlots
+   * Adjust given slot so that it does not overlap with existing slot
    */
   private adjustSlot(slot: TimeSlot) {
-    // Check if there is one availableSlot that can contain given slot
-    const doesOverlap = this.props.availableSlots.some(slotA => {
-      return (slotA.start.isBefore(slot.start) || slotA.start.isSame(slot.start)) &&
-        (slotA.end.isAfter(slot.end) || slotA.end.isSame(slot.end));
-    });
-
-    if (doesOverlap) {
-      return false;
-    }
-
     // If the some slot's end is in the range, adjust start
     let slotA = this.props.availableSlots.find(slotA => {
       return slotA.end.isAfter(slot.start) && slotA.end.isBefore(slot.end);
