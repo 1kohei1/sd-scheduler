@@ -14,6 +14,9 @@ export interface AvailableSlotsProps {
   onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean) => void;
 }
 
+// blockHeight represents how many pixel is for 30 min
+const blockHeight = KoCalendarConstants.rulerColumnHeightNum / 2;
+
 export default class AvailableSlots extends React.Component<AvailableSlotsProps, any> {
   private wrapperRef: HTMLDivElement;
   private isResizing: boolean = false;
@@ -105,8 +108,6 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
         // this.wrapperRef.getClientRects()[0].top gets how far the top of the elemenet from the top window
         // Reference: http://javascript.info/coordinates
         const diff = event.clientY - this.wrapperRef.getClientRects()[0].top;
-        // blockHeight represents how many pixel is for 30 min
-        const blockHeight = KoCalendarConstants.rulerColumnHeightNum / 2;
         return Math.floor(diff / blockHeight);
       })
       .distinctUntilChanged()
@@ -138,7 +139,6 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
     }
 
     const startClientY = e.clientY;
-    const blockHeight = KoCalendarConstants.rulerColumnHeightNum / 2;
 
     Observable.fromEvent<MouseEvent>(this.wrapperRef, 'mousemove')
       .takeUntil(Observable.fromEvent(window.document, 'mouseup'))
@@ -168,6 +168,12 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
   }
 
   render() {
+    const topHourBlock = parseInt(DatetimeUtil.formatDate(this.props.presentationDate.start, 'H')) - this.props.ruler[0];
+    const topOffset = `${topHourBlock * KoCalendarConstants.rulerColumnHeightNum}px`;
+
+    const hourBlock = parseInt(DatetimeUtil.formatDate(this.props.presentationDate.end, 'H')) - parseInt(DatetimeUtil.formatDate(this.props.presentationDate.start, 'H'));
+    const height = `${hourBlock * KoCalendarConstants.rulerColumnHeightNum}px`;
+
     return (
       <div
         className="ko-availableslots_wrapper"
@@ -188,8 +194,8 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
           .ko-availableslots_wrapper {
             position: absolute;
             left: 0;
-            top: calc(${KoCalendarConstants.dayTitleHeight} - 1px);
-            height: calc(100% - ${KoCalendarConstants.dayTitleHeight} + 15px);
+            top: calc(${KoCalendarConstants.dayTitleHeight} - 1px + ${topOffset});
+            height: calc(${height} + 15px);
             width: 100%;
             z-index: 1;
           }

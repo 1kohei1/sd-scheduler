@@ -30,6 +30,7 @@ export default class Day extends React.Component<DayProps, any> {
           presentationDate={this.props.presentationDate}
         />
         <Hourlines
+          presentationDate={this.props.presentationDate}
           isLastColumn={this.props.isLastColumn}
           ruler={this.props.ruler}
         />
