@@ -159,7 +159,9 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
     const topHourBlock = parseInt(DatetimeUtil.formatDate(this.props.presentationDate.start, 'H')) - this.props.ruler[0];
     const topOffset = `${topHourBlock * KoCalendarConstants.rulerColumnHeightNum}px`;
 
-    const hourBlock = parseInt(DatetimeUtil.formatDate(this.props.presentationDate.end, 'H')) - parseInt(DatetimeUtil.formatDate(this.props.presentationDate.start, 'H'));
+    const hourBlock =
+      parseInt(DatetimeUtil.formatDate(this.props.presentationDate.end, 'H')) -
+      parseInt(DatetimeUtil.formatDate(this.props.presentationDate.start, 'H'));
     const height = `${hourBlock * KoCalendarConstants.rulerColumnHeightNum}px`;
 
     return (
