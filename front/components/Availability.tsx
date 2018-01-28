@@ -9,7 +9,7 @@ import { DateConstants } from '../models/Constants';
 import { Semester } from '../models/Semester';
 import DatetimeUtil from '../utils/DatetimeUtil';
 import TimeSlot from '../models/TimeSlot';
-import AvailabilityForm from './AvailabilityForm';
+// import AvailabilityForm from './AvailabilityForm';
 
 export interface AvailabilityProps {
   semester: Semester;
@@ -164,7 +164,7 @@ export default class Availability extends React.Component<AvailabilityProps, Ava
     return (
       <div>
         <h1>Available calendar</h1>
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
+        {/* <div style={{ display: 'flex', flexDirection: 'row' }}>
           <div style={{ marginRight: '64px' }}>
             {presentationDates.map(date => {
               const availableSlots = this.state.availableSlots.toArray().filter((slot: TimeSlot) => {
@@ -180,14 +180,14 @@ export default class Availability extends React.Component<AvailabilityProps, Ava
                 />
               )
             })}
-          </div>
+          </div> */}
           <KoCalendar
             presentationDates={presentationDates}
             presentations={this.state.presentations.toArray()}
             availableSlots={this.state.availableSlots.toArray()}
             onAvailableSlotChange={this.onAvailableSlotChange}
           />
-        </div>
+        {/* </div> */}
       </div>
     );
   }
