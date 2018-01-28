@@ -1,5 +1,6 @@
 export default interface Group {
   _id: string;
+  projectName: string;
   semester: string; // This property will not be populated on the server side
   members: [{
     _id: string;

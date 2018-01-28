@@ -41,6 +41,7 @@ updated_at: date;
 ### Group
 
 _id: ObjectId;
+projectName: string;
 semester: Ref Semester ObjectId
 members: [{
   _id: string;

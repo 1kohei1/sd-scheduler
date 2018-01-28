@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Modal } from 'antd';
+import ObjectID from 'bson-objectid';
+import { Modal, Row, Col } from 'antd';
 
 import { KoCalendarConstants } from '../../models/Constants';
 import DatetimeUtil from '../../utils/DatetimeUtil';
@@ -46,6 +47,8 @@ export default class PresentationSlotTile extends React.Component<PresentationSl
     const topOffset = `${(start - this.props.ruler[0]) * KoCalendarConstants.rulerColumnHeightNum}px`;
     const height = `${(end - start) * KoCalendarConstants.rulerColumnHeightNum}px`;
 
+    const { group } = this.props.presentation;
+
     return (
       <div>
         <div
@@ -56,14 +59,39 @@ export default class PresentationSlotTile extends React.Component<PresentationSl
         </div>
 
         <Modal
-          title="Basic modal"
+          title={group.projectName}
           visible={this.state.visible}
           onOk={(e) => this.toggleModal(false)}
           onCancel={(e) => this.toggleModal(false)}
         >
-          <p>Some content</p>
-          <p>Some content</p>
-          <p>Some content</p>
+          <Row>
+            <Col span={4} xs={5}>
+              Group:
+          </Col>
+            <Col span={20} xs={19}>
+              {group.groupNumber}
+            </Col>
+          </Row>
+          <Row>
+            <Col span={4} xs={5}>
+              Member:
+          </Col>
+            <Col span={20} xs={19}>
+              {group.members.map((member, index) => (
+                <span key={ObjectID.generate()}>
+                  {member.firstName} {member.lastName}{index !== group.members.length - 1 ? ', ' : ''}
+                </span>
+              ))}
+            </Col>
+          </Row>
+          <Row>
+            <Col span={4} xs={5}>
+              Sponsor:
+          </Col>
+            <Col span={20} xs={19}>
+              {group.sponsorName}
+            </Col>
+          </Row>
         </Modal>
         <style jsx>{`
           .ko-presentationslottile {
