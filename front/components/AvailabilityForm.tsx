@@ -16,8 +16,28 @@ export default class AvailabilityForm extends React.Component<AvailabilityFormPr
   constructor(props: AvailabilityFormProps) {
     super(props);
 
+    this.onSelect = this.onSelect.bind(this);
     this.addNewSlot = this.addNewSlot.bind(this);
     this.deleteSlot = this.deleteSlot.bind(this);
+  }
+
+  onSelect(slot: TimeSlot, prop: string, val: string) {
+    const dateStr = DatetimeUtil.formatDate(this.props.presentationDate.start, DateConstants.dateFormat);
+
+    let newSlot: any = {
+      _id: slot._id
+    };
+    if (prop === 'start') {
+      newSlot.start = DatetimeUtil.getMomentByFormat(`${dateStr} ${val}`, `${DateConstants.dateFormat} ${DateConstants.hourMinFormat}`);
+      newSlot.end = slot.end;
+    } else if (prop === 'end') {
+      newSlot.start = slot.start;
+      newSlot.end = DatetimeUtil.getMomentByFormat(`${dateStr} ${val}`, `${DateConstants.dateFormat} ${DateConstants.hourMinFormat}`);
+    } else {
+      return;
+    }
+
+    this.props.onAvailableSlotChange(newSlot, false);
   }
 
   deleteSlot(slot: TimeSlot) {
@@ -25,7 +45,12 @@ export default class AvailabilityForm extends React.Component<AvailabilityFormPr
   }
 
   addNewSlot() {
-
+    const newSlot = {
+      _id: ObjectID.generate(),
+      start: this.props.presentationDate.start,
+      end: DatetimeUtil.addToMoment(this.props.presentationDate.start, 1, 'h'),
+    };
+    this.props.onAvailableSlotChange(newSlot, false);
   }
 
   render() {
@@ -45,16 +70,32 @@ export default class AvailabilityForm extends React.Component<AvailabilityFormPr
         <h2>{DatetimeUtil.formatDate(this.props.presentationDate.start, DateConstants.dateFormat)}</h2>
         <Form>
           {this.props.availableSlots.map((slot: TimeSlot) => (
-            <div style={{ display: 'flex', flexDirection: 'row' }} key={ObjectID.generate()}>
+            <div
+              style={{ display: 'flex', flexDirection: 'row' }}
+              key={ObjectID.generate()}
+            >
               <Form.Item style={{ marginRight: '8px' }}>
-                <Select placeholder="Start time" style={{ width: 120 }}>
+                <Select
+                  placeholder="Start time"
+                  style={{ width: 120 }}
+                  value={DatetimeUtil.formatDate(slot.start, DateConstants.hourMinFormat)}
+                  onSelect={(val: string) => this.onSelect(slot, 'start', val)}
+                >
                   {timeOptions.map((val: string) => (
                     <Select.Option value={val} key={val}>{val}</Select.Option>
                   ))}
                 </Select>
               </Form.Item>
               <Form.Item style={{ marginRight: '8px' }}>
-                <Select placeholder="End time" style={{ width: 120 }}>
+                -
+              </Form.Item>
+              <Form.Item style={{ marginRight: '8px' }}>
+                <Select
+                  placeholder="End time"
+                  style={{ width: 120 }}
+                  value={DatetimeUtil.formatDate(slot.end, DateConstants.hourMinFormat)}
+                  onSelect={(val: string) => this.onSelect(slot, 'end', val)}
+                >
                   {timeOptions.map((val: string) => (
                     <Select.Option value={val} key={val}>{val}</Select.Option>
                   ))}
