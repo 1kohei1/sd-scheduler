@@ -83,14 +83,22 @@ export default class DatetimeUtil {
     }
   }
 
-  static getHourOptions() {
+  static getTimeOptions(includeMin: boolean = false) {
     const ampm = ['AM', 'PM'];
     const hours = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-    const temp = ampm.map(val => {
-      return hours.map(h => `${h} ${val}`);
-    });
-    const hourOptions = [].concat.apply([], temp); // Taken from http://www.jstips.co/en/javascript/flattening-multidimensional-arrays-in-javascript/
 
-    return hourOptions;
+    const arr: string[] = [];
+    ampm.forEach(val => {
+      hours.forEach(h => {
+        if (includeMin) {
+          arr.push(`${h}:00 ${val}`);
+          arr.push(`${h}:30 ${val}`);
+        } else {
+          arr.push(`${h} ${val}`);
+        }
+      });
+    });
+
+    return arr;
   }
 }

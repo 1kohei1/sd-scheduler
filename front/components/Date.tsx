@@ -20,8 +20,6 @@ interface DateState {
   objectIdsInForm: List<string>
 }
 
-const hourOptions = DatetimeUtil.getHourOptions();
-
 class Date extends React.Component<DateProps, DateState> {
   constructor(props: DateProps) {
     super(props);
@@ -179,7 +177,7 @@ class Date extends React.Component<DateProps, DateState> {
                 initialValue: this.getInitialValue(id, 'startTime')
               })(
                 <Select placeholder="Start time" style={{ width: 120 }}>
-                  {hourOptions.map((val: string) => (
+                  {DatetimeUtil.getTimeOptions().map((val: string) => (
                     <Select.Option value={val} key={val}>{val}</Select.Option>
                   ))}
                 </Select>
@@ -190,7 +188,7 @@ class Date extends React.Component<DateProps, DateState> {
                 initialValue: this.getInitialValue(id, 'endTime')
               })(
                 <Select placeholder="End time" style={{ width: 120 }}>
-                  {hourOptions.map((val: string) => (
+                  {DatetimeUtil.getTimeOptions().map((val: string) => (
                     <Select.Option value={val} key={val}>{val}</Select.Option>
                   ))}
                 </Select>
