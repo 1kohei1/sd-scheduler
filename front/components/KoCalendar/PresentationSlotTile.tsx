@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Modal } from 'antd';
 
 import { KoCalendarConstants } from '../../models/Constants';
 import DatetimeUtil from '../../utils/DatetimeUtil';
@@ -10,23 +11,60 @@ export interface PresentationSlotTileProps {
   presentation: Presentation;
 }
 
+interface PresentationSlotTileState {
+  visible: boolean;
+}
+
 export default class PresentationSlotTile extends React.Component<PresentationSlotTileProps, any> {
+  constructor(props: PresentationSlotTileProps) {
+    super(props);
+
+    this.state = {
+      visible: false
+    };
+
+    this.toggleModal = this.toggleModal.bind(this);
+  }
+
+  toggleModal(v: boolean) {
+    this.setState({
+      visible: v
+    });
+  }
+
+
   render() {
     let hour = parseInt(DatetimeUtil.formatDate(this.props.presentation.start, 'H'));
     let min = parseInt(DatetimeUtil.formatDate(this.props.presentation.start, 'm')) / 60;
     const start = hour + min;
-    
+
     // It's supposed to be one hour. But, let's just compute here
     hour = parseInt(DatetimeUtil.formatDate(this.props.presentation.end, 'H'));
     min = parseInt(DatetimeUtil.formatDate(this.props.presentation.end, 'm')) / 60;
     const end = hour + min;
-    
+
     const topOffset = `${(start - this.props.ruler[0]) * KoCalendarConstants.rulerColumnHeightNum}px`;
     const height = `${(end - start) * KoCalendarConstants.rulerColumnHeightNum}px`;
 
     return (
-      <div className="ko-presentationslottile">
-        <span>Group 8 presentation</span>
+      <div>
+        <div
+          className="ko-presentationslottile"
+          onClick={(e) => this.toggleModal(true)}
+        >
+          <span>Group 8 presentation</span>
+        </div>
+
+        <Modal
+          title="Basic modal"
+          visible={this.state.visible}
+          onOk={(e) => this.toggleModal(false)}
+          onCancel={(e) => this.toggleModal(false)}
+        >
+          <p>Some content</p>
+          <p>Some content</p>
+          <p>Some content</p>
+        </Modal>
         <style jsx>{`
           .ko-presentationslottile {
             position: absolute;
@@ -42,6 +80,10 @@ export default class PresentationSlotTile extends React.Component<PresentationSl
           }
           .ko-presentationslottile span {
             align-self: flex-end;
+          }
+          .ko-presentationslottile:hover {
+            cursor: pointer;
+            opacity: 0.9;
           }
         `}
         </style>
