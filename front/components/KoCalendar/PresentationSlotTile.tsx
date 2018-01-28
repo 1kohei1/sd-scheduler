@@ -55,7 +55,7 @@ export default class PresentationSlotTile extends React.Component<PresentationSl
           className="ko-presentationslottile"
           onClick={(e) => this.toggleModal(true)}
         >
-          <span>Group 8 presentation</span>
+          <span>Group {group.groupNumber} presentation</span>
         </div>
 
         <Modal
