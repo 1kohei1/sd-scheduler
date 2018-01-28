@@ -41,13 +41,21 @@ export default class KoCalendar extends React.Component<KoCalendarProps, KoCalen
         />
         {this.props.presentationDates.map((presentationDate, index) => {
           const availableSlots = this.props.availableSlots.filter(slot => DatetimeUtil.doesOverlap(slot, presentationDate))
+          const presentations = this.props.presentations.filter(p => {
+            const pSlot = {
+              _id: p._id,
+              start: p.start,
+              end: p.end
+            };
+            return DatetimeUtil.doesOverlap(pSlot, presentationDate);
+          });
           return (
             <Day
               key={presentationDate._id}
               presentationDate={presentationDate}
               ruler={ruler}
               isLastColumn={index === this.props.presentationDates.length - 1}
-              presentations={this.props.presentations}
+              presentations={presentations}
               availableSlots={availableSlots}
               onAvailableSlotChange={this.props.onAvailableSlotChange}
             />

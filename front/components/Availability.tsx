@@ -23,8 +23,28 @@ export default class Availability extends React.Component<AvailabilityProps, Ava
   constructor(props: AvailabilityProps) {
     super(props);
 
+    // Get presentations and available slots
+
     this.state = {
-      presentations: List<Presentation>([]),
+      presentations: List<Presentation>([{
+        _id: ObjectID.generate(),
+        start: moment.tz('2018-04-26 12 PM', `${DateConstants.dateFormat} ${DateConstants.hourFormat}`, DateConstants.timezone),
+        end: moment.tz('2018-04-26 1 PM', `${DateConstants.dateFormat} ${DateConstants.hourFormat}`, DateConstants.timezone),
+        semesterId: this.props.semester._id,
+        groupId: ObjectID.generate(),
+        faculties: [],
+        midPresentationLink: '',
+        committeeFormLink: '',
+      }, {
+        _id: ObjectID.generate(),
+        start: moment.tz('2018-04-27 3:30 PM', `${DateConstants.dateFormat} h:m A`, DateConstants.timezone),
+        end: moment.tz('2018-04-27 4:30 PM', `${DateConstants.dateFormat} h:m A`, DateConstants.timezone),
+        semesterId: this.props.semester._id,
+        groupId: ObjectID.generate(),
+        faculties: [],
+        midPresentationLink: '',
+        committeeFormLink: '',
+      }]),
       availableSlots: List<TimeSlot>([{
         _id: ObjectID.generate(),
         start: moment.tz('2018-04-25 9 AM', `${DateConstants.dateFormat} ${DateConstants.hourFormat}`, DateConstants.timezone),
