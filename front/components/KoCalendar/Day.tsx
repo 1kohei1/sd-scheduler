@@ -6,6 +6,7 @@ import Presentation from '../../models/Presentation';
 import DayHeader from './DayHeader';
 import Hourlines from './Hourlines';
 import AvailableSlots from './AvailableSlots';
+import PresentationSlots from './PresentationSlots';
 import TimeSlot from '../../models/TimeSlot';
 
 export interface DayProps {
@@ -38,6 +39,11 @@ export default class Day extends React.Component<DayProps, any> {
           availableSlots={this.props.availableSlots}
           presentationDate={this.props.presentationDate}
           onAvailableSlotChange={this.props.onAvailableSlotChange}
+        />
+        <PresentationSlots 
+          ruler={this.props.ruler}
+          presentations={this.props.presentations}
+          presentationDate={this.props.presentationDate}
         />
         <style jsx>{`
           .ko-day_container {
