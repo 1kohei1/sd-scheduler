@@ -42,8 +42,17 @@ updated_at: date;
 
 _id: ObjectId;
 semesterId: Ref Semester ObjectId
-studentEmails: [string];
-sponsorEmails: [string];
+members: [{
+  firstName: string;
+  lastName: string;
+  email: string;
+}];
+sponsors: [{
+  firstName: string;
+  lastName: string;
+  email: string;
+}]
+sponsorName: string;
 groupNumber: number;
 adminFaculty: Ref Faculty ObjectId
 created_at: date;
