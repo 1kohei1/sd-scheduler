@@ -1,12 +1,15 @@
 import { Moment } from 'moment-timezone';
+import Group from './Group';
 
 export default interface Presentation {
   _id: string;
   start: Moment;
   end: Moment;
-  semester: string;
-  group: string; // This will be replaced with actual group interface, but let's keep it as string id
-  faculties: any[]; // This will be replaced with actual faculty interface, but let's keep it like this
+  semester: string; // This property will not be populated on the server side
+  group: Group;
+  faculties: string[]; // This property will not be populated on the server side
   midPresentationLink: string;
   committeeFormLink: string;
+  created_at: Date;
+  updated_at: Date;
 }

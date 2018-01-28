@@ -70,3 +70,5 @@ group: Ref Group ObjectId
 faculties: [Ref Faculty ObjectId]
 midPresentationLink: string; // This should be available
 committeeFormLink: string;   // This should be available
+created_at: date;
+updated_at: date'
