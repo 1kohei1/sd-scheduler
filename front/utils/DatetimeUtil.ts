@@ -48,6 +48,13 @@ export default class DatetimeUtil {
     return m.clone().add(amount, unit);
   }
 
+  // Convert moment hour and min to number. Ex) 9:30 AM => 9.5, 10:30 PM => 22.5
+  static convertToHourlyNumber(m: Moment) {
+    const hour = parseInt(this.formatDate(m, 'H'));
+    const min = parseInt(this.formatDate(m, 'm')) / 60;
+    return hour + min;
+  }
+
   static doesOverlap(t1: TimeSlot, t2: TimeSlot) {
     // If it is the same TimeSlot, return false
     if (t1._id === t2._id) {

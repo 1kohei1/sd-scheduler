@@ -49,14 +49,8 @@ export default class AvailableSlotTile extends React.Component<AvailableSlotTile
 
   render() {
     const presentationStart = parseInt(DatetimeUtil.formatDate(this.props.presentationDate.start, 'H'));
-
-    let hour = parseInt(DatetimeUtil.formatDate(this.props.slot.start, 'H'));
-    let min = parseInt(DatetimeUtil.formatDate(this.props.slot.start, 'm')) / 60;
-    const start = hour + min;
-
-    hour = parseInt(DatetimeUtil.formatDate(this.props.slot.end, 'H'));
-    min = parseInt(DatetimeUtil.formatDate(this.props.slot.end, 'm')) / 60;
-    const end = hour + min;
+    const start = DatetimeUtil.convertToHourlyNumber(this.props.slot.start);
+    const end = DatetimeUtil.convertToHourlyNumber(this.props.slot.end);
 
     const top = `${(start - presentationStart) * KoCalendarConstants.rulerColumnHeightNum}px`;
     const height = `${(end - start) * KoCalendarConstants.rulerColumnHeightNum}px`;
