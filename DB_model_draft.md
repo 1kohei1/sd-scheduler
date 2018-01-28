@@ -28,8 +28,8 @@ updated_at: date
 ### AvailableSlot
 
 _id: ObjectId
-facultyId: Ref Faculty ObjectId
-semesterId: Ref Semester ObjectId
+faculty: Ref Faculty ObjectId
+semester: Ref Semester ObjectId
 availableSlots: [{
   _id: ObjectId;
   start: date;
@@ -41,13 +41,15 @@ updated_at: date;
 ### Group
 
 _id: ObjectId;
-semesterId: Ref Semester ObjectId
+semester: Ref Semester ObjectId
 members: [{
+  _id: string;
   firstName: string;
   lastName: string;
   email: string;
 }];
 sponsors: [{
+  _id: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -63,8 +65,8 @@ updated_at: date;
 _id: ObjectId;
 start: date;
 end: date;
-semesterId: Ref Semester ObjectId
-groupId: Ref Group ObjectId
+semester: Ref Semester ObjectId
+group: Ref Group ObjectId
 faculties: [Ref Faculty ObjectId]
 midPresentationLink: string; // This should be available
 committeeFormLink: string;   // This should be available
