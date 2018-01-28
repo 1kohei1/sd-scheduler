@@ -14,5 +14,6 @@ export const KoCalendarConstants = {
 export const DateConstants = {
   dateFormat: 'YYYY-MM-DD',
   hourFormat: 'h A',
+  hourMinFormat: 'h:mm A',
   timezone: 'America/New_York'
 }

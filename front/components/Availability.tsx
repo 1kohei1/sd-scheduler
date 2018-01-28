@@ -9,6 +9,7 @@ import { DateConstants } from '../models/Constants';
 import { Semester } from '../models/Semester';
 import DatetimeUtil from '../utils/DatetimeUtil';
 import TimeSlot from '../models/TimeSlot';
+import AvailabilityForm from './AvailabilityForm';
 
 export interface AvailabilityProps {
   semester: Semester;
@@ -163,12 +164,30 @@ export default class Availability extends React.Component<AvailabilityProps, Ava
     return (
       <div>
         <h1>Available calendar</h1>
-        <KoCalendar
-          presentationDates={presentationDates}
-          presentations={this.state.presentations.toArray()}
-          availableSlots={this.state.availableSlots.toArray()}
-          onAvailableSlotChange={this.onAvailableSlotChange}
-        />
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <div>
+            {presentationDates.map(date => {
+              const availableSlots = this.state.availableSlots.toArray().filter((slot: TimeSlot) => {
+                return DatetimeUtil.formatDate(slot.start, DateConstants.dateFormat) === DatetimeUtil.formatDate(date.start, DateConstants.dateFormat);
+              });
+
+              return (
+                <AvailabilityForm
+                  key={ObjectID.generate()}
+                  presentationDate={date}
+                  availableSlots={availableSlots}
+                  onAvailableSlotChange={this.onAvailableSlotChange}
+                />
+              )
+            })}
+          </div>
+          <KoCalendar
+            presentationDates={presentationDates}
+            presentations={this.state.presentations.toArray()}
+            availableSlots={this.state.availableSlots.toArray()}
+            onAvailableSlotChange={this.onAvailableSlotChange}
+          />
+        </div>
       </div>
     );
   }
