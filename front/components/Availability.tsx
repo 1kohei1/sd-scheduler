@@ -165,7 +165,7 @@ export default class Availability extends React.Component<AvailabilityProps, Ava
       <div>
         <h1>Available calendar</h1>
         <div style={{ display: 'flex', flexDirection: 'row' }}>
-          <div>
+          <div style={{ marginRight: '64px' }}>
             {presentationDates.map(date => {
               const availableSlots = this.state.availableSlots.toArray().filter((slot: TimeSlot) => {
                 return DatetimeUtil.formatDate(slot.start, DateConstants.dateFormat) === DatetimeUtil.formatDate(date.start, DateConstants.dateFormat);
