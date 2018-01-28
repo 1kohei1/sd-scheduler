@@ -52,3 +52,18 @@ TODO:
 NOTES:
 
 * Date displayed in the browser is in US Eastern time. This is because this project is developed for UCF.
+
+### Flows
+
+Update presentation:
+
+1. Students make change to the presentation
+2. Students enter one of the email in the studentsEmail
+3. System sends verification email
+4. Student clicks the link and change is made. 
+
+Delete presentation:
+
+1. Student click delete button
+2. Student enter one of the group member's email
+3. System sends email and confirm the action

@@ -19,12 +19,13 @@ _id: ObjectId;
 email: [string]
 firstName: string;
 lastName: string;
+isAdmin: boolean;
 signup_at: date; // When the password is set
 register_at: date; // When the admin adds the faculty
 created_at: date
 updated_at: date
 
-### AvailableSlots
+### AvailableSlot
 
 _id: ObjectId
 facultyId: Ref Faculty ObjectId
@@ -36,5 +37,25 @@ availableSlots: [{
 }]
 created_at: date;
 updated_at: date;
-// Think later how to store faculty's available/unavailable time. Create another date model?
-// Test how update child object work
+
+### Group
+
+_id: ObjectId;
+semesterId: Ref Semester ObjectId
+studentEmails: [string];
+sponsorEmails: [string];
+groupNumber: number;
+adminFaculty: Ref Faculty ObjectId
+created_at: date;
+updated_at: date;
+
+### Presentation
+
+_id: ObjectId;
+start: date;
+end: date;
+semesterId: Ref Semester ObjectId
+groupId: Ref Group ObjectId
+faculties: [Ref Faculty ObjectId]
+midPresentationLink: string; // This should be available
+committeeFormLink: string;   // This should be available
