@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Moment } from 'moment-timezone';
 
 import { KoCalendarConstants } from '../../models/Constants';
-import Event from '../../models/Event';
+import Presentation from '../../models/Presentation';
 import DayHeader from './DayHeader';
 import Hourlines from './Hourlines';
 import AvailableSlots from './AvailableSlots';
@@ -12,8 +12,7 @@ export interface DayProps {
   presentationDate: TimeSlot;
   ruler: number[];
   isLastColumn: boolean;
-  events: Event[];
-  eventItem: (event: Event, style: any) => JSX.Element
+  presentations: Presentation[];
   availableSlots: TimeSlot[]
   onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean) => void;
 }

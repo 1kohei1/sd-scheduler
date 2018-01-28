@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import Event from '../../models/Event';
+import Presentation from '../../models/Presentation';
 import Ruler from './Ruler';
 import Day from './Day';
 import DatetimeUtil from '../../utils/DatetimeUtil';
@@ -8,8 +8,7 @@ import TimeSlot from '../../models/TimeSlot';
 
 interface KoCalendarProps {
   presentationDates: TimeSlot[];
-  events: Event[];
-  eventItem: (event: Event, style: any) => JSX.Element
+  presentations: Presentation[];
   availableSlots: TimeSlot[]
   onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean) => void;
 }
@@ -52,8 +51,7 @@ export default class KoCalendar extends React.Component<KoCalendarProps, KoCalen
               presentationDate={presentationDate}
               ruler={ruler}
               isLastColumn={index === this.props.presentationDates.length - 1}
-              events={this.props.events}
-              eventItem={this.props.eventItem}
+              presentations={this.props.presentations}
               availableSlots={availableSlots}
               onAvailableSlotChange={this.props.onAvailableSlotChange}
             />

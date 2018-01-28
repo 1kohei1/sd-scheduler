@@ -4,7 +4,7 @@ import ObjectID from 'bson-objectid';
 import * as moment from 'moment-timezone';
 
 import KoCalendar from './KoCalendar/KoCalendar';
-import Event from '../models/Event';
+import Presentation from '../models/Presentation';
 import { DateConstants } from '../models/Constants';
 import { Semester } from '../models/Semester';
 import DatetimeUtil from '../utils/DatetimeUtil';
@@ -15,7 +15,7 @@ export interface AvailabilityProps {
 }
 
 interface AvailabilityState {
-  events: List<Event>;
+  presentations: List<Presentation>;
   availableSlots: List<TimeSlot>;
 }
 
@@ -24,7 +24,7 @@ export default class Availability extends React.Component<AvailabilityProps, Ava
     super(props);
 
     this.state = {
-      events: List<Event>([]),
+      presentations: List<Presentation>([]),
       availableSlots: List<TimeSlot>([{
         _id: ObjectID.generate(),
         start: moment.tz('2018-04-25 9 AM', `${DateConstants.dateFormat} ${DateConstants.hourFormat}`, DateConstants.timezone),
@@ -93,8 +93,7 @@ export default class Availability extends React.Component<AvailabilityProps, Ava
         <h1>Available calendar</h1>
         <KoCalendar
           presentationDates={presentationDates}
-          events={this.state.events.toArray()}
-          eventItem={this.eventItem}
+          presentations={this.state.presentations.toArray()}
           availableSlots={this.state.availableSlots.toArray()}
           onAvailableSlotChange={this.onAvailableSlotChange}
         />
