@@ -44,19 +44,19 @@ export default class Dashboard extends React.Component<DashboardProps, Dashboard
         presentationDates: [{
           _id: ObjectID.generate(),
           start: tempFunc('2018-04-25 9 AM'),
-          end:  tempFunc('2018-04-25 6 PM'),
+          end: tempFunc('2018-04-25 6 PM'),
         }, {
           _id: ObjectID.generate(),
           // start: tempFunc('2018-04-26 11 AM'),
           // end:  tempFunc('2018-04-26 3 PM'),
           start: tempFunc('2018-04-26 9 AM'),
-          end:  tempFunc('2018-04-26 6 PM'),
+          end: tempFunc('2018-04-26 6 PM'),
         }, {
           _id: ObjectID.generate(),
           // start: tempFunc('2018-04-27 11 AM'),
           // end:  tempFunc('2018-04-27 6 PM'),
           start: tempFunc('2018-04-27 9 AM'),
-          end:  tempFunc('2018-04-27 6 PM'),
+          end: tempFunc('2018-04-27 6 PM'),
         }],
       }, {
         _id: ObjectID.generate(),
@@ -83,6 +83,7 @@ export default class Dashboard extends React.Component<DashboardProps, Dashboard
     this.state = this.stateFromQuery(props.url.query);
 
     this.onSubMenuTitleClick = this.onSubMenuTitleClick.bind(this);
+    this.content = this.content.bind(this);
   }
 
   componentWillReceiveProps(nextProps: DashboardProps) {
@@ -126,8 +127,18 @@ export default class Dashboard extends React.Component<DashboardProps, Dashboard
     });
   }
 
+  content(menu: string, semester: Semester) {
+    if (menu === 'overview') {
+      return <Overview semester={semester} />
+    } else if (menu === 'calendar') {
+      return <Availability semester={semester} />
+    } else {
+      return <div>Unknow menu is selected</div>
+    }
+  }
+
   render() {
-    const semester:Semester = this.props.semesters.find((semester) => semester.key === this.state.semester) as Semester;
+    const semester: Semester = this.props.semesters.find((semester) => semester.key === this.state.semester) as Semester;
 
     return (
       <AppLayout>
@@ -140,18 +151,8 @@ export default class Dashboard extends React.Component<DashboardProps, Dashboard
               onSubMenuTitleClick={this.onSubMenuTitleClick}
             />
           </Layout.Sider>
-          <Layout.Content style={{ backgroundColor: 'white', minHeight: "calc(100vh - 64px)", padding: '32px'}}>
-            {(() => {
-              if (this.state.menu === 'overview') {
-                return <Overview semester={semester} />
-              } else if (this.state.menu === 'availability') {
-                return <Availability semester={semester} />
-              } else if (this.state.menu === 'schedule') {
-                return <Schedule />
-              } else {
-                return <div>Unknow menu is selected</div>
-              }
-            })()}
+          <Layout.Content style={{ backgroundColor: 'white', minHeight: "calc(100vh - 64px)", padding: '32px' }}>
+            {this.content(this.state.menu, semester)}
           </Layout.Content>
         </Layout>
       </AppLayout>

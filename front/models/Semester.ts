@@ -13,11 +13,8 @@ export interface Semester {
 
 export const Menus = [{
   key: 'overview',
-  displayName: 'Overview'
+  displayName: 'Overview',
 }, {
-  key: 'availability',
-  displayName: 'My Availability'
-}, {
-  key: 'schedule',
-  displayName: 'My Schedule'
+  key: 'calendar',
+  displayName: 'My Calendar',
 }];
