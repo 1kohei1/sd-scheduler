@@ -1,9 +1,12 @@
 export const KoCalendarConstants = {
+  rulerColumnWidthNum: 40,
   rulerColumnWidth: '40px',
   rulerColumnHeightNum: 60,
   rulerColumnHeight: '60px',
 
   dayFormat: 'MM-DD (ddd)',
+  
+  dayColumnWidthNum: 200,
   dayColumnWidth: '200px',
   dayTitleHeight: '25px',
 

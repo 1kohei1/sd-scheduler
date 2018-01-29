@@ -2,14 +2,14 @@ import * as React from 'react';
 import { List } from 'immutable';
 import ObjectID from 'bson-objectid';
 import * as moment from 'moment-timezone';
+import { Button, Icon } from 'antd';
 
 import KoCalendar from './KoCalendar/KoCalendar';
 import Presentation from '../models/Presentation';
-import { DateConstants } from '../models/Constants';
+import { DateConstants, KoCalendarConstants } from '../models/Constants';
 import { Semester } from '../models/Semester';
 import DatetimeUtil from '../utils/DatetimeUtil';
 import TimeSlot from '../models/TimeSlot';
-// import AvailabilityForm from './AvailabilityForm';
 
 export interface AvailabilityProps {
   semester: Semester;
@@ -166,30 +166,27 @@ export default class Availability extends React.Component<AvailabilityProps, Ava
     return (
       <div>
         <h1>Available calendar</h1>
-        {/* <div style={{ display: 'flex', flexDirection: 'row' }}>
-          <div style={{ marginRight: '64px' }}>
-            {presentationDates.map(date => {
-              const availableSlots = this.state.availableSlots.toArray().filter((slot: TimeSlot) => {
-                return DatetimeUtil.formatDate(slot.start, DateConstants.dateFormat) === DatetimeUtil.formatDate(date.start, DateConstants.dateFormat);
-              });
-
-              return (
-                <AvailabilityForm
-                  key={ObjectID.generate()}
-                  presentationDate={date}
-                  availableSlots={availableSlots}
-                  onAvailableSlotChange={this.onAvailableSlotChange}
-                />
-              )
-            })}
-          </div> */}
-          <KoCalendar
-            presentationDates={presentationDates}
-            presentations={this.state.presentations.toArray()}
-            availableSlots={this.state.availableSlots.toArray()}
-            onAvailableSlotChange={this.onAvailableSlotChange}
-          />
-        {/* </div> */}
+        <p className="ko-description">
+          Please fill available time.
+          <Button icon="question-circle">
+            Check how to put available time
+          </Button>
+        </p>
+        <KoCalendar
+          presentationDates={presentationDates}
+          presentations={this.state.presentations.toArray()}
+          availableSlots={this.state.availableSlots.toArray()}
+          onAvailableSlotChange={this.onAvailableSlotChange}
+        />
+        <style jsx>{`
+          .ko-description {
+            display: flex;
+            width: ${ `${KoCalendarConstants.rulerColumnWidthNum + KoCalendarConstants.dayColumnWidthNum * presentationDates.length}px` };
+            align-items: baseline;
+            justify-content: space-between;
+          }
+        `}
+        </style>
       </div>
     );
   }
