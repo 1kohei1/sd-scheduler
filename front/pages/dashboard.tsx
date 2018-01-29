@@ -49,14 +49,14 @@ export default class Dashboard extends React.Component<DashboardProps, Dashboard
           _id: ObjectID.generate(),
           // start: tempFunc('2018-04-26 11 AM'),
           // end:  tempFunc('2018-04-26 3 PM'),
-          start: tempFunc('2018-04-25 9 AM'),
-          end:  tempFunc('2018-04-25 6 PM'),
+          start: tempFunc('2018-04-26 9 AM'),
+          end:  tempFunc('2018-04-26 6 PM'),
         }, {
           _id: ObjectID.generate(),
           // start: tempFunc('2018-04-27 11 AM'),
           // end:  tempFunc('2018-04-27 6 PM'),
-          start: tempFunc('2018-04-25 9 AM'),
-          end:  tempFunc('2018-04-25 6 PM'),
+          start: tempFunc('2018-04-27 9 AM'),
+          end:  tempFunc('2018-04-27 6 PM'),
         }],
       }, {
         _id: ObjectID.generate(),
