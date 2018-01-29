@@ -11,7 +11,7 @@ import { Semester, Menus } from '../models/Semester';
 import AppLayout from '../components/AppLayout';
 import DashboardSider from '../components/DashboardSider';
 import Overview from '../components/Overview';
-import Availability from '../components/Availability';
+import MyCalendar from '../components/MyCalendar';
 import Schedule from '../components/Schedule';
 import { DateConstants } from '../models/Constants';
 
@@ -131,7 +131,7 @@ export default class Dashboard extends React.Component<DashboardProps, Dashboard
     if (menu === 'overview') {
       return <Overview semester={semester} />
     } else if (menu === 'calendar') {
-      return <Availability semester={semester} />
+      return <MyCalendar semester={semester} />
     } else {
       return <div>Unknow menu is selected</div>
     }

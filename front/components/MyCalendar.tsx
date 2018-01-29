@@ -11,17 +11,17 @@ import { Semester } from '../models/Semester';
 import DatetimeUtil from '../utils/DatetimeUtil';
 import TimeSlot from '../models/TimeSlot';
 
-export interface AvailabilityProps {
+export interface MyCalendarProps {
   semester: Semester;
 }
 
-interface AvailabilityState {
+interface MyCalendarState {
   presentations: List<Presentation>;
   availableSlots: List<TimeSlot>;
 }
 
-export default class Availability extends React.Component<AvailabilityProps, AvailabilityState> {
-  constructor(props: AvailabilityProps) {
+export default class MyCalendar extends React.Component<MyCalendarProps, MyCalendarState> {
+  constructor(props: MyCalendarProps) {
     super(props);
 
     // Get presentations and available slots
@@ -132,20 +132,20 @@ export default class Availability extends React.Component<AvailabilityProps, Ava
 
     if (isDelete) {
       if (index >= 0) {
-        this.setState((prevState: AvailabilityState, props: AvailabilityProps) => {
+        this.setState((prevState: MyCalendarState, props: MyCalendarProps) => {
           return {
             availableSlots: prevState.availableSlots.delete(index)
           }
         })
       }
     } else if (index >= 0) {
-      this.setState((prevState: AvailabilityState, props: AvailabilityProps) => {
+      this.setState((prevState: MyCalendarState, props: MyCalendarProps) => {
         return {
           availableSlots: prevState.availableSlots.set(index, updatedSlot)
         }
       })
     } else {
-      this.setState((prevState: AvailabilityState, props: AvailabilityProps) => {
+      this.setState((prevState: MyCalendarState, props: MyCalendarProps) => {
         return {
           availableSlots: prevState.availableSlots.push(updatedSlot)
         }
@@ -165,9 +165,9 @@ export default class Availability extends React.Component<AvailabilityProps, Ava
 
     return (
       <div>
-        <h1>Available calendar</h1>
+        <h1>My Calendar</h1>
         <p className="ko-description">
-          Please fill available time.
+          You can put your available time and check assigned presentations.
           <Button icon="question-circle">
             Check how to put available time
           </Button>
