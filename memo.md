@@ -49,6 +49,7 @@ TODO:
 - [ ] Change Semester.tsx to store semester's presentation date in Date Object
 - [ ] Check why initial component layout is broken
 - [ ] Make availability editable by text. Auto refresh on calendar. Date is at the header and input will look like the date input in overview
+- [ ] Create a video to explain how to put available time
 
 NOTES:
 
