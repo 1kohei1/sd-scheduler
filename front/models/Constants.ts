@@ -11,12 +11,14 @@ export const KoCalendarConstants = {
   dayTitleHeight: '25px',
 
   tileBackgroundColor: '#0070E0',
-  tileTimeFormat: 'h:mma'
+  tileTimeFormat: 'h:mma',
+
+  helpVideoLink: 'https://youtu.be/7IFa5wbVuEs',
 }
 
 export const DateConstants = {
   dateFormat: 'YYYY-MM-DD',
   hourFormat: 'h A',
   hourMinFormat: 'h:mm A',
-  timezone: 'America/New_York'
+  timezone: 'America/New_York',
 }

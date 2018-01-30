@@ -168,7 +168,11 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
         <h1>My Calendar</h1>
         <p className="ko-description">
           You can put your available time and check assigned presentations.
-          <Button icon="question-circle">
+          <Button
+            icon="question-circle"
+            href={KoCalendarConstants.helpVideoLink}
+            target="blank"
+          >
             Check how to put available time
           </Button>
         </p>
@@ -181,7 +185,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
         <style jsx>{`
           .ko-description {
             display: flex;
-            width: ${ `${KoCalendarConstants.rulerColumnWidthNum + KoCalendarConstants.dayColumnWidthNum * presentationDates.length}px` };
+            width: ${ `${KoCalendarConstants.rulerColumnWidthNum + KoCalendarConstants.dayColumnWidthNum * presentationDates.length}px`};
             align-items: baseline;
             justify-content: space-between;
           }
