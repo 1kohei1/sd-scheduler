@@ -12,7 +12,6 @@ import AppLayout from '../components/AppLayout';
 import DashboardSider from '../components/DashboardSider';
 import Overview from '../components/Overview';
 import MyCalendar from '../components/MyCalendar';
-import Schedule from '../components/Schedule';
 import { DateConstants } from '../models/Constants';
 
 export interface DashboardProps {
