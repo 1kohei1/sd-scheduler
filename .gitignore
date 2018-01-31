@@ -3,5 +3,6 @@ node_modules
 .dist
 *.js
 !front/static/*.js
+!frontend-env.js
 *.map
 .env

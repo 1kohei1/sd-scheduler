@@ -8,6 +8,7 @@
         "libraryName": "antd",
         "style": false
       }
-    ]
+    ],
+    ["transform-define", "./frontend-env.js"]
   ]
 }
