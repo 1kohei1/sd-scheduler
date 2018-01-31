@@ -1,6 +1,6 @@
 import { Response } from 'express';
 
-export default class Util {
+export default class APIUtil {
   static successResponse(info: Object, data: any, res: Response) {
     res.json({
       success: true,
