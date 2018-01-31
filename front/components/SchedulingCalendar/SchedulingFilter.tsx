@@ -4,9 +4,12 @@ import { Form, Checkbox, Button } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import FilterQuery from '../../models/FilterQuery';
+import { Semester } from '../../models/Semester';
 
 export interface SchedulingFilterProps {
-  form: WrappedFormUtils,
+  form: WrappedFormUtils;
+  semester: Semester;
+  filterQuery: FilterQuery;
 }
 
 const formItemLayout = {
