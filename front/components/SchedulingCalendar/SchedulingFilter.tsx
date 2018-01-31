@@ -40,7 +40,7 @@ class SchedulingFilter extends React.Component<SchedulingFilterProps, any> {
         return;
       }
 
-      // Update router
+      // Update router. Ref: https://github.com/zeit/next.js/#imperatively
       Router.push({
         pathname: '/',
         query: {
