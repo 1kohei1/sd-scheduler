@@ -3,13 +3,16 @@ import { Row, Col } from 'antd';
 const fetch = require('isomorphic-unfetch');
 
 import AppLayout from '../components/AppLayout';
+import FilterQuery from '../models/FilterQuery';
+import InitialProps from '../models/InitialProps';
+import SchedulingFilter from '../components/SchedulingCalendar/SchedulingFilter';
 import SchedulingCalendar from '../components/SchedulingCalendar/SchedulingCalendar';
 
 interface Props {
 }
 
 class Index extends React.Component<Props, {}> {
-  static async getInitialProps() {
+  static async getInitialProps(props: InitialProps) {
     return {};
   }
 
@@ -27,9 +30,8 @@ class Index extends React.Component<Props, {}> {
               offset: 3
             }}
           >
-            <SchedulingCalendar
-
-            />
+            <SchedulingFilter />
+            <SchedulingCalendar />
           </Col>
         </Row>
       </AppLayout>

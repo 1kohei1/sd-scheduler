@@ -1,7 +1,5 @@
 import * as React from 'react';
 
-import Filter from './Filter';
-
 export interface SchedulingCalendarProps {
 }
 
@@ -9,9 +7,7 @@ export default class SchedulingCalendar extends React.Component<SchedulingCalend
   render() {
     return (
       <div>
-        <Filter
-
-        />
+        Scheduling calendar
       </div>
     );
   }
