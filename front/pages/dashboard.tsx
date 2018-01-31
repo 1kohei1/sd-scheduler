@@ -13,6 +13,7 @@ import DashboardSider from '../components/DashboardSider';
 import Overview from '../components/Overview';
 import MyCalendar from '../components/MyCalendar';
 import { DateConstants } from '../models/Constants';
+import Api from '../utils/Api';
 
 export interface DashboardProps {
   url: InitialProps;
@@ -29,51 +30,57 @@ export default class Dashboard extends React.Component<DashboardProps, Dashboard
   util: SemesterUtil = new SemesterUtil();
 
   static async getInitialProps(context: InitialProps) {
-    // Get list of semesters to display in the left column
-
-    const tempFunc = (dateStr: string) => {
-      return moment.tz(dateStr, `${DateConstants.dateFormat} ${DateConstants.hourFormat}`, DateConstants.timezone);
-    }
+    const semesters = await Api.getSemesters();
+    console.log(semesters);
 
     return {
-      semesters: [{
-        _id: ObjectID.generate(),
-        key: '2018_spring',
-        displayName: '2018 Spring',
-        presentationDates: [{
-          _id: ObjectID.generate(),
-          start: tempFunc('2018-04-25 9 AM'),
-          end: tempFunc('2018-04-25 6 PM'),
-        }, {
-          _id: ObjectID.generate(),
-          // start: tempFunc('2018-04-26 11 AM'),
-          // end:  tempFunc('2018-04-26 3 PM'),
-          start: tempFunc('2018-04-26 9 AM'),
-          end: tempFunc('2018-04-26 6 PM'),
-        }, {
-          _id: ObjectID.generate(),
-          // start: tempFunc('2018-04-27 11 AM'),
-          // end:  tempFunc('2018-04-27 6 PM'),
-          start: tempFunc('2018-04-27 9 AM'),
-          end: tempFunc('2018-04-27 6 PM'),
-        }],
-      }, {
-        _id: ObjectID.generate(),
-        key: '2017_fall',
-        displayName: '2017 Fall',
-        presentationDates: [],
-      }, {
-        _id: ObjectID.generate(),
-        key: '2017_summer',
-        displayName: '2017 Summer',
-        presentationDates: [],
-      }, {
-        _id: ObjectID.generate(),
-        key: '2017_spring',
-        displayName: '2017 Spring',
-        presentationDates: [],
-      }]
-    };
+      semesters,
+    }
+    // Get list of semesters to display in the left column
+
+    // const tempFunc = (dateStr: string) => {
+    //   return moment.tz(dateStr, `${DateConstants.dateFormat} ${DateConstants.hourFormat}`, DateConstants.timezone);
+    // }
+
+    // return {
+    //   semesters: [{
+    //     _id: ObjectID.generate(),
+    //     key: '2018_spring',
+    //     displayName: '2018 Spring',
+    //     presentationDates: [{
+    //       _id: ObjectID.generate(),
+    //       start: tempFunc('2018-04-25 9 AM'),
+    //       end: tempFunc('2018-04-25 6 PM'),
+    //     }, {
+    //       _id: ObjectID.generate(),
+    //       // start: tempFunc('2018-04-26 11 AM'),
+    //       // end:  tempFunc('2018-04-26 3 PM'),
+    //       start: tempFunc('2018-04-26 9 AM'),
+    //       end: tempFunc('2018-04-26 6 PM'),
+    //     }, {
+    //       _id: ObjectID.generate(),
+    //       // start: tempFunc('2018-04-27 11 AM'),
+    //       // end:  tempFunc('2018-04-27 6 PM'),
+    //       start: tempFunc('2018-04-27 9 AM'),
+    //       end: tempFunc('2018-04-27 6 PM'),
+    //     }],
+    //   }, {
+    //     _id: ObjectID.generate(),
+    //     key: '2017_fall',
+    //     displayName: '2017 Fall',
+    //     presentationDates: [],
+    //   }, {
+    //     _id: ObjectID.generate(),
+    //     key: '2017_summer',
+    //     displayName: '2017 Summer',
+    //     presentationDates: [],
+    //   }, {
+    //     _id: ObjectID.generate(),
+    //     key: '2017_spring',
+    //     displayName: '2017 Spring',
+    //     presentationDates: [],
+    //   }]
+    // };
   }
 
   constructor(props: DashboardProps) {
