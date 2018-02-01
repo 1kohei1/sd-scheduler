@@ -57,9 +57,11 @@ class Location extends React.Component<LocationProps, {}> {
   }
 
   info() {
-    return (
-      <div>HEC 450</div>
-    );
+    if (this.props.semester.location) {
+      return <div>{this.props.semester.location}</div>
+    } else {
+      return <div>Location is not defined yet.</div>
+    }
   }
 
   form() {

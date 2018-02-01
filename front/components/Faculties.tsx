@@ -51,14 +51,17 @@ export default class Faculties extends React.Component<FacultiesProps, any> {
   }
 
   info() {
-    return (
-      <div>
-        <div>AAA AAA | aaa@aaa.com</div>
-        <div>BBB BBB | bbb@bbb.com</div>
-        <div>CCC CCC | ccc@ccc.com</div>
-        <div>DDD DDD | ddd@ddd.com</div>
-      </div>
-    );
+    if (this.props.semester.faculties && this.props.semester.faculties.length > 0) {
+      return (
+        <div>
+          {this.props.semester.faculties.map((faculty, index) => (
+            <div key={index}>AAA AAA | aaa@aaa.com</div>
+          ))}
+        </div>
+      )
+    } else {
+      return <div>No faculties are found.</div>
+    }
   }
 
   form() {

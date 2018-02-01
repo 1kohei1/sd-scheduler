@@ -1,3 +1,5 @@
+import TimeSlot from './TimeSlot';
+
 export interface Semester {
   _id?: string;
   key: string;
@@ -8,7 +10,9 @@ export interface Semester {
     _id: string;
     start: string;
     end: string;
-  }]
+  }];
+  location: string;
+  faculties: any[];
 }
 
 export const Menus = [{

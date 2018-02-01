@@ -113,6 +113,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
 
     this.eventItem = this.eventItem.bind(this);
     this.onAvailableSlotChange = this.onAvailableSlotChange.bind(this);
+    this.calendar = this.calendar.bind(this);
   }
 
   eventItem(event: any, style: any) {
@@ -153,39 +154,51 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
     }
   }
 
-  render() {
-    // Semester.presentationDates are in string format. So convert them to moment.
-    const presentationDates = this.props.semester.presentationDates.map(presentationDate => {
-      return {
-        _id: presentationDate._id,
-        start: DatetimeUtil.getMomentFromISOString(presentationDate.start),
-        end: DatetimeUtil.getMomentFromISOString(presentationDate.end)
-      };
-    });
+  calendar() {
+    if (this.props.semester.presentationDates && this.props.semester.presentationDates.length > 0) {
+      // Semester.presentationDates are in string format. So convert them to moment.
+      const presentationDates = this.props.semester.presentationDates.map(presentationDate => {
+        return {
+          _id: presentationDate._id,
+          start: DatetimeUtil.getMomentFromISOString(presentationDate.start),
+          end: DatetimeUtil.getMomentFromISOString(presentationDate.end)
+        };
+      });
 
+      return (
+        <div>
+          <p className="ko-description">
+            You can put your available time and check assigned presentations.
+        <Button
+              icon="question-circle"
+              href={KoCalendarConstants.helpVideoLink}
+              target="blank"
+            >
+              Check how to put available time
+        </Button>
+          </p>
+          <KoCalendar
+            presentationDates={presentationDates}
+            presentations={this.state.presentations.toArray()}
+            availableSlots={this.state.availableSlots.toArray()}
+            onAvailableSlotChange={this.onAvailableSlotChange}
+          />
+        </div>
+      )
+    } else {
+      return <div>Presentation dates are not defined. Once the date is set, the system sends email. Please check later!</div>
+    }
+  }
+
+  render() {
     return (
       <div>
         <h1>My Calendar</h1>
-        <p className="ko-description">
-          You can put your available time and check assigned presentations.
-          <Button
-            icon="question-circle"
-            href={KoCalendarConstants.helpVideoLink}
-            target="blank"
-          >
-            Check how to put available time
-          </Button>
-        </p>
-        <KoCalendar
-          presentationDates={presentationDates}
-          presentations={this.state.presentations.toArray()}
-          availableSlots={this.state.availableSlots.toArray()}
-          onAvailableSlotChange={this.onAvailableSlotChange}
-        />
+        {this.calendar()}
         <style jsx>{`
           .ko-description {
             display: flex;
-            width: ${ `${KoCalendarConstants.rulerColumnWidthNum + KoCalendarConstants.dayColumnWidthNum * presentationDates.length}px`};
+            width: ${ `${KoCalendarConstants.rulerColumnWidthNum + KoCalendarConstants.dayColumnWidthNum * this.props.semester.presentationDates.length}px`};
             align-items: baseline;
             justify-content: space-between;
           }

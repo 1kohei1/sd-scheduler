@@ -102,6 +102,9 @@ class Date extends React.Component<DateProps, DateState> {
   }
 
   info() {
+    if (!this.props.semester.presentationDates || this.props.semester.presentationDates.length === 0) {
+      return <div>Date is not defined yet.</div>
+    }
     return (
       <div>
         {this.props.semester.presentationDates.map(date => (
