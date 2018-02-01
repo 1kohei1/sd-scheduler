@@ -134,6 +134,10 @@ export default class Dashboard extends React.Component<DashboardProps, Dashboard
   }
 
   content(menu: string, semester: Semester) {
+    if (!semester) {
+      return null;
+    }
+
     if (menu === 'overview') {
       return <Overview semester={semester} />
     } else if (menu === 'calendar') {
