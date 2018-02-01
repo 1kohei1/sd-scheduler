@@ -7,6 +7,7 @@ const express = require('express');
 const next = require('next');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const session = require('express-session');
 import { Application, Request, Response } from 'express';
 import { Server } from 'next';
 
@@ -26,10 +27,25 @@ app.prepare()
 
     const server: Application = express();
 
+    // Set up to parse POST body
     server.use(bodyParser.json());
     server.use(bodyParser.urlencoded({ 
       extended: true
     }));
+
+    // Set up session configuration
+    // The default server-side session storage, MemoryStore, is purposely not designed for a production environment.
+    // However in this app, the number of session would be at most 20, so it's ok to use MemoryState
+    server.use(session({
+      cookie: {
+        httpOnly: true,
+        maxAge: 60 * 60 * 24 * 60 * 1000, // Set cookie expire in 60 days
+        secure: process.env.NODE_ENV === 'production' ? true : false,
+        resave: true,
+        saveUninitialized: true,
+        secret: process.env.SECRET, // Used this website: https://www.random.org/strings/
+      }
+    }))
 
     // Set up API routes
     require('./api/routes/index.route')(server);
