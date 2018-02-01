@@ -6,6 +6,7 @@ if (process.env.NODE_ENV !== 'production') {
 const express = require('express');
 const next = require('next');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 import { Application, Request, Response } from 'express';
 import { Server } from 'next';
 
@@ -24,6 +25,11 @@ app.prepare()
     })
 
     const server: Application = express();
+
+    server.use(bodyParser.json());
+    server.use(bodyParser.urlencoded({ 
+      extended: true
+    }));
 
     // Set up API routes
     require('./api/routes/index.route')(server);

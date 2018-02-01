@@ -18,6 +18,7 @@
     "@types/immutable": "^3.8.7",
     "antd": "^3.1.0",
     "babel-plugin-import": "^1.6.3",
+    "body-parser": "^1.18.2",
     "bson-objectid": "^1.2.2",
     "express": "^4.16.2",
     "immutable": "^3.8.2",
