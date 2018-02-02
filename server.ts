@@ -51,6 +51,7 @@ app.prepare()
     // Set up passport
     server.use(passport.initialize());
     server.use(passport.session());
+    require('./config/passport')(passport);
 
     // Set up API routes
     require('./api/routes/index.route')(server);
