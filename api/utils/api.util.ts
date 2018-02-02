@@ -8,11 +8,13 @@ export default class APIUtil {
     })
   }
 
-  static errorResponse(info: Object, message: string, res: Response) {
+  // errors are form property validation message
+  static errorResponse(info: Object, message: string, errors: Object = {}, res: Response) {
     this.logError(info);
     res.json({
       success: false,
-      message
+      message,
+      errors
     });
   }
 

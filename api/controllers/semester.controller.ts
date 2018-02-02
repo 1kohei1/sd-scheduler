@@ -15,6 +15,6 @@ module.exports.getSemesters = (req: Request, res: Response) => {
   })
   .catch(err => {
     info.debugInfo.message = err.message;
-    APIUtil.errorResponse(info, 'Failed to retrieve semesters', res);
+    APIUtil.errorResponse(info, 'Failed to retrieve semesters', {}, res);
   });
 }

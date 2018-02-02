@@ -22,6 +22,7 @@
     "bson-objectid": "^1.2.2",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
+    "express-validator": "^4.3.0",
     "immutable": "^3.8.2",
     "isomorphic-unfetch": "^2.0.0",
     "moment": "^2.20.1",
