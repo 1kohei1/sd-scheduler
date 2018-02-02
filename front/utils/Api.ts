@@ -35,7 +35,7 @@ export default class Api {
       if (res.success) {
         return Promise.resolve(res.data);
       } else {
-        return Promise.reject(res.message);
+        return Promise.reject(res);
       }
     } else {
       return Promise.reject('Invalid request method');

@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { Form, Icon, Input, Button, Checkbox } from 'antd';
+import Router from 'next/router';
+import { WrappedFormUtils } from 'antd/lib/form/Form';
+
 import AppLayout from '../components/AppLayout';
 import InitialProps from '../models/InitialProps';
-import { WrappedFormUtils } from 'antd/lib/form/Form';
 import Api from '../utils/Api';
 
 const FormItem = Form.Item;
@@ -36,8 +38,12 @@ class Login extends React.Component<LoginProps, LoginState> {
       if (err) {
         console.log(err);
       } else {
-        const data = await Api.login(values);
-        console.log(data);
+        try {
+          const data = await Api.login(values);
+          Router.push('/dashboard');
+        } catch (err) {
+          console.log('error', err);
+        }
       }
     })
   }

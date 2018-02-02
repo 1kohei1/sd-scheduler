@@ -5,7 +5,6 @@ const passport = require('passport');
 module.exports = (server: Application) => {
   server.post(
     '/api/users/login',
-    passport.authenticate('local'),
     userController.login
   );
 }
