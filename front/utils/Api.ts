@@ -56,7 +56,6 @@ export default class Api {
     const res = await fetch(`${this.getBackendUrl()}${path}`, {
       method: 'POST',
       headers: myHeaders,
-      mode: 'cors',
       body: JSON.stringify(body),
     });
     const data = await res.json();
