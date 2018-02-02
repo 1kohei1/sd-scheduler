@@ -5,6 +5,11 @@ enum RequestMethod {
   POST,
 }
 
+interface loginBody {
+  email: string;
+  password: string;
+}
+
 export default class Api {
   static async getSemesters(query: string = '') {
     return await this.makeRequest(RequestMethod.GET, `/api/semesters?${query}`);
@@ -12,6 +17,10 @@ export default class Api {
 
   static async getSample() {
     return await this.get('/api/sample');
+  }
+
+  static async login(body: loginBody) {
+    return await this.makeRequest(RequestMethod.POST, `/api/users/login`, body);
   }
 
   private static async makeRequest(method: RequestMethod, path: string, body: Object = {}) {
@@ -41,7 +50,18 @@ export default class Api {
   }
 
   private static async post(path: string, body: Object = {}) {
+    const myHeaders = new Headers();
+    myHeaders.append('Content-Type', 'application/json');
 
+    const res = await fetch(`${this.getBackendUrl()}${path}`, {
+      method: 'POST',
+      headers: myHeaders,
+      mode: 'cors',
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+
+    return data;
   }
 
   private static getBackendUrl() {

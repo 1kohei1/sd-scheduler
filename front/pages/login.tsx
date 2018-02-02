@@ -3,6 +3,7 @@ import { Form, Icon, Input, Button, Checkbox } from 'antd';
 import AppLayout from '../components/AppLayout';
 import InitialProps from '../models/InitialProps';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
+import Api from '../utils/Api';
 
 const FormItem = Form.Item;
 
@@ -31,11 +32,12 @@ class Login extends React.Component<LoginProps, LoginState> {
   handleSubmit(e: React.FormEvent<any>) {
     e.preventDefault();
 
-    this.props.form.validateFields((err, values) => {
+    this.props.form.validateFields(async (err, values) => {
       if (err) {
         console.log(err);
       } else {
-        console.log(values);
+        const data = await Api.login(values);
+        console.log(data);
       }
     })
   }
