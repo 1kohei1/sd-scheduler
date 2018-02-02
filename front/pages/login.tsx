@@ -56,13 +56,29 @@ class Login extends React.Component<LoginProps, LoginState> {
         <div className="form-wrapper">
           <Form onSubmit={this.handleSubmit}>
             <FormItem>
-              {getFieldDecorator('email')(
+              {getFieldDecorator('email', {
+                rules: [{
+                  required: true,
+                  message: 'Please enter email'
+                }, {
+                  type: 'email',
+                  message: 'It is not valid email',
+                }]
+              })(
                 <Input prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Email" />
               )}
             </FormItem>
             <FormItem>
-              {getFieldDecorator('password')(
-                <Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Password" />
+              {getFieldDecorator('password', {
+                rules: [{
+                  required: true,
+                  message: 'Please enter password'
+                }, {
+                  min: 6,
+                  message: 'Password must be minimum 6 characters',
+                }]
+              })(
+                <Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="Password" />
               )}
             </FormItem>
             <FormItem>
