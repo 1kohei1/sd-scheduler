@@ -60,14 +60,11 @@ class Login extends React.Component<LoginProps, LoginState> {
               )}
             </FormItem>
             <FormItem>
-              {getFieldDecorator('remember')(
-                <Checkbox>Remember me</Checkbox>
-              )}
-              <a className="login-form-forgot" href="">Forgot password</a>
-            </FormItem>
-            <FormItem>
               <Button htmlType="submit" style={{ width: '100%' }} type="primary" size="large">Submit</Button>
             </FormItem>
+            <div style={{ textAlign: 'center' }}>
+              <a className="" href="">Forgot password</a>
+            </div>
           </Form>
         </div>
         <style jsx>{`
@@ -75,9 +72,6 @@ class Login extends React.Component<LoginProps, LoginState> {
             max-width: 500px;
             margin: auto;
             margin-top: 100px;
-          }
-          .form-wrapper .login-form-forgot {
-            float: right;
           }
         `}
         </style>
