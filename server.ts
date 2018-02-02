@@ -8,6 +8,7 @@ const next = require('next');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const passport = require('passport');
 import { Application, Request, Response } from 'express';
 import { Server } from 'next';
 
@@ -29,7 +30,7 @@ app.prepare()
 
     // Set up to parse POST body
     server.use(bodyParser.json());
-    server.use(bodyParser.urlencoded({ 
+    server.use(bodyParser.urlencoded({
       extended: true
     }));
 
@@ -41,11 +42,15 @@ app.prepare()
         httpOnly: true,
         maxAge: 60 * 60 * 24 * 60 * 1000, // Set cookie expire in 60 days
         secure: process.env.NODE_ENV === 'production' ? true : false,
-        resave: true,
-        saveUninitialized: true,
-        secret: process.env.SECRET, // Used this website: https://www.random.org/strings/
-      }
-    }))
+      },
+      resave: true,
+      saveUninitialized: true,
+      secret: process.env.SECRET, // Used this website: https://www.random.org/strings/
+    }));
+
+    // Set up passport
+    server.use(passport.initialize());
+    server.use(passport.session());
 
     // Set up API routes
     require('./api/routes/index.route')(server);
