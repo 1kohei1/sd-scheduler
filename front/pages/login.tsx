@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Icon, Input, Button, Checkbox } from 'antd';
+import { Form, Icon, Input, Button, Alert } from 'antd';
 import Router from 'next/router';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
@@ -14,18 +14,14 @@ export interface LoginProps {
 }
 
 interface LoginState {
-  email: string;
-  password: string;
-  remember: boolean
+  message: string;
 }
 
 class Login extends React.Component<LoginProps, LoginState> {
   constructor(props: LoginProps) {
     super(props);
     this.state = {
-      email: '',
-      password: '',
-      remember: true
+      message: '',
     }
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -41,8 +37,10 @@ class Login extends React.Component<LoginProps, LoginState> {
         try {
           const data = await Api.login(values);
           Router.push('/dashboard');
-        } catch (err) {
-          console.log('error', err);
+        } catch (errRes) {
+          this.setState({
+            message: errRes.message,
+          })
         }
       }
     })
@@ -55,6 +53,14 @@ class Login extends React.Component<LoginProps, LoginState> {
       <AppLayout>
         <div className="form-wrapper">
           <Form onSubmit={this.handleSubmit}>
+            {this.state.message && this.state.message.length > 0 && (
+              <FormItem>
+                <Alert
+                  type="error"
+                  message={this.state.message}
+                />
+              </FormItem>
+            )}
             <FormItem>
               {getFieldDecorator('email', {
                 rules: [{
@@ -66,7 +72,7 @@ class Login extends React.Component<LoginProps, LoginState> {
                 }]
               })(
                 <Input prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Email" />
-              )}
+                )}
             </FormItem>
             <FormItem>
               {getFieldDecorator('password', {
@@ -79,7 +85,7 @@ class Login extends React.Component<LoginProps, LoginState> {
                 }]
               })(
                 <Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="Password" />
-              )}
+                )}
             </FormItem>
             <FormItem>
               <Button htmlType="submit" style={{ width: '100%' }} type="primary" size="large">Submit</Button>
