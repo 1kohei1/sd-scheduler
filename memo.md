@@ -54,6 +54,7 @@ TODO:
 NOTES:
 
 * Date displayed in the browser is in US Eastern time. This is because this project is developed for UCF.
+* async/await is currently used in the client side only. This is new and I would like to get used to first.
 
 ### Flows
 
