@@ -21,10 +21,17 @@ module.exports.login = (req: Request, res: Response, next: any) => {
           info.debugInfo.err = err;
           APIUtil.errorResponse(info, 'Invalid email or password', {}, res);
         } else {
-          APIUtil.redirectResponse(info, {
-            pathname: '/dashboard',
-            query: {}
-          }, res);
+          req.logIn(user, (err) => {
+            if (err) {
+              info.debugInfo.err = err;
+              APIUtil.errorResponse(info, 'Failed to login. The system administrator will take a look.', {}, res);
+            } else {
+              APIUtil.redirectResponse(info, {
+                pathname: '/dashboard',
+                query: {}
+              }, res);
+            }
+          });
         }
       });
     }

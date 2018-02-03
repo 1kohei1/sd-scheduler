@@ -2,6 +2,8 @@ import { Application, Request, Response } from 'express';
 const userController = require('../controllers/user.controller');
 const passport = require('passport');
 
+import APIUtil from '../utils/api.util';
+
 module.exports = (server: Application) => {
   server.post(
     '/api/users/login',
@@ -10,7 +12,7 @@ module.exports = (server: Application) => {
 
   server.post(
     '/api/users/logout',
-    passport.authorize('local'),
+    APIUtil.isAuthenticated,
     userController.logout
   )
 }

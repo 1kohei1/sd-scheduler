@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 export default class APIUtil {
   static successResponse(info: Object, data: any, res: Response) {
@@ -23,6 +23,17 @@ export default class APIUtil {
       message,
       errors
     });
+  }
+
+  static isAuthenticated(req: Request, res: Response, next: any) {
+    if (req.isAuthenticated()) {
+      next();
+    } else {
+      APIUtil.redirectResponse({}, {
+        pathname: '/login',
+        query: {},
+      }, res);
+    }
   }
 
   private static logError(info: any) {
