@@ -1,12 +1,25 @@
 import { Server } from 'next';
 import { Application, Request, Response } from 'express';
 
+import APIUtil from '../api/utils/api.util';
+
 module.exports = (app: Server, server: Application) => {
   server.get('/users/:id', (req: Request, res: Response) => {
     const actualPage = '/users';
     const queryParams = { id: req.params.id };
     app.render(req, res, actualPage, queryParams);
   });
+
+  server.get(
+    '/dashboard', 
+    (req: Request, res: Response) => {
+      if (req.isAuthenticated()) {
+        app.render(req, res, '/dashboard', {});
+      } else {
+        res.redirect('/login?message=You are not authenticated. Please login first');
+      }
+    }
+  );
 
   server.get('/dashboard/*', (req: Request, res: Response) => {
     let url = req.url;
