@@ -2,13 +2,33 @@ import Head from 'next/head'
 import Link from 'next/link'
 import * as NProgress from 'nprogress'
 import Router from 'next/router'
+import { Layout, Button, Dropdown, Menu, Icon } from 'antd';
 
-import { Layout, Button } from 'antd';
+import Api from '../utils/Api';
 
 // Loading animation
-Router.onRouteChangeStart = (url) => NProgress.start()
-Router.onRouteChangeComplete = () => NProgress.done()
-Router.onRouteChangeError = () => NProgress.done()
+Router.onRouteChangeStart = (url) => NProgress.start();
+Router.onRouteChangeComplete = () => NProgress.done();
+Router.onRouteChangeError = () => NProgress.done();
+
+const onClick = (obj: any) => {
+  if (obj.key === '2') {
+    Api.logout();
+  }
+}
+
+const menu = (
+  <Menu onClick={onClick}>
+    <Menu.Item key={1}>
+      <Link href="/account">
+        <a>Account</a>
+      </Link>
+    </Menu.Item>
+    <Menu.Item key={2}>
+      Logout
+    </Menu.Item>
+  </Menu>
+)
 
 const AppLayout = (props: any) => (
   <div style={{ minHeight: '100%' }}>
@@ -27,14 +47,19 @@ const AppLayout = (props: any) => (
             <Link href="/"><a style={{ color: 'white' }}>LOGO</a></Link>
           </div>
           <div>
-            <Link href="/login">
+            {/* <Link href="/login">
               <Button ghost>Login</Button>
-            </Link>
+            </Link> */}
+            <Dropdown overlay={menu}>
+              <Button ghost>
+                Prof name <Icon type="down" />
+              </Button>
+            </Dropdown>
           </div>
         </div>
       </Layout.Header>
     </Layout>
-    { props.children }
+    {props.children}
     <style jsx>{`
       .ko-header {
         display: flex;

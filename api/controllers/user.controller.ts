@@ -22,7 +22,7 @@ module.exports.login = (req: Request, res: Response, next: any) => {
           APIUtil.errorResponse(info, 'Invalid email or password', {}, res);
         } else {
           APIUtil.redirectResponse(info, {
-            url: '/dashboard',
+            pathname: '/dashboard',
             query: {}
           }, res);
         }

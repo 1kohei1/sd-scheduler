@@ -24,6 +24,10 @@ export default class Api {
     return await this.makeRequest(RequestMethod.POST, `/api/users/login`, body);
   }
 
+  static async logout() {
+    return await this.makeRequest(RequestMethod.POST, '/api/users/logout');
+  }
+
   private static async makeRequest(method: RequestMethod, path: string, body: Object = {}) {
     let res;
     if (method === RequestMethod.GET) {
