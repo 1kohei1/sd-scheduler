@@ -1,11 +1,26 @@
 import { Model, model, Schema } from 'mongoose';
 
 const FacultySchema = new Schema({
-  emails: [String],
-  password: String,
-  firstName: String,
-  lastName: String,
-  isAdmin: Boolean,
+  emails: [{
+    type: String,
+    required: true
+  }],
+  password: {
+    type: String,
+    required: true,
+  },
+  firstName: {
+    type: String,
+    required: true,
+  },
+  lastName: {
+    type: String,
+    required: true,
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false
+  },
   signedup_at: Date, // When the password is set
   register_at: Date, // When the admin adds the faculty
   created_at: Date,
