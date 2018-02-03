@@ -15,6 +15,7 @@ export interface LoginProps {
 
 interface LoginState {
   message: string;
+  loading: boolean;
 }
 
 class Login extends React.Component<LoginProps, LoginState> {
@@ -22,6 +23,7 @@ class Login extends React.Component<LoginProps, LoginState> {
     super(props);
     this.state = {
       message: '',
+      loading: false,
     }
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -35,11 +37,15 @@ class Login extends React.Component<LoginProps, LoginState> {
         console.log(err);
       } else {
         try {
+          this.setState({
+            loading: true,
+          });
           const data = await Api.login(values);
           Router.push('/dashboard');
         } catch (errRes) {
           this.setState({
             message: errRes.message,
+            loading: false,
           })
         }
       }
@@ -88,7 +94,9 @@ class Login extends React.Component<LoginProps, LoginState> {
                 )}
             </FormItem>
             <FormItem>
-              <Button htmlType="submit" style={{ width: '100%' }} type="primary" size="large">Submit</Button>
+              <Button htmlType="submit" style={{ width: '100%' }} type="primary" size="large" loading={this.state.loading}>
+                Submit
+              </Button>
             </FormItem>
             <div style={{ textAlign: 'center' }}>
               <a className="" href="">Forgot password</a>
