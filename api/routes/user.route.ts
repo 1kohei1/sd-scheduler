@@ -7,4 +7,10 @@ module.exports = (server: Application) => {
     '/api/users/login',
     userController.login
   );
+
+  server.post(
+    '/api/users/logout',
+    passport.authorize('local'),
+    userController.logout
+  )
 }

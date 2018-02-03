@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Form, Icon, Input, Button, Alert } from 'antd';
-import Router from 'next/router';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import AppLayout from '../components/AppLayout';
@@ -40,8 +39,7 @@ class Login extends React.Component<LoginProps, LoginState> {
           this.setState({
             loading: true,
           });
-          const data = await Api.login(values);
-          Router.push('/dashboard');
+          Api.login(values);
         } catch (errRes) {
           this.setState({
             message: errRes.message,

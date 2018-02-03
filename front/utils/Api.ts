@@ -1,4 +1,5 @@
 const fetch = require('isomorphic-unfetch');
+import Router from 'next/router';
 
 enum RequestMethod {
   GET,
@@ -33,7 +34,14 @@ export default class Api {
 
     if (res) {
       if (res.success) {
-        return Promise.resolve(res.data);
+        if (res.hasOwnProperty('redirect')) {
+          Router.push({
+            pathname: res.redirect.pathname,
+            query: res.redirect.query
+          });
+        } else {
+          return Promise.resolve(res.data);
+        }
       } else {
         return Promise.reject(res);
       }

@@ -5,7 +5,7 @@ import APIUtil from '../utils/api.util';
 
 module.exports.login = (req: Request, res: Response, next: any) => {
   const info: any = {
-    key: 'login',
+    key: '/api/users/login',
     debugInfo: {}
   };
 
@@ -21,9 +21,26 @@ module.exports.login = (req: Request, res: Response, next: any) => {
           info.debugInfo.err = err;
           APIUtil.errorResponse(info, 'Invalid email or password', {}, res);
         } else {
-          APIUtil.successResponse(info, null, res);
+          APIUtil.redirectResponse(info, {
+            url: '/dashboard',
+            query: {}
+          }, res);
         }
       });
     }
   })(req, res, next);
+}
+
+module.exports.logout = (req: Request, res: Response) => {
+  const info: any = {
+    key: '/api/users/logout',
+    debugInfo: {}
+  };
+
+  req.logOut();
+
+  APIUtil.redirectResponse(info, {
+    pathname: '/',
+    query: {}
+  }, res);
 }
