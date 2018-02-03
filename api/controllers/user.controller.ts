@@ -47,7 +47,9 @@ module.exports.logout = (req: Request, res: Response) => {
   req.logOut();
 
   APIUtil.redirectResponse(info, {
-    pathname: '/',
-    query: {}
+    pathname: '/login',
+    query: {
+      message: 'You are successfully logged out.'
+    }
   }, res);
 }

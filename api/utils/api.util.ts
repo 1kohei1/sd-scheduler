@@ -31,7 +31,9 @@ export default class APIUtil {
     } else {
       APIUtil.redirectResponse({}, {
         pathname: '/login',
-        query: {},
+        query: {
+          message: 'You are not authenticated. Please login first'
+        },
       }, res);
     }
   }

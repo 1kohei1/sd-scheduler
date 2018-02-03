@@ -3,26 +3,30 @@ import { Form, Icon, Input, Button, Alert } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import AppLayout from '../components/AppLayout';
-import InitialProps from '../models/InitialProps';
+import NextClientProps from '../models/NextClientProps';
 import Api from '../utils/Api';
 
 const FormItem = Form.Item;
 
-export interface LoginProps {
+export interface LoginProps extends NextClientProps {
   form: WrappedFormUtils
 }
 
 interface LoginState {
+  isError: boolean;
   message: string;
   loading: boolean;
 }
 
 class Login extends React.Component<LoginProps, LoginState> {
   constructor(props: LoginProps) {
+    const message = props.url.query.message || '';
+    
     super(props);
     this.state = {
-      message: '',
+      isError: message ? false : true,
       loading: false,
+      message,
     }
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -38,11 +42,13 @@ class Login extends React.Component<LoginProps, LoginState> {
         try {
           this.setState({
             loading: true,
+            message: '',
           });
-          Api.login(values);
+          await Api.login(values);
         } catch (errRes) {
           this.setState({
             message: errRes.message,
+            isError: true,
             loading: false,
           })
         }
@@ -60,7 +66,7 @@ class Login extends React.Component<LoginProps, LoginState> {
             {this.state.message && this.state.message.length > 0 && (
               <FormItem>
                 <Alert
-                  type="error"
+                  type={this.state.isError ? 'error' : 'success'}
                   message={this.state.message}
                 />
               </FormItem>
