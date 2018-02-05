@@ -51,6 +51,7 @@ TODO:
 - [ ] Make availability editable by text. Auto refresh on calendar. Date is at the header and input will look like the date input in overview
 - [ ] Create a video to explain how to put available time
 - [ ] Make redirect to where user used to be after success login (Wait release of Next 5: https://zeit.co/blog/next-canary)
+- [ ] Remove .env devendencies by adding babel configuration. Resource: https://github.com/zeit/next.js/tree/canary/examples/with-dotenv
 
 NOTES:
 
