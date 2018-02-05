@@ -12,6 +12,10 @@ interface loginBody {
 }
 
 export default class Api {
+  static async getUser() {
+    return await this.makeRequest(RequestMethod.GET, '/api/users');
+  }
+
   static async getSemesters(query: string = '') {
     return await this.makeRequest(RequestMethod.GET, `/api/semesters?${query}`);
   }

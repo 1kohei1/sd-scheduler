@@ -6,6 +6,7 @@ import Router from 'next/router'
 import { Layout, Button, Dropdown, Menu, Icon } from 'antd';
 
 import Api from '../utils/Api';
+import Faculty from '../models/Faculty';
 
 // Loading animation
 Router.onRouteChangeStart = (url) => NProgress.start();
@@ -32,12 +33,56 @@ const menu = (
 )
 
 export interface AppLayoutProps {
-
 }
 
-export default class AppLayout extends React.Component<AppLayoutProps, {}> {
+interface AppLayoutState {
+  user: Faculty | undefined;
+}
+
+export default class AppLayout extends React.Component<AppLayoutProps, AppLayoutState> {
   constructor(props: AppLayoutProps) {
     super(props);
+
+    this.state = {
+      user: undefined,
+    }
+
+    this.getUser();
+
+    this.rightAction = this.rightAction.bind(this);
+  }
+
+  private async getUser() {
+    const user = await Api.getUser();
+    console.log(user);
+
+    if (user) {
+      this.onUserUpdate(user);
+    }
+  }
+
+  private onUserUpdate(user: Faculty | undefined) {
+    this.setState({
+      user,
+    });
+  }
+
+  rightAction() {
+    if (this.state.user) {
+      return (
+        <Link href="/login">
+          <Button ghost>Login</Button>
+        </Link>
+      )
+    } else {
+      return (
+        <Dropdown overlay={menu}>
+          <Button ghost>
+            Prof name <Icon type="down" />
+          </Button>
+        </Dropdown>
+      )
+    }
   }
 
   render() {
@@ -58,14 +103,7 @@ export default class AppLayout extends React.Component<AppLayoutProps, {}> {
                 <Link href="/"><a style={{ color: 'white' }}>LOGO</a></Link>
               </div>
               <div>
-                {/* <Link href="/login">
-                <Button ghost>Login</Button>
-              </Link> */}
-                <Dropdown overlay={menu}>
-                  <Button ghost>
-                    Prof name <Icon type="down" />
-                  </Button>
-                </Dropdown>
+                {this.rightAction()}
               </div>
             </div>
           </Layout.Header>
