@@ -22,6 +22,11 @@ module.exports = (app: Server, server: Application) => {
   );
 
   server.get('/dashboard/*', (req: Request, res: Response) => {
+    // If not authenticated, redirect to login page
+    if (!req.isAuthenticated()) {
+      res.redirect('/login?message=You are not authenticated. Please login first');
+    }
+
     let url = req.url;
     // Remove the first slash and the last slash
     if (url.charAt(0) === '/') {
@@ -43,5 +48,5 @@ module.exports = (app: Server, server: Application) => {
 
     const actualPage = '/dashboard';
     app.render(req, res, actualPage, queryParams);
-  });
+ });
 }
