@@ -3,6 +3,15 @@ const passport = require('passport');
 
 import APIUtil from '../utils/api.util';
 
+module.exports.getUser = (req: Request, res: Response) => {
+  const info: any = {
+    key: '/api/users',
+    debugInfo: {}
+  };
+  
+  APIUtil.successResponse(info, req.user, res);
+}
+
 module.exports.login = (req: Request, res: Response, next: any) => {
   const info: any = {
     key: '/api/users/login',
