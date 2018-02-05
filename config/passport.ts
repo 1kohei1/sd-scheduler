@@ -12,7 +12,9 @@ module.exports = (passport: Authenticator) => {
     DBUtil.findFacultyById(id)
     .then(faculty => {
       if (faculty) {
-        done(null, faculty);
+        const f: any = faculty.toJSON();
+        delete f.password;
+        done(null, f);
       } else {
         done(null, undefined);
       }

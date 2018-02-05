@@ -4,8 +4,8 @@ export default interface Faculty {
   firstName: string;
   lastName: string;
   isAdmin: boolean;
-  signedup_at: Date;
-  register_at: Date;
-  created_at: Date;
-  updated_at: Date;
+  signedup_at: string; // ISO string
+  register_at: string; // ISO string
+  created_at: string; // ISO string
+  updated_at: string; // ISO string
 }
