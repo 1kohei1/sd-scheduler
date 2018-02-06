@@ -5,7 +5,7 @@ import * as NProgress from 'nprogress'
 import Router from 'next/router'
 import { Layout, Button, Dropdown, Menu, Icon } from 'antd';
 
-import Api from '../utils/Api';
+import UserUtil from '../utils/UserUtil';
 import Faculty from '../models/Faculty';
 
 // Loading animation
@@ -15,7 +15,7 @@ Router.onRouteChangeError = () => NProgress.done();
 
 const onClick = (obj: any) => {
   if (obj.key === '2') {
-    Api.logout();
+    UserUtil.logout();
   }
 }
 
@@ -40,6 +40,8 @@ interface AppLayoutState {
 }
 
 export default class AppLayout extends React.Component<AppLayoutProps, AppLayoutState> {
+  userUpdateKey = `AppLayout_${new Date().toISOString()}`;
+
   constructor(props: AppLayoutProps) {
     super(props);
 
@@ -47,18 +49,11 @@ export default class AppLayout extends React.Component<AppLayoutProps, AppLayout
       user: undefined,
     }
 
-    this.getUser();
+    UserUtil.registerOnUserUpdates(this.userUpdateKey, this.onUserUpdate.bind(this));
+    // To reflect change to the database, call updateUser
+    UserUtil.updateUser();
 
     this.rightAction = this.rightAction.bind(this);
-  }
-
-  private async getUser() {
-    const user = await Api.getUser();
-    console.log(user);
-
-    if (user) {
-      this.onUserUpdate(user);
-    }
   }
 
   private onUserUpdate(user: Faculty | undefined) {
@@ -67,20 +62,24 @@ export default class AppLayout extends React.Component<AppLayoutProps, AppLayout
     });
   }
 
+  componentWillUnmount() {
+    UserUtil.removeOnUserUpdates(this.userUpdateKey);
+  }
+
   rightAction() {
     if (this.state.user) {
+      return (
+        <Dropdown overlay={menu}>
+          <Button ghost>
+            Dr. {this.state.user.firstName} {this.state.user.lastName} <Icon type="down" />
+          </Button>
+        </Dropdown>
+      )
+    } else {
       return (
         <Link href="/login">
           <Button ghost>Login</Button>
         </Link>
-      )
-    } else {
-      return (
-        <Dropdown overlay={menu}>
-          <Button ghost>
-            Prof name <Icon type="down" />
-          </Button>
-        </Dropdown>
       )
     }
   }

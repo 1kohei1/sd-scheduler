@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Row, Col, Button } from 'antd';
 import ObjectID from 'bson-objectid';
 import * as moment from 'moment-timezone';
-const fetch = require('isomorphic-unfetch');
+import Link from 'next/link'
 
 import AppLayout from '../components/AppLayout';
 import FilterQuery from '../models/FilterQuery';
@@ -88,6 +88,9 @@ class Index extends React.Component<Props, {}> {
             </div>
           </Col>
         </Row>
+        <Link href="/dashboard">
+          <a>Dashboard</a>
+        </Link>
       </AppLayout>
     )
   }
