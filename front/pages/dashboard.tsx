@@ -31,7 +31,11 @@ export default class Dashboard extends React.Component<DashboardProps, Dashboard
   util: SemesterUtil = new SemesterUtil();
 
   static async getInitialProps(context: InitialProps) {
-    await UserUtil.checkAuthentication();
+    // Check the authentication only when getInitialProps is executed on the client side.
+    // When this is executed on the server side, it's already handled by custom-routes.ts
+    if (!context.req) {
+      await UserUtil.checkAuthentication();
+    }
 
     const semesters = await Api.getSemesters();
 
