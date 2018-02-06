@@ -38,6 +38,14 @@ export default class APIUtil {
     }
   }
 
+  static isAuthorized(req: Request, res: Response, next: any) {
+    if (req.user.isAdmin) {
+      next();
+    } else {
+      APIUtil.errorResponse({}, 'You are not authorized to make this action', {}, res);
+    }
+  }
+
   static key(req: Request) {
     return `[${req.method}] ${req.url}`;
   }

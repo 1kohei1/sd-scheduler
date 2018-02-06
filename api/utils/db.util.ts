@@ -4,13 +4,27 @@ import Semester from '../models/Semester.model';
 import Faculty from '../models/Faculty.model';
 
 export default class DBUtil {
+  /**
+   * Semester
+   */
+
   static findSemesters(query: Object = {}) {
     return Semester.find(query);
   }
 
-  static findSemesterById(id: string | number | object) {
-    return Semester.findById(id);
+  static findSemesterById(_id: string | number | object) {
+    return Semester.findById(_id);
   }
+
+  static updateSemesterById(_id: string | number | object, update: Object) {
+    return Semester.findByIdAndUpdate(_id, update, {
+      runValidators: true,
+    });
+  }
+
+  /**
+   * Faculty
+   */
 
   static findFaculties(query: Object = {}) {
     return Faculty.find(query);
