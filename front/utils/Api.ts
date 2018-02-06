@@ -82,7 +82,7 @@ export default class Api {
     return data;
   }
 
-  private static getBackendUrl() {
+  static getBackendUrl() {
     return process.env.BACKEND_URL;
   }
 }

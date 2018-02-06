@@ -14,6 +14,7 @@ import Overview from '../components/Overview';
 import MyCalendar from '../components/MyCalendar';
 import { DateConstants } from '../models/Constants';
 import Api from '../utils/Api';
+import UserUtil from '../utils/UserUtil';
 
 export interface DashboardProps {
   url: InitialProps;
@@ -30,6 +31,8 @@ export default class Dashboard extends React.Component<DashboardProps, Dashboard
   util: SemesterUtil = new SemesterUtil();
 
   static async getInitialProps(context: InitialProps) {
+    await UserUtil.checkAuthentication();
+
     const semesters = await Api.getSemesters();
 
     return {

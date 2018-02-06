@@ -1,4 +1,5 @@
 import * as Cookie from 'js-cookie';
+import Router from 'next/router';
 
 import Api from './Api';
 import Faculty from '../models/Faculty';
@@ -32,6 +33,20 @@ export default class UserUtil {
     keys.forEach(key => {
       UserUtil.onUserUpdates[key](undefined);
     });
+  }
+
+  static async checkAuthentication() {
+    const user = await Api.getUser();
+
+    // It is ok to use client side only code here. Since the route is protected by front/custom-routes.ts
+    if (!user) {
+      Router.push({
+        pathname: '/login',
+        query: {
+          message: 'You are not authenticated. Please login first',
+        }
+      }, '/login')
+    }
   }
 
   static async updateUser() {
