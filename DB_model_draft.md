@@ -29,8 +29,8 @@ updated_at: date
 ### AvailableSlot
 
 _id: ObjectId
-faculty: Ref Faculty ObjectId
-semester: Ref Semester ObjectId
+faculty: Ref Faculty ObjectId, required
+semester: Ref Semester ObjectId, required
 availableSlots: [{
   _id: ObjectId;
   start: date;
