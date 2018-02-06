@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Icon, Select, DatePicker, Card, Button, Tooltip } from 'antd';
+import { Form, Icon, Select, DatePicker, Card, Button, Tooltip, Alert } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import { Semester } from '../models/Semester';
@@ -10,6 +10,7 @@ export interface FacultiesProps {
   semester: Semester,
   editing: boolean;
   updating: boolean;
+  error: string;
   toggleForm: (menu: string) => void;
   updateSemester: (updateObj: any, menu: string) => void;
 }
@@ -25,7 +26,8 @@ class Faculties extends React.Component<FacultiesProps, any> {
   }
 
   handleSubmit(e: React.FormEvent<any>) {
-
+    e.preventDefault();
+    
   }
 
   extra() {
@@ -72,7 +74,11 @@ class Faculties extends React.Component<FacultiesProps, any> {
   form() {
     return (
       <Form onSubmit={this.handleSubmit}>
-
+        {this.props.error.length > 0 && (
+          <Form.Item>
+            <Alert message={this.props.error} type="error" />
+          </Form.Item>
+        )}
         <Form.Item>
           <Button
             htmlType="submit"

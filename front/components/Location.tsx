@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Icon, Input, Card, Button } from 'antd';
+import { Form, Icon, Input, Card, Button, Alert } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import { Semester } from '../models/Semester';
@@ -10,6 +10,7 @@ export interface LocationProps {
   semester: Semester,
   editing: boolean;
   updating: boolean;
+  error: string;
   toggleForm: (menu: string) => void;
   updateSemester: (updateObj: any, menu: string) => void;
 }
@@ -70,6 +71,11 @@ class Location extends React.Component<LocationProps, {}> {
   form() {
     return (
       <Form onSubmit={this.handleSubmit}>
+        {this.props.error.length > 0 && (
+          <Form.Item>
+            <Alert message={this.props.error} type="error" />
+          </Form.Item>
+        )}
         <Form.Item>
           {this.props.form.getFieldDecorator('location', {
             rules: [{ required: true, message: 'Please enter the location!' }],

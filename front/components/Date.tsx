@@ -1,7 +1,7 @@
 import * as React from 'react';
 import ObjectID from 'bson-objectid';
 import { List } from 'immutable';
-import { Form, Icon, Select, DatePicker, Card, Button } from 'antd';
+import { Form, Icon, Select, DatePicker, Card, Button, Alert } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import { Semester } from '../models/Semester';
@@ -14,6 +14,7 @@ export interface DateProps {
   semester: Semester,
   editing: boolean;
   updating: boolean;
+  error: string;
   toggleForm: (menu: string) => void;
   updateSemester: (updateObj: any, menu: string) => void;
 }
@@ -171,6 +172,11 @@ class Date extends React.Component<DateProps, DateState> {
   form() {
     return (
       <Form onSubmit={this.handleSubmit}>
+        {this.props.error.length > 0 && (
+          <Form.Item>
+            <Alert message={this.props.error} type="error" />
+          </Form.Item>
+        )}
         {this.state.objectIdsInForm.map((id) => (
           <div style={{ display: 'flex', flexDirection: 'row' }} key={id}>
             <Form.Item style={{ marginRight: 8 }}>

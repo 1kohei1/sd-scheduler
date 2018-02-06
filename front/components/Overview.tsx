@@ -17,13 +17,13 @@ interface OverviewState {
     semester: Semester;
     presentationDatesEditing: boolean;
     presentationDatesUpdating: boolean;
+    presentationDatesError: string;
     locationEditing: boolean;
     locationLoading: boolean;
+    locationError: string;
     facultiesEditing: boolean;
     facultiesLoading: boolean;
-    isPresentationDatesEditing: boolean;
-    isLocationEditing: boolean;
-    isFacultiesEditing: boolean;
+    facultiesError: string;
   }
 }
 
@@ -46,14 +46,13 @@ export default class Overview extends React.Component<OverviewProps, any> {
       semester: props.semester,
       presentationDatesEditing: false,
       presentationDatesUpdating: false,
+      presentationDatesError: '',
       locationEditing: false,
       locationUpdating: false,
+      locationError: '',
       facultiesEditing: false,
       facultiesUpdating: false,
-
-      isPresentationDatesEditing: false,
-      isLocationEditing: false,
-      isFacultiesEditing: false,
+      facultiesError: '',
     };
 
     this.updateSemester = this.updateSemester.bind(this);
@@ -72,6 +71,7 @@ export default class Overview extends React.Component<OverviewProps, any> {
   async updateSemester(updateObj: any, prop: 'presentationDates' | 'location' | 'faculties') {
     const editingKey = `${prop}Editing`;
     const updatingKey = `${prop}Updating`;
+    const errorKey = `${prop}Error`;
 
     const newState: any = {};
     newState[updatingKey] = true;
@@ -85,13 +85,18 @@ export default class Overview extends React.Component<OverviewProps, any> {
       newState[editingKey] = false;
       newState[updatingKey] = false;
       newState.semester = semester.toObject();
+      newState[errorKey] = '';
       this.setState(newState);
 
       message.success('Successfully updated the semester');
     } catch (err) {
       newState[updatingKey] = false;
+      if (err.message) {
+        newState[errorKey] = err.message;
+      } else {
+        newState[err] = err;
+      }
       this.setState(newState);
-      console.log(err);
     }
   }
 
@@ -114,6 +119,7 @@ export default class Overview extends React.Component<OverviewProps, any> {
           semester={this.state.semester}
           editing={this.state.presentationDatesEditing}
           updating={this.state.presentationDatesUpdating}
+          error={this.state.presentationDatesError}
           toggleForm={this.toggleForm}
           updateSemester={this.updateSemester}
         />
@@ -122,6 +128,7 @@ export default class Overview extends React.Component<OverviewProps, any> {
           semester={this.state.semester}
           editing={this.state.locationEditing}
           updating={this.state.locationUpdating}
+          error={this.state.locationError}
           toggleForm={this.toggleForm}
           updateSemester={this.updateSemester}
         />
@@ -130,6 +137,7 @@ export default class Overview extends React.Component<OverviewProps, any> {
           semester={this.state.semester}
           editing={this.state.facultiesEditing}
           updating={this.state.facultiesUpdating}
+          error={this.state.facultiesError}
           toggleForm={this.toggleForm}
           updateSemester={this.updateSemester}
         />
