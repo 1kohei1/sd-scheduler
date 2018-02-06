@@ -35,6 +35,4 @@ module.exports.updateSemester = (req: Request, res: Response) => {
       info.debugInfo.message = err.message;
       APIUtil.errorResponse(info, 'Failed to update semester. The system administrator will take a look', {}, res);
     })
-
-  APIUtil.successResponse(info, {}, res);
 }
