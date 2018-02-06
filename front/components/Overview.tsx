@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Map } from 'immutable';
+import { message } from 'antd';
 
 import Date from './Date';
 import Location from './Location';
@@ -64,6 +65,8 @@ export default class Overview extends React.Component<OverviewProps, any> {
         semester: semester.toObject(),
       });
       this.toggleForm(menu);
+
+      message.success('Successfully updated the semester');
     } catch (err) {
       console.log(err);
     }
