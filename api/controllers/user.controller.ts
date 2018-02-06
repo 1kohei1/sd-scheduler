@@ -5,7 +5,7 @@ import APIUtil from '../utils/api.util';
 
 module.exports.getUser = (req: Request, res: Response) => {
   const info: any = {
-    key: '/api/users',
+    key: APIUtil.key(req),
     debugInfo: {}
   };
   
@@ -14,7 +14,7 @@ module.exports.getUser = (req: Request, res: Response) => {
 
 module.exports.login = (req: Request, res: Response, next: any) => {
   const info: any = {
-    key: '/api/users/login',
+    key: APIUtil.key(req),
     debugInfo: {}
   };
 
@@ -49,7 +49,7 @@ module.exports.login = (req: Request, res: Response, next: any) => {
 
 module.exports.logout = (req: Request, res: Response) => {
   const info: any = {
-    key: '/api/users/logout',
+    key: APIUtil.key(req),
     debugInfo: {}
   };
 

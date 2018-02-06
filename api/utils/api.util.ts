@@ -38,6 +38,10 @@ export default class APIUtil {
     }
   }
 
+  static key(req: Request) {
+    return `[${req.method}] ${req.url}`;
+  }
+
   private static logError(info: any) {
     console.log(`${info.key}: ${JSON.stringify(info.debugInfo)}`);
   }

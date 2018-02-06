@@ -5,7 +5,7 @@ import APIUtil from '../utils/api.util';
 
 module.exports.findSemesters = (req: Request, res: Response) => {
   const info: any = {
-    key: 'find_semesters',
+    key: APIUtil.key(req),
     debugInfo: {}
   };
 

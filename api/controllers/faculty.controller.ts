@@ -5,7 +5,7 @@ import APIUtil from '../utils/api.util';
 
 module.exports.createFaculty = (req: Request, res: Response) => {
   const info: any = {
-    key: '/api/faculties',
+    key: APIUtil.key(req),
     debugInfo: {}
   };
 
