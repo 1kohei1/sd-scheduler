@@ -15,6 +15,12 @@ export interface OverviewProps {
 interface OverviewState {
   [index: string]: {
     semester: Semester;
+    presentationDatesEditing: boolean;
+    presentationDatesUpdating: boolean;
+    locationEditing: boolean;
+    locationLoading: boolean;
+    facultiesEditing: boolean;
+    facultiesLoading: boolean;
     isPresentationDatesEditing: boolean;
     isLocationEditing: boolean;
     isFacultiesEditing: boolean;
@@ -38,6 +44,13 @@ export default class Overview extends React.Component<OverviewProps, any> {
 
     this.state = {
       semester: props.semester,
+      presentationDatesEditing: false,
+      presentationDatesUpdating: false,
+      locationEditing: false,
+      locationUpdating: false,
+      facultiesEditing: false,
+      facultiesUpdating: false,
+
       isPresentationDatesEditing: false,
       isLocationEditing: false,
       isFacultiesEditing: false,
@@ -47,38 +60,38 @@ export default class Overview extends React.Component<OverviewProps, any> {
     this.toggleForm = this.toggleForm.bind(this);
   }
 
-  toggleForm(menu: 'presentationDates' | 'location') {
+  toggleForm(prop: 'presentationDates' | 'location' | 'faculties') {
     this.setState((prevState: OverviewState, props: OverviewProps) => {
-      const key = this.getPropName(menu);
+      const key = `${prop}Editing`;
       return {
         [key]: !prevState[key]
       };
     })
   }
 
-  async updateSemester(updateObj: any, menu: 'presentationDates' | 'location') {
+  async updateSemester(updateObj: any, prop: 'presentationDates' | 'location' | 'faculties') {
+    const editingKey = `${prop}Editing`;
+    const updatingKey = `${prop}Updating`;
+
+    const newState: any = {};
+    newState[updatingKey] = true;
+    this.setState(newState);
+
     try {
       await Api.updateSemester(this.state.semester._id, updateObj);
       let semester = Map(this.state.semester);
-      semester = semester.set(menu, updateObj[menu]);
-      this.setState({
-        semester: semester.toObject(),
-      });
-      this.toggleForm(menu);
+      semester = semester.set(prop, updateObj[prop]);
+
+      newState[editingKey] = false;
+      newState[updatingKey] = false;
+      newState.semester = semester.toObject();
+      this.setState(newState);
 
       message.success('Successfully updated the semester');
     } catch (err) {
+      newState[updatingKey] = false;
+      this.setState(newState);
       console.log(err);
-    }
-  }
-
-  private getPropName(menu: 'presentationDates' | 'location') {
-    if (menu === 'presentationDates') {
-      return 'isPresentationDatesEditing';
-    } else if (menu === 'location') {
-      return 'isLocationEditing';
-    } else {
-      return 'isFacultiesEditing';
     }
   }
 
@@ -97,20 +110,26 @@ export default class Overview extends React.Component<OverviewProps, any> {
       <div>
         <h1>Overview</h1>
         <Date
+          prop="presentationDates"
           semester={this.state.semester}
-          editing={this.state.isPresentationDatesEditing}
+          editing={this.state.presentationDatesEditing}
+          updating={this.state.presentationDatesUpdating}
           toggleForm={this.toggleForm}
           updateSemester={this.updateSemester}
         />
         <Location
+          prop="location"
           semester={this.state.semester}
-          editing={this.state.isLocationEditing}
+          editing={this.state.locationEditing}
+          updating={this.state.locationUpdating}
           toggleForm={this.toggleForm}
           updateSemester={this.updateSemester}
         />
         <Faculties
+          prop="faculties"
           semester={this.state.semester}
-          editing={this.state.isFacultiesEditing}
+          editing={this.state.facultiesEditing}
+          updating={this.state.facultiesUpdating}
           toggleForm={this.toggleForm}
           updateSemester={this.updateSemester}
         />

@@ -6,8 +6,10 @@ import { Semester } from '../models/Semester';
 
 export interface LocationProps {
   form: WrappedFormUtils,
+  prop: string;
   semester: Semester,
   editing: boolean;
+  updating: boolean;
   toggleForm: (menu: string) => void;
   updateSemester: (updateObj: any, menu: string) => void;
 }
@@ -26,7 +28,7 @@ class Location extends React.Component<LocationProps, {}> {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (err) return;
-      this.props.updateSemester(values, 'location');
+      this.props.updateSemester(values, this.props.prop);
     })
   }
 
@@ -36,10 +38,11 @@ class Location extends React.Component<LocationProps, {}> {
 
     let extra: string | JSX.Element = '';
     if (isAdmin && !isArchived && this.props.editing) {
-      return (<Button 
+      return (<Button
         icon="close"
         size="small"
-        onClick={(e) => this.props.toggleForm('location')}
+        loading={this.props.updating}
+        onClick={(e) => this.props.toggleForm(this.props.prop)}
       >
         Cancel
       </Button>);
@@ -47,7 +50,7 @@ class Location extends React.Component<LocationProps, {}> {
       return (<Button ghost
         type="primary"
         size="small"
-        onClick={(e) => this.props.toggleForm('location')}
+        onClick={(e) => this.props.toggleForm(this.props.prop)}
       >
         Edit location
       </Button>);
@@ -73,13 +76,21 @@ class Location extends React.Component<LocationProps, {}> {
             initialValue: this.props.semester.location,
           })(
             <Input prefix={<Icon type="home" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Presentation location" />
-          )}
+            )}
         </Form.Item>
         <Form.Item>
-          <Button htmlType="submit" type="primary" style={{ marginRight: '16px' }}>
+          <Button
+            htmlType="submit"
+            type="primary"
+            style={{ marginRight: '16px' }}
+            loading={this.props.updating}
+          >
             Update
           </Button>
-          <Button onClick={(e) => this.props.toggleForm('location')}>
+          <Button
+            onClick={(e) => this.props.toggleForm(this.props.prop)}
+            loading={this.props.updating}
+          >
             Cancel
           </Button>
         </Form.Item>

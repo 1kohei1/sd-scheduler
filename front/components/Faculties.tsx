@@ -1,16 +1,20 @@
 import * as React from 'react';
 import { Form, Icon, Select, DatePicker, Card, Button, Tooltip } from 'antd';
+import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import { Semester } from '../models/Semester';
 
 export interface FacultiesProps {
+  form: WrappedFormUtils,
+  prop: string;
   semester: Semester,
   editing: boolean;
+  updating: boolean;
   toggleForm: (menu: string) => void;
   updateSemester: (updateObj: any, menu: string) => void;
 }
 
-export default class Faculties extends React.Component<FacultiesProps, any> {
+class Faculties extends React.Component<FacultiesProps, any> {
   constructor(props: FacultiesProps) {
     super(props);
 
@@ -30,10 +34,11 @@ export default class Faculties extends React.Component<FacultiesProps, any> {
 
     let extra: string | JSX.Element = '';
     if (isAdmin && !isArchived && this.props.editing) {
-      return (<Button 
+      return (<Button
         icon="close"
         size="small"
-        onClick={(e) => this.props.toggleForm('faculties')}
+        loading={this.props.updating}
+        onClick={(e) => this.props.toggleForm(this.props.prop)}
       >
         Cancel
       </Button>);
@@ -41,7 +46,7 @@ export default class Faculties extends React.Component<FacultiesProps, any> {
       return (<Button ghost
         type="primary"
         size="small"
-        onClick={(e) => this.props.toggleForm('faculties')}
+        onClick={(e) => this.props.toggleForm(this.props.prop)}
       >
         Edit faculties
       </Button>);
@@ -67,12 +72,20 @@ export default class Faculties extends React.Component<FacultiesProps, any> {
   form() {
     return (
       <Form onSubmit={this.handleSubmit}>
-      
+
         <Form.Item>
-          <Button htmlType="submit" type="primary" style={{ marginRight: '16px' }}>
+          <Button
+            htmlType="submit"
+            type="primary"
+            style={{ marginRight: '16px' }}
+            loading={this.props.updating}
+          >
             Update
           </Button>
-          <Button onClick={(e) => this.props.toggleForm('faculties')}>
+          <Button
+            onClick={(e) => this.props.toggleForm(this.props.prop)}
+            loading={this.props.updating}
+          >
             Cancel
           </Button>
         </Form.Item>
@@ -84,8 +97,11 @@ export default class Faculties extends React.Component<FacultiesProps, any> {
   render() {
     return (
       <Card title="Faculty" extra={this.extra()} style={{ marginBottom: '16px' }}>
-        {this.props.editing ? this.form() : this.info() }
+        {this.props.editing ? this.form() : this.info()}
       </Card>
     );
   }
 }
+
+
+export default Form.create()(Faculties);

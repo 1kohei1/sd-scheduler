@@ -10,8 +10,10 @@ import DatetimeUtil from '../utils/DatetimeUtil';
 
 export interface DateProps {
   form: WrappedFormUtils,
+  prop: string;
   semester: Semester,
   editing: boolean;
+  updating: boolean;
   toggleForm: (menu: string) => void;
   updateSemester: (updateObj: any, menu: string) => void;
 }
@@ -73,7 +75,7 @@ class Date extends React.Component<DateProps, DateState> {
       const updateObj = {
         presentationDates,
       }
-      this.props.updateSemester(updateObj, 'presentationDates');
+      this.props.updateSemester(updateObj, this.props.prop);
     })
   }
 
@@ -86,7 +88,8 @@ class Date extends React.Component<DateProps, DateState> {
       return (<Button
         icon="close"
         size="small"
-        onClick={(e) => this.props.toggleForm('presentationDates')}
+        loading={this.props.updating}
+        onClick={(e) => this.props.toggleForm(this.props.prop)}
       >
         Cancel
       </Button>);
@@ -94,7 +97,7 @@ class Date extends React.Component<DateProps, DateState> {
       return (<Button ghost
         type="primary"
         size="small"
-        onClick={(e) => this.props.toggleForm('presentationDates')}
+        onClick={(e) => this.props.toggleForm(this.props.prop)}
       >
         Edit presentation dates
       </Button>);
@@ -205,15 +208,27 @@ class Date extends React.Component<DateProps, DateState> {
           </div>
         ))}
         <Form.Item>
-          <Button type="dashed" onClick={this.addDate} style={{ width: '200px' }}>
+          <Button
+            type="dashed"
+            onClick={this.addDate}
+            style={{ width: '200px' }}
+          >
             <Icon type="plus" /> Add new date
           </Button>
         </Form.Item>
         <Form.Item>
-          <Button htmlType="submit" type="primary" style={{ marginRight: '16px' }}>
+          <Button
+            htmlType="submit"
+            type="primary"
+            loading={this.props.updating}
+            style={{ marginRight: '16px' }}
+          >
             Update
           </Button>
-          <Button onClick={(e) => this.props.toggleForm('presentationDates')}>
+          <Button
+            onClick={(e) => this.props.toggleForm(this.props.prop)}
+            loading={this.props.updating}
+          >
             Cancel
           </Button>
         </Form.Item>

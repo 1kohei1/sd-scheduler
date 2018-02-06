@@ -54,7 +54,7 @@ TODO:
 - [ ] Remove .env devendencies by adding babel configuration. Resource: https://github.com/zeit/next.js/tree/canary/examples/with-dotenv
 - [ ] Do not flash right action button when moving across the page. This happens because header component is remounted every time page changes
 - [ ] Update auth guard to better way
-- [ ] Display loading while data in overview is updating
+- [x] Display loading while data in overview is updating
 
 NOTES:
 
