@@ -70,8 +70,10 @@ class Date extends React.Component<DateProps, DateState> {
           end: DatetimeUtil.getISOString(dateString, formValue.endTime),
         });
       }
-      console.log(presentationDates);
-      this.props.updateSemester(presentationDates, 'presentationDates');
+      const updateObj = {
+        presentationDates,
+      }
+      this.props.updateSemester(updateObj, 'presentationDates');
     })
   }
 
@@ -110,7 +112,7 @@ class Date extends React.Component<DateProps, DateState> {
         {this.props.semester.presentationDates.map(date => (
           <div key={date._id}>
             {this.getInitialValue(date._id, 'date')}&nbsp;
-            {this.getInitialValue(date._id, 'startTime')} - 
+            {this.getInitialValue(date._id, 'startTime')} -&nbsp;
             {this.getInitialValue(date._id, 'endTime')}
           </div>
         ))}

@@ -1,9 +1,11 @@
 import * as React from 'react';
+import { Map } from 'immutable';
 
 import Date from './Date';
 import Location from './Location';
 import Faculties from './Faculties';
 import { Semester } from '../models/Semester';
+import Api from '../utils/Api';
 
 export interface OverviewProps {
   semester: Semester;
@@ -44,7 +46,7 @@ export default class Overview extends React.Component<OverviewProps, any> {
     this.toggleForm = this.toggleForm.bind(this);
   }
 
-  toggleForm(menu: string) {
+  toggleForm(menu: 'presentationDates' | 'location') {
     this.setState((prevState: OverviewState, props: OverviewProps) => {
       const key = this.getPropName(menu);
       return {
@@ -53,13 +55,21 @@ export default class Overview extends React.Component<OverviewProps, any> {
     })
   }
 
-  async updateSemester(updateObj: any, menu: string) {
-    // Update DB Semester
-    console.log(`Update ${menu}`);
-    // Update state semester and is???Editing
+  async updateSemester(updateObj: any, menu: 'presentationDates' | 'location') {
+    try {
+      await Api.updateSemester(this.state.semester._id, updateObj);
+      let semester = Map(this.state.semester);
+      semester = semester.set(menu, updateObj[menu]);
+      this.setState({
+        semester: semester.toObject(),
+      });
+      this.toggleForm(menu);
+    } catch (err) {
+      console.log(err);
+    }
   }
 
-  private getPropName(menu: string) {
+  private getPropName(menu: 'presentationDates' | 'location') {
     if (menu === 'presentationDates') {
       return 'isPresentationDatesEditing';
     } else if (menu === 'location') {
