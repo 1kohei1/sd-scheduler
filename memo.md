@@ -8,7 +8,6 @@
 
 System: 
 
-- [ ] Login with outlook [passport-outlook](https://www.npmjs.com/package/passport-outlook)
 - [ ] Send notification email when new group books faculties' time
 - [ ] Send notification email when faculties become unavailable for booked time
 - [ ] Send notification email when student gruop updates the presentation time
@@ -36,8 +35,8 @@ Admin:
 
 - [ ] Add faculties
 - [ ] Deactivate faculties
-- [ ] Register presentation dates
-- [ ] Register presentation location
+- [x] Register presentation dates
+- [x] Register presentation location
 - [ ] Check schedule in the calendar view
 
 TODO:
