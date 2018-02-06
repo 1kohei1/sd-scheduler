@@ -61,7 +61,7 @@ class Date extends React.Component<DateProps, DateState> {
         const formValue = values.presentationDates[id];
 
         // If all data is not given, skip it
-        if (!formValue.date && !formValue.startTime && !formValue.endTime) {
+        if (!formValue.date || !formValue.startTime || !formValue.endTime) {
           continue;
         }
 
