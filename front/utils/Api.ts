@@ -4,6 +4,7 @@ import Router from 'next/router';
 enum RequestMethod {
   GET,
   POST,
+  PUT,
 }
 
 interface loginBody {
@@ -21,7 +22,7 @@ export default class Api {
   }
 
   static async getSample() {
-    return await this.get('/api/sample');
+    return await this.makeRequest(RequestMethod.GET, '/api/sample');
   }
 
   static async login(body: loginBody) {
@@ -32,13 +33,16 @@ export default class Api {
     return await this.makeRequest(RequestMethod.POST, '/api/users/logout');
   }
 
+  static async updateSemester(_id: string, update: Object = {}) {
+    return await this.makeRequest(RequestMethod.PUT, `/api/semesters/${_id}`, update);
+  }
+
   private static async makeRequest(method: RequestMethod, path: string, body: Object = {}) {
-    let res;
-    if (method === RequestMethod.GET) {
-      res = await this.get(path);
-    } else if (method === RequestMethod.POST) {
-      res = await this.post(path, body);
-    }
+    let res = await fetch(
+      `${this.getBackendUrl()}${path}`,
+      Api.fetchOption(method, body),
+    )
+    res = await res.json();
 
     if (res) {
       if (res.success) {
@@ -58,28 +62,28 @@ export default class Api {
     }
   }
 
-  private static async get(path: string) {
-    const res = await fetch(`${this.getBackendUrl()}${path}`, {
-      method: 'GET',
-      credentials: 'same-origin',
-    });
-    const data = await res.json();
+  private static fetchOption(method: RequestMethod, body: Object = {}) {
+    let requestMethod = '';
+    if (method === RequestMethod.GET) {
+      requestMethod = 'GET';
+    } else if (method === RequestMethod.POST) {
+      requestMethod = 'POST';
+    } else if (method === RequestMethod.PUT) {
+      requestMethod = 'PUT';
+    }
 
-    return data;
-  }
-
-  private static async post(path: string, body: Object = {}) {
-    const res = await fetch(`${this.getBackendUrl()}${path}`, {
-      method: 'POST',
+    let obj: any = {
+      method: requestMethod,
       credentials: 'same-origin',
       headers: {
         'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
-    const data = await res.json();
+      }
+    };
 
-    return data;
+    if (Object.keys(body).length > 0) {
+      obj.body = JSON.stringify(body);
+    }
+    return obj;
   }
 
   static getBackendUrl() {
