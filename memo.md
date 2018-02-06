@@ -53,11 +53,18 @@ TODO:
 - [ ] Make redirect to where user used to be after success login (Wait release of Next 5: https://zeit.co/blog/next-canary)
 - [ ] Remove .env devendencies by adding babel configuration. Resource: https://github.com/zeit/next.js/tree/canary/examples/with-dotenv
 - [ ] Do not flash right action button when moving across the page. This happens because header component is remounted every time page changes
+- [ ] Update auth guard to better way
 
 NOTES:
 
 * Date displayed in the browser is in US Eastern time. This is because this project is developed for UCF.
 * async/await is currently used in the client side only. This is new and I would like to get used to first.
+
+How auth guard works in this project:
+
+1. API route guard => Express middle ware
+2. Frontend landing to auth protected page => front/custom-routes.ts
+3. Frontend navigating to auth protected page => page's getInitialProps
 
 ### Flows
 
@@ -73,3 +80,4 @@ Delete presentation:
 1. Student click delete button
 2. Student enter one of the group member's email
 3. System sends email and confirm the action
+
