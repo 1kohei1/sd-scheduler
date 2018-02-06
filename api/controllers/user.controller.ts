@@ -15,7 +15,9 @@ module.exports.getUser = (req: Request, res: Response) => {
 module.exports.login = (req: Request, res: Response, next: any) => {
   const info: any = {
     key: APIUtil.key(req),
-    debugInfo: {}
+    debugInfo: {
+      email: req.body.email,
+    }
   };
 
   passport.authenticate('local', (err: any, user: any) => {
@@ -23,6 +25,7 @@ module.exports.login = (req: Request, res: Response, next: any) => {
       info.debugInfo.err = err;
       APIUtil.errorResponse(info, 'Invalid email or password', {}, res);
     } else if (!user) {
+      info.debugInfo.message = 'No user found';
       APIUtil.errorResponse(info, 'Invalid email or password', {}, res);
     } else {
       req.logIn(user, (err) => {
@@ -50,7 +53,9 @@ module.exports.login = (req: Request, res: Response, next: any) => {
 module.exports.logout = (req: Request, res: Response) => {
   const info: any = {
     key: APIUtil.key(req),
-    debugInfo: {}
+    debugInfo: {
+      userId: req.user._id
+    }
   };
 
   req.logOut();

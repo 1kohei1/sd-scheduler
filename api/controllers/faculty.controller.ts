@@ -6,7 +6,10 @@ import APIUtil from '../utils/api.util';
 module.exports.createFaculty = (req: Request, res: Response) => {
   const info: any = {
     key: APIUtil.key(req),
-    debugInfo: {}
+    debugInfo: {
+      userId: req.user._id,
+      body: req.body,
+    }
   };
 
   DB.createFaculty(req.body)
@@ -14,7 +17,7 @@ module.exports.createFaculty = (req: Request, res: Response) => {
     APIUtil.successResponse(info, newFaculty, res);
   })
   .catch(err => {
-    info.debugInfo.err = err;
-    APIUtil.errorResponse(info, 'Failed to create faculty. The system admin will look the log.', {}, res);
+    info.debugInfo.message = err.message;
+    APIUtil.errorResponse(info, err.message, {}, res);
   });
 }

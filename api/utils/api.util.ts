@@ -51,6 +51,6 @@ export default class APIUtil {
   }
 
   private static logError(info: any) {
-    console.log(`${info.key}: ${JSON.stringify(info.debugInfo)}`);
+    console.log(`Error:${info.key}: ${JSON.stringify(info.debugInfo)}`);
   }
 }
