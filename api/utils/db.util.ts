@@ -17,8 +17,9 @@ export default class DBUtil {
   }
 
   static updateSemesterById(_id: string | number | object, update: Object) {
-    return Semester.findByIdAndUpdate(_id, update, {
+    return Semester.update({ _id }, update, {
       runValidators: true,
+      context: 'query',
     });
   }
 

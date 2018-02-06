@@ -33,6 +33,6 @@ module.exports.updateSemester = (req: Request, res: Response) => {
     })
     .catch(err => {
       info.debugInfo.message = err.message;
-      APIUtil.errorResponse(info, 'Failed to update semester. The system administrator will take a look', {}, res);
+      APIUtil.errorResponse(info, err.message, {}, res);
     })
 }
