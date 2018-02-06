@@ -59,20 +59,22 @@ export default class Api {
   }
 
   private static async get(path: string) {
-    const res = await fetch(`${this.getBackendUrl()}${path}`);
+    const res = await fetch(`${this.getBackendUrl()}${path}`, {
+      method: 'GET',
+      credentials: 'same-origin',
+    });
     const data = await res.json();
 
     return data;
   }
 
   private static async post(path: string, body: Object = {}) {
-    const myHeaders = new Headers();
-    myHeaders.append('Content-Type', 'application/json');
-
     const res = await fetch(`${this.getBackendUrl()}${path}`, {
       method: 'POST',
       credentials: 'same-origin',
-      headers: myHeaders,
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(body),
     });
     const data = await res.json();
