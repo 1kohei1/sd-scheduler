@@ -24,12 +24,13 @@ module.exports.updateSemester = (req: Request, res: Response) => {
     key: APIUtil.key(req),
     debugInfo: {
       userId: req.user._id,
+      _id: req.params._id,
       body: req.body,
     }
   }
 
   DBUtil.updateSemesterById(req.params._id, req.body)
-    .then(semester => {
+    .then(result => {
       APIUtil.successResponse(info, {}, res);
     })
     .catch(err => {

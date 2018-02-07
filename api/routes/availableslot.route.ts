@@ -8,4 +8,16 @@ module.exports = (server: Application) => {
     '/api/availableslots',
     availableslotController.findAvailableSlots,
   );
+
+  server.post(
+    '/api/availableslots',
+    APIUtil.isAuthenticated,
+    availableslotController.createAvailableSlot,
+  );
+
+  server.put(
+    '/api/availableslots/:_id',
+    APIUtil.isAuthenticated,
+    availableslotController.updateAvailableSlot,
+  )
 }

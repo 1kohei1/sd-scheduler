@@ -9,7 +9,7 @@ const AvailableSlotSchema = new Schema({
   semester: {
     type: Schema.Types.ObjectId,
     required: true,
-    ref: 'Faculty',
+    ref: 'Semester',
   },
   availableSlots: [{
     start: Date,
