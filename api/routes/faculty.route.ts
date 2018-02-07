@@ -1,11 +1,12 @@
 import { Application, Request, Response } from 'express';
-const passport = require('passport');
 const facultyController = require('../controllers/faculty.controller');
+
+import APIUtil from '../utils/api.util';
 
 module.exports = (server: Application) => {
   server.post(
     '/api/faculties',
-    passport.authorize('local'),
+    APIUtil.isAuthenticated,
     facultyController.createFaculty
   );
 }
