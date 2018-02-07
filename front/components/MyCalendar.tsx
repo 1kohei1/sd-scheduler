@@ -11,6 +11,9 @@ import { Semester } from '../models/Semester';
 import DatetimeUtil from '../utils/DatetimeUtil';
 import TimeSlot from '../models/TimeSlot';
 import Loading from './Loading';
+import UserUtil from '../utils/UserUtil';
+import Api from '../utils/Api';
+import AvailableSlot from '../models/AvailableSlot';
 
 export interface MyCalendarProps {
   semester: Semester;
@@ -23,10 +26,10 @@ interface MyCalendarState {
 }
 
 export default class MyCalendar extends React.Component<MyCalendarProps, MyCalendarState> {
+  availableSpotId: string | undefined = undefined;
+
   constructor(props: MyCalendarProps) {
     super(props);
-
-    // Get presentations and available slots
 
     this.state = {
       // presentations: List<Presentation>([{
@@ -114,8 +117,53 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
       availableSlots: List<TimeSlot>(),
     };
 
+    this.getAvailableSlot();
+    this.getPresentations();
+
     this.onAvailableSlotChange = this.onAvailableSlotChange.bind(this);
     this.calendar = this.calendar.bind(this);
+  }
+
+  private async getAvailableSlot() {
+    const semesterId = this.props.semester._id;
+    const loginUser = await UserUtil.getUser();
+    const facultyId = loginUser._id;
+
+    const availableSlots = await Api.getAvailableSlots(`semester=${semesterId}&faculty=${facultyId}`) as AvailableSlot[];
+    
+    if (availableSlots.length > 0) {
+      this.onAvailableSlotGet(availableSlots[0]);
+    } else {
+      const availableSlot = await Api.createAvailableSlot({
+        semester: semesterId,
+        faculty: facultyId,
+        availableSlots: [],
+      });
+
+      this.onAvailableSlotGet(availableSlot);
+    }
+  }
+
+  private onAvailableSlotGet(availableSlot: AvailableSlot) {
+    this.availableSpotId = availableSlot._id;
+    let availableSlots = List<TimeSlot>();
+
+    availableSlot.availableSlots.forEach(slot => {
+      availableSlots = availableSlots.push({
+        _id: slot._id,
+        start: DatetimeUtil.getMomentFromISOString(slot.start),
+        end: DatetimeUtil.getMomentFromISOString(slot.end),
+      })
+    });
+
+    this.setState({
+      availableSlots,
+      loading: false,
+    });
+  }
+
+  private async getPresentations() {
+
   }
 
   onAvailableSlotChange(updatedSlot: TimeSlot, isDelete: boolean) {

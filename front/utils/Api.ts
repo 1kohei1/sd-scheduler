@@ -13,17 +13,18 @@ interface loginBody {
 }
 
 export default class Api {
+  static async getSample() {
+    return await this.makeRequest(RequestMethod.GET, '/api/sample');
+  }
+
+  /**
+   * User
+   */
+
   static async getUser() {
     return await this.makeRequest(RequestMethod.GET, '/api/users');
   }
 
-  static async getSemesters(query: string = '') {
-    return await this.makeRequest(RequestMethod.GET, `/api/semesters?${query}`);
-  }
-
-  static async getSample() {
-    return await this.makeRequest(RequestMethod.GET, '/api/sample');
-  }
 
   static async login(body: loginBody) {
     return await this.makeRequest(RequestMethod.POST, `/api/users/login`, body);
@@ -33,9 +34,37 @@ export default class Api {
     return await this.makeRequest(RequestMethod.POST, '/api/users/logout');
   }
 
+  /**
+   * Semester
+   */
+
+  static async getSemesters(query: string = '') {
+    return await this.makeRequest(RequestMethod.GET, `/api/semesters?${query}`);
+  }
+
   static async updateSemester(_id: string, update: Object = {}) {
     return await this.makeRequest(RequestMethod.PUT, `/api/semesters/${_id}`, update);
   }
+
+  /**
+   * AvailableSlot
+   */
+
+  static async getAvailableSlots(query: string = '') {
+    return await this.makeRequest(RequestMethod.GET, `/api/availableslots?${query}`);
+  }
+
+  static async createAvailableSlot(body: Object) {
+    return await this.makeRequest(RequestMethod.POST, `/api/availableslots`, body);
+  }
+
+  static async updateAvailableSlot(_id: string, update: Object = {}) {
+    return await this.makeRequest(RequestMethod.PUT, `/api/availableslots/${_id}`, update);
+  }
+
+  /**
+   * Utility functions
+   */
 
   private static async makeRequest(method: RequestMethod, path: string, body: Object = {}) {
     let res = await fetch(
