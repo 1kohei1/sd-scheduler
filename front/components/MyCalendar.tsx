@@ -2,7 +2,7 @@ import * as React from 'react';
 import { List } from 'immutable';
 import ObjectID from 'bson-objectid';
 import * as moment from 'moment-timezone';
-import { Button, Icon, message } from 'antd';
+import { Button, Icon, message, Alert } from 'antd';
 
 import KoCalendar from './KoCalendar/KoCalendar';
 import Presentation from '../models/Presentation';
@@ -21,6 +21,7 @@ export interface MyCalendarProps {
 
 interface MyCalendarState {
   loading: boolean;
+  errors: List<string>;
   presentations: List<Presentation>;
   availableSlots: List<TimeSlot>;
 }
@@ -32,8 +33,8 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
   constructor(props: MyCalendarProps) {
     super(props);
 
-      // Semester.presentationDates are in string format. So convert them to moment.
-      this.presentationDates = props.semester.presentationDates.map(presentationDate => {
+    // Semester.presentationDates are in string format. So convert them to moment.
+    this.presentationDates = props.semester.presentationDates.map(presentationDate => {
       return {
         _id: presentationDate._id,
         start: DatetimeUtil.getMomentFromISOString(presentationDate.start),
@@ -123,6 +124,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
       //   end: moment.tz('2018-04-25 3:30 PM', `${DateConstants.dateFormat} h:m A`, DateConstants.timezone),
       // }]),
       loading: true,
+      errors: List<string>(),
       presentations: List<Presentation>(),
       availableSlots: List<TimeSlot>(),
     };
@@ -132,6 +134,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
 
     this.onAvailableSlotChange = this.onAvailableSlotChange.bind(this);
     this.calendar = this.calendar.bind(this);
+    this.alert = this.alert.bind(this);
   }
 
   private async getAvailableSlot() {
@@ -229,8 +232,11 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
         message.success('Successfully updated your available time!');
       }
     } catch (err) {
-      // Error handling
-      console.log(err);
+      this.setState((prevState: MyCalendarState, props: MyCalendarProps) => {
+        return {
+          errors: prevState.errors.push(err.message),
+        }
+      });
     }
   }
 
@@ -264,13 +270,42 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
     }
   }
 
+  alert(message: string, index: number) {
+    return (
+      <Alert
+        key={index}
+        message={message}
+        description={(
+          <div>
+            {message}. To check your available time in DB, please <a href="">reload</a>.
+          </div>
+        )}
+        type="error"
+        style={{ marginBottom: '16px' }}
+      />
+    )
+  }
+
   render() {
     return (
-      <div>
-        <h1>My Calendar</h1>
-        {this.calendar()}
+      <div className="ko-mycalendar-wrapper">
+        <div>
+          <h1>My Calendar</h1>
+          {this.calendar()}
+        </div>
+        <div className="errors">
+          {this.state.errors.map(this.alert)}
+        </div>
         <style jsx>{`
-          .ko-description {
+          .ko-mycalendar-wrapper {
+            display: flex;
+            justify-content: row;
+          }
+          .ko-mycalendar-wrapper .errors {
+            flex-grow: 1;
+            margin-left: 16px;
+          }
+          .ko-mycalendar-wrapper .ko-description {
             display: flex;
             width: ${ `${KoCalendarConstants.rulerColumnWidthNum + KoCalendarConstants.dayColumnWidthNum * this.props.semester.presentationDates.length}px`};
             align-items: baseline;
