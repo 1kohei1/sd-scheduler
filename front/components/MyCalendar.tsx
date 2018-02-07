@@ -10,12 +10,14 @@ import { DateConstants, KoCalendarConstants } from '../models/Constants';
 import { Semester } from '../models/Semester';
 import DatetimeUtil from '../utils/DatetimeUtil';
 import TimeSlot from '../models/TimeSlot';
+import Loading from './Loading';
 
 export interface MyCalendarProps {
   semester: Semester;
 }
 
 interface MyCalendarState {
+  loading: boolean;
   presentations: List<Presentation>;
   availableSlots: List<TimeSlot>;
 }
@@ -107,19 +109,13 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
       //   start: moment.tz('2018-04-25 1:30 PM', `${DateConstants.dateFormat} h:m A`, DateConstants.timezone),
       //   end: moment.tz('2018-04-25 3:30 PM', `${DateConstants.dateFormat} h:m A`, DateConstants.timezone),
       // }]),
+      loading: true,
       presentations: List<Presentation>(),
       availableSlots: List<TimeSlot>(),
     };
 
-    this.eventItem = this.eventItem.bind(this);
     this.onAvailableSlotChange = this.onAvailableSlotChange.bind(this);
     this.calendar = this.calendar.bind(this);
-  }
-
-  eventItem(event: any, style: any) {
-    return (
-      <div>Item</div>
-    )
   }
 
   onAvailableSlotChange(updatedSlot: TimeSlot, isDelete: boolean) {
@@ -155,6 +151,9 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
   }
 
   calendar() {
+    if (this.state.loading) {
+      return <Loading />
+    }
     if (this.props.semester.presentationDates && this.props.semester.presentationDates.length > 0) {
       // Semester.presentationDates are in string format. So convert them to moment.
       const presentationDates = this.props.semester.presentationDates.map(presentationDate => {
