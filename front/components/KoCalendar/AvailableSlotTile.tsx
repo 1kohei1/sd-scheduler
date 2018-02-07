@@ -9,7 +9,7 @@ export interface AvailableSlotTileProps {
   ruler: number[];
   slot: TimeSlot;
   presentationDate: TimeSlot;
-  onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean) => void;
+  onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean, updateDB?: boolean) => void;
   onResizeStart: (slot: TimeSlot) => void;
   onMoveStart: (e: React.MouseEvent<HTMLDivElement>, slot: TimeSlot) => void;
 }
@@ -32,7 +32,7 @@ export default class AvailableSlotTile extends React.Component<AvailableSlotTile
   }
 
   onClick() {
-    this.props.onAvailableSlotChange(this.props.slot, true);
+    this.props.onAvailableSlotChange(this.props.slot, true, true);
   }
 
   onMouseEnter() {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { List } from 'immutable';
 import ObjectID from 'bson-objectid';
 import * as moment from 'moment-timezone';
-import { Button, Icon } from 'antd';
+import { Button, Icon, message } from 'antd';
 
 import KoCalendar from './KoCalendar/KoCalendar';
 import Presentation from '../models/Presentation';
@@ -130,7 +130,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
     const facultyId = loginUser._id;
 
     const availableSlots = await Api.getAvailableSlots(`semester=${semesterId}&faculty=${facultyId}`) as AvailableSlot[];
-    
+
     if (availableSlots.length > 0) {
       this.onAvailableSlotGet(availableSlots[0]);
     } else {
@@ -166,7 +166,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
 
   }
 
-  onAvailableSlotChange(updatedSlot: TimeSlot, isDelete: boolean) {
+  onAvailableSlotChange(updatedSlot: TimeSlot, isDelete: boolean, updateDB: boolean = false) {
     const index = this.state.availableSlots.findIndex(slot => {
       if (slot) {
         return slot._id === updatedSlot._id;
@@ -178,23 +178,49 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
     if (isDelete) {
       if (index >= 0) {
         this.setState((prevState: MyCalendarState, props: MyCalendarProps) => {
+          const newAvailableSlots = prevState.availableSlots.delete(index);
+          if (updateDB) {
+            this.updateDBAvailableSlot(newAvailableSlots.toArray());
+          }
           return {
-            availableSlots: prevState.availableSlots.delete(index)
+            availableSlots: newAvailableSlots,
           }
         })
       }
     } else if (index >= 0) {
       this.setState((prevState: MyCalendarState, props: MyCalendarProps) => {
+        const newAvailableSlots = prevState.availableSlots.set(index, updatedSlot);
+        if (updateDB) {
+          this.updateDBAvailableSlot(newAvailableSlots.toArray());
+        }
         return {
-          availableSlots: prevState.availableSlots.set(index, updatedSlot)
+          availableSlots: newAvailableSlots,
         }
       })
     } else {
       this.setState((prevState: MyCalendarState, props: MyCalendarProps) => {
+        const newAvailableSlots = prevState.availableSlots.push(updatedSlot);
+        if (updateDB) {
+          this.updateDBAvailableSlot(newAvailableSlots.toArray());
+        }
         return {
-          availableSlots: prevState.availableSlots.push(updatedSlot)
+          availableSlots: newAvailableSlots,
         }
       });
+    }
+  }
+
+  private async updateDBAvailableSlot(newAvailableSlots: TimeSlot[]) {
+    try {
+      if (this.availableSpotId) {
+        await Api.updateAvailableSlot(this.availableSpotId, {
+          availableSlots: newAvailableSlots
+        });
+        message.success('Successfully updated your available time!');
+      }
+    } catch (err) {
+      // Error handling
+      console.log(err);
     }
   }
 
@@ -216,13 +242,13 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
         <div>
           <p className="ko-description">
             You can put your available time and check assigned presentations.
-        <Button
+            <Button
               icon="question-circle"
               href={KoCalendarConstants.helpVideoLink}
               target="blank"
             >
               Check how to put available time
-        </Button>
+            </Button>
           </p>
           <KoCalendar
             presentationDates={presentationDates}

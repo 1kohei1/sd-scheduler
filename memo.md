@@ -52,6 +52,7 @@ TODO:
 - [ ] Do not flash right action button when moving across the page. This happens because header component is remounted every time page changes (v3)
 - [ ] Update auth guard to better way (v3)
 - [x] Display loading while data in overview is updating
+- [ ] Sort presentation dates when updated
 
 NOTES:
 

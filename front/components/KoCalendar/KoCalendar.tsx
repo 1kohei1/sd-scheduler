@@ -10,7 +10,7 @@ interface KoCalendarProps {
   presentationDates: TimeSlot[];
   presentations: Presentation[];
   availableSlots: TimeSlot[]
-  onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean) => void;
+  onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean, updateDB?: boolean) => void;
 }
 interface KoCalendarState { }
 

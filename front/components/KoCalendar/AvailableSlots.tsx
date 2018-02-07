@@ -11,7 +11,7 @@ export interface AvailableSlotsProps {
   ruler: number[];
   availableSlots: TimeSlot[];
   presentationDate: TimeSlot;
-  onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean) => void;
+  onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean, updateDB?: boolean) => void;
 }
 
 // blockHeight represents how many pixel is for 30 min
@@ -92,6 +92,8 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
   onResizeStart(slot: TimeSlot) {
     this.isResizing = true;
 
+    const _id = slot._id;
+
     Observable.fromEvent<MouseEvent>(this.wrapperRef, 'mousemove')
       .takeUntil(Observable.fromEvent(window.document, 'mouseup'))
       // Convert to how many blocks apart from .ko-availableslots_wrapper
@@ -121,6 +123,11 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
           this.props.onAvailableSlotChange(newSlot, false);
         }
       }, undefined, () => {
+        // When resizing completes, update DB
+        const index = this.props.availableSlots.findIndex(slot => slot._id === _id);
+        if (index >= 0) {
+          this.props.onAvailableSlotChange(this.props.availableSlots[index], false, true);
+        }
         this.isResizing = false;
       });
   }
@@ -130,7 +137,14 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
       return;
     }
 
+    const targetDOM = e.target as HTMLElement;
+    const className = targetDOM.className;
+    if (!className.includes('ko-availableslotstile')) {
+      return;
+    }
+
     const startClientY = e.clientY;
+    const _id = slot._id;
 
     Observable.fromEvent<MouseEvent>(this.wrapperRef, 'mousemove')
       .takeUntil(Observable.fromEvent(window.document, 'mouseup'))
@@ -151,6 +165,12 @@ export default class AvailableSlots extends React.Component<AvailableSlotsProps,
           (this.props.presentationDate.end.isAfter(newSlot.end) || this.props.presentationDate.end.isSame(newSlot.end))
         ) {
           this.props.onAvailableSlotChange(newSlot, false);
+        }
+      }, undefined, () => {
+        // When moving completes, update DB
+        const index = this.props.availableSlots.findIndex(slot => slot._id === _id);
+        if (index >= 0) {
+          this.props.onAvailableSlotChange(this.props.availableSlots[index], false, true);
         }
       })
   }

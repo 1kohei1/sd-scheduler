@@ -15,7 +15,7 @@ export interface DayProps {
   isLastColumn: boolean;
   presentations: Presentation[];
   availableSlots: TimeSlot[]
-  onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean) => void;
+  onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean, updateDB?: boolean) => void;
 }
 
 export default class Day extends React.Component<DayProps, any> {
