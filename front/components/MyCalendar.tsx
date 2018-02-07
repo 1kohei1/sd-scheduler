@@ -27,9 +27,19 @@ interface MyCalendarState {
 
 export default class MyCalendar extends React.Component<MyCalendarProps, MyCalendarState> {
   availableSpotId: string | undefined = undefined;
+  presentationDates: TimeSlot[];
 
   constructor(props: MyCalendarProps) {
     super(props);
+
+      // Semester.presentationDates are in string format. So convert them to moment.
+      this.presentationDates = props.semester.presentationDates.map(presentationDate => {
+      return {
+        _id: presentationDate._id,
+        start: DatetimeUtil.getMomentFromISOString(presentationDate.start),
+        end: DatetimeUtil.getMomentFromISOString(presentationDate.end)
+      };
+    });
 
     this.state = {
       // presentations: List<Presentation>([{
@@ -229,15 +239,6 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
       return <Loading />
     }
     if (this.props.semester.presentationDates && this.props.semester.presentationDates.length > 0) {
-      // Semester.presentationDates are in string format. So convert them to moment.
-      const presentationDates = this.props.semester.presentationDates.map(presentationDate => {
-        return {
-          _id: presentationDate._id,
-          start: DatetimeUtil.getMomentFromISOString(presentationDate.start),
-          end: DatetimeUtil.getMomentFromISOString(presentationDate.end)
-        };
-      });
-
       return (
         <div>
           <p className="ko-description">
@@ -251,7 +252,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
             </Button>
           </p>
           <KoCalendar
-            presentationDates={presentationDates}
+            presentationDates={this.presentationDates}
             presentations={this.state.presentations.toArray()}
             availableSlots={this.state.availableSlots.toArray()}
             onAvailableSlotChange={this.onAvailableSlotChange}
