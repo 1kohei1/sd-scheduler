@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 
 import Semester from '../models/Semester.model';
 import Faculty from '../models/Faculty.model';
+import AvailableSlot from '../models/AvailableSlot.model';
 
 export default class DBUtil {
   /**
@@ -45,6 +46,13 @@ export default class DBUtil {
     });
 
     return newFaculty.save();
+  }
+
+  /**
+   * AvailableSlot
+   */
+  static findAvailableSlots(query: Object = {}) {
+    return AvailableSlot.find(query);
   }
 }
 
