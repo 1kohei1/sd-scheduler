@@ -13,7 +13,7 @@ export const KoCalendarConstants = {
   tileBackgroundColor: '#0070E0',
   tileTimeFormat: 'h:mma',
 
-  helpVideoLink: 'https://youtu.be/7IFa5wbVuEs',
+  helpVideoLink: 'https://youtu.be/kCc5v-SuLX4',
 }
 
 export const DateConstants = {
