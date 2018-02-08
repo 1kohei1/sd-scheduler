@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import * as moment from 'moment-timezone';
 
 import DBUtil from '../utils/db.util';
 import APIUtil from '../utils/api.util';
@@ -29,9 +30,16 @@ module.exports.updateSemester = (req: Request, res: Response) => {
     }
   }
 
-  DBUtil.updateSemesterById(req.params._id, req.body)
+  let body = req.body;
+  if (body.hasOwnProperty('presentationDates')) {
+    body.presentationDates.sort((a: any, b: any) => {
+      return moment(a.start).valueOf() - moment(b.start).valueOf();
+    })
+  }
+
+  DBUtil.updateSemesterById(req.params._id, body)
     .then(result => {
-      APIUtil.successResponse(info, {}, res);
+      APIUtil.successResponse(info, body, res);
     })
     .catch(err => {
       info.debugInfo.message = err.message;

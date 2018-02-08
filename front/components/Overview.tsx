@@ -78,9 +78,9 @@ export default class Overview extends React.Component<OverviewProps, any> {
     this.setState(newState);
 
     try {
-      await Api.updateSemester(this.state.semester._id, updateObj);
+      const newData = await Api.updateSemester(this.state.semester._id, updateObj);
       let semester = Map(this.state.semester);
-      semester = semester.set(prop, updateObj[prop]);
+      semester = semester.set(prop, newData[prop]);
 
       newState[editingKey] = false;
       newState[updatingKey] = false;
