@@ -11,6 +11,17 @@ module.exports = (app: Server, server: Application) => {
   });
 
   server.get(
+    '/account',
+    (req: Request, res: Response) => {
+      if (req.isAuthenticated()) {
+        app.render(req, res, '/account', {});
+      } else {
+        res.redirect('/login?message=You are not authenticated. Please login first');
+      }
+    }
+  )
+
+  server.get(
     '/dashboard', 
     (req: Request, res: Response) => {
       if (req.isAuthenticated()) {

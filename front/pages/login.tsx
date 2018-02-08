@@ -21,7 +21,7 @@ interface LoginState {
 class Login extends React.Component<LoginProps, LoginState> {
   constructor(props: LoginProps) {
     const message = props.url.query.message || '';
-    
+
     super(props);
     this.state = {
       isError: message ? false : true,
@@ -81,8 +81,11 @@ class Login extends React.Component<LoginProps, LoginState> {
                   message: 'It is not valid email',
                 }]
               })(
-                <Input prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Email" />
-                )}
+                <Input
+                  prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                  placeholder="Email"
+                />
+              )}
             </FormItem>
             <FormItem>
               {getFieldDecorator('password', {
@@ -94,11 +97,21 @@ class Login extends React.Component<LoginProps, LoginState> {
                   message: 'Password must be minimum 6 characters',
                 }]
               })(
-                <Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="Password" />
-                )}
+                <Input
+                  prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                  type="password"
+                  placeholder="Password"
+                />
+              )}
             </FormItem>
             <FormItem>
-              <Button htmlType="submit" style={{ width: '100%' }} type="primary" size="large" loading={this.state.loading}>
+              <Button
+                htmlType="submit"
+                style={{ width: '100%' }}
+                type="primary"
+                size="large"
+                loading={this.state.loading}
+              >
                 Submit
               </Button>
             </FormItem>
