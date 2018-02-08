@@ -139,6 +139,20 @@ class Account extends React.Component<AccountProps, AccountState> {
           )}
         </Form.Item>
         <Form.Item>
+          {this.state.user && this.state.user.emailVerified ? (
+            <div>
+              <Icon type="check-circle-o" style={{ marginRight: '8px' }} />
+              Email is verified.
+            </div>
+          ) : (
+            <div>
+              <Icon type="exclamation-circle-o" style={{ marginRight: '8px' }} />
+              Email is not verified yet.&nbsp;
+              <a href="Send verification">Send verification email</a>
+            </div>
+          )}
+        </Form.Item>
+        <Form.Item>
           <Button
             htmlType="submit"
             type="primary"

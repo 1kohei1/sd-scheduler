@@ -15,6 +15,7 @@ System:
 - [ ] Send notification email when senior design date is updated
 - [ ] Send reminder email a day before and an hour before the presentation time
 - [ ] Send signed PDF to senior design admin faculties when the presentation booking is made (v2)
+- [ ] Email verification
 
 Faculties:
 
@@ -52,7 +53,6 @@ TODO:
 - [ ] Update auth guard to better way (v3)
 - [x] Display loading while data in overview is updating
 - [x] Sort presentation dates when updated
-- [ ] Email verification
 - [ ] Let faculty enter the second, third emails to receive emails
 
 NOTES:
