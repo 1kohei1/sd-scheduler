@@ -37,21 +37,20 @@ class Login extends React.Component<LoginProps, LoginState> {
 
     this.props.form.validateFields(async (err, values) => {
       if (err) {
-        console.log(err);
-      } else {
-        try {
-          this.setState({
-            loading: true,
-            message: '',
-          });
-          await Api.login(values);
-        } catch (errRes) {
-          this.setState({
-            message: errRes.message,
-            isError: true,
-            loading: false,
-          })
-        }
+        return
+      }
+      try {
+        this.setState({
+          loading: true,
+          message: '',
+        });
+        await Api.login(values);
+      } catch (errRes) {
+        this.setState({
+          message: errRes.message,
+          isError: true,
+          loading: false,
+        })
       }
     })
   }

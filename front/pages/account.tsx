@@ -68,8 +68,9 @@ class Account extends React.Component<AccountProps, AccountState> {
 
     this.props.form.validateFields(async (err, values) => {
       if (err) {
-        console.log(err);
-      } else if (this.state.user) {
+        return
+      }
+      if (this.state.user) {
         this.setState({
           updating: true,
         });
