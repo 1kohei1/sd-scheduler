@@ -6,11 +6,11 @@ export interface Semester {
   displayName: string;
   // presentationDates is not array of interface PresentationDate for below reason.
   // When NextJS returns the initial property, it serializes the object. So on the client side, Semester.presentationDates start and end are ISO string
-  presentationDates: [{
+  presentationDates: {
     _id: string;
     start: string;
     end: string;
-  }];
+  }[];
   location: string;
   faculties: any[];
 }
