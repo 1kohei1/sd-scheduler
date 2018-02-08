@@ -3,6 +3,8 @@ import { Form, Icon, Input, Card, Button, Alert } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import { Semester } from '../models/Semester';
+import Faculty from '../models/Faculty';
+import UserUtil from '../utils/UserUtil';
 
 export interface LocationProps {
   form: WrappedFormUtils,
@@ -15,14 +17,36 @@ export interface LocationProps {
   updateSemester: (updateObj: any, menu: string) => void;
 }
 
-class Location extends React.Component<LocationProps, {}> {
+interface LocationState {
+  user: Faculty | undefined;
+}
+
+class Location extends React.Component<LocationProps, LocationState> {
+  userUpdateKey = `Location_${new Date().toISOString()}`;
+
   constructor(props: LocationProps) {
     super(props);
+
+    this.state = {
+      user: undefined,
+    }
+
+    UserUtil.registerOnUserUpdates(this.userUpdateKey, this.setUser.bind(this));
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.extra = this.extra.bind(this);
     this.info = this.info.bind(this);
     this.form = this.form.bind(this);
+  }
+
+  setUser(user: Faculty | undefined) {
+    this.setState({
+      user,
+    });
+  }
+
+  componentWillUnmount() {
+    UserUtil.removeOnUserUpdates(this.userUpdateKey);
   }
 
   handleSubmit(e: React.FormEvent<any>) {
@@ -34,7 +58,7 @@ class Location extends React.Component<LocationProps, {}> {
   }
 
   extra() {
-    const isAdmin = true;
+    const isAdmin = this.state.user && this.state.user.isAdmin;
     const isArchived = false;
 
     let extra: string | JSX.Element = '';

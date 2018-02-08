@@ -7,6 +7,8 @@ import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { Semester } from '../models/Semester';
 import { DateConstants } from '../models/Constants';
 import DatetimeUtil from '../utils/DatetimeUtil';
+import Faculty from '../models/Faculty';
+import UserUtil from '../utils/UserUtil';
 
 export interface DateProps {
   form: WrappedFormUtils,
@@ -20,16 +22,22 @@ export interface DateProps {
 }
 
 interface DateState {
-  objectIdsInForm: List<string>
+  objectIdsInForm: List<string>;
+  user: Faculty | undefined;
 }
 
-class Date extends React.Component<DateProps, DateState> {
+class DateView extends React.Component<DateProps, DateState> {
+  userUpdateKey = `DateView_${new Date().toISOString()}`;
+
   constructor(props: DateProps) {
     super(props);
 
     this.state = {
-      objectIdsInForm: List(this.props.semester.presentationDates.map(date => date._id))
+      objectIdsInForm: List(this.props.semester.presentationDates.map(date => date._id)),
+      user: undefined,
     }
+
+    UserUtil.registerOnUserUpdates(this.userUpdateKey, this.setUser.bind(this));
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.extra = this.extra.bind(this);
@@ -37,6 +45,16 @@ class Date extends React.Component<DateProps, DateState> {
     this.form = this.form.bind(this);
     this.deleteDate = this.deleteDate.bind(this);
     this.addDate = this.addDate.bind(this);
+  }
+
+  setUser(user: Faculty | undefined) {
+    this.setState({
+      user,
+    });
+  }
+
+  componentWillUnmount() {
+    UserUtil.removeOnUserUpdates(this.userUpdateKey);
   }
 
   componentWillReceiveProps(nextProps: DateProps) {
@@ -81,7 +99,7 @@ class Date extends React.Component<DateProps, DateState> {
   }
 
   extra() {
-    const isAdmin = true;
+    const isAdmin = this.state.user && this.state.user.isAdmin;
     const isArchived = false;
 
     let extra: string | JSX.Element = '';
@@ -251,4 +269,4 @@ class Date extends React.Component<DateProps, DateState> {
   }
 }
 
-export default Form.create()(Date);
+export default Form.create()(DateView);

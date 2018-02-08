@@ -55,7 +55,7 @@ class Account extends React.Component<AccountProps, AccountState> {
     UserUtil.removeOnUserUpdates(this.userUpdateKey);
   }
 
-  private async setUser(user: Faculty) {
+  private async setUser(user: Faculty | undefined) {
     this.setState({
       user,
       updating: false,

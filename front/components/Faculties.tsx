@@ -3,6 +3,8 @@ import { Form, Icon, Select, DatePicker, Card, Button, Tooltip, Alert } from 'an
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import { Semester } from '../models/Semester';
+import Faculty from '../models/Faculty';
+import UserUtil from '../utils/UserUtil';
 
 export interface FacultiesProps {
   form: WrappedFormUtils,
@@ -15,14 +17,36 @@ export interface FacultiesProps {
   updateSemester: (updateObj: any, menu: string) => void;
 }
 
+interface FacultiesState {
+  user: Faculty | undefined;
+}
+
 class Faculties extends React.Component<FacultiesProps, any> {
+  userUpdateKey = `Faculties_${new Date().toISOString()}`;
+  
   constructor(props: FacultiesProps) {
     super(props);
+
+    this.state = {
+      user: undefined,
+    }
+
+    UserUtil.registerOnUserUpdates(this.userUpdateKey, this.setUser.bind(this));
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.extra = this.extra.bind(this);
     this.info = this.info.bind(this);
     this.form = this.form.bind(this);
+  }
+
+  setUser(user: Faculty | undefined) {
+    this.setState({
+      user,
+    });
+  }
+
+  componentWillUnmount() {
+    UserUtil.removeOnUserUpdates(this.userUpdateKey);
   }
 
   handleSubmit(e: React.FormEvent<any>) {
@@ -31,7 +55,7 @@ class Faculties extends React.Component<FacultiesProps, any> {
   }
 
   extra() {
-    const isAdmin = true;
+    const isAdmin = this.state.user && this.state.user.isAdmin;
     const isArchived = false;
 
     let extra: string | JSX.Element = '';
