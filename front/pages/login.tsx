@@ -44,7 +44,7 @@ class Login extends React.Component<LoginProps, LoginState> {
             loading: true,
             message: '',
           });
-          Api.login(values);
+          await Api.login(values);
         } catch (errRes) {
           this.setState({
             message: errRes.message,
