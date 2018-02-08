@@ -35,6 +35,10 @@ module.exports.updateFaculty = (req: Request, res: Response) => {
   DBUtil.updateFaculty(req.params._id, req.body)
   .then(result => {
     APIUtil.successResponse(info, req.body, res);
+    
+    if (!req.body.emailVerified) {
+      // Send email verification
+    }
   })
   .catch(err => {
     info.debugInfo.message = err.message;

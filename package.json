@@ -30,6 +30,7 @@
     "moment": "^2.20.1",
     "moment-timezone": "^0.5.14",
     "mongoose": "^5.0.0",
+    "mongoose-unique-validator": "^2.0.0",
     "next": "^4.2.1",
     "nprogress": "^0.2.0",
     "passport": "^0.4.0",

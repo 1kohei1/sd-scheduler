@@ -30,7 +30,7 @@ module.exports = (passport: Authenticator) => {
     passwordField: 'password',
   }, (email: string, password: string, done: (error: any, user?: any, options?: IVerifyOptions) => void) => {
     DBUtil.findFaculties({
-      emails: email
+      email: email
     })
     .then((faculties) => {
       if (faculties.length === 0) {

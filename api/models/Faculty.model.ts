@@ -1,9 +1,12 @@
 import { Model, model, Schema } from 'mongoose';
+const uniqueValidator = require('mongoose-unique-validator');
 
 const FacultySchema = new Schema({
   email: {
     type: String,
     required: true,
+    unique: true,
+    uniqueCaseInsensitive: true,
   },
   emailVerified: {
     type: Boolean,
@@ -38,6 +41,10 @@ FacultySchema.pre('save', function(this: any, next) {
   this.updated_at = new Date();
 
   next();
+});
+
+FacultySchema.plugin(uniqueValidator, {
+  message: 'Expected {PATH} to be unique',
 });
 
 export default model('Faculty', FacultySchema);
