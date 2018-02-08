@@ -94,6 +94,7 @@ export default class AppLayout extends React.Component<AppLayoutProps, AppLayout
           <link rel='stylesheet' type='text/css' href='/static/nprogress.css' />
           {/* Antd css */}
           <link rel='stylesheet' href='/static/antd.min.css' />
+          <title>SD Scheduler</title>
         </Head>
         <Layout>
           <Layout.Header style={{ padding: "0 16px" }}>
