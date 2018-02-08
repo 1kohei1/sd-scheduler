@@ -15,13 +15,12 @@ System:
 - [ ] Send notification email when senior design date is updated
 - [ ] Send reminder email a day before and an hour before the presentation time
 - [ ] Send signed PDF to senior design admin faculties when the presentation booking is made (v2)
-- [ ] Cash retrieved data on the client side
 
 Faculties:
 
-- [ ] Submit the schedule
-- [ ] Update the schedule
-- [ ] Check the bookings in the calendar view
+- [x] Submit the schedule
+- [x] Update the schedule
+- [x] Check the bookings in the calendar view
 - [ ] Upload signature (v2)
 
 Students:
@@ -37,7 +36,7 @@ Admin:
 - [ ] Deactivate faculties
 - [x] Register presentation dates
 - [x] Register presentation location
-- [ ] Check schedule in the calendar view
+- [x] Check schedule in the calendar view
 
 TODO:
 
@@ -52,7 +51,7 @@ TODO:
 - [ ] Do not flash right action button when moving across the page. This happens because header component is remounted every time page changes (v3)
 - [ ] Update auth guard to better way (v3)
 - [x] Display loading while data in overview is updating
-- [ ] Sort presentation dates when updated
+- [x] Sort presentation dates when updated
 
 NOTES:
 
