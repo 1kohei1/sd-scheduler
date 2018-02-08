@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Link from 'next/link';
+import ObjectID from 'bson-objectid';
 import { Form, Icon, Input, Button, Alert, Tooltip, message } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
@@ -7,16 +8,16 @@ import AppLayout from '../components/AppLayout';
 import UserUtil from '../utils/UserUtil';
 import Faculty from '../models/Faculty';
 import InitialProps from '../models/InitialProps';
+import Api from '../utils/Api';
 
 export interface AccountProps {
   form: WrappedFormUtils;
-  user: Faculty;
 }
 
 interface AccountState {
   error: string;
   updating: boolean;
-  user: Faculty; // It's not recommended to hold props as state, but didn't come up with a good way.
+  user: Faculty | undefined; // It's not recommended to hold props as state, but didn't come up with a good way.
 }
 
 class Account extends React.Component<AccountProps, AccountState> {
@@ -29,11 +30,7 @@ class Account extends React.Component<AccountProps, AccountState> {
       await UserUtil.checkAuthentication();
     }
 
-    const user = await UserUtil.getUser();
-
-    return {
-      user,
-    };
+    return {};
   }
 
   constructor(props: AccountProps) {
@@ -42,7 +39,7 @@ class Account extends React.Component<AccountProps, AccountState> {
     this.state = {
       error: '',
       updating: false,
-      user: this.props.user,
+      user: undefined,
     }
 
     UserUtil.registerOnUserUpdates(this.userUpdateKey, this.setUser.bind(this));
@@ -60,12 +57,15 @@ class Account extends React.Component<AccountProps, AccountState> {
   private async setUser(user: Faculty) {
     this.setState({
       user,
+      updating: false,
     });
   }
 
   addEmail() {
     this.setState((prevState: AccountState, props: AccountProps) => {
-      prevState.user.emails.push('');
+      if (prevState.user) {
+        prevState.user.emails.push('');
+      }
       return {
         user: prevState.user,
       }
@@ -74,15 +74,38 @@ class Account extends React.Component<AccountProps, AccountState> {
 
   deleteEmail(index: number) {
     this.setState((prevState: AccountState, props: AccountProps) => {
-      prevState.user.emails.splice(index, 1);
+      if (prevState.user) {
+        prevState.user.emails.splice(index, 1);
+      }
       return {
         user: prevState.user,
       }
     })
   }
 
-  async handleSubmit() {
+  handleSubmit(e: React.FormEvent<any>) {
+    e.preventDefault();
 
+    this.props.form.validateFields(async (err, values) => {
+      if (err) {
+        console.log(err);
+      } else if (this.state.user) {
+        this.setState({
+          updating: true,
+        });
+        try {
+          await Api.updateFaculty(this.state.user._id, values);
+          // By calling this, all components using login user gets updated user.
+          UserUtil.updateUser();
+          message.success('Your account information is successfully updated');
+        } catch (err) {
+          this.setState({
+            updating: false,
+            error: err.message,
+          })
+        }
+      }
+    })
   }
 
   form() {
@@ -98,7 +121,7 @@ class Account extends React.Component<AccountProps, AccountState> {
               required: true,
               message: 'Please enter first name',
             }],
-            initialValue: this.state.user.firstName,
+            initialValue: this.state.user ? this.state.user.firstName : '',
           })(
             <Input placeholder="First name" />
           )}
@@ -111,12 +134,12 @@ class Account extends React.Component<AccountProps, AccountState> {
               required: true,
               message: 'Please enter last name',
             }],
-            initialValue: this.state.user.lastName,
+            initialValue: this.state.user ? this.state.user.lastName : '',
           })(
             <Input placeholder="Last name" />
           )}
         </Form.Item>
-        {this.state.user.emails.map((email: string, index: number) => (
+        {this.state.user && this.state.user.emails.map((email: string, index: number) => (
           <div key={index}>
             <Form.Item
               label={index === 0 ? "Email" : null}
@@ -124,7 +147,7 @@ class Account extends React.Component<AccountProps, AccountState> {
               {getFieldDecorator(`emails[${index}]`, {
                 rules: [{
                   required: true,
-                  message: 'Please enter last name',
+                  message: 'Please enter email',
                 }, {
                   type: 'email',
                   message: 'Please enter valid email',
@@ -136,7 +159,7 @@ class Account extends React.Component<AccountProps, AccountState> {
               <Button
                 icon="delete"
                 shape="circle"
-                disabled={this.state.user.emails.length <= 1}
+                disabled={this.state.user && this.state.user.emails.length <= 1}
                 style={{ marginLeft: '8px' }}
                 onClick={(e) => this.deleteEmail(index)}
               />

@@ -7,6 +7,12 @@ module.exports = (server: Application) => {
   server.post(
     '/api/faculties',
     APIUtil.isAuthenticated,
-    facultyController.createFaculty
+    facultyController.createFaculty,
   );
+
+  server.put(
+    '/api/faculties/:_id',
+    APIUtil.isAuthenticated,
+    facultyController.updateFaculty,
+  )
 }

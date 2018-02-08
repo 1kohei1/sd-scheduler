@@ -63,6 +63,14 @@ export default class Api {
   }
 
   /**
+   * Faculty
+   */
+
+   static async updateFaculty(_id: string, update: object = {}) {
+     return await this.makeRequest(RequestMethod.PUT, `/api/faculties/${_id}`, update);
+   }
+
+  /**
    * Utility functions
    */
 

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import DB from '../utils/db.util';
+import DBUtil from '../utils/db.util';
 import APIUtil from '../utils/api.util';
 
 module.exports.findAvailableSlots = (req: Request, res: Response) => {
@@ -11,7 +11,7 @@ module.exports.findAvailableSlots = (req: Request, res: Response) => {
     }
   };
 
-  DB.findAvailableSlots(req.query)
+  DBUtil.findAvailableSlots(req.query)
   .then(availableslots => {
     APIUtil.successResponse(info, availableslots, res);
   })
@@ -30,10 +30,10 @@ module.exports.createAvailableSlot = (req: Request, res: Response) => {
     }
   };
 
-  DB.checkDuplicate(req.body.semester, req.body.faculty)
+  DBUtil.checkDuplicate(req.body.semester, req.body.faculty)
   .then(availableSlots => {
     if (availableSlots.length === 0) {
-      return DB.createAvailableSlots(req.body)
+      return DBUtil.createAvailableSlots(req.body)
     } else {
       return Promise.reject({
         message: 'Combination of given semester id and faculty id already exists. System administrator will take a look',
@@ -59,7 +59,7 @@ module.exports.updateAvailableSlot = (req: Request, res: Response) => {
     }
   };
 
-  DB.updateAvailalbleSlotById(req.params._id, req.body)
+  DBUtil.updateAvailalbleSlotById(req.params._id, req.body)
   .then(result => {
     APIUtil.successResponse(info, {}, res);
   })
