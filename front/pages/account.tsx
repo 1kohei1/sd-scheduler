@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import ObjectID from 'bson-objectid';
-import { Form, Icon, Input, Button, Alert, Tooltip, message } from 'antd';
+import { Form, Icon, Input, Button, Alert, message } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import AppLayout from '../components/AppLayout';
@@ -9,6 +9,7 @@ import UserUtil from '../utils/UserUtil';
 import Faculty from '../models/Faculty';
 import InitialProps from '../models/InitialProps';
 import Api from '../utils/Api';
+import Loading from '../components/Loading';
 
 export interface AccountProps {
   form: WrappedFormUtils;
@@ -16,6 +17,7 @@ export interface AccountProps {
 
 interface AccountState {
   error: string;
+  loading: boolean;
   updating: boolean;
   user: Faculty | undefined; // It's not recommended to hold props as state, but didn't come up with a good way.
 }
@@ -39,6 +41,7 @@ class Account extends React.Component<AccountProps, AccountState> {
     this.state = {
       error: '',
       updating: false,
+      loading: true,
       user: undefined,
     }
 
@@ -46,8 +49,6 @@ class Account extends React.Component<AccountProps, AccountState> {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.form = this.form.bind(this);
-    this.addEmail = this.addEmail.bind(this);
-    this.deleteEmail = this.deleteEmail.bind(this);
   }
 
   componentWillUnmount() {
@@ -58,29 +59,8 @@ class Account extends React.Component<AccountProps, AccountState> {
     this.setState({
       user,
       updating: false,
+      loading: false,
     });
-  }
-
-  addEmail() {
-    this.setState((prevState: AccountState, props: AccountProps) => {
-      if (prevState.user) {
-        prevState.user.emails.push('');
-      }
-      return {
-        user: prevState.user,
-      }
-    })
-  }
-
-  deleteEmail(index: number) {
-    this.setState((prevState: AccountState, props: AccountProps) => {
-      if (prevState.user) {
-        prevState.user.emails.splice(index, 1);
-      }
-      return {
-        user: prevState.user,
-      }
-    })
   }
 
   handleSubmit(e: React.FormEvent<any>) {
@@ -93,6 +73,9 @@ class Account extends React.Component<AccountProps, AccountState> {
         this.setState({
           updating: true,
         });
+        if (this.state.user && values.email !== this.state.user.email) {
+          values.emailVerified = false;
+        }
         try {
           await Api.updateFaculty(this.state.user._id, values);
           // By calling this, all components using login user gets updated user.
@@ -139,48 +122,21 @@ class Account extends React.Component<AccountProps, AccountState> {
             <Input placeholder="Last name" />
           )}
         </Form.Item>
-        {this.state.user && this.state.user.emails.map((email: string, index: number) => (
-          <div key={index}>
-            <Form.Item
-              label={index === 0 ? "Email" : null}
-            >
-              {getFieldDecorator(`emails[${index}]`, {
-                rules: [{
-                  required: true,
-                  message: 'Please enter email',
-                }, {
-                  type: 'email',
-                  message: 'Please enter valid email',
-                }],
-                initialValue: email,
-              })(
-                <Input placeholder="Email" style={{ width: '460px' }} />
-              )}
-              <Button
-                icon="delete"
-                shape="circle"
-                disabled={this.state.user && this.state.user.emails.length <= 1}
-                style={{ marginLeft: '8px' }}
-                onClick={(e) => this.deleteEmail(index)}
-              />
-            </Form.Item>
-          </div>
-        ))}
-        <Form.Item>
-          <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <Button
-              type="dashed"
-              onClick={this.addEmail}
-              style={{ width: '200px', marginRight: '8px' }}
-            >
-              <Icon type="plus" /> Add new email
-          </Button>
-            <div>
-              <Tooltip title="We will send emails to all your email addresses">
-                <Icon type="question-circle-o" style={{ fontSize: '24px', color: 'rgba(0, 0, 0, 0.5)' }} />
-              </Tooltip>
-            </div>
-          </div>
+        <Form.Item
+          label="Email"
+        >
+          {getFieldDecorator('email', {
+            rules: [{
+              required: true,
+              message: 'Please enter email',
+            }, {
+              type: 'email',
+              message: 'Please enter valid email',
+            }],
+            initialValue: this.state.user ? this.state.user.email : '',
+          })(
+            <Input placeholder="Email" />
+          )}
         </Form.Item>
         <Form.Item>
           <Button
@@ -211,7 +167,7 @@ class Account extends React.Component<AccountProps, AccountState> {
               type="error"
             />
           )}
-          {this.form()}
+          {this.state.loading ? <Loading /> : this.form()}
         </div>
         <style jsx>{`
           .account-wrapper {

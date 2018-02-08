@@ -16,7 +16,8 @@ updated_at: date
 ### Faculty
 
 _id: ObjectId;
-email: [string];
+email: string;
+emailVerified: boolean;
 password: string;
 firstName: string;
 lastName: string;

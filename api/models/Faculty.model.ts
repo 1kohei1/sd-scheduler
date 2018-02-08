@@ -1,10 +1,14 @@
 import { Model, model, Schema } from 'mongoose';
 
 const FacultySchema = new Schema({
-  emails: [{
+  email: {
     type: String,
-    required: true
-  }],
+    required: true,
+  },
+  emailVerified: {
+    type: Boolean,
+    default: false,
+  },
   password: {
     type: String,
     required: true,

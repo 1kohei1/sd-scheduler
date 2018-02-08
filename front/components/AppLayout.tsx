@@ -55,8 +55,6 @@ export default class AppLayout extends React.Component<AppLayoutProps, AppLayout
     }
 
     UserUtil.registerOnUserUpdates(this.userUpdateKey, this.onUserUpdate.bind(this));
-    // To reflect change to the database, call updateUser
-    UserUtil.updateUser();
 
     this.rightAction = this.rightAction.bind(this);
   }
@@ -65,6 +63,11 @@ export default class AppLayout extends React.Component<AppLayoutProps, AppLayout
     this.setState({
       user,
     });
+  }
+
+  componentDidMount() {
+    // To reflect change to the database, call updateUser
+    UserUtil.updateUser();
   }
 
   componentWillUnmount() {
