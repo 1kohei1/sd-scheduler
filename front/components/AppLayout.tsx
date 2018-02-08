@@ -21,6 +21,11 @@ const onClick = (obj: any) => {
 
 const menu = (
   <Menu onClick={onClick}>
+    <Menu.Item key={0}>
+      <Link href="/dashboard">
+        <a>Dashboard</a>
+      </Link>
+    </Menu.Item>
     <Menu.Item key={1}>
       <Link href="/account">
         <a>Account</a>
