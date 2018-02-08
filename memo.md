@@ -52,6 +52,7 @@ TODO:
 - [ ] Update auth guard to better way (v3)
 - [x] Display loading while data in overview is updating
 - [x] Sort presentation dates when updated
+- [ ] Email verification (v2)
 
 NOTES:
 
