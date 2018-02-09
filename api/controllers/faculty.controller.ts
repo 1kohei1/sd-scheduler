@@ -3,6 +3,7 @@ import * as crypt from 'crypto';
 
 import APIUtil from '../utils/api.util';
 import DBUtil from '../utils/db.util';
+import Mailer, { MailType } from '../utils/mail.util';
 
 module.exports.findFaculty = (req: Request, res: Response) => {
   const info: any = {
@@ -39,6 +40,10 @@ module.exports.createFaculty = (req: Request, res: Response) => {
     const token = crypt.randomBytes(48).toString('hex');
     const expire_at = new Date();
     expire_at.setDate(expire_at.getDate() + 7); // Set token expire in 7 days
+    
+    // Save these data so that we can look up.
+    info.debugInfo.newFaculty_id = newFaculty.get('_id');
+    info.debugInfo.token = token;
 
     return DBUtil.updateFacultyById(newFaculty.get('_id'), {
       token,
@@ -47,6 +52,13 @@ module.exports.createFaculty = (req: Request, res: Response) => {
   })
   .then(result => {
     // Send invitation email
+    Mailer.send(MailType.invitation, {
+      to: req.body.email,
+      extra: {
+        fromWhom: `Dr. ${req.user.firstName} ${req.user.lastName}`,
+        token: info.debugInfo.token,
+      }
+    })
   })
   .catch(err => {
     info.debugInfo.message = err.message;

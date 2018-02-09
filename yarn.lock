@@ -162,6 +162,13 @@
   version "8.5.2"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-8.5.2.tgz#83b8103fa9a2c2e83d78f701a9aa7c9539739aa5"
 
+"@types/nodemailer@^4.3.2":
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/@types/nodemailer/-/nodemailer-4.3.2.tgz#e7c303d7106b6697ede2a28e269140d92710a8d5"
+  dependencies:
+    "@types/events" "*"
+    "@types/node" "*"
+
 "@types/nprogress@^0.0.29":
   version "0.0.29"
   resolved "https://registry.yarnpkg.com/@types/nprogress/-/nprogress-0.0.29.tgz#060bd510022a005f1840234030d3132fb9195471"
@@ -4320,6 +4327,10 @@ node-pre-gyp@^0.6.39:
     semver "^5.3.0"
     tar "^2.2.1"
     tar-pack "^3.4.0"
+
+nodemailer@^4.4.2:
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/nodemailer/-/nodemailer-4.4.2.tgz#f215fb88e8a1052f9f93083909e116d2b79fc8de"
 
 nodemon@^1.14.11:
   version "1.14.11"
