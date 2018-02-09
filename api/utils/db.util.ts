@@ -41,10 +41,12 @@ export default class DBUtil {
   }
 
   static createFaculty(body: any) {
-    const salt = bcrypt.genSaltSync(10);
-    body.password = bcrypt.hashSync(body.password, salt);
+    if (body.password) {
+      const salt = bcrypt.genSaltSync(10);
+      body.password = bcrypt.hashSync(body.password, salt);
+    }
     const newFaculty = new Faculty(body);
-    
+
     newFaculty.set({
       register_at: new Date()
     });
@@ -78,7 +80,7 @@ export default class DBUtil {
   }
 
   static updateAvailalbleSlotById(_id: string | number | object, update: Object) {
-    return AvailableSlot.update({ _id}, update, updateOption);
+    return AvailableSlot.update({ _id }, update, updateOption);
   }
 }
 
