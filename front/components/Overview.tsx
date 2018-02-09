@@ -51,9 +51,15 @@ export default class Overview extends React.Component<OverviewProps, OverviewSta
     };
 
     UserUtil.registerOnUserUpdates(this.userUpdateKey, this.setUser.bind(this));
+    this.getUser();
 
     this.updateSemester = this.updateSemester.bind(this);
     this.toggleForm = this.toggleForm.bind(this);
+  }
+
+  private async getUser() {
+    const user = await UserUtil.getUser();
+    this.setUser(user);
   }
 
   private setUser(user: Faculty | undefined) {
