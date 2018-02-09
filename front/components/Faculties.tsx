@@ -45,6 +45,7 @@ class Faculties extends React.Component<FacultiesProps, FacultiesState> {
     this.extra = this.extra.bind(this);
     this.info = this.info.bind(this);
     this.form = this.form.bind(this);
+    this.onReload = this.onReload.bind(this);
   }
 
   setUser(user: Faculty | undefined) {
@@ -53,10 +54,14 @@ class Faculties extends React.Component<FacultiesProps, FacultiesState> {
     });
   }
 
-  async getFaculties() {
+  onReload() {
     this.setState({
       loading: true,
-    })
+    });
+    this.getFaculties();
+  }
+
+  private async getFaculties() {
     const faculties = await Api.getFaculties() as Faculty[];
     faculties.sort((a, b) => {
       if (a.firstName < b.firstName) {
@@ -134,7 +139,7 @@ class Faculties extends React.Component<FacultiesProps, FacultiesState> {
         <Form.Item>
           <Button
             loading={this.state.loading}
-            onClick={this.getFaculties}
+            onClick={this.onReload}
           >
             {this.state.loading ? 'Loading' : 'Reload'}
           </Button>
