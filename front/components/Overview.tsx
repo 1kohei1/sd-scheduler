@@ -9,6 +9,7 @@ import { Semester } from '../models/Semester';
 import Api from '../utils/Api';
 import Faculty from '../models/Faculty';
 import UserUtil from '../utils/UserUtil';
+import InviteFaculty from './InviteFaculty';
 
 export interface OverviewProps {
   semester: Semester;
@@ -31,7 +32,7 @@ interface OverviewState {
 
 export default class Overview extends React.Component<OverviewProps, OverviewState> {
   userUpdateKey = `Overview_${new Date().toISOString()}`;
-  
+
   constructor(props: OverviewProps) {
     super(props);
 
@@ -152,6 +153,9 @@ export default class Overview extends React.Component<OverviewProps, OverviewSta
           toggleForm={this.toggleForm}
           updateSemester={this.updateSemester}
         />
+        {isAdmin && (
+          <InviteFaculty />
+        )}
       </div>
     )
   }
