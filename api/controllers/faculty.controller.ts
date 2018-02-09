@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import * as crypt from 'crypto';
 
 import APIUtil from '../utils/api.util';
 import DBUtil from '../utils/db.util';
@@ -34,13 +35,26 @@ module.exports.createFaculty = (req: Request, res: Response) => {
   .then(newFaculty => {
     APIUtil.successResponse(info, newFaculty, res);
     
-    // Generate token that expires in a week. 
-    // Save them to the database
+    // Generate token and when it expires. Save them to the created faculty
+    const token = crypt.randomBytes(48).toString('hex');
+    const expire_at = new Date();
+    expire_at.setDate(expire_at.getDate() + 7); // Set token expire in 7 days
+
+    return DBUtil.updateFacultyById(newFaculty.get('_id'), {
+      token,
+      expire_at,
+    });
+  })
+  .then(result => {
     // Send invitation email
   })
   .catch(err => {
     info.debugInfo.message = err.message;
-    APIUtil.errorResponse(info, err.message, {}, res);
+    if (res.headersSent) {
+      APIUtil.logError(info);
+    } else {
+      APIUtil.errorResponse(info, err.message, {}, res);
+    }
   });
 }
 
@@ -54,7 +68,7 @@ module.exports.updateFaculty = (req: Request, res: Response) => {
     }
   };
  
-  DBUtil.updateFaculty(req.params._id, req.body)
+  DBUtil.updateFacultyById(req.params._id, req.body)
   .then(result => {
     APIUtil.successResponse(info, req.body, res);
     

@@ -59,7 +59,7 @@ export default class DBUtil {
     return newFaculty.save();
   }
 
-  static updateFaculty(_id: string | number | object, update: Object) {
+  static updateFacultyById(_id: string | number | object, update: Object) {
     return Faculty.update({ _id }, update, updateOption);
   }
 

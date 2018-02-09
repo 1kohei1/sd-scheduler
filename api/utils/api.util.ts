@@ -50,7 +50,7 @@ export default class APIUtil {
     return `[${req.method}] ${req.url}`;
   }
 
-  private static logError(info: any) {
+  static logError(info: any) {
     console.log(`Error:${info.key}: ${JSON.stringify(info.debugInfo)}`);
   }
 }
