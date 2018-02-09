@@ -54,12 +54,12 @@ export default class AppLayout extends React.Component<AppLayoutProps, AppLayout
       user: undefined,
     }
 
-    UserUtil.registerOnUserUpdates(this.userUpdateKey, this.onUserUpdate.bind(this));
+    UserUtil.registerOnUserUpdates(this.userUpdateKey, this.setUser.bind(this));
 
     this.rightAction = this.rightAction.bind(this);
   }
 
-  private onUserUpdate(user: Faculty | undefined) {
+  private setUser(user: Faculty | undefined) {
     this.setState({
       user,
     });

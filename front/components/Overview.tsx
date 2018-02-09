@@ -8,6 +8,7 @@ import Faculties from './Faculties';
 import { Semester } from '../models/Semester';
 import Api from '../utils/Api';
 import Faculty from '../models/Faculty';
+import UserUtil from '../utils/UserUtil';
 
 export interface OverviewProps {
   semester: Semester;
@@ -28,18 +29,9 @@ interface OverviewState {
   [key: string]: Semester | boolean | string | Faculty | undefined;
 }
 
-const faculties = [{
-  email: 'aaa@aaa.com',
-  name: 'AAA AAA'
-}, {
-  email: 'bbb@bbb.com',
-  name: 'BBB BBB'
-}, {
-  email: 'ccc@ccc.com',
-  name: 'CCC CCC'
-}];
-
 export default class Overview extends React.Component<OverviewProps, OverviewState> {
+  userUpdateKey = `Overview_${new Date().toISOString()}`;
+  
   constructor(props: OverviewProps) {
     super(props);
 
@@ -57,8 +49,20 @@ export default class Overview extends React.Component<OverviewProps, OverviewSta
       user: undefined,
     };
 
+    UserUtil.registerOnUserUpdates(this.userUpdateKey, this.setUser.bind(this));
+
     this.updateSemester = this.updateSemester.bind(this);
     this.toggleForm = this.toggleForm.bind(this);
+  }
+
+  private setUser(user: Faculty | undefined) {
+    this.setState({
+      user,
+    })
+  }
+
+  componentWillUnmount() {
+    UserUtil.removeOnUserUpdates(this.userUpdateKey);
   }
 
   toggleForm(prop: 'presentationDates' | 'location' | 'faculties') {
@@ -113,11 +117,14 @@ export default class Overview extends React.Component<OverviewProps, OverviewSta
   }
 
   render() {
+    const isAdmin = this.state.user && this.state.user.isAdmin ? true : false;
+
     return (
       <div>
         <h1>Overview</h1>
         <PresentationDate
           prop="presentationDates"
+          isAdmin={isAdmin}
           semester={this.state.semester}
           editing={this.state.presentationDatesEditing}
           updating={this.state.presentationDatesUpdating}
@@ -127,6 +134,7 @@ export default class Overview extends React.Component<OverviewProps, OverviewSta
         />
         <Location
           prop="location"
+          isAdmin={isAdmin}
           semester={this.state.semester}
           editing={this.state.locationEditing}
           updating={this.state.locationUpdating}
@@ -136,6 +144,7 @@ export default class Overview extends React.Component<OverviewProps, OverviewSta
         />
         <Faculties
           prop="faculties"
+          isAdmin={isAdmin}
           semester={this.state.semester}
           editing={this.state.facultiesEditing}
           updating={this.state.facultiesUpdating}

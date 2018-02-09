@@ -11,6 +11,7 @@ import DatetimeUtil from '../utils/DatetimeUtil';
 export interface PresentationDateProps {
   form: WrappedFormUtils,
   prop: string;
+  isAdmin: boolean;
   semester: Semester,
   editing: boolean;
   updating: boolean;
@@ -81,11 +82,10 @@ class PresentationDate extends React.Component<PresentationDateProps, Presentati
   }
 
   extra() {
-    const isAdmin = true;
     const isArchived = false;
 
     let extra: string | JSX.Element = '';
-    if (isAdmin && !isArchived && this.props.editing) {
+    if (this.props.isAdmin && !isArchived && this.props.editing) {
       return (<Button
         icon="close"
         size="small"
@@ -94,7 +94,7 @@ class PresentationDate extends React.Component<PresentationDateProps, Presentati
       >
         Cancel
       </Button>);
-    } else if (isAdmin && !isArchived) {
+    } else if (this.props.isAdmin && !isArchived) {
       return (<Button ghost
         type="primary"
         size="small"

@@ -9,6 +9,7 @@ import Api from '../utils/Api';
 export interface FacultiesProps {
   form: WrappedFormUtils,
   prop: string;
+  isAdmin: boolean;
   semester: Semester,
   editing: boolean;
   updating: boolean;
@@ -72,11 +73,10 @@ class Faculties extends React.Component<FacultiesProps, FacultiesState> {
   }
 
   extra() {
-    const isAdmin = true;
     const isArchived = false;
 
     let extra: string | JSX.Element = '';
-    if (isAdmin && !isArchived && this.props.editing) {
+    if (this.props.isAdmin && !isArchived && this.props.editing) {
       return (<Button
         icon="close"
         size="small"
@@ -85,7 +85,7 @@ class Faculties extends React.Component<FacultiesProps, FacultiesState> {
       >
         Cancel
       </Button>);
-    } else if (isAdmin && !isArchived) {
+    } else if (this.props.isAdmin && !isArchived) {
       return (<Button ghost
         type="primary"
         size="small"

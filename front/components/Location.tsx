@@ -7,6 +7,7 @@ import { Semester } from '../models/Semester';
 export interface LocationProps {
   form: WrappedFormUtils,
   prop: string;
+  isAdmin: boolean;
   semester: Semester,
   editing: boolean;
   updating: boolean;
@@ -39,11 +40,10 @@ class Location extends React.Component<LocationProps, LocationState> {
   }
 
   extra() {
-    const isAdmin = true;
     const isArchived = false;
 
     let extra: string | JSX.Element = '';
-    if (isAdmin && !isArchived && this.props.editing) {
+    if (this.props.isAdmin && !isArchived && this.props.editing) {
       return (<Button
         icon="close"
         size="small"
@@ -52,7 +52,7 @@ class Location extends React.Component<LocationProps, LocationState> {
       >
         Cancel
       </Button>);
-    } else if (isAdmin && !isArchived) {
+    } else if (this.props.isAdmin && !isArchived) {
       return (<Button ghost
         type="primary"
         size="small"
