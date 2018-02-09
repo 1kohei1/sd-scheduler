@@ -146,12 +146,19 @@ class Account extends React.Component<AccountProps, AccountState> {
               Email is verified.
             </div>
           ) : (
-            <div>
-              <Icon type="exclamation-circle-o" style={{ marginRight: '8px' }} />
-              Email is not verified yet.&nbsp;
-              <a href="Send verification">Send verification email</a>
-            </div>
-          )}
+              <div>
+                <Icon type="exclamation-circle-o" style={{ marginRight: '8px' }} />
+                Email is not verified yet.&nbsp;
+                <a href="Send verification">Send verification email</a>
+              </div>
+            )}
+          <div>
+            <Icon type="lock" style={{ marginRight: '8px', fontSize: '16px' }} />
+            Forgot password?&nbsp;
+            <Link href="/password">
+              <a>Reset password</a>
+            </Link>
+          </div>
         </Form.Item>
         <Form.Item>
           <Button
