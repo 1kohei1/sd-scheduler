@@ -33,6 +33,10 @@ module.exports.createFaculty = (req: Request, res: Response) => {
   DBUtil.createFaculty(req.body)
   .then(newFaculty => {
     APIUtil.successResponse(info, newFaculty, res);
+    
+    // Generate token that expires in a week. 
+    // Save them to the database
+    // Send invitation email
   })
   .catch(err => {
     info.debugInfo.message = err.message;

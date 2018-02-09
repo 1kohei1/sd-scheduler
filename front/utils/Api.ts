@@ -70,6 +70,10 @@ export default class Api {
     return await this.makeRequest(RequestMethod.GET, `/api/faculties?${query}`);
   }
 
+  static async createFaculty(body: object = {}) {
+    return await this.makeRequest(RequestMethod.POST, `/api/faculties`, body);
+  }
+
   static async updateFaculty(_id: string, update: object = {}) {
      return await this.makeRequest(RequestMethod.PUT, `/api/faculties/${_id}`, update);
    }

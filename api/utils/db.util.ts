@@ -30,8 +30,12 @@ export default class DBUtil {
    * Faculty
    */
 
-  static findFaculties(query: Object = {}, shouldIncludePassword: boolean = false) {
+  static findFaculties(query: any = {}, shouldIncludePassword: boolean = false) {
     const password = shouldIncludePassword ? '+password' : '';
+    // Ignore case sensitivity for the email property
+    if (query.hasOwnProperty('email') && typeof query.email === 'string') {
+    query.email = query.email.toLowerCase();
+    }
     return Faculty.find(query, password);
   }
 

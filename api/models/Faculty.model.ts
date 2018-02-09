@@ -5,6 +5,8 @@ const FacultySchema = new Schema({
   email: {
     type: String,
     required: true,
+    lowercase: true,
+    trim: true,
     unique: true,
     uniqueCaseInsensitive: true,
   },
@@ -14,6 +16,7 @@ const FacultySchema = new Schema({
   },
   password: {
     type: String,
+    default: '',
     select: false, // By default, don't return the password field in find. Reference: https://stackoverflow.com/a/12096922/4155129
   },
   firstName: {
@@ -44,7 +47,7 @@ FacultySchema.pre('save', function(this: any, next) {
 });
 
 FacultySchema.plugin(uniqueValidator, {
-  message: 'Expected {PATH} to be unique',
+  message: '{VALUE} is already registered',
 });
 
 export default model('Faculty', FacultySchema);

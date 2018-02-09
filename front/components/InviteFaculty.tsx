@@ -1,14 +1,26 @@
 import * as React from 'react';
-import { Form, Icon, Card, Button, Alert, Input, Tag } from 'antd';
+import { Form, Icon, Card, Button, Alert, Input, Tag, message } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
+
+import Api from '../utils/Api';
 
 export interface InviteFacultyProps {
   form: WrappedFormUtils,
 }
 
-class InviteFaculty extends React.Component<InviteFacultyProps, any> {
+interface InviteFacultyState {
+  loading: boolean;
+  err: string;
+}
+
+class InviteFaculty extends React.Component<InviteFacultyProps, InviteFacultyState> {
   constructor(props: InviteFacultyProps) {
     super(props);
+
+    this.state = {
+      loading: false,
+      err: '',
+    }
 
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -21,7 +33,24 @@ class InviteFaculty extends React.Component<InviteFacultyProps, any> {
         return;
       }
 
-      console.log(values);
+      this.setState({
+        loading: true,
+        err: '',
+      });
+
+      try {
+        await Api.createFaculty(values);
+        this.setState({
+          loading: false,
+        });
+        message.success(`Successfully invited Dr. ${values.firstName} ${values.lastName}`);
+        this.props.form.resetFields();
+      } catch (err) {
+        this.setState({
+          loading: false,
+          err: err.message,
+        });
+      }
     })
   }
   render() {
@@ -36,10 +65,15 @@ class InviteFaculty extends React.Component<InviteFacultyProps, any> {
 
     return (
       <Card title={title} style={{ marginBottom: '16px' }}>
-        <div>
-          We will send the sign up emails to the email address.
-        </div>
         <Form onSubmit={this.handleSubmit}>
+          {this.state.err && (
+            <Form.Item>
+              <Alert message={this.state.err} type="error" />
+            </Form.Item>
+          )}
+          <div>
+            We will send the sign up emails to the email address.
+          </div>
           <div style={{ display: 'flex', flexDirection: 'row' }}>
             <Form.Item style={{ marginRight: '8px' }}>
               {getFieldDecorator('firstName', {
@@ -77,6 +111,7 @@ class InviteFaculty extends React.Component<InviteFacultyProps, any> {
             <Form.Item>
               <Button
                 htmlType="submit"
+                loading={this.state.loading}
                 type="primary"
               >
                 Invite
