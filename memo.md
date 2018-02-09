@@ -33,7 +33,7 @@ Students:
 
 Admin:
 
-- [ ] Add faculties
+- [x] Add faculties
 - [ ] Deactivate faculties
 - [x] Register presentation dates
 - [x] Register presentation location
@@ -53,7 +53,8 @@ TODO:
 - [ ] Update auth guard to better way (v3)
 - [x] Display loading while data in overview is updating
 - [x] Sort presentation dates when updated
-- [ ] Let faculty enter the second, third emails to receive emails
+- [ ] Let faculty enter the second, third emails to receive notification emails
+- [ ] Make email fancy
 
 NOTES:
 

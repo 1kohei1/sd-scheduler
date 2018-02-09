@@ -22,6 +22,15 @@ module.exports = (app: Server, server: Application) => {
   )
 
   server.get(
+    '/password/:token',
+    (req: Request, res: Response) => {
+      app.render(req, res, '/password/token', {
+        token: req.params.token,
+      });
+    }
+  )
+
+  server.get(
     '/dashboard', 
     (req: Request, res: Response) => {
       if (req.isAuthenticated()) {
