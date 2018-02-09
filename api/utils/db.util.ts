@@ -30,12 +30,14 @@ export default class DBUtil {
    * Faculty
    */
 
-  static findFaculties(query: Object = {}) {
-    return Faculty.find(query);
+  static findFaculties(query: Object = {}, shouldIncludePassword: boolean = false) {
+    const password = shouldIncludePassword ? '+password' : '';
+    return Faculty.find(query, password);
   }
 
-  static findFacultyById(_id: string | number | object) {
-    return Faculty.findById(_id);
+  static findFacultyById(_id: string | number | object, shouldIncludePassword: boolean = false) {
+    const password = shouldIncludePassword ? '+password' : '';
+    return Faculty.findById(_id, password);
   }
 
   static createFaculty(body: any) {
@@ -47,6 +49,7 @@ export default class DBUtil {
       register_at: new Date()
     });
 
+    // Would like not to include password field. Research how to omit the field in save() callback
     return newFaculty.save();
   }
 

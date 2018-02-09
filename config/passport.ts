@@ -8,13 +8,11 @@ module.exports = (passport: Authenticator) => {
     done(null, user._id);
   });
   
-  passport.deserializeUser(function(id, done) {
-    DBUtil.findFacultyById(id)
+  passport.deserializeUser(function(_id, done) {
+    DBUtil.findFacultyById(_id)
     .then(faculty => {
       if (faculty) {
-        const f: any = faculty.toJSON();
-        delete f.password;
-        done(null, f);
+        done(null, faculty.toJSON());
       } else {
         done(null, undefined);
       }
@@ -31,22 +29,23 @@ module.exports = (passport: Authenticator) => {
   }, (email: string, password: string, done: (error: any, user?: any, options?: IVerifyOptions) => void) => {
     DBUtil.findFaculties({
       email: email
-    })
+    }, true)
     .then((faculties) => {
       if (faculties.length === 0) {
         return done(null, false, {
           message: 'Invalid email or password'
         });
       } else {
-        let user = null;
+        let user: any = null;
         faculties.forEach((faculty) => {
           const isMatch = bcrypt.compareSync(password, faculty.get('password'));
           if (isMatch) {
-            user = faculty;
+            user = faculty.toJSON();
           }
         });
         
         if (user) {
+          delete user.password;
           return done(null, user);
         } else {
           return done(null, false, {

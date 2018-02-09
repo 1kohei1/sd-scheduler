@@ -15,6 +15,7 @@ const FacultySchema = new Schema({
   password: {
     type: String,
     required: true,
+    select: false, // By default, don't return the password field in find. Reference: https://stackoverflow.com/a/12096922/4155129
   },
   firstName: {
     type: String,
