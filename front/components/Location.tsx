@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Icon, Input, Card, Button, Alert } from 'antd';
+import { Form, Icon, Input, Card, Button, Alert, Tag } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import { Semester } from '../models/Semester';
@@ -76,6 +76,9 @@ class Location extends React.Component<LocationProps, LocationState> {
   form() {
     return (
       <Form onSubmit={this.handleSubmit}>
+        <Form.Item>
+          Editing is <Tag>Admin only</Tag> feature
+        </Form.Item>
         {this.props.error.length > 0 && (
           <Form.Item>
             <Alert message={this.props.error} type="error" />

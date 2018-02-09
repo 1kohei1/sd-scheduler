@@ -1,7 +1,7 @@
 import * as React from 'react';
 import ObjectID from 'bson-objectid';
 import { List } from 'immutable';
-import { Form, Icon, Select, DatePicker, Card, Button, Alert } from 'antd';
+import { Form, Icon, Select, DatePicker, Card, Button, Alert, Tag } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import { Semester } from '../models/Semester';
@@ -172,6 +172,9 @@ class PresentationDate extends React.Component<PresentationDateProps, Presentati
   form() {
     return (
       <Form onSubmit={this.handleSubmit}>
+        <Form.Item>
+          Editing is <Tag>Admin only</Tag> feature
+        </Form.Item>
         {this.props.error.length > 0 && (
           <Form.Item>
             <Alert message={this.props.error} type="error" />

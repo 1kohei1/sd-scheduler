@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Icon, Card, Button, Alert, Input } from 'antd';
+import { Form, Icon, Card, Button, Alert, Input, Tag } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 export interface InviteFacultyProps {
@@ -27,8 +27,15 @@ class InviteFaculty extends React.Component<InviteFacultyProps, any> {
   render() {
     const { getFieldDecorator } = this.props.form;
 
+    const title = (
+      <div>
+        Invite faculty&nbsp;
+        <Tag>Admin only</Tag>
+      </div>
+    )
+
     return (
-      <Card title="Invite faculty" style={{ marginBottom: '16px' }}>
+      <Card title={title} style={{ marginBottom: '16px' }}>
         <div>
           We will send the sign up emails to the email address.
         </div>

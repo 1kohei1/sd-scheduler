@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Icon, Select, DatePicker, Card, Button, Tooltip, Alert } from 'antd';
+import { Form, Icon, Select, DatePicker, Card, Button, Tooltip, Alert, Tag } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import { Semester } from '../models/Semester';
@@ -115,6 +115,9 @@ class Faculties extends React.Component<FacultiesProps, FacultiesState> {
   form() {
     return (
       <Form onSubmit={this.handleSubmit}>
+        <Form.Item>
+          Editing is <Tag>Admin only</Tag> feature
+        </Form.Item>
         {this.props.error && (
           <Form.Item>
             <Alert message={this.props.error} type="error" />
