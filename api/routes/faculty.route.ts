@@ -4,6 +4,11 @@ const facultyController = require('../controllers/faculty.controller');
 import APIUtil from '../utils/api.util';
 
 module.exports = (server: Application) => {
+  server.get(
+    '/api/faculties',
+    facultyController.findFaculty,
+  );
+  
   server.post(
     '/api/faculties',
     APIUtil.isAuthenticated,

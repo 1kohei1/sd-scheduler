@@ -3,6 +3,24 @@ import { Request, Response } from 'express';
 import APIUtil from '../utils/api.util';
 import DBUtil from '../utils/db.util';
 
+module.exports.findFaculty = (req: Request, res: Response) => {
+  const info: any = {
+    key: APIUtil.key(req),
+    debugInfo: {
+      query: req.query,
+    }
+  };
+ 
+  DBUtil.findFaculties(req.query)
+  .then(faculties => {
+    APIUtil.successResponse(info, faculties, res);
+  })
+  .catch(err => {
+    info.debugInfo.message = err.message;
+    APIUtil.errorResponse(info, err.message, {}, res);
+  });
+}
+
 module.exports.createFaculty = (req: Request, res: Response) => {
   const info: any = {
     key: APIUtil.key(req),
