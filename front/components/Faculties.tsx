@@ -5,6 +5,7 @@ import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { Semester } from '../models/Semester';
 import Faculty from '../models/Faculty';
 import UserUtil from '../utils/UserUtil';
+import Api from '../utils/Api';
 
 export interface FacultiesProps {
   form: WrappedFormUtils,
@@ -19,19 +20,26 @@ export interface FacultiesProps {
 
 interface FacultiesState {
   user: Faculty | undefined;
+  loading: boolean;
+  faculties: Faculty[];
 }
 
-class Faculties extends React.Component<FacultiesProps, any> {
+class Faculties extends React.Component<FacultiesProps, FacultiesState> {
   userUpdateKey = `Faculties_${new Date().toISOString()}`;
-  
+
   constructor(props: FacultiesProps) {
     super(props);
 
     this.state = {
       user: undefined,
+      loading: true,
+      faculties: [],
     }
 
     UserUtil.registerOnUserUpdates(this.userUpdateKey, this.setUser.bind(this));
+    UserUtil.updateUser();
+
+    this.getFaculties();
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.extra = this.extra.bind(this);
@@ -45,13 +53,33 @@ class Faculties extends React.Component<FacultiesProps, any> {
     });
   }
 
+  async getFaculties() {
+    this.setState({
+      loading: true,
+    })
+    const faculties = await Api.getFaculties() as Faculty[];
+    faculties.sort((a, b) => {
+      if (a.firstName < b.firstName) {
+        return -1;
+      } else if (a.firstName > b.firstName) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+    this.setState({
+      faculties,
+      loading: false,
+    });
+  }
+
   componentWillUnmount() {
     UserUtil.removeOnUserUpdates(this.userUpdateKey);
   }
 
   handleSubmit(e: React.FormEvent<any>) {
     e.preventDefault();
-    
+
   }
 
   extra() {
@@ -98,30 +126,39 @@ class Faculties extends React.Component<FacultiesProps, any> {
   form() {
     return (
       <Form onSubmit={this.handleSubmit}>
-        {this.props.error.length > 0 && (
+        {this.props.error && (
           <Form.Item>
             <Alert message={this.props.error} type="error" />
           </Form.Item>
         )}
         <Form.Item>
           <Button
-            htmlType="submit"
-            type="primary"
-            style={{ marginRight: '16px' }}
-            loading={this.props.updating}
+            loading={this.state.loading}
+            onClick={this.getFaculties}
           >
-            Update
-          </Button>
-          <Button
-            onClick={(e) => this.props.toggleForm(this.props.prop)}
-            loading={this.props.updating}
-          >
-            Cancel
+            {this.state.loading ? 'Loading' : 'Reload'}
           </Button>
         </Form.Item>
+        {!this.state.loading && (
+          <Form.Item>
+            <Button
+              htmlType="submit"
+              type="primary"
+              style={{ marginRight: '16px' }}
+              loading={this.props.updating}
+            >
+              Update
+            </Button>
+            <Button
+              onClick={(e) => this.props.toggleForm(this.props.prop)}
+              loading={this.props.updating}
+            >
+              Cancel
+            </Button>
+          </Form.Item>
+        )}
       </Form>
     )
-
   }
 
   render() {
