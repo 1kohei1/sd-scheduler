@@ -7,24 +7,25 @@ import Location from './Location';
 import Faculties from './Faculties';
 import { Semester } from '../models/Semester';
 import Api from '../utils/Api';
+import Faculty from '../models/Faculty';
 
 export interface OverviewProps {
   semester: Semester;
 }
 
 interface OverviewState {
-  [index: string]: {
-    semester: Semester;
-    presentationDatesEditing: boolean;
-    presentationDatesUpdating: boolean;
-    presentationDatesError: string;
-    locationEditing: boolean;
-    locationLoading: boolean;
-    locationError: string;
-    facultiesEditing: boolean;
-    facultiesLoading: boolean;
-    facultiesError: string;
-  }
+  semester: Semester;
+  presentationDatesEditing: boolean;
+  presentationDatesUpdating: boolean;
+  presentationDatesError: string;
+  locationEditing: boolean;
+  locationUpdating: boolean;
+  locationError: string;
+  facultiesEditing: boolean;
+  facultiesUpdating: boolean;
+  facultiesError: string;
+  user: Faculty | undefined;
+  [key: string]: Semester | boolean | string | Faculty | undefined;
 }
 
 const faculties = [{
@@ -38,7 +39,7 @@ const faculties = [{
   name: 'CCC CCC'
 }];
 
-export default class Overview extends React.Component<OverviewProps, any> {
+export default class Overview extends React.Component<OverviewProps, OverviewState> {
   constructor(props: OverviewProps) {
     super(props);
 
@@ -53,6 +54,7 @@ export default class Overview extends React.Component<OverviewProps, any> {
       facultiesEditing: false,
       facultiesUpdating: false,
       facultiesError: '',
+      user: undefined,
     };
 
     this.updateSemester = this.updateSemester.bind(this);
@@ -63,8 +65,8 @@ export default class Overview extends React.Component<OverviewProps, any> {
     this.setState((prevState: OverviewState, props: OverviewProps) => {
       const key = `${prop}Editing`;
       return {
-        [key]: !prevState[key]
-      };
+        [key]: !prevState[key],
+      }
     })
   }
 
@@ -78,7 +80,7 @@ export default class Overview extends React.Component<OverviewProps, any> {
     this.setState(newState);
 
     try {
-      const newData = await Api.updateSemester(this.state.semester._id, updateObj);
+      const newData = await Api.updateSemester(this.state.semester._id as string, updateObj);
       let semester = Map(this.state.semester);
       semester = semester.set(prop, newData[prop]);
 
@@ -103,9 +105,9 @@ export default class Overview extends React.Component<OverviewProps, any> {
   componentWillReceiveProps(nextProps: OverviewProps) {
     if (nextProps.semester !== this.state.semester) {
       this.setState({
-        isPresentationDatesEditing: false,
-        isLocationEditing: false,
-        isFacultiesEditing: false
+        presentationDatesEditing: false,
+        locationEditing: false,
+        facultiesEditing: false
       });
     }
   }
