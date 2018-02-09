@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Map } from 'immutable';
 import { message } from 'antd';
 
-import DateView from './DateView';
+import PresentationDate from './PresentationDate';
 import Location from './Location';
 import Faculties from './Faculties';
 import { Semester } from '../models/Semester';
@@ -116,7 +116,7 @@ export default class Overview extends React.Component<OverviewProps, OverviewSta
     return (
       <div>
         <h1>Overview</h1>
-        <DateView
+        <PresentationDate
           prop="presentationDates"
           semester={this.state.semester}
           editing={this.state.presentationDatesEditing}

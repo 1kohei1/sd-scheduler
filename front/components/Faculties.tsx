@@ -4,7 +4,6 @@ import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import { Semester } from '../models/Semester';
 import Faculty from '../models/Faculty';
-import UserUtil from '../utils/UserUtil';
 import Api from '../utils/Api';
 
 export interface FacultiesProps {
@@ -25,8 +24,6 @@ interface FacultiesState {
 }
 
 class Faculties extends React.Component<FacultiesProps, FacultiesState> {
-  userUpdateKey = `Faculties_${new Date().toISOString()}`;
-
   constructor(props: FacultiesProps) {
     super(props);
 
@@ -36,9 +33,6 @@ class Faculties extends React.Component<FacultiesProps, FacultiesState> {
       faculties: [],
     }
 
-    UserUtil.registerOnUserUpdates(this.userUpdateKey, this.setUser.bind(this));
-    UserUtil.updateUser();
-
     this.getFaculties();
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -46,12 +40,6 @@ class Faculties extends React.Component<FacultiesProps, FacultiesState> {
     this.info = this.info.bind(this);
     this.form = this.form.bind(this);
     this.onReload = this.onReload.bind(this);
-  }
-
-  setUser(user: Faculty | undefined) {
-    this.setState({
-      user,
-    });
   }
 
   onReload() {
@@ -78,17 +66,13 @@ class Faculties extends React.Component<FacultiesProps, FacultiesState> {
     });
   }
 
-  componentWillUnmount() {
-    UserUtil.removeOnUserUpdates(this.userUpdateKey);
-  }
-
   handleSubmit(e: React.FormEvent<any>) {
     e.preventDefault();
 
   }
 
   extra() {
-    const isAdmin = this.state.user && this.state.user.isAdmin;
+    const isAdmin = true;
     const isArchived = false;
 
     let extra: string | JSX.Element = '';

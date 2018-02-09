@@ -7,10 +7,8 @@ import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { Semester } from '../models/Semester';
 import { DateConstants } from '../models/Constants';
 import DatetimeUtil from '../utils/DatetimeUtil';
-import Faculty from '../models/Faculty';
-import UserUtil from '../utils/UserUtil';
 
-export interface DateProps {
+export interface PresentationDateProps {
   form: WrappedFormUtils,
   prop: string;
   semester: Semester,
@@ -21,23 +19,17 @@ export interface DateProps {
   updateSemester: (updateObj: any, menu: string) => void;
 }
 
-interface DateState {
+interface PresentationDateState {
   objectIdsInForm: List<string>;
-  user: Faculty | undefined;
 }
 
-class DateView extends React.Component<DateProps, DateState> {
-  userUpdateKey = `DateView_${new Date().toISOString()}`;
-
-  constructor(props: DateProps) {
+class PresentationDate extends React.Component<PresentationDateProps, PresentationDateState> {
+  constructor(props: PresentationDateProps) {
     super(props);
 
     this.state = {
       objectIdsInForm: List(this.props.semester.presentationDates.map(date => date._id)),
-      user: undefined,
     }
-
-    UserUtil.registerOnUserUpdates(this.userUpdateKey, this.setUser.bind(this));
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.extra = this.extra.bind(this);
@@ -47,17 +39,7 @@ class DateView extends React.Component<DateProps, DateState> {
     this.addDate = this.addDate.bind(this);
   }
 
-  setUser(user: Faculty | undefined) {
-    this.setState({
-      user,
-    });
-  }
-
-  componentWillUnmount() {
-    UserUtil.removeOnUserUpdates(this.userUpdateKey);
-  }
-
-  componentWillReceiveProps(nextProps: DateProps) {
+  componentWillReceiveProps(nextProps: PresentationDateProps) {
     if (!nextProps.editing) {
       this.setState({
         objectIdsInForm: List(nextProps.semester.presentationDates.map(date => date._id))
@@ -99,7 +81,7 @@ class DateView extends React.Component<DateProps, DateState> {
   }
 
   extra() {
-    const isAdmin = this.state.user && this.state.user.isAdmin;
+    const isAdmin = true;
     const isArchived = false;
 
     let extra: string | JSX.Element = '';
@@ -143,7 +125,7 @@ class DateView extends React.Component<DateProps, DateState> {
   }
 
   addDate() {
-    this.setState((prevState: DateState, props: DateProps) => {
+    this.setState((prevState: PresentationDateState, props: PresentationDateProps) => {
       return {
         objectIdsInForm: prevState.objectIdsInForm.push(`${ObjectID.generate()}`)
       }
@@ -155,7 +137,7 @@ class DateView extends React.Component<DateProps, DateState> {
       return;
     }
 
-    this.setState((prevState: DateState, props: DateProps) => {
+    this.setState((prevState: PresentationDateState, props: PresentationDateProps) => {
       const index = prevState.objectIdsInForm.indexOf(objectId);
       return {
         objectIdsInForm: prevState.objectIdsInForm.delete(index)
@@ -269,4 +251,4 @@ class DateView extends React.Component<DateProps, DateState> {
   }
 }
 
-export default Form.create()(DateView);
+export default Form.create()(PresentationDate);
