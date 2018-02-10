@@ -55,7 +55,7 @@ TODO:
 - [x] Sort presentation dates when updated
 - [ ] Let faculty enter the second, third emails to receive notification emails
 - [ ] Make email fancy
-- [ ] Think better redirect structure. (Currently redirect happens in custom-routes, Api.redirect, Api.makeRequest)
+- [x] Think better redirect structure. (Currently redirect happens in custom-routes, Api.redirect, Api.makeRequest)
 
 NOTES:
 

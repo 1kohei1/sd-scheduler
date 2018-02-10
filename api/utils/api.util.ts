@@ -8,13 +8,6 @@ export default class APIUtil {
     })
   }
 
-  static redirectResponse(info: Object, redirect: any, res: Response) {
-    res.json({
-      success: true,
-      redirect,
-    });
-  }
-
   // errors are form property validation message
   static errorResponse(info: Object, message: string, errors: Object = {}, res: Response) {
     this.logError(info);
@@ -29,12 +22,7 @@ export default class APIUtil {
     if (req.isAuthenticated()) {
       next();
     } else {
-      APIUtil.redirectResponse({}, {
-        pathname: '/login',
-        query: {
-          message: 'You are not authenticated. Please login first'
-        },
-      }, res);
+      APIUtil.errorResponse({}, 'You are not authenticated. Please login first', {}, res);
     }
   }
 

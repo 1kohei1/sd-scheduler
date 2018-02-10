@@ -13,7 +13,7 @@ export interface LoginProps extends NextClientProps {
 }
 
 interface LoginState {
-  isError: boolean;
+  err: string;
   message: string;
   loading: boolean;
 }
@@ -24,9 +24,9 @@ class Login extends React.Component<LoginProps, LoginState> {
 
     super(props);
     this.state = {
-      isError: message ? false : true,
+      err: props.url.query.err || '',
+      message: props.url.query.message || '',
       loading: false,
-      message,
     }
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -43,12 +43,15 @@ class Login extends React.Component<LoginProps, LoginState> {
         this.setState({
           loading: true,
           message: '',
+          err: '',
         });
-        await Api.login(values);
+        const result = await Api.login(values);
+        if (result) {
+          Api.redirect(undefined, '/dashboard');
+        }
       } catch (errRes) {
         this.setState({
-          message: errRes.message,
-          isError: true,
+          err: errRes.message,
           loading: false,
         })
       }
@@ -62,10 +65,18 @@ class Login extends React.Component<LoginProps, LoginState> {
       <AppLayout>
         <div className="form-wrapper">
           <Form onSubmit={this.handleSubmit}>
-            {this.state.message && this.state.message.length > 0 && (
+            {this.state.err && (
               <FormItem>
                 <Alert
-                  type={this.state.isError ? 'error' : 'success'}
+                  type="error"
+                  message={this.state.err}
+                />
+              </FormItem>
+            )}
+            {this.state.message && (
+              <FormItem>
+                <Alert
+                  type="success"
                   message={this.state.message}
                 />
               </FormItem>

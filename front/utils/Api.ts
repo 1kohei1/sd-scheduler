@@ -92,7 +92,10 @@ export default class Api {
       });
       context.res.end();
     } else {
-      Router.replace(path, query);
+      Router.push({
+        pathname: path,
+        query,
+      });
     }
   }
 
@@ -113,14 +116,7 @@ export default class Api {
 
     if (res) {
       if (res.success) {
-        if (res.hasOwnProperty('redirect')) {
-          Router.push({
-            pathname: res.redirect.pathname,
-            query: res.redirect.query
-          });
-        } else {
-          return Promise.resolve(res.data);
-        }
+        return Promise.resolve(res.data);
       } else {
         return Promise.reject(res);
       }

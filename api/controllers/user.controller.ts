@@ -38,10 +38,7 @@ module.exports.login = (req: Request, res: Response, next: any) => {
               info.debugInfo.err = err;
               APIUtil.errorResponse(info, 'Failed to login. The system administrator will take a look.', {}, res);
             } else {
-              APIUtil.redirectResponse(info, {
-                pathname: '/dashboard',
-                query: {}
-              }, res);
+              APIUtil.successResponse(info, true, res);
             }
           });
         }
@@ -60,10 +57,5 @@ module.exports.logout = (req: Request, res: Response) => {
 
   req.logOut();
 
-  APIUtil.redirectResponse(info, {
-    pathname: '/login',
-    query: {
-      message: 'You are successfully logged out.'
-    }
-  }, res);
+  APIUtil.successResponse(info, true, res);
 }

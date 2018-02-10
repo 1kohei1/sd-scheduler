@@ -26,13 +26,19 @@ export default class UserUtil {
   }
 
   static async logout() {
-    await Api.logout();
+    const result = await Api.logout();
     Cookie.remove('user');
 
     const keys = Object.keys(UserUtil.onUserUpdates);
     keys.forEach(key => {
       UserUtil.onUserUpdates[key](undefined);
     });
+
+    if (result) {
+      Api.redirect(undefined, '/login', {
+        message: 'You are successfully logged out',
+      });
+    }
   }
 
   static async checkAuthentication() {
