@@ -93,3 +93,39 @@ module.exports.updateFaculty = (req: Request, res: Response) => {
     APIUtil.errorResponse(info, err.message, {}, res);
   });
 }
+
+module.exports.updatePassword = (req: Request, res: Response) => {
+  const info: any = {
+    key: APIUtil.key(req),
+    debugInfo: {
+      _id: req.params._id,
+      token: req.params.token,
+      body: req.body,
+    }
+  };
+
+  const update: any = {};
+  if (req.body.password) {
+    update.password = req.body.password;
+  } else {
+    info.debugInfo.message = 'Password is not given to API';
+    APIUtil.errorResponse(info, 'Password is not given to API', {}, res);
+    return;
+  }
+ 
+  DBUtil.updateFacultyById(req.params._id, update)
+  .then(result => {
+    return DBUtil.updateFacultyById(req.params._id, {
+      token: '',
+      expire_at: null,
+      register_at: new Date(),
+    });
+  })
+  .then(result => {
+    APIUtil.successResponse(info, null, res);
+  })
+  .catch(err => {
+    info.debugInfo.message = err.message;
+    APIUtil.errorResponse(info, err.message, {}, res);
+  })
+}

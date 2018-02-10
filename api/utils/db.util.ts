@@ -59,7 +59,11 @@ export default class DBUtil {
     return newFaculty.save();
   }
 
-  static updateFacultyById(_id: string | number | object, update: Object) {
+  static updateFacultyById(_id: string | number | object, update: any) {
+    if (update.hasOwnProperty('password') && update.password) {
+      const salt = bcrypt.genSaltSync(10);
+      update.password = bcrypt.hashSync(update.password, salt);
+    }
     return Faculty.update({ _id }, update, updateOption);
   }
 

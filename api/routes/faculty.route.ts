@@ -20,5 +20,10 @@ module.exports = (server: Application) => {
     '/api/faculties/:_id',
     APIUtil.isAuthenticated,
     facultyController.updateFaculty,
+  );
+
+  server.put(
+    '/api/faculties/:_id/:token',
+    facultyController.updatePassword,
   )
 }

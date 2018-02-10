@@ -11,13 +11,13 @@ import Api from '../../utils/Api';
 export interface TokenProps {
   form: WrappedFormUtils;
   token: string;
+  _id: string;
 }
 
 interface TokenState {
   err: string;
   loading: boolean;
   confirmDirty: boolean;
-  passwordResetSuccess: boolean;
 }
 
 class Token extends React.Component<TokenProps, TokenState> {
@@ -33,6 +33,7 @@ class Token extends React.Component<TokenProps, TokenState> {
     }
     return {
       token,
+      _id: faculties[0]._id,
     };
   }
 
@@ -43,7 +44,6 @@ class Token extends React.Component<TokenProps, TokenState> {
       err: '',
       loading: false,
       confirmDirty: false,
-      passwordResetSuccess: false,
     }
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -84,7 +84,23 @@ class Token extends React.Component<TokenProps, TokenState> {
         loading: true,
       });
 
-
+      try {
+        // Update password here
+        await Api.updateFacultyByToken(this.props._id, this.props.token, {
+          password: values.password,
+        });
+        this.setState({
+          loading: false,
+        });
+        Api.redirect(undefined, '/login', {
+          message: 'Password is successfully set. Please login to enjoy SD Scheduler!',
+        })
+      } catch (err) {
+        this.setState({
+          loading: false,
+          err: err.message,
+        })
+      }
     })
   }
 
@@ -98,19 +114,6 @@ class Token extends React.Component<TokenProps, TokenState> {
             {this.state.err && (
               <Form.Item>
                 <Alert type="error" message={this.state.err} />
-              </Form.Item>
-            )}
-            {this.state.passwordResetSuccess && (
-              <Form.Item>
-                <Alert type="success"
-                  message={(
-                    <div>
-                      Password is successfully set.&nbsp;
-                      <Link href="/login">
-                        <a>Go to login</a>
-                      </Link>
-                    </div>
-                  )} />
               </Form.Item>
             )}
             <Form.Item label="New password">
