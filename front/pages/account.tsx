@@ -160,6 +160,7 @@ class Account extends React.Component<AccountProps, AccountState> {
           <Button
             htmlType="submit"
             type="primary"
+            size="large"
             loading={this.state.updating}
             style={{ width: '100%' }}
           >

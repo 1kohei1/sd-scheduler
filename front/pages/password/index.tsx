@@ -50,6 +50,7 @@ class PasswordIndex extends React.Component<PasswordIndexProps, any> {
               <Button
                 htmlType="submit"
                 type="primary"
+                size="large"
                 style={{ width: '100%' }}
               >
                 Send password reset email
