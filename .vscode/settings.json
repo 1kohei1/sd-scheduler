@@ -3,5 +3,6 @@
     "**/*.js": { "when": "$(basename).ts"},
     "**/**.js": { "when": "$(basename).tsx"},
     "**/*.map": { "when": "$(basename).map"}
-    }
-}
+    },
+    "git.ignoreLimitWarning": true
+  }
