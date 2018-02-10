@@ -23,8 +23,8 @@ export default class Api {
    * User
    */
 
-  static async getUser() {
-    return await this.makeRequest(RequestMethod.GET, '/api/users');
+  static async getUser(cookie: string = '') {
+    return await this.makeRequest(RequestMethod.GET, '/api/users', {}, cookie);
   }
 
 
@@ -107,10 +107,10 @@ export default class Api {
    * Private functions
    */
 
-  private static async makeRequest(method: RequestMethod, path: string, body: Object = {}) {
+  private static async makeRequest(method: RequestMethod, path: string, body: Object = {}, cookie: string = '') {
     let res = await fetch(
       `${this.getBackendUrl()}${path}`,
-      Api.fetchOption(method, body),
+      Api.fetchOption(method, body, cookie),
     )
     res = await res.json();
 
@@ -125,7 +125,7 @@ export default class Api {
     }
   }
 
-  private static fetchOption(method: RequestMethod, body: Object = {}) {
+  private static fetchOption(method: RequestMethod, body: Object = {}, cookie: string = '') {
     let requestMethod = '';
     if (method === RequestMethod.GET) {
       requestMethod = 'GET';
@@ -142,6 +142,10 @@ export default class Api {
         'Content-Type': 'application/json',
       }
     };
+
+    if (cookie) {
+      obj.headers.Cookie = cookie;
+    }
 
     if (Object.keys(body).length > 0) {
       obj.body = JSON.stringify(body);

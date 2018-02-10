@@ -43,7 +43,12 @@ export default class UserUtil {
   }
 
   static async checkAuthentication(context: InitialProps) {
-    const user = await Api.getUser();
+    let cookie = '';
+    if (context.req) {
+      cookie = context.req.headers.cookie as string;
+    }
+    
+    const user = await Api.getUser(cookie);
 
     if (!user) {
       Api.redirect(context, '/login', {
