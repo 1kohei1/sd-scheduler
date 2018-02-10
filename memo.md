@@ -56,6 +56,7 @@ TODO:
 - [ ] Let faculty enter the second, third emails to receive notification emails
 - [ ] Make email fancy
 - [x] Think better redirect structure. (Currently redirect happens in custom-routes, Api.redirect, Api.makeRequest)
+- [ ] Add validation for req.body using express-validator (https://github.com/ctavan/express-validator)
 
 NOTES:
 
