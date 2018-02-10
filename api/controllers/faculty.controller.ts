@@ -158,6 +158,43 @@ module.exports.updateFaculty = (req: Request, res: Response) => {
     });
 }
 
+module.exports.verify = (req: Request, res: Response) => {
+  const info: any = {
+    key: APIUtil.key(req),
+    debugInfo: {
+      _id: req.params._id,
+    }
+  };
+
+  const _id = req.params._id;
+  const token = crypto.randomBytes(48).toString('hex');
+  let faculty: object | undefined = undefined;
+
+  DBUtil.findFacultyById(_id)
+    .then(f => {
+      if (f) {
+        faculty = f.toJSON();
+        return DBUtil.updateFacultyById(_id, {
+          verifyToken: token,
+        });
+      } else {
+        return Promise.reject({
+          message: 'Specified faculty does not exist',
+        });
+      }
+    })
+    .then(result => {
+      // Send email
+    })
+    .then(result => {
+      APIUtil.successResponse(info, true, res);
+    })
+    .catch(err => {
+      info.debugInfo.message = err.message;
+      APIUtil.errorResponse(info, err.message, {}, res);
+    })
+}
+
 module.exports.updatePassword = (req: Request, res: Response) => {
   const info: any = {
     key: APIUtil.key(req),

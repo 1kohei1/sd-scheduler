@@ -35,6 +35,10 @@ const FacultySchema = new Schema({
     type: String,
     default: '',
   },
+  verifyToken: {
+    type: String,
+    default: '',
+  },
   expire_at: Date,
   signedup_at: Date, // When the password is set
   register_at: Date, // When the admin adds the faculty
