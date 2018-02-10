@@ -5,14 +5,29 @@ import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import AppLayout from '../../components/AppLayout';
 import FormLayout from '../../components/FormLayout';
+import NextClientProps from '../../models/NextClientProps';
 
-export interface PasswordIndexProps {
+export interface PasswordIndexProps extends NextClientProps {
   form: WrappedFormUtils
 }
 
-class PasswordIndex extends React.Component<PasswordIndexProps, any> {
+interface PasswordIndexState {
+  err: string;
+  message: string;
+  loading: boolean;
+}
+
+class PasswordIndex extends React.Component<PasswordIndexProps, PasswordIndexState> {
   constructor(props: PasswordIndexProps) {
     super(props);
+
+    const { query } = this.props.url;
+
+    this.state = {
+      err: query.err || '',
+      message: query.message || '',
+      loading: false,
+    }
 
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -29,10 +44,20 @@ class PasswordIndex extends React.Component<PasswordIndexProps, any> {
     return (
       <AppLayout>
         <FormLayout>
-          <div>
-            Enter your email address and we will send you a link to reset your password.
-          </div>
           <Form onSubmit={this.handleSubmit}>
+            {this.state.err && (
+              <Form.Item>
+                <Alert type="error" message={this.state.err} />
+              </Form.Item>
+            )}
+            {this.state.message && (
+              <Form.Item>
+                <Alert type="success" message={this.state.message} />
+              </Form.Item>
+            )}
+            <div>
+              Enter your email address and we will send you a link to reset your password.
+            </div>
             <Form.Item>
               {getFieldDecorator('email', {
                 rules: [{
@@ -51,6 +76,7 @@ class PasswordIndex extends React.Component<PasswordIndexProps, any> {
                 htmlType="submit"
                 type="primary"
                 size="large"
+                loading={this.state.loading}
                 style={{ width: '100%' }}
               >
                 Send password reset email
