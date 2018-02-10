@@ -168,7 +168,7 @@ module.exports.verify = (req: Request, res: Response) => {
 
   const _id = req.params._id;
   const token = crypto.randomBytes(48).toString('hex');
-  let faculty: object | undefined = undefined;
+  let faculty: any | undefined = undefined;
 
   DBUtil.findFacultyById(_id)
     .then(f => {
@@ -184,7 +184,13 @@ module.exports.verify = (req: Request, res: Response) => {
       }
     })
     .then(result => {
-      // Send email
+      return Mailer.send(MailType.verify, {
+        to: faculty.email,
+        extra: {
+          name: `Dr. ${faculty.firstName} ${faculty.lastName}`,
+          token,
+        }
+      })
     })
     .then(result => {
       APIUtil.successResponse(info, true, res);

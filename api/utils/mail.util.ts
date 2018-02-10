@@ -3,6 +3,7 @@ import * as nodemailer from 'nodemailer';
 export enum MailType {
   invitation,
   passwordreset,
+  verify,
 }
 
 interface MailOption {
@@ -33,6 +34,8 @@ export default class Mailer {
       return this.sendInvitation(option);
     } else if (type === MailType.passwordreset) {
       return this.sendPasswordreset(option);
+    } else if (type === MailType.verify) {
+      return this.sendVerify(option);
     } else {
       return Promise.resolve({});
     }
@@ -58,6 +61,20 @@ export default class Mailer {
       text: MailTemplate.passwordresetText(option),
       html: MailTemplate.passwordresetHtml(option),
     }
+
+    return transporter.sendMail(mailOption);
+  }
+
+  private static sendVerify(option: MailOption) {
+    const mailOption = {
+      from: MAIL_CONSTANTS.from,
+      to: option.to,
+      subject: `[SD Scheduler] Email verification`,
+      text: MailTemplate.verifyText(option),
+      html: MailTemplate.verifyHtml(option),
+    }
+
+    return transporter.sendMail(mailOption);
   }
 }
 
@@ -273,6 +290,32 @@ class MailTemplate {
     <br />
     Kohei<br />
     `;
+  }
+
+  static verifyText(option: MailOption) {
+    return `
+    Hi ${option.extra.name},
+
+    Please click this link to verify your email address
+    ${MailTemplate.siteUrl()}/verify/${option.extra.token}
+
+    Sincerely,
+
+    Kohei
+    `
+  }
+
+  static verifyHtml(option: MailOption) {
+    return `
+    Hi ${option.extra.name},<br />
+    <br />
+    Please click this link to verify your email address. <br />
+    <a href="${MailTemplate.siteUrl()}/verify/${option.extra.token}">${MailTemplate.siteUrl()}/verify/${option.extra.token}</a>
+    <br />
+    Sincerely,<br />
+    <br />
+    Kohei<br />
+    `
   }
 
   private static siteUrl() {
