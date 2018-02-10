@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Link from 'next/link';
 import { Form, Icon, Input, Button, Alert } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
@@ -127,7 +128,9 @@ class Login extends React.Component<LoginProps, LoginState> {
               </Button>
             </FormItem>
             <div style={{ textAlign: 'center' }}>
-              <a className="" href="">Forgot password</a>
+              <Link href="/password">
+                <a>Forgot password</a>
+              </Link>
             </div>
           </Form>
         </FormLayout>
