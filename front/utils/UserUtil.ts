@@ -3,6 +3,7 @@ import Router from 'next/router';
 
 import Api from './Api';
 import Faculty from '../models/Faculty';
+import InitialProps from '../models/InitialProps';
 
 const KEY = 'user';
 
@@ -41,17 +42,13 @@ export default class UserUtil {
     }
   }
 
-  static async checkAuthentication() {
+  static async checkAuthentication(context: InitialProps) {
     const user = await Api.getUser();
 
-    // It is ok to use client side only code here. Since the route is protected by front/custom-routes.ts
     if (!user) {
-      Router.push({
-        pathname: '/login',
-        query: {
-          message: 'You are not authenticated. Please login first',
-        }
-      }, '/login')
+      Api.redirect(context, '/login', {
+        message: 'You are not authenticated. Please login first',
+      });
     }
   }
 

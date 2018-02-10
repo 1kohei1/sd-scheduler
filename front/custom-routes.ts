@@ -11,17 +11,6 @@ module.exports = (app: Server, server: Application) => {
   });
 
   server.get(
-    '/account',
-    (req: Request, res: Response) => {
-      if (req.isAuthenticated()) {
-        app.render(req, res, '/account', {});
-      } else {
-        res.redirect('/login?message=You are not authenticated. Please login first');
-      }
-    }
-  )
-
-  server.get(
     '/password/:token',
     (req: Request, res: Response) => {
       app.render(req, res, '/password/token', {
@@ -30,23 +19,7 @@ module.exports = (app: Server, server: Application) => {
     }
   )
 
-  server.get(
-    '/dashboard', 
-    (req: Request, res: Response) => {
-      if (req.isAuthenticated()) {
-        app.render(req, res, '/dashboard', {});
-      } else {
-        res.redirect('/login?message=You are not authenticated. Please login first');
-      }
-    }
-  );
-
   server.get('/dashboard/*', (req: Request, res: Response) => {
-    // If not authenticated, redirect to login page
-    if (!req.isAuthenticated()) {
-      res.redirect('/login?message=You are not authenticated. Please login first');
-    }
-
     let url = req.url;
     // Remove the first slash and the last slash
     if (url.charAt(0) === '/') {
