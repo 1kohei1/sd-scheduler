@@ -16,6 +16,7 @@ export interface TokenProps {
 
 interface TokenState {
   err: string;
+  message: string;
   loading: boolean;
   confirmDirty: boolean;
 }
@@ -42,6 +43,7 @@ class Token extends React.Component<TokenProps, TokenState> {
 
     this.state = {
       err: '',
+      message: '',
       loading: false,
       confirmDirty: false,
     }
@@ -81,6 +83,8 @@ class Token extends React.Component<TokenProps, TokenState> {
       }
 
       this.setState({
+        err: '',
+        message: '',
         loading: true,
       });
 
@@ -91,6 +95,7 @@ class Token extends React.Component<TokenProps, TokenState> {
         });
         this.setState({
           loading: false,
+          message: 'Successfully reset the password. Navigating to the login',
         });
         Api.redirect(undefined, '/login', {
           message: 'Password is successfully set. Please login to enjoy SD Scheduler!',
@@ -114,6 +119,11 @@ class Token extends React.Component<TokenProps, TokenState> {
             {this.state.err && (
               <Form.Item>
                 <Alert type="error" message={this.state.err} />
+              </Form.Item>
+            )}
+            {this.state.message && (
+              <Form.Item>
+                <Alert type="success" message={this.state.message} />
               </Form.Item>
             )}
             <Form.Item label="New password">

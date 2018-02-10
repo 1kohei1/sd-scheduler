@@ -84,6 +84,10 @@ export default class Api {
      return await this.makeRequest(RequestMethod.PUT, `/api/faculties/${_id}/${token}`, update);
    }
 
+   static async sendPasswordreset(body: object = {}) {
+     return await this.makeRequest(RequestMethod.POST, '/api/faculties/password', body);
+   }
+
   /**
    * Utility functions
    */

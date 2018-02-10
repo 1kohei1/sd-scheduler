@@ -16,6 +16,11 @@ module.exports = (server: Application) => {
     facultyController.createFaculty,
   );
 
+  server.post(
+    '/api/faculties/password',
+    facultyController.sendPasswordResetEmail,
+  )
+
   server.put(
     '/api/faculties/:_id',
     APIUtil.isAuthenticated,

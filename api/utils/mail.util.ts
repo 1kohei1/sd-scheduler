@@ -2,6 +2,7 @@ import * as nodemailer from 'nodemailer';
 
 export enum MailType {
   invitation,
+  passwordreset,
 }
 
 interface MailOption {
@@ -30,8 +31,11 @@ export default class Mailer {
   static send(type: MailType, option: MailOption) {
     if (type === MailType.invitation) {
       return this.sendInvitation(option);
+    } else if (type === MailType.passwordreset) {
+      return this.sendPasswordreset(option);
+    } else {
+      return Promise.resolve({});
     }
-    return Promise.resolve({});
   }
 
   private static sendInvitation(option: MailOption) {
@@ -46,6 +50,15 @@ export default class Mailer {
     return transporter.sendMail(mailOption);
   }
 
+  private static sendPasswordreset(option: MailOption) {
+    const mailOption = {
+      from: MAIL_CONSTANTS.from,
+      to: option.to,
+      subject: `[SD Scheduler] Password reset email`,
+      text: MailTemplate.passwordresetText(option),
+      html: MailTemplate.passwordresetHtml(option),
+    }
+  }
 }
 
 class MailTemplate {
@@ -56,7 +69,7 @@ class MailTemplate {
   static invitationText1(option: MailOption) {
     return `
     ${option.extra.fromWhom} invited you to join SD Scheduler!
-    Please set the password at ${this.siteUrl()}/password/${option.extra.token}
+    Please set the password at ${MailTemplate.siteUrl()}/password/${option.extra.token}
 
     ...? What is SD Scheduler?
 
@@ -105,7 +118,7 @@ class MailTemplate {
   static invitationText2(option: MailOption) {
     return `
     ${option.extra.fromWhom} invited you to join SD Scheduler!
-    Please set the password at ${this.siteUrl()}/password/${option.extra.token}
+    Please set the password at ${MailTemplate.siteUrl()}/password/${option.extra.token}
 
     ...? What is SD Scheduler?
 
@@ -142,7 +155,7 @@ class MailTemplate {
   static invitationHtml1(option: MailOption) {
     return `
       ${option.extra.fromWhom} invited you to join SD Scheduler!<br />
-      Please set the password at <a href="${this.siteUrl()}/password/${option.extra.token}" target="_blank">${this.siteUrl()}/password/${option.extra.token}</a>
+      Please set the password at <a href="${MailTemplate.siteUrl()}/password/${option.extra.token}" target="_blank">${MailTemplate.siteUrl()}/password/${option.extra.token}</a>
 
       <h3>...? What is SD Scheduler?</h3>
   
@@ -197,7 +210,7 @@ class MailTemplate {
   static invitationHtml2(option: MailOption) {
     return `
       ${option.extra.fromWhom} invited you to join SD Scheduler!<br />
-      Please set the password at <a href="${this.siteUrl()}/password/${option.extra.token}" target="_blank">${this.siteUrl()}/password/${option.extra.token}</a><br />
+      Please set the password at <a href="${MailTemplate.siteUrl()}/password/${option.extra.token}" target="_blank">${MailTemplate.siteUrl()}/password/${option.extra.token}</a><br />
   
       <h3>...? What is SD Scheduler?</h3>
   
@@ -233,6 +246,32 @@ class MailTemplate {
       Sincerely,<br />
       <br />
       Kohei<br />
+    `;
+  }
+
+  static passwordresetText(option: MailOption) {
+    return `
+    Hi ${option.extra.name},
+
+    You've requested the password reset. Please reset your password here: ${MailTemplate.siteUrl()}/password/${option.extra.token}
+
+    Sincerely,
+
+    Kohei
+    `;
+  }
+
+  static passwordresetHtml(option: MailOption) {
+    return `
+    Hi ${option.extra.name}<br />
+    <br />
+    You've requested the password reset. Please reset your password here: <a href="${MailTemplate.siteUrl()}/password/${option.extra.token}" target="_blank">${MailTemplate.siteUrl()}/password/${option.extra.token}</a><br />
+    <br />
+    This email expires in 30 minutes.<br />
+    <br />
+    Sincerely,<br />
+    <br />
+    Kohei<br />
     `;
   }
 

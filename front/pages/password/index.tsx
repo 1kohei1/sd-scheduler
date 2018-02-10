@@ -6,6 +6,7 @@ import { WrappedFormUtils } from 'antd/lib/form/Form';
 import AppLayout from '../../components/AppLayout';
 import FormLayout from '../../components/FormLayout';
 import NextClientProps from '../../models/NextClientProps';
+import Api from '../../utils/Api';
 
 export interface PasswordIndexProps extends NextClientProps {
   form: WrappedFormUtils
@@ -35,7 +36,30 @@ class PasswordIndex extends React.Component<PasswordIndexProps, PasswordIndexSta
   handleSubmit(e: React.FormEvent<any>) {
     e.preventDefault();
 
+    this.props.form.validateFields(async (err, values) => {
+      if (err) {
+        return;
+      }
 
+      this.setState({
+        err: '',
+        loading: true,
+      });
+      try {
+        await Api.sendPasswordreset({
+          email: values.email,
+        });
+        this.setState({
+          loading: false,
+          message: 'Password reset email is queued. You will receive the email in 5 minutes',
+        })
+      } catch (err) {
+        this.setState({
+          loading: false,
+          err: err.message,
+        });
+      }
+    })
   }
 
   render() {
