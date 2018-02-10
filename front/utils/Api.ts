@@ -1,6 +1,8 @@
 const fetch = require('isomorphic-unfetch');
 import Router from 'next/router';
 
+import InitialProps from '../models/InitialProps';
+
 enum RequestMethod {
   GET,
   POST,
@@ -82,6 +84,26 @@ export default class Api {
    * Utility functions
    */
 
+  static redirect(context: InitialProps | undefined, path: string, query: {[key: string]: string} = {}) {
+    if (context && context.res) {
+      const queryString = Object.entries(query).map(([key, val]) => `${key}=${val}&`);
+      context.res.writeHead(302, {
+        Location: `${path}?${queryString}`,
+      });
+      context.res.end();
+    } else {
+      Router.replace(path, query);
+    }
+  }
+
+  static getBackendUrl() {
+    return process.env.BACKEND_URL;
+  }
+
+  /**
+   * Private functions
+   */
+
   private static async makeRequest(method: RequestMethod, path: string, body: Object = {}) {
     let res = await fetch(
       `${this.getBackendUrl()}${path}`,
@@ -129,9 +151,5 @@ export default class Api {
       obj.body = JSON.stringify(body);
     }
     return obj;
-  }
-
-  static getBackendUrl() {
-    return process.env.BACKEND_URL;
   }
 }

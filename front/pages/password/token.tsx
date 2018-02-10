@@ -1,25 +1,35 @@
 import * as React from 'react';
+import { Form, Icon, Input, Button, Alert } from 'antd';
+import { WrappedFormUtils } from 'antd/lib/form/Form';
 
+import AppLayout from '../../components/AppLayout';
 import InitialProps from '../../models/InitialProps';
+import Api from '../../utils/Api';
 
 export interface TokenProps {
+  form: WrappedFormUtils
 }
 
-export default class Token extends React.Component<TokenProps, any> {
+class Token extends React.Component<TokenProps, any> {
   static async getInitialProps(context: InitialProps) {
-    const token = context.query.token;
+    // Check if token is valid or not. If not valid, API redirects to /password
+    const faculties = await Api.getFaculties(`token=${context.query.token}`);
 
-    console.log(token);
-
-    // Check token and if token is not valid depending on where this code is executed, redirect to /password
+    if (faculties.length === 0 || new Date(faculties[0]).valueOf() < new Date().valueOf()) {
+      Api.redirect(context, '/password', {
+        err: 'Token has expired. Please send another password reset email',
+      })
+    }
     return {};
   }
 
   render() {
     return (
-      <div>
-        
-      </div>
+      <AppLayout>
+        Password reset.
+      </AppLayout>
     );
   }
 }
+
+export default Form.create()(Token);
