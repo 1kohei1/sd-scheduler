@@ -3,6 +3,7 @@ import { Form, Icon, Input, Button, Alert } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import AppLayout from '../components/AppLayout';
+import FormLayout from '../components/FormLayout';
 import NextClientProps from '../models/NextClientProps';
 import Api from '../utils/Api';
 
@@ -63,7 +64,7 @@ class Login extends React.Component<LoginProps, LoginState> {
 
     return (
       <AppLayout>
-        <div className="form-wrapper">
+        <FormLayout>
           <Form onSubmit={this.handleSubmit}>
             {this.state.err && (
               <FormItem>
@@ -129,15 +130,7 @@ class Login extends React.Component<LoginProps, LoginState> {
               <a className="" href="">Forgot password</a>
             </div>
           </Form>
-        </div>
-        <style jsx>{`
-          .form-wrapper {
-            max-width: 500px;
-            margin: auto;
-            margin-top: 100px;
-          }
-        `}
-        </style>
+        </FormLayout>
       </AppLayout>
     );
   }

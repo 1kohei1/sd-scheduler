@@ -4,6 +4,7 @@ import { Form, Icon, Input, Button, Alert } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import AppLayout from '../../components/AppLayout';
+import FormLayout from '../../components/FormLayout';
 
 export interface PasswordIndexProps {
   form: WrappedFormUtils
@@ -27,7 +28,7 @@ class PasswordIndex extends React.Component<PasswordIndexProps, any> {
 
     return (
       <AppLayout>
-        <div className="password-wrapper">
+        <FormLayout>
           <div>
             Enter your email address and we will send you a link to reset your password.
           </div>
@@ -60,14 +61,7 @@ class PasswordIndex extends React.Component<PasswordIndexProps, any> {
               </Link>
             </div>
           </Form>
-        </div>
-        <style jsx>{`
-          .password-wrapper {
-            max-width: 500px;
-            margin: auto;
-            margin-top: 100px;
-          }
-        `}</style>
+        </FormLayout>
       </AppLayout>
     );
   }

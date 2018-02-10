@@ -3,6 +3,7 @@ import { Form, Icon, Input, Button, Alert } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import AppLayout from '../../components/AppLayout';
+import FormLayout from '../../components/FormLayout';
 import InitialProps from '../../models/InitialProps';
 import Api from '../../utils/Api';
 
@@ -26,7 +27,9 @@ class Token extends React.Component<TokenProps, any> {
   render() {
     return (
       <AppLayout>
-        Password reset.
+        <FormLayout>
+          Password reset.
+        </FormLayout>
       </AppLayout>
     );
   }

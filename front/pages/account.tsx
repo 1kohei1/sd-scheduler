@@ -5,6 +5,7 @@ import { Form, Icon, Input, Button, Alert, message } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import AppLayout from '../components/AppLayout';
+import FormLayout from '../components/FormLayout';
 import UserUtil from '../utils/UserUtil';
 import Faculty from '../models/Faculty';
 import InitialProps from '../models/InitialProps';
@@ -177,7 +178,7 @@ class Account extends React.Component<AccountProps, AccountState> {
   render() {
     return (
       <AppLayout>
-        <div className="account-wrapper">
+        <FormLayout>
           {this.state.error && (
             <Alert
               message={this.state.error}
@@ -185,14 +186,7 @@ class Account extends React.Component<AccountProps, AccountState> {
             />
           )}
           {this.state.loading ? <Loading /> : this.form()}
-        </div>
-        <style jsx>{`
-          .account-wrapper {
-            max-width: 500px;
-            margin: auto;
-            margin-top: 100px;
-          }
-        `}</style>
+        </FormLayout>
       </AppLayout>
     );
   }
