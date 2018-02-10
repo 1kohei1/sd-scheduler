@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import * as crypt from 'crypto';
+import * as crypto from 'crypto';
 
 import APIUtil from '../utils/api.util';
 import DBUtil from '../utils/db.util';
@@ -37,7 +37,7 @@ module.exports.createFaculty = (req: Request, res: Response) => {
       APIUtil.successResponse(info, newFaculty, res);
 
       // Generate token and when it expires. Save them to the created faculty
-      const token = crypt.randomBytes(48).toString('hex');
+      const token = crypto.randomBytes(48).toString('hex');
       const expire_at = new Date();
       expire_at.setDate(expire_at.getDate() + 7); // Set token expire in 7 days
 
@@ -96,7 +96,7 @@ module.exports.sendPasswordResetEmail = (req: Request, res: Response) => {
 
       faculty = faculties[0];
 
-      const token = crypt.randomBytes(48).toString('hex');
+      const token = crypto.randomBytes(48).toString('hex');
       const expire_at = new Date();
       expire_at.setMinutes(expire_at.getMinutes() + 30); // Set token expire in 30 minutes
 
