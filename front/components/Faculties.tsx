@@ -72,6 +72,19 @@ class Faculties extends React.Component<FacultiesProps, FacultiesState> {
   handleSubmit(e: React.FormEvent<any>) {
     e.preventDefault();
 
+    this.props.form.validateFields(async (err, values) => {
+      if (err) {
+        return;
+      }
+
+      const checkedFacultyIds = Object.entries(values).filter(([_id, isChecked]) => isChecked).map(([_id]) => _id);
+      const key = this.props.prop;
+      const updateObj = {
+        [key]: checkedFacultyIds,
+      };
+
+      this.props.updateSemester(updateObj, key);
+    })
   }
 
   extra() {
@@ -115,6 +128,8 @@ class Faculties extends React.Component<FacultiesProps, FacultiesState> {
   }
 
   form() {
+    const { getFieldDecorator } = this.props.form;
+
     return (
       <Form onSubmit={this.handleSubmit}>
         <Form.Item>
@@ -142,7 +157,12 @@ class Faculties extends React.Component<FacultiesProps, FacultiesState> {
               dataSource={this.state.faculties}
               bordered
               renderItem={(faculty: Faculty) => (
-                <List.Item actions={[<Switch />]}>
+                <List.Item
+                  actions={[getFieldDecorator(faculty._id)(
+                    <Switch defaultChecked={this.props.semester.faculties.indexOf(faculty._id) >= 0} />
+                  )]}
+                  key={faculty._id}
+                >
                   Dr. {faculty.firstName} {faculty.lastName}
                 </List.Item>
               )}
