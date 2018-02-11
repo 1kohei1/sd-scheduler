@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Icon, Select, DatePicker, Card, Button, Tooltip, Alert, Tag } from 'antd';
+import { Form, Icon, Card, Button, Alert, Tag, List, Switch } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import { Semester } from '../models/Semester';
@@ -34,8 +34,6 @@ class Faculties extends React.Component<FacultiesProps, FacultiesState> {
       faculties: [],
     }
 
-    this.getFaculties();
-
     this.handleSubmit = this.handleSubmit.bind(this);
     this.extra = this.extra.bind(this);
     this.info = this.info.bind(this);
@@ -47,6 +45,10 @@ class Faculties extends React.Component<FacultiesProps, FacultiesState> {
     this.setState({
       loading: true,
     });
+    this.getFaculties();
+  }
+
+  componentDidMount() {
     this.getFaculties();
   }
 
@@ -127,10 +129,26 @@ class Faculties extends React.Component<FacultiesProps, FacultiesState> {
           <Button
             loading={this.state.loading}
             onClick={this.onReload}
+            style={{ marginRight: '8px' }}
           >
-            {this.state.loading ? 'Loading' : 'Reload'}
+            {this.state.loading ? 'Loading' : 'Reload faculties'}
           </Button>
+          Students can request checked faculties for their final presentations.
         </Form.Item>
+        {!this.state.loading && (
+          <Form.Item>
+            <List
+              size="small"
+              dataSource={this.state.faculties}
+              bordered
+              renderItem={(faculty: Faculty) => (
+                <List.Item actions={[<Switch />]}>
+                  Dr. {faculty.firstName} {faculty.lastName}
+                </List.Item>
+              )}
+            />
+          </Form.Item>
+        )}
         {!this.state.loading && (
           <Form.Item>
             <Button
