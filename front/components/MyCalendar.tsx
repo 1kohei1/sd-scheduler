@@ -129,12 +129,14 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
       availableSlots: List<TimeSlot>(),
     };
 
-    this.getAvailableSlot();
-    this.getPresentations();
-
     this.onAvailableSlotChange = this.onAvailableSlotChange.bind(this);
     this.calendar = this.calendar.bind(this);
     this.alert = this.alert.bind(this);
+  }
+
+  componentDidMount() {
+    this.getAvailableSlot();
+    this.getPresentations();
   }
 
   private async getAvailableSlot() {
