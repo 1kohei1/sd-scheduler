@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Icon, Card, Button, Alert, Tag, List, Switch } from 'antd';
+import { Form, Icon, Card, Button, Alert, Tag, List, Switch, Tooltip } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import { Semester } from '../models/Semester';
@@ -205,7 +205,17 @@ class Faculties extends React.Component<FacultiesProps, FacultiesState> {
 
   render() {
     return (
-      <Card title="Faculty" extra={this.extra()} style={{ marginBottom: '16px' }}>
+      <Card
+        title={
+          <div>
+            Faculty <Tooltip title="Students can request them for the final presentation.">
+              <Icon type="question-circle-o" />
+            </Tooltip>
+          </div>
+        }
+        extra={this.extra()}
+        style={{ marginBottom: '16px' }}
+      >
         {this.props.editing ? this.form() : this.info()}
       </Card>
     );
