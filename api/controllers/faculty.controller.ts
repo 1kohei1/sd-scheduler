@@ -144,13 +144,40 @@ module.exports.updateFaculty = (req: Request, res: Response) => {
     }
   };
 
-  DBUtil.updateFacultyById(req.params._id, req.body)
+  let faculty: any | undefined = undefined;
+  let token: string | undefined = undefined;
+  const sendVerify = req.body.hasOwnProperty('emailVerified') && !req.body.emailVerified;
+
+  DBUtil.findFacultyById(req.params._id)
+    .then(f => {
+      if (!f) {
+        return Promise.reject({
+          message: 'Specified faculty does not exist',
+        })
+      } else {
+        if (sendVerify) {
+          token = crypto.randomBytes(48).toString('hex');;
+          req.body.verifyToken = token;
+        }
+        faculty = f.toJSON();
+        return DBUtil.updateFacultyById(req.params._id, req.body);
+      }
+    })
+    .then(result => {
+      if (sendVerify) {
+        return Mailer.send(MailType.verify, {
+          to: faculty.email,
+          extra: {
+            name: `Dr. ${faculty.firstName} ${faculty.lastName}`,
+            token,
+          }
+        })
+      } else {
+        return Promise.resolve();
+      }
+    })
     .then(result => {
       APIUtil.successResponse(info, req.body, res);
-
-      if (!req.body.emailVerified) {
-        // Send email verification
-      }
     })
     .catch(err => {
       info.debugInfo.message = err.message;
@@ -228,6 +255,7 @@ module.exports.updatePassword = (req: Request, res: Response) => {
         register_at: new Date(),
       });
     })
+    // Send password update notification email
     .then(result => {
       APIUtil.successResponse(info, null, res);
     })

@@ -78,6 +78,9 @@ class Account extends React.Component<AccountProps, AccountState> {
           // By calling this, all components using login user gets updated user.
           UserUtil.updateUser();
           message.success('Your account information is successfully updated');
+          if (values.hasOwnProperty('emailVerified') && !values.emailVerified) {
+            message.success('Email verification is sent');
+          }
         } catch (err) {
           this.setState({
             updating: false,
