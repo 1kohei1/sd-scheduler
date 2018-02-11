@@ -17,7 +17,7 @@ export interface AccountProps {
 }
 
 interface AccountState {
-  error: string;
+  err: string;
   loading: boolean;
   updating: boolean;
   user: Faculty | undefined; // It's not recommended to hold props as state, but didn't come up with a good way.
@@ -35,7 +35,7 @@ class Account extends React.Component<AccountProps, AccountState> {
     super(props)
 
     this.state = {
-      error: '',
+      err: '',
       updating: false,
       loading: true,
       user: undefined,
@@ -45,6 +45,7 @@ class Account extends React.Component<AccountProps, AccountState> {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.form = this.form.bind(this);
+    this.sendVerify = this.sendVerify.bind(this);
   }
 
   componentWillUnmount() {
@@ -84,11 +85,42 @@ class Account extends React.Component<AccountProps, AccountState> {
         } catch (err) {
           this.setState({
             updating: false,
-            error: err.message,
+            err: err.message,
           })
         }
+      } else {
+        this.setState({
+          err: 'Unexpected thing happens. Please logout and login',
+        })
       }
     })
+  }
+
+  async sendVerify(e: React.MouseEvent<HTMLAnchorElement>) {
+    e.preventDefault();
+
+    this.setState({
+      updating: true,
+    })
+    try {
+      if (this.state.user) {
+        await Api.sendVerify(this.state.user._id);
+        message.success('Email verification is sent');
+        this.setState({
+          updating: false,
+        });
+      } else {
+        this.setState({
+          err: 'Unexpected thing happens. Please logout and login',
+          updating: false,
+        })
+      }
+    } catch (err) {
+      this.setState({
+        err: err.message,
+        updating: false,
+      })
+    }
   }
 
   form() {
@@ -148,7 +180,9 @@ class Account extends React.Component<AccountProps, AccountState> {
               <div>
                 <Icon type="exclamation-circle-o" style={{ marginRight: '8px' }} />
                 Email is not verified yet.&nbsp;
-                <a href="Send verification">Send verification email</a>
+                <a href="" onClick={this.sendVerify}>
+                  Send verification email
+                </a>
               </div>
             )}
           <div>
@@ -183,9 +217,9 @@ class Account extends React.Component<AccountProps, AccountState> {
     return (
       <AppLayout>
         <FormLayout>
-          {this.state.error && (
+          {this.state.err && (
             <Alert
-              message={this.state.error}
+              message={this.state.err}
               type="error"
             />
           )}

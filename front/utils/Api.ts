@@ -88,6 +88,10 @@ export default class Api {
      return await this.makeRequest(RequestMethod.POST, '/api/faculties/password', body);
    }
 
+   static async sendVerify(_id: string) {
+     return await this.makeRequest(RequestMethod.POST, `/api/faculties/${_id}/verify`);
+   }
+
   /**
    * Utility functions
    */
