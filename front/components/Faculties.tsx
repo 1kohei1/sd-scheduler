@@ -117,9 +117,18 @@ class Faculties extends React.Component<FacultiesProps, FacultiesState> {
     if (this.props.semester.faculties && this.props.semester.faculties.length > 0) {
       return (
         <div>
-          {this.props.semester.faculties.map((faculty, index) => (
-            <div key={index}>AAA AAA | aaa@aaa.com</div>
-          ))}
+          {this.props.semester.faculties.map((_id: string) => {
+            const faculty = this.state.faculties.find(faculty => {
+              return faculty._id === _id;
+            });
+            if (faculty) {
+              return <div key={_id}>
+                Dr. {faculty.firstName} {faculty.lastName}
+              </div>
+            } else {
+              return null;
+            }
+          })}
         </div>
       )
     } else {
@@ -158,8 +167,11 @@ class Faculties extends React.Component<FacultiesProps, FacultiesState> {
               bordered
               renderItem={(faculty: Faculty) => (
                 <List.Item
-                  actions={[getFieldDecorator(faculty._id)(
-                    <Switch defaultChecked={this.props.semester.faculties.indexOf(faculty._id) >= 0} />
+                  actions={[getFieldDecorator(faculty._id, {
+                    initialValue: this.props.semester.faculties.indexOf(faculty._id) >= 0,
+                    valuePropName: 'checked',
+                  })(
+                    <Switch />
                   )]}
                   key={faculty._id}
                 >
