@@ -173,7 +173,7 @@ class PresentationDate extends React.Component<PresentationDateProps, Presentati
     return (
       <Form onSubmit={this.handleSubmit}>
         <Form.Item>
-          Editing is <Tag>Admin only</Tag> feature
+          Editing is <Tag>Admin only</Tag>feature
         </Form.Item>
         {this.props.error.length > 0 && (
           <Form.Item>
