@@ -15,7 +15,7 @@ System:
 - [ ] Send notification email when senior design date is updated
 - [ ] Send reminder email a day before and an hour before the presentation time
 - [ ] Send signed PDF to senior design admin faculties when the presentation booking is made (v2)
-- [ ] Email verification
+- [x] Email verification
 
 Faculties:
 
@@ -50,10 +50,10 @@ TODO:
 - [ ] Make redirect to where user used to be after success login (Wait release of Next 5: https://zeit.co/blog/next-canary) (v3)
 - [ ] Remove .env devendencies by adding babel configuration. Resource: https://github.com/zeit/next.js/tree/canary/examples/with-dotenv (v3)
 - [ ] Do not flash right action button when moving across the page. This happens because header component is remounted every time page changes (v3)
-- [ ] Update auth guard to better way (v3)
+- [x] Update auth guard to better way (v3)
 - [x] Display loading while data in overview is updating
 - [x] Sort presentation dates when updated
-- [ ] Let faculty enter the second, third emails to receive notification emails
+- [ ] Let faculty enter the second, third emails to receive notification emails (v3)
 - [ ] Make email fancy
 - [x] Think better redirect structure. (Currently redirect happens in custom-routes, Api.redirect, Api.makeRequest)
 - [ ] Add validation for req.body using express-validator (https://github.com/ctavan/express-validator) (v3)
