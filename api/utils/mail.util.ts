@@ -33,6 +33,7 @@ let transporter = nodemailer.createTransport({
 
 export default class Mailer {
   static send(type: MailType, option: MailOption) {
+    // Log send status and handle error here
     if (type === MailType.invitation) {
       return this.sendInvitation(option);
     } else if (type === MailType.passwordreset) {

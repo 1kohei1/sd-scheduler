@@ -32,18 +32,19 @@ module.exports.createFaculty = (req: Request, res: Response) => {
     }
   };
 
+  let token: string | undefined = undefined;
+
   DBUtil.createFaculty(req.body)
     .then(newFaculty => {
       APIUtil.successResponse(info, newFaculty, res);
 
       // Generate token and when it expires. Save them to the created faculty
-      const token = crypto.randomBytes(48).toString('hex');
+      token = crypto.randomBytes(48).toString('hex');
       const expire_at = new Date();
       expire_at.setDate(expire_at.getDate() + 7); // Set token expire in 7 days
 
       // Save these data so that we can look up.
-      info.debugInfo.newFaculty_id = newFaculty.get('_id');
-      info.debugInfo.token = token;
+      info.debugInfo._id = newFaculty.get('_id');
 
       return DBUtil.updateFacultyById(newFaculty.get('_id'), {
         token,
@@ -56,7 +57,7 @@ module.exports.createFaculty = (req: Request, res: Response) => {
         to: req.body.email,
         extra: {
           fromWhom: `Dr. ${req.user.firstName} ${req.user.lastName}`,
-          token: info.debugInfo.token,
+          token,
         }
       })
     })
@@ -85,6 +86,7 @@ module.exports.sendPasswordResetEmail = (req: Request, res: Response) => {
   }
 
   let faculty: any = null;
+  let token: string | undefined = undefined;
 
   DBUtil.findFaculties({ email })
     .then(faculties => {
@@ -96,13 +98,11 @@ module.exports.sendPasswordResetEmail = (req: Request, res: Response) => {
 
       faculty = faculties[0];
 
-      const token = crypto.randomBytes(48).toString('hex');
+      token = crypto.randomBytes(48).toString('hex');
       const expire_at = new Date();
       expire_at.setMinutes(expire_at.getMinutes() + 30); // Set token expire in 30 minutes
 
       info.debugInfo._id = faculty.get('_id');
-      info.debugInfo.token = token;
-      info.debugInfo.expire_at = expire_at;
 
       return DBUtil.updateFacultyById(faculty.get('_id'), {
         token,
@@ -110,16 +110,16 @@ module.exports.sendPasswordResetEmail = (req: Request, res: Response) => {
       })
     })
     .then(result => {
-      return Mailer.send(MailType.passwordreset, {
+      APIUtil.successResponse(info, true, res);
+    })
+    .then(result => {
+      Mailer.send(MailType.passwordreset, {
         to: email,
         extra: {
           name: `Dr. ${faculty.firstName} ${faculty.lastName}`,
-          token: info.debugInfo.token,
+          token,
         }
       });
-    })
-    .then(result => {
-      APIUtil.successResponse(info, true, res);
     })
     .catch(err => {
       let message = '';
@@ -155,29 +155,23 @@ module.exports.updateFaculty = (req: Request, res: Response) => {
           message: 'Specified faculty does not exist',
         })
       } else {
+        faculty = f.toJSON();
         if (sendVerify) {
           token = crypto.randomBytes(48).toString('hex');;
           req.body.verifyToken = token;
         }
-        faculty = f.toJSON();
         return DBUtil.updateFacultyById(req.params._id, req.body);
       }
     })
     .then(result => {
-      if (sendVerify) {
-        return Mailer.send(MailType.verify, {
-          to: faculty.email,
-          extra: {
-            name: `Dr. ${faculty.firstName} ${faculty.lastName}`,
-            token,
-          }
-        })
-      } else {
-        return Promise.resolve();
-      }
-    })
-    .then(result => {
       APIUtil.successResponse(info, req.body, res);
+      Mailer.send(MailType.verify, {
+        to: faculty.email,
+        extra: {
+          name: `Dr. ${faculty.firstName} ${faculty.lastName}`,
+          token,
+        }
+      });
     })
     .catch(err => {
       info.debugInfo.message = err.message;
@@ -211,16 +205,14 @@ module.exports.verify = (req: Request, res: Response) => {
       }
     })
     .then(result => {
-      return Mailer.send(MailType.verify, {
+      APIUtil.successResponse(info, true, res);
+      Mailer.send(MailType.verify, {
         to: faculty.email,
         extra: {
           name: `Dr. ${faculty.firstName} ${faculty.lastName}`,
           token,
         }
       })
-    })
-    .then(result => {
-      APIUtil.successResponse(info, true, res);
     })
     .catch(err => {
       info.debugInfo.message = err.message;
@@ -247,20 +239,57 @@ module.exports.updatePassword = (req: Request, res: Response) => {
     return;
   }
 
-  DBUtil.updateFacultyById(req.params._id, update)
+  const _id = req.params._id;
+  let faculty: any | undefined = undefined;
+
+  DBUtil.findFacultyById(_id)
+    .then(f => {
+      if (f) {
+        faculty = f.toJSON();
+        return DBUtil.updateFacultyById(_id, update);
+      } else {
+        return Promise.reject('Specified faculty does not exist')
+      }
+    })
     .then(result => {
       return DBUtil.updateFacultyById(req.params._id, {
         token: '',
         expire_at: null,
         register_at: new Date(),
+        // To successfully come here, they have to receive token by the email. So set emailVerified true.
+        emailVerified: true,
+        verify_at: new Date(),
       });
     })
-    // Send password update notification email
     .then(result => {
+      // Return API response first.
       APIUtil.successResponse(info, null, res);
+      
+      if (!faculty.register_at) {
+        // Send welcome email
+      } else {
+        // Send password update nofication
+      }
     })
     .catch(err => {
       info.debugInfo.message = err.message;
       APIUtil.errorResponse(info, err.message, {}, res);
     })
+
+  // DBUtil.updateFacultyById(req.params._id, update)
+  //   .then(result => {
+  //     return DBUtil.updateFacultyById(req.params._id, {
+  //       token: '',
+  //       expire_at: null,
+  //       register_at: new Date(),
+  //     });
+  //   })
+  //   // Send password update notification email
+  //   .then(result => {
+  //     APIUtil.successResponse(info, null, res);
+  //   })
+  //   .catch(err => {
+  //     info.debugInfo.message = err.message;
+  //     APIUtil.errorResponse(info, err.message, {}, res);
+  //   })
 }

@@ -80,7 +80,7 @@ class Account extends React.Component<AccountProps, AccountState> {
           UserUtil.updateUser();
           message.success('Your account information is successfully updated');
           if (values.hasOwnProperty('emailVerified') && !values.emailVerified) {
-            message.success('Email verification is sent');
+            message.success('Verification email is queued in the system');
           }
         } catch (err) {
           this.setState({
@@ -105,7 +105,7 @@ class Account extends React.Component<AccountProps, AccountState> {
     try {
       if (this.state.user) {
         await Api.sendVerify(this.state.user._id);
-        message.success('Email verification is sent');
+        message.success('Verification email is queued in the system');
         this.setState({
           updating: false,
         });
