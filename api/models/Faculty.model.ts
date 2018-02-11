@@ -40,6 +40,7 @@ const FacultySchema = new Schema({
     default: '',
   },
   expire_at: Date,
+  verify_at: Date,
   signedup_at: Date, // When the password is set
   register_at: Date, // When the admin adds the faculty
   created_at: Date,

@@ -14,6 +14,15 @@ module.exports = (app: Server, server: Application) => {
   )
 
   server.get(
+    '/verify/:token',
+    (req: Request, res: Response) => {
+      app.render(req, res, '/verify', {
+        token: req.params.token,
+      });
+    }
+  )
+
+  server.get(
     '/dashboard/*',
     (req: Request, res: Response) => {
       let url = req.url;
