@@ -58,6 +58,8 @@ TODO:
 - [x] Think better redirect structure. (Currently redirect happens in custom-routes, Api.redirect, Api.makeRequest)
 - [ ] Add validation for req.body using express-validator (https://github.com/ctavan/express-validator) (v3)
 - [ ] Return error if specified resource does not exist (v3)
+- [ ] Set up the mailing server and use queueing service to send emails (v4)
+- [ ] Log email fail/success
 
 NOTES:
 
