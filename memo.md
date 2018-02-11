@@ -54,7 +54,7 @@ TODO:
 - [x] Display loading while data in overview is updating
 - [x] Sort presentation dates when updated
 - [ ] Let faculty enter the second, third emails to receive notification emails (v3)
-- [ ] Make email fancy
+- [x] Make email fancy
 - [x] Think better redirect structure. (Currently redirect happens in custom-routes, Api.redirect, Api.makeRequest)
 - [ ] Add validation for req.body using express-validator (https://github.com/ctavan/express-validator) (v3)
 - [ ] Return error if specified resource does not exist (v3)

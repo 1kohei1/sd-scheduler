@@ -188,7 +188,7 @@ class MailTemplate {
   }
 
   static invitationHtml1(option: MailOption) {
-    return `
+    return MailTemplate.htmlTemplate(`
       ${option.extra.fromWhom} invited you to join SD Scheduler!<br />
       Please set the password at <a href="${Util.siteUrl()}/password/${option.extra.token}" target="_blank">${Util.siteUrl()}/password/${option.extra.token}</a>
 
@@ -239,11 +239,11 @@ class MailTemplate {
       Sincerely,<br />
       <br />
       Kohei<br />
-    `;
+    `);
   }
 
   static invitationHtml2(option: MailOption) {
-    return `
+    return MailTemplate.htmlTemplate(`
       ${option.extra.fromWhom} invited you to join SD Scheduler!<br />
       Please set the password at <a href="${Util.siteUrl()}/password/${option.extra.token}" target="_blank">${Util.siteUrl()}/password/${option.extra.token}</a><br />
   
@@ -281,7 +281,7 @@ class MailTemplate {
       Sincerely,<br />
       <br />
       Kohei<br />
-    `;
+    `);
   }
 
   static passwordresetText(option: MailOption) {
@@ -290,6 +290,8 @@ class MailTemplate {
 
     You've requested the password reset. Please reset your password here: ${Util.siteUrl()}/password/${option.extra.token}
 
+    This reset link expires in 30 minutes.<br />
+
     Sincerely,
 
     Kohei
@@ -297,17 +299,17 @@ class MailTemplate {
   }
 
   static passwordresetHtml(option: MailOption) {
-    return `
+    return MailTemplate.htmlTemplate(`
     Hi ${option.extra.name}<br />
     <br />
     You've requested the password reset. Please reset your password here: <a href="${Util.siteUrl()}/password/${option.extra.token}" target="_blank">${Util.siteUrl()}/password/${option.extra.token}</a><br />
     <br />
-    This email expires in 30 minutes.<br />
+    This reset link expires in 30 minutes.<br />
     <br />
     Sincerely,<br />
     <br />
     Kohei<br />
-    `;
+    `);
   }
 
   static verifyText(option: MailOption) {
@@ -324,7 +326,7 @@ class MailTemplate {
   }
 
   static verifyHtml(option: MailOption) {
-    return `
+    return MailTemplate.htmlTemplate(`
     Hi ${option.extra.name},<br />
     <br />
     Please click this link to verify your email address. <br />
@@ -333,7 +335,7 @@ class MailTemplate {
     Sincerely,<br />
     <br />
     Kohei<br />
-    `
+    `);
   }
 
   static welcomeText(option: MailOption) {
@@ -350,7 +352,7 @@ class MailTemplate {
   }
 
   static welcomeHtml(option: MailOption) {
-    return `
+    return MailTemplate.htmlTemplate(`
     Hi ${option.extra.name},<br />
     <br />
     Thanks for using SD Scheduler! We committed to provide easy interface to fill your available time.<br />
@@ -359,6 +361,20 @@ class MailTemplate {
     Sincerely,<br />
     <br />
     Kohei<br />
+    `);
+  }
+
+  static htmlTemplate(content: string) {
+    return `
+      <div style="max-width: 500px; margin: auto">
+        <div style="height: 64px; line-height: 64px; background-color: #041528; color: #fff; padding: 0 16px; font-size: 14px;">
+          SD Scheduler
+        </div>
+        <div style="padding: 0 16px 16px 16px; border: 1px solid #e8e8e8; border-top: 0 solid #e8e8e8">
+          <br />
+          ${content}
+        </div>
+      </div>
     `
   }
 }
