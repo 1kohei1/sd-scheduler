@@ -51,10 +51,6 @@ export default class DBUtil {
     }
     const newFaculty = new Faculty(body);
 
-    newFaculty.set({
-      register_at: new Date()
-    });
-
     // Would like not to include password field. Research how to omit the field in save() callback
     return newFaculty.save();
   }

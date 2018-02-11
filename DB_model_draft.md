@@ -23,7 +23,6 @@ firstName: string;
 lastName: string;
 isAdmin: boolean;
 signup_at: date; // When the password is set
-register_at: date; // When the admin adds the faculty
 created_at: date
 updated_at: date
 

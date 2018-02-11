@@ -40,7 +40,9 @@ export default class Mailer {
       return this.sendPasswordreset(option);
     } else if (type === MailType.verify) {
       return this.sendVerify(option);
-    } else {
+    } else if (type === MailType.welcome) {
+      return this.sendWelcome(option);
+    } {
       return Promise.resolve({});
     }
   }
@@ -76,6 +78,18 @@ export default class Mailer {
       subject: `[SD Scheduler] Email verification`,
       text: MailTemplate.verifyText(option),
       html: MailTemplate.verifyHtml(option),
+    }
+
+    return transporter.sendMail(mailOption);
+  }
+
+  private static sendWelcome(option: MailOption) {
+    const mailOption = {
+      from: MAIL_CONSTANTS.from,
+      to: option.to,
+      subject: `[SD Scheduler] Welcome to SD Scheduler!`,
+      text: MailTemplate.welcomeText(option),
+      html: MailTemplate.welcomeHtml(option),
     }
 
     return transporter.sendMail(mailOption);
@@ -314,7 +328,33 @@ class MailTemplate {
     Hi ${option.extra.name},<br />
     <br />
     Please click this link to verify your email address. <br />
-    <a href="${Util.siteUrl()}/verify/${option.extra.token}">${Util.siteUrl()}/verify/${option.extra.token}</a>
+    <a href="${Util.siteUrl()}/verify/${option.extra.token}" target="_blank">${Util.siteUrl()}/verify/${option.extra.token}</a>
+    <br />
+    Sincerely,<br />
+    <br />
+    Kohei<br />
+    `
+  }
+
+  static welcomeText(option: MailOption) {
+    return `
+    Hi ${option.extra.name},
+
+    Thanks for using SD Scheduler! We committed to provide easy interface to fill your available time.
+    Please check at ${Util.siteUrl()}/dashboard/${Util.currentSemesterKey()}/calendar
+
+    Sincerely,
+
+    Kohei
+    `
+  }
+
+  static welcomeHtml(option: MailOption) {
+    return `
+    Hi ${option.extra.name},<br />
+    <br />
+    Thanks for using SD Scheduler! We committed to provide easy interface to fill your available time.<br />
+    Please check at <a href="${Util.siteUrl()}/dashboard/${Util.currentSemesterKey()}/calendar" target="_blank">${Util.siteUrl()}/dashboard/${Util.currentSemesterKey()}/calendar</a><br />
     <br />
     Sincerely,<br />
     <br />

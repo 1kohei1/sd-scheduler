@@ -252,44 +252,36 @@ module.exports.updatePassword = (req: Request, res: Response) => {
       }
     })
     .then(result => {
-      return DBUtil.updateFacultyById(req.params._id, {
+      const obj: any = {
         token: '',
         expire_at: null,
-        register_at: new Date(),
-        // To successfully come here, they have to receive token by the email. So set emailVerified true.
-        emailVerified: true,
-        verify_at: new Date(),
-      });
+        password_at: new Date(),
+      }
+      if (!faculty.signup_at) {
+        obj.signup_at = new Date();
+      }
+      // To successfully come here, they have to receive token by the email. So set emailVerified true.
+      if (!faculty.emailVerified) {
+        obj.emailVerified = true;
+        obj.verify_at = new Date();
+      }
+      return DBUtil.updateFacultyById(req.params._id, obj);
     })
     .then(result => {
       // Return API response first.
       APIUtil.successResponse(info, null, res);
-      
-      if (!faculty.register_at) {
-        // Send welcome email
-      } else {
-        // Send password update nofication
+
+      if (!faculty.signup_at) {
+        Mailer.send(MailType.welcome, {
+          to: faculty.email,
+          extra: {
+            name: `Dr. ${faculty.firstName} ${faculty.lastName}`,
+          }
+        })
       }
     })
     .catch(err => {
       info.debugInfo.message = err.message;
       APIUtil.errorResponse(info, err.message, {}, res);
     })
-
-  // DBUtil.updateFacultyById(req.params._id, update)
-  //   .then(result => {
-  //     return DBUtil.updateFacultyById(req.params._id, {
-  //       token: '',
-  //       expire_at: null,
-  //       register_at: new Date(),
-  //     });
-  //   })
-  //   // Send password update notification email
-  //   .then(result => {
-  //     APIUtil.successResponse(info, null, res);
-  //   })
-  //   .catch(err => {
-  //     info.debugInfo.message = err.message;
-  //     APIUtil.errorResponse(info, err.message, {}, res);
-  //   })
 }
