@@ -15,7 +15,9 @@ export default class DBUtil {
    */
 
   static findSemesters(query: Object = {}) {
-    return Semester.find(query);
+    return Semester.find(query).sort({
+      'created_at': 'desc',
+    });
   }
 
   static findSemesterById(_id: string | number | object) {
@@ -34,9 +36,12 @@ export default class DBUtil {
     const password = shouldIncludePassword ? '+password' : '';
     // Ignore case sensitivity for the email property
     if (query.hasOwnProperty('email') && typeof query.email === 'string') {
-    query.email = query.email.toLowerCase();
+      query.email = query.email.toLowerCase();
     }
-    return Faculty.find(query, password);
+    return Faculty.find(query, password).sort({
+      'firstName': 'asc',
+      'lastName': 'asc',
+    });
   }
 
   static findFacultyById(_id: string | number | object, shouldIncludePassword: boolean = false) {
