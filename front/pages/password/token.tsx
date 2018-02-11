@@ -98,7 +98,7 @@ class Token extends React.Component<TokenProps, TokenState> {
           message: 'Successfully reset the password. Navigating to the login',
         });
         Api.redirect(undefined, '/login', {
-          message: 'Password is successfully set. Please login to enjoy SD Scheduler!',
+          message: 'Password is successfully set',
         })
       } catch (err) {
         this.setState({
