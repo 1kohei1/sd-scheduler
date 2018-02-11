@@ -1,9 +1,12 @@
 import * as nodemailer from 'nodemailer';
 
+import Util from './util';
+
 export enum MailType {
   invitation,
   passwordreset,
   verify,
+  welcome,
 }
 
 interface MailOption {
@@ -86,7 +89,7 @@ class MailTemplate {
   static invitationText1(option: MailOption) {
     return `
     ${option.extra.fromWhom} invited you to join SD Scheduler!
-    Please set the password at ${MailTemplate.siteUrl()}/password/${option.extra.token}
+    Please set the password at ${Util.siteUrl()}/password/${option.extra.token}
 
     ...? What is SD Scheduler?
 
@@ -135,7 +138,7 @@ class MailTemplate {
   static invitationText2(option: MailOption) {
     return `
     ${option.extra.fromWhom} invited you to join SD Scheduler!
-    Please set the password at ${MailTemplate.siteUrl()}/password/${option.extra.token}
+    Please set the password at ${Util.siteUrl()}/password/${option.extra.token}
 
     ...? What is SD Scheduler?
 
@@ -172,7 +175,7 @@ class MailTemplate {
   static invitationHtml1(option: MailOption) {
     return `
       ${option.extra.fromWhom} invited you to join SD Scheduler!<br />
-      Please set the password at <a href="${MailTemplate.siteUrl()}/password/${option.extra.token}" target="_blank">${MailTemplate.siteUrl()}/password/${option.extra.token}</a>
+      Please set the password at <a href="${Util.siteUrl()}/password/${option.extra.token}" target="_blank">${Util.siteUrl()}/password/${option.extra.token}</a>
 
       <h3>...? What is SD Scheduler?</h3>
   
@@ -227,7 +230,7 @@ class MailTemplate {
   static invitationHtml2(option: MailOption) {
     return `
       ${option.extra.fromWhom} invited you to join SD Scheduler!<br />
-      Please set the password at <a href="${MailTemplate.siteUrl()}/password/${option.extra.token}" target="_blank">${MailTemplate.siteUrl()}/password/${option.extra.token}</a><br />
+      Please set the password at <a href="${Util.siteUrl()}/password/${option.extra.token}" target="_blank">${Util.siteUrl()}/password/${option.extra.token}</a><br />
   
       <h3>...? What is SD Scheduler?</h3>
   
@@ -270,7 +273,7 @@ class MailTemplate {
     return `
     Hi ${option.extra.name},
 
-    You've requested the password reset. Please reset your password here: ${MailTemplate.siteUrl()}/password/${option.extra.token}
+    You've requested the password reset. Please reset your password here: ${Util.siteUrl()}/password/${option.extra.token}
 
     Sincerely,
 
@@ -282,7 +285,7 @@ class MailTemplate {
     return `
     Hi ${option.extra.name}<br />
     <br />
-    You've requested the password reset. Please reset your password here: <a href="${MailTemplate.siteUrl()}/password/${option.extra.token}" target="_blank">${MailTemplate.siteUrl()}/password/${option.extra.token}</a><br />
+    You've requested the password reset. Please reset your password here: <a href="${Util.siteUrl()}/password/${option.extra.token}" target="_blank">${Util.siteUrl()}/password/${option.extra.token}</a><br />
     <br />
     This email expires in 30 minutes.<br />
     <br />
@@ -297,7 +300,7 @@ class MailTemplate {
     Hi ${option.extra.name},
 
     Please click this link to verify your email address
-    ${MailTemplate.siteUrl()}/verify/${option.extra.token}
+    ${Util.siteUrl()}/verify/${option.extra.token}
 
     Sincerely,
 
@@ -310,15 +313,11 @@ class MailTemplate {
     Hi ${option.extra.name},<br />
     <br />
     Please click this link to verify your email address. <br />
-    <a href="${MailTemplate.siteUrl()}/verify/${option.extra.token}">${MailTemplate.siteUrl()}/verify/${option.extra.token}</a>
+    <a href="${Util.siteUrl()}/verify/${option.extra.token}">${Util.siteUrl()}/verify/${option.extra.token}</a>
     <br />
     Sincerely,<br />
     <br />
     Kohei<br />
     `
-  }
-
-  private static siteUrl() {
-    return process.env.NODE_ENV === 'production' ? process.env.SITE_PRODUCTION_URL : process.env.SITE_DEVELOPMENT_URL;
   }
 }
