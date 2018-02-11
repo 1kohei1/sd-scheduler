@@ -34,7 +34,7 @@ Students:
 Admin:
 
 - [x] Add faculties
-- [ ] Deactivate faculties
+- [x] Deactivate faculties
 - [x] Register presentation dates
 - [x] Register presentation location
 - [x] Check schedule in the calendar view
