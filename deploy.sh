@@ -18,8 +18,7 @@ cd .dist
 
 # Deploy to now
 now --public --dotenv=.env.production 
-deploy=`pbpaste`
-now alias $deploy sd-scheduler.com
+now alias `pbpaste` sd-scheduler.com
 
 # Move back to project parent folder
 cd ../
