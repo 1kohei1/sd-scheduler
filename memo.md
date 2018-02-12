@@ -60,6 +60,7 @@ TODO:
 - [ ] Return error if specified resource does not exist (v3)
 - [ ] Set up the mailing server and use queueing service to send emails (v4)
 - [ ] Log email fail/success
+- [ ] Use production ready session store (v3)
 
 NOTES:
 
