@@ -5,4 +5,4 @@ node_modules
 !front/static/*.js
 !frontend-env.js
 *.map
-.env
+.env*
