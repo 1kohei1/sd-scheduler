@@ -51,9 +51,15 @@ export default class UserUtil {
     const user = await Api.getUser(cookie);
 
     if (!user) {
-      Api.redirect(context, '/login', {
-        message: 'You are not authenticated. Please login first',
-      });
+      const query: any = {
+        err: 'You are not authenticated. Please login first',
+        pathname: context.pathname,
+        query: JSON.stringify(context.query),
+      };
+      if (context.asPath) {
+        query.asPath = context.asPath;
+      }
+      Api.redirect(context, '/login', query);
     }
   }
 

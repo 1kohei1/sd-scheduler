@@ -11,7 +11,7 @@ import Api from '../utils/Api';
 const FormItem = Form.Item;
 
 export interface LoginProps extends NextClientProps {
-  form: WrappedFormUtils
+  form: WrappedFormUtils;
 }
 
 interface LoginState {
@@ -22,8 +22,6 @@ interface LoginState {
 
 class Login extends React.Component<LoginProps, LoginState> {
   constructor(props: LoginProps) {
-    const message = props.url.query.message || '';
-
     super(props);
     this.state = {
       err: props.url.query.err || '',
@@ -49,7 +47,22 @@ class Login extends React.Component<LoginProps, LoginState> {
         });
         const result = await Api.login(values);
         if (result) {
-          Api.redirect(undefined, '/dashboard');
+          const { query } = this.props.url;
+
+          let pathname = '/dashboard';
+          if (query.hasOwnProperty('pathname')) {
+            pathname = query.pathname;
+          }
+          let asPath = undefined;
+          if (query.hasOwnProperty('asPath')) {
+            asPath = query.asPath;
+          }
+          let redirectQuery = {};
+          if (query.hasOwnProperty('query')) {
+            redirectQuery = JSON.parse(query.query);
+          }
+          
+          Api.redirect(undefined, pathname, redirectQuery, asPath);
         }
       } catch (errRes) {
         this.setState({

@@ -96,18 +96,22 @@ export default class Api {
    * Utility functions
    */
 
-  static redirect(context: InitialProps | undefined, path: string, query: {[key: string]: string} = {}) {
+  static redirect(context: InitialProps | undefined, path: string, query: {[key: string]: string} = {}, asPath?: string) {
     if (context && context.res) {
-      const queryString = Object.entries(query).map(([key, val]) => `${key}=${val}&`);
+      const queryString = Object.entries(query).map(([key, val]) => `${key}=${val}`).join('&');
       context.res.writeHead(302, {
         Location: `${path}?${queryString}`,
       });
       context.res.end();
     } else {
-      Router.push({
+      const option: any = {
         pathname: path,
         query,
-      });
+      }
+      if (asPath) {
+        option.asPath = asPath;
+      }
+      Router.push(option);
     }
   }
 
