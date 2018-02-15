@@ -27,6 +27,7 @@ app.prepare()
     })
 
     const server: Application = express();
+    server.set('trust proxy', 1); // https://github.com/expressjs/session#cookiesecure
 
     // Set up to parse POST body
     server.use(bodyParser.json());
