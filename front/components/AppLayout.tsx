@@ -108,7 +108,7 @@ export default class AppLayout extends React.Component<AppLayoutProps, AppLayout
           <Layout.Header style={{ padding: "0 16px" }}>
             <div className="ko-header">
               <div>
-                <Link href="/"><a style={{ color: 'white' }}>LOGO</a></Link>
+                <Link href="/"><a style={{ color: 'white' }}>SD Scheduler</a></Link>
               </div>
               <div>
                 {this.rightAction()}
