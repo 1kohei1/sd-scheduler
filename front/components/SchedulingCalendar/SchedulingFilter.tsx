@@ -3,13 +3,12 @@ import Router from 'next/router';
 import { Form, Checkbox, Button } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
-import FilterQuery from '../../models/FilterQuery';
 import { Semester } from '../../models/Semester';
 
 export interface SchedulingFilterProps {
   form: WrappedFormUtils;
+  faculties: string[];
   semester: Semester;
-  filterQuery: FilterQuery;
 }
 
 const formItemLayout = {
@@ -59,18 +58,6 @@ class SchedulingFilter extends React.Component<SchedulingFilterProps, any> {
         <Form onSubmit={this.handleSubmit}>
           <Form.Item
             {...formItemLayout}
-            label="Date"
-          >
-            {this.props.form.getFieldDecorator('presentationDates')(
-              <div>
-                <Checkbox value={true}>Date 1</Checkbox>
-                <Checkbox value={true}>Date 2</Checkbox>
-                <Checkbox value={true}>Date 3</Checkbox>
-              </div>
-            )}
-          </Form.Item>
-          <Form.Item
-            {...formItemLayout}
             label="Faculties"
           >
             {this.props.form.getFieldDecorator('faculties')(
@@ -91,6 +78,7 @@ class SchedulingFilter extends React.Component<SchedulingFilterProps, any> {
         </Form>
         <style jsx>{`
           .ko-filter-form {
+            margin: 16px 0;
             padding: 16px;
             background: #fbfbfb;
             border: 1px solid #d9d9d9;

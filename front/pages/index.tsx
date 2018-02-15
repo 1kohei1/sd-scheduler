@@ -5,16 +5,20 @@ import * as moment from 'moment-timezone';
 import Link from 'next/link'
 
 import AppLayout from '../components/AppLayout';
-import FilterQuery from '../models/FilterQuery';
 import InitialProps from '../models/InitialProps';
 import { Semester } from '../models/Semester';
 import SchedulingFilter from '../components/SchedulingCalendar/SchedulingFilter';
 import SchedulingCalendar from '../components/SchedulingCalendar/SchedulingCalendar';
 import { DateConstants } from '../models/Constants';
+import Api from '../utils/Api';
 
 interface Props {
-  filterQuery: FilterQuery;
+  faculties: string[];
   semester: Semester;
+}
+
+interface IndexState {
+  presentationDateIndex: number;
 }
 
 const columnLayout = {
@@ -30,34 +34,11 @@ const columnLayout = {
 
 class Index extends React.Component<Props, {}> {
   static async getInitialProps(props: InitialProps) {
-
-    const tempFunc = (dateStr: string) => {
-      return moment.tz(dateStr, `${DateConstants.dateFormat} ${DateConstants.hourFormat}`, DateConstants.timezone);
-    }
-
-    // Get semester here
-    const semester = {
-      _id: ObjectID.generate(),
-      key: '2018_spring',
-      displayName: '2018 Spring',
-      presentationDates: [{
-        _id: ObjectID.generate(),
-        start: tempFunc('2018-04-25 9 AM').toISOString(),
-        end: tempFunc('2018-04-25 6 PM').toISOString(),
-      }, {
-        _id: ObjectID.generate(),
-        start: tempFunc('2018-04-26 9 AM').toISOString(),
-        end: tempFunc('2018-04-26 6 PM').toISOString(),
-      }, {
-        _id: ObjectID.generate(),
-        start: tempFunc('2018-04-27 9 AM').toISOString(),
-        end: tempFunc('2018-04-27 6 PM').toISOString(),
-      }]
-    };
+    const semesters: Semester[] = await Api.getSemesters();
 
     return {
-      filterQuery: props.query,
-      semester,
+      faculties: props.query.faculties.split(','),
+      semester: semesters[0],
     };
   }
 
@@ -76,21 +57,14 @@ class Index extends React.Component<Props, {}> {
           >
             <SchedulingFilter 
               semester={this.props.semester}
-              filterQuery={this.props.filterQuery}
+              faculties={this.props.faculties}
             />
             <SchedulingCalendar 
               semester={this.props.semester}
-              filterQuery={this.props.filterQuery}
+              faculties={this.props.faculties}
             />
-            <div>
-              Display the selected professors and datetime.
-              <Button type="primary">Schedule presentation</Button>
-            </div>
           </Col>
         </Row>
-        <Link href="/dashboard">
-          <a>Dashboard</a>
-        </Link>
       </AppLayout>
     )
   }

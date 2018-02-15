@@ -1,12 +1,11 @@
 import * as React from 'react';
 
-import FilterQuery from '../../models/FilterQuery';
 import { Semester } from '../../models/Semester';
 import Presentation from '../../models/Presentation';
 
 export interface SchedulingCalendarProps {
   semester: Semester;
-  filterQuery: FilterQuery;
+  faculties: string[];
 }
 
 interface SchedulingCalendarState {
