@@ -39,7 +39,7 @@ app.prepare()
     // Set up session configuration
     // The default server-side session storage, MemoryStore, is purposely not designed for a production environment.
     // However in this app, the number of session would be at most 20, so it's ok to use MemoryState
-    server.use(session({
+    const option: any = {
       cookie: {
         httpOnly: true,
         maxAge: 60 * 60 * 24 * 60 * 1000, // Set cookie expire in 60 days
@@ -48,10 +48,13 @@ app.prepare()
       resave: true,
       saveUninitialized: true,
       secret: process.env.SECRET, // Used this website: https://www.random.org/strings/
-      store: new MongoStore({
+    }
+    if (process.env.NODE_ENV === 'production') {
+      option.store = new MongoStore({
         mongooseConnection: mongoose.connection,
-      }),
-    }));
+      });
+    }
+    server.use(session(option));
 
     // Set up passport
     server.use(passport.initialize());
