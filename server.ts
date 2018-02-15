@@ -8,6 +8,7 @@ const next = require('next');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 const passport = require('passport');
 import { Application, Request, Response } from 'express';
 import { Server } from 'next';
@@ -47,6 +48,9 @@ app.prepare()
       resave: true,
       saveUninitialized: true,
       secret: process.env.SECRET, // Used this website: https://www.random.org/strings/
+      store: new MongoStore({
+        mongooseConnection: mongoose.connection,
+      }),
     }));
 
     // Set up passport

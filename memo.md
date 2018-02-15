@@ -61,6 +61,7 @@ TODO:
 - [ ] Set up the mailing server and use queueing service to send emails (v4)
 - [ ] Log email fail/success
 - [ ] Use production ready session store (v3)
+- [ ] Maybe MLab sandbox should not be enough for the project. Think other way to store session free
 
 NOTES:
 
