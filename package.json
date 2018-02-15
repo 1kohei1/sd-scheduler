@@ -11,6 +11,9 @@
     "start": "NODE_ENV=production node server.js",
     "copy-static-assets": "ts-node copyStaticAssets.ts"
   },
+  "now": {
+    "alias": "sd-scheduler.com"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
