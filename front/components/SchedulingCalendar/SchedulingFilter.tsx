@@ -10,6 +10,7 @@ export interface SchedulingFilterProps {
   form: WrappedFormUtils;
   checkedFaculties: string[];
   faculties: Faculty[];
+  onUpdateFilter: (ids: string[]) => void;
 }
 
 const formItemLayout = {
@@ -43,13 +44,8 @@ class SchedulingFilter extends React.Component<SchedulingFilterProps, any> {
         return;
       }
 
-      // Update router. Ref: https://github.com/zeit/next.js/#imperatively
-      Router.push({
-        pathname: '/',
-        query: {
-
-        }
-      });
+      const ids = Object.entries(values).filter(([_id, isChecked]) => isChecked).map(([_id]) => _id);
+      this.props.onUpdateFilter(ids);
     })
   }
 
@@ -61,13 +57,14 @@ class SchedulingFilter extends React.Component<SchedulingFilterProps, any> {
             {...formItemLayout}
             label="Faculties"
           >
-            {this.props.form.getFieldDecorator('faculties')(
-              <div>
-                <Checkbox value={true}>Faculty 1</Checkbox>
-                <Checkbox value={true}>Faculty 2</Checkbox>
-                <Checkbox value={true}>Faculty 3</Checkbox>
-              </div>
-            )}
+            {this.props.faculties.map(f => {
+              return this.props.form.getFieldDecorator(f._id, {
+                initialValue: this.props.checkedFaculties.indexOf(f._id) >= 0,
+                valuePropName: 'checked',
+              })(
+                <Checkbox key={f._id}>Dr. {f.firstName} {f.lastName}</Checkbox>
+              )
+            })}
           </Form.Item>
           <Form.Item
             {...tailFormItemLayout}

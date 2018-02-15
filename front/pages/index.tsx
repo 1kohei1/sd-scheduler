@@ -3,6 +3,7 @@ import { Row, Col, Button } from 'antd';
 import ObjectID from 'bson-objectid';
 import * as moment from 'moment-timezone';
 import Link from 'next/link'
+import * as Cookie from 'js-cookie';
 
 import AppLayout from '../components/AppLayout';
 import InitialProps from '../models/InitialProps';
@@ -15,12 +16,12 @@ import { DateConstants } from '../models/Constants';
 import Api from '../utils/Api';
 
 interface Props {
-  checkedFaculties: string[];
-  faculties: Faculty[];
+  facultiesInSemester: Faculty[];
   semester: Semester;
 }
 
 interface IndexState {
+  checkedFaculties: string[];
   presentationDateIndex: number;
   availableSlots: AvailableSlot[],
   loading: boolean;
@@ -38,6 +39,8 @@ const columnLayout = {
   },
 };
 
+const COOKIE_KEY = 'faculties';
+
 class Index extends React.Component<Props, IndexState> {
   static async getInitialProps(props: InitialProps) {
     const semesters: Semester[] = await Api.getSemesters();
@@ -48,14 +51,8 @@ class Index extends React.Component<Props, IndexState> {
       return semester.faculties.indexOf(f._id) >= 0;
     });
 
-    let checkedFaculties = [];
-    if (props.query.faculties) {
-      checkedFaculties = props.query.faculties.split(',');
-    }
-
     return {
-      checkedFaculties,
-      faculties: facultiesInSemester,
+      facultiesInSemester,
       semester,
     };
   }
@@ -63,7 +60,14 @@ class Index extends React.Component<Props, IndexState> {
   constructor(props: Props) {
     super(props);
 
+    let checkedFaculties = this.props.facultiesInSemester.map(f => f._id);
+    const ids = Cookie.get(COOKIE_KEY);
+    if (ids) {
+      checkedFaculties = ids.split(',');
+    }
+
     this.state = {
+      checkedFaculties,
       presentationDateIndex: 0,
       availableSlots: [],
       loading: true,
@@ -71,10 +75,12 @@ class Index extends React.Component<Props, IndexState> {
     };
 
     this.getAvailableSlots();
+
+    this.onUpdateFilter = this.onUpdateFilter.bind(this);
   }
 
   private async getAvailableSlots() {
-    const ids = this.props.faculties.map(f => f._id);
+    const ids = this.props.facultiesInSemester.map(f => f._id);
     const query = `ids=${ids.join(',')}&semester=${this.props.semester._id}`;
     
     try {
@@ -91,6 +97,13 @@ class Index extends React.Component<Props, IndexState> {
     }
   }
 
+  onUpdateFilter(ids: string[]) {
+    this.setState({
+      checkedFaculties: ids,
+    });
+    Cookie.set(COOKIE_KEY, ids.join(','));
+  }
+
   render() {
     return (
       <AppLayout>
@@ -99,8 +112,9 @@ class Index extends React.Component<Props, IndexState> {
             {...columnLayout}
           >
             <SchedulingFilter 
-              checkedFaculties={this.props.checkedFaculties}
-              faculties={this.props.faculties}
+              checkedFaculties={this.state.checkedFaculties}
+              faculties={this.props.facultiesInSemester}
+              onUpdateFilter={this.onUpdateFilter}
             />
             {/* <SchedulingCalendar 
               semester={this.props.semester}
