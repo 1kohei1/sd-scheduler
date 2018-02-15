@@ -11,9 +11,10 @@ import { Semester } from '../models/Semester';
 import Faculty from '../models/Faculty';
 import AvailableSlot from '../models/AvailableSlot';
 import SchedulingFilter from '../components/SchedulingCalendar/SchedulingFilter';
-// import SchedulingCalendar from '../components/SchedulingCalendar/SchedulingCalendar';
+import SchedulingCalendar from '../components/SchedulingCalendar/SchedulingCalendar';
 import { DateConstants } from '../models/Constants';
 import Api from '../utils/Api';
+import Presentation from '../models/Presentation';
 
 interface Props {
   facultiesInSemester: Faculty[];
@@ -22,8 +23,8 @@ interface Props {
 
 interface IndexState {
   checkedFaculties: string[];
-  presentationDateIndex: number;
   availableSlots: AvailableSlot[],
+  presentations: Presentation[],
   loading: boolean;
   err: string;
 }
@@ -68,13 +69,14 @@ class Index extends React.Component<Props, IndexState> {
 
     this.state = {
       checkedFaculties,
-      presentationDateIndex: 0,
       availableSlots: [],
+      presentations: [],
       loading: true,
       err: '',
     };
 
     this.getAvailableSlots();
+    this.getPresentations();
 
     this.onUpdateFilter = this.onUpdateFilter.bind(this);
   }
@@ -97,6 +99,11 @@ class Index extends React.Component<Props, IndexState> {
     }
   }
 
+  private async getPresentations() {
+    // Get presentations
+    const query = `semester=${this.props.semester._id}`;
+  }
+
   onUpdateFilter(ids: string[]) {
     this.setState({
       checkedFaculties: ids,
@@ -105,6 +112,10 @@ class Index extends React.Component<Props, IndexState> {
   }
 
   render() {
+    const facultiesToDisplay = this.props.facultiesInSemester.filter(f => {
+      return this.state.checkedFaculties.indexOf(f._id) >= 0;
+    });
+
     return (
       <AppLayout>
         <Row>
@@ -116,10 +127,12 @@ class Index extends React.Component<Props, IndexState> {
               faculties={this.props.facultiesInSemester}
               onUpdateFilter={this.onUpdateFilter}
             />
-            {/* <SchedulingCalendar 
+            <SchedulingCalendar 
               semester={this.props.semester}
-              faculties={this.props.faculties}
-            /> */}
+              faculties={this.props.facultiesInSemester}
+              availableSlots={this.state.availableSlots}
+              presentations={this.state.presentations}
+            />
           </Col>
         </Row>
       </AppLayout>
