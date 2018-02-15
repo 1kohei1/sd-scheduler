@@ -7,18 +7,24 @@ import Link from 'next/link'
 import AppLayout from '../components/AppLayout';
 import InitialProps from '../models/InitialProps';
 import { Semester } from '../models/Semester';
+import Faculty from '../models/Faculty';
+import AvailableSlot from '../models/AvailableSlot';
 import SchedulingFilter from '../components/SchedulingCalendar/SchedulingFilter';
-import SchedulingCalendar from '../components/SchedulingCalendar/SchedulingCalendar';
+// import SchedulingCalendar from '../components/SchedulingCalendar/SchedulingCalendar';
 import { DateConstants } from '../models/Constants';
 import Api from '../utils/Api';
 
 interface Props {
-  faculties: string[];
+  checkedFaculties: string[];
+  faculties: Faculty[];
   semester: Semester;
 }
 
 interface IndexState {
   presentationDateIndex: number;
+  availableSlots: AvailableSlot[],
+  loading: boolean;
+  err: string;
 }
 
 const columnLayout = {
@@ -32,20 +38,57 @@ const columnLayout = {
   },
 };
 
-class Index extends React.Component<Props, {}> {
+class Index extends React.Component<Props, IndexState> {
   static async getInitialProps(props: InitialProps) {
     const semesters: Semester[] = await Api.getSemesters();
+    const faculties: Faculty[] = await Api.getFaculties();
+
+    const semester = semesters[0];
+    const facultiesInSemester = faculties.filter((f) => {
+      return semester.faculties.indexOf(f._id) >= 0;
+    });
+
+    let checkedFaculties = [];
+    if (props.query.faculties) {
+      checkedFaculties = props.query.faculties.split(',');
+    }
 
     return {
-      faculties: props.query.faculties.split(','),
-      semester: semesters[0],
+      checkedFaculties,
+      faculties: facultiesInSemester,
+      semester,
     };
   }
 
   constructor(props: Props) {
     super(props);
 
-    this.state = {};
+    this.state = {
+      presentationDateIndex: 0,
+      availableSlots: [],
+      loading: true,
+      err: '',
+    };
+
+    this.getAvailableSlots();
+  }
+
+  private async getAvailableSlots() {
+    const ids = this.props.faculties.map(f => f._id);
+    const query = `ids=${ids.join(',')}&semester=${this.props.semester._id}`;
+    
+    try {
+      const availableSlots = await Api.getAvailableSlots(query);
+      this.setState({
+        loading: false,
+        availableSlots,
+      });
+    } catch (err) {
+      this.setState({
+        err: err.message,
+        loading: false,
+      })
+    }
   }
 
   render() {
@@ -56,13 +99,13 @@ class Index extends React.Component<Props, {}> {
             {...columnLayout}
           >
             <SchedulingFilter 
-              semester={this.props.semester}
+              checkedFaculties={this.props.checkedFaculties}
               faculties={this.props.faculties}
             />
-            <SchedulingCalendar 
+            {/* <SchedulingCalendar 
               semester={this.props.semester}
               faculties={this.props.faculties}
-            />
+            /> */}
           </Col>
         </Row>
       </AppLayout>

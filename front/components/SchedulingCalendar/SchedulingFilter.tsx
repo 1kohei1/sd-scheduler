@@ -4,11 +4,12 @@ import { Form, Checkbox, Button } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import { Semester } from '../../models/Semester';
+import Faculty from '../../models/Faculty';
 
 export interface SchedulingFilterProps {
   form: WrappedFormUtils;
-  faculties: string[];
-  semester: Semester;
+  checkedFaculties: string[];
+  faculties: Faculty[];
 }
 
 const formItemLayout = {
