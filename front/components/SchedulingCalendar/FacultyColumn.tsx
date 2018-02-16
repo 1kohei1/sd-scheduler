@@ -13,7 +13,7 @@ export interface FacultyColumnProps {
 export default class FacultyColumn extends React.Component<FacultyColumnProps, any> {
   render() {
     return (
-      <div>
+      <div style={{ minWidth: '200px' }}>
         <div className="row" style={{ fontSize: '18px' }}>
           {DatetimeUtil.formatDate(this.props.presentationDate.start, DateConstants.dateFormat)}
         </div>
@@ -24,7 +24,6 @@ export default class FacultyColumn extends React.Component<FacultyColumnProps, a
         ))}
         <style jsx>{`
           .row {
-            height: ${SchedulingCalendarConstants.rowHeight};
             line-height: ${SchedulingCalendarConstants.rowHeight};
             padding: 0 16px 0 8px;
           }

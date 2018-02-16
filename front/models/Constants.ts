@@ -26,4 +26,7 @@ export const DateConstants = {
 export const SchedulingCalendarConstants = {
   rowHeightNum: 30,
   rowHeight: '30px',
+
+  columnWidthNum: 60,
+  columnWidth: '60px',
 }
