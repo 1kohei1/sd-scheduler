@@ -66,6 +66,10 @@ export default class SchedulingCalendar extends React.Component<SchedulingCalend
             {presentationDates.map((date, index) => (
               <CalendarBody
                 key={index}
+                presentationDate={date}
+                faculties={this.props.faculties}
+                availableSlots={this.props.availableSlots}
+                presentations={this.props.presentations}
               />
             ))}
           </div>

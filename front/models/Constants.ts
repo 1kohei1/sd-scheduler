@@ -22,3 +22,8 @@ export const DateConstants = {
   hourMinFormat: 'h:mm A',
   timezone: 'America/New_York',
 }
+
+export const SchedulingCalendarConstants = {
+  rowHeightNum: 30,
+  rowHeight: '30px',
+}
