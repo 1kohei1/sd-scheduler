@@ -30,14 +30,17 @@ interface IndexState {
 }
 
 const columnLayout = {
-  xs: {
-    span: 22,
-    offset: 1,
+  md: {
+    span: 24,
   },
   lg: {
-    span: 18,
-    offset: 3
+    span: 22,
+    offset: 1
   },
+  xl: {
+    span: 20,
+    offset: 2,
+  }
 };
 
 const COOKIE_KEY = 'faculties';
