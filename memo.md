@@ -63,6 +63,7 @@ TODO:
 - [ ] Use production ready session store (v3)
 - [ ] Maybe MLab sandbox should not be enough for the project. Think other way to store session free
 - [ ] Find a way to read cookies from the server side since index constructor is executed on the server side
+- [ ] Animate calendar in and out
 
 NOTES:
 
