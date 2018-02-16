@@ -6,6 +6,7 @@ import Presentation from '../../models/Presentation';
 import AvailableSlot from '../../models/AvailableSlot';
 import CalendarControl from './CalendarControl';
 import DatetimeUtil from '../../utils/DatetimeUtil';
+import CalendarBody from './CalendarBody';
 
 export interface SchedulingCalendarProps {
   semester: Semester;
@@ -55,12 +56,32 @@ export default class SchedulingCalendar extends React.Component<SchedulingCalend
     })
     return (
       <div>
-        <CalendarControl 
+        <CalendarControl
           index={this.state.presentationDatesIndex}
           presentationDates={presentationDates}
           changeIndex={this.changeIndex}
         />
-        Scheduling calendar
+        <div className="ko-calendar-wrapper">
+          <div className="ko-calendar-window">
+            {presentationDates.map((date, index) => (
+              <CalendarBody
+                key={index}
+              />
+            ))}
+          </div>
+        </div>
+        <style jsx>{`
+          .ko-calendar-wrapper {
+            width: 100%;
+            overflow: hidden;
+          }
+          .ko-calendar-window {
+            display: flex;
+            position: relative;
+            left: 0;
+          }
+        `}
+        </style>
       </div>
     );
   }
