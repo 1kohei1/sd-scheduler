@@ -47,13 +47,7 @@ export default class SchedulingCalendar extends React.Component<SchedulingCalend
   }
 
   render() {
-    const presentationDates = this.props.semester.presentationDates.map(date => {
-      return {
-        _id: date._id,
-        start: DatetimeUtil.getMomentFromISOString(date.start),
-        end: DatetimeUtil.getMomentFromISOString(date.end),
-      };
-    })
+    const presentationDates = this.props.semester.presentationDates.map(DatetimeUtil.convertToTimeSlot)
     return (
       <div>
         <CalendarControl

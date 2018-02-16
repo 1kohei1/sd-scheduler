@@ -5,6 +5,12 @@ import { Range } from 'immutable';
 import { DateConstants } from '../models/Constants';
 import TimeSlot from '../models/TimeSlot';
 
+interface TimeSlotLikeObject {
+  _id: string;
+  start: string;
+  end: string;
+}
+
 export default class DatetimeUtil {
   static convertTo12Hr(hour: number) {
     if (hour < 12) {
@@ -46,6 +52,14 @@ export default class DatetimeUtil {
 
   static addToMoment(m: Moment, amount: number, unit: unitOfTime.DurationConstructor) {
     return m.clone().add(amount, unit);
+  }
+
+  static convertToTimeSlot(slot: TimeSlotLikeObject): TimeSlot {
+    return {
+      _id: slot._id,
+      start: DatetimeUtil.getMomentFromISOString(slot.start),
+      end: DatetimeUtil.getMomentFromISOString(slot.end),
+    }
   }
 
   // Convert moment hour and min to number. Ex) 9:30 AM => 9.5, 10:30 PM => 22.5

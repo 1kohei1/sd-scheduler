@@ -34,13 +34,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
     super(props);
 
     // Semester.presentationDates are in string format. So convert them to moment.
-    this.presentationDates = props.semester.presentationDates.map(presentationDate => {
-      return {
-        _id: presentationDate._id,
-        start: DatetimeUtil.getMomentFromISOString(presentationDate.start),
-        end: DatetimeUtil.getMomentFromISOString(presentationDate.end)
-      };
-    });
+    this.presentationDates = props.semester.presentationDates.map(DatetimeUtil.convertToTimeSlot);
 
     this.state = {
       // presentations: List<Presentation>([{
@@ -164,11 +158,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
     let availableSlots = List<TimeSlot>();
 
     availableSlot.availableSlots.forEach(slot => {
-      availableSlots = availableSlots.push({
-        _id: slot._id,
-        start: DatetimeUtil.getMomentFromISOString(slot.start),
-        end: DatetimeUtil.getMomentFromISOString(slot.end),
-      })
+      availableSlots = availableSlots.push(DatetimeUtil.convertToTimeSlot(slot))
     });
 
     this.setState({
