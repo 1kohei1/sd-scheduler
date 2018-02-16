@@ -35,8 +35,8 @@ export default class PresentationSlotTile extends React.Component<PresentationSl
 
 
   render() {
-    const start = DatetimeUtil.convertToHourlyNumber(this.props.presentation.start);
-    const end = DatetimeUtil.convertToHourlyNumber(this.props.presentation.end);
+    const start = DatetimeUtil.convertToHourlyNumber(DatetimeUtil.getMomentFromISOString(this.props.presentation.start));
+    const end = DatetimeUtil.convertToHourlyNumber(DatetimeUtil.getMomentFromISOString(this.props.presentation.end));
 
     const topOffset = `${(start - this.props.ruler[0]) * KoCalendarConstants.rulerColumnHeightNum}px`;
     const height = `${(end - start) * KoCalendarConstants.rulerColumnHeightNum}px`;
