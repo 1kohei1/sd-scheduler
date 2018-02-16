@@ -1,11 +1,11 @@
 import * as React from 'react';
 
+import DatetimeUtil from '../../utils/DatetimeUtil';
+import { SchedulingCalendarConstants, DateConstants } from '../../models/Constants';
+
 export interface TimeTableHeaderProps {
   hoursArray: number[];
 }
-
-import DatetimeUtil from '../../utils/DatetimeUtil';
-import { SchedulingCalendarConstants, DateConstants } from '../../models/Constants';
 
 export default class TimeTableHeader extends React.Component<TimeTableHeaderProps, any> {
   render() {
