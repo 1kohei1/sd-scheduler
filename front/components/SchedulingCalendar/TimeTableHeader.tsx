@@ -14,7 +14,7 @@ export default class TimeTableHeader extends React.Component<TimeTableHeaderProp
     return (
       <div className="time-table-header">
         {hoursArray.map(hour => (
-          <div style={{ width: SchedulingCalendarConstants.columnWidth }}>
+          <div style={{ width: SchedulingCalendarConstants.columnWidth }} key={hour}>
             {DatetimeUtil.convertTo12Hr(hour)}
           </div>
         ))}
