@@ -28,7 +28,7 @@ export default class TimeTable extends React.Component<TimeTableProps, any> {
         <TimeTableHeader
           hoursArray={hoursArray}
         />
-        {this.props.faculties.map(faculty => {
+        {this.props.faculties.map((faculty, i) => {
           let availableSlots: TimeSlot[] = [];
           const index = this.props.availableSlots.findIndex(slot => slot.faculty === faculty._id);
           if (index >= 0) {
@@ -38,16 +38,18 @@ export default class TimeTable extends React.Component<TimeTableProps, any> {
           let presentations = this.props.presentations.filter(presentation => {
             return presentation.faculties.indexOf(faculty._id) >= 0
           })
-          .filter(presentation => {
-            const t = DatetimeUtil.convertToTimeSlot(presentation);
-            return DatetimeUtil.doesOverlap(this.props.presentationDate, t);
-          });
-          
+            .filter(presentation => {
+              const t = DatetimeUtil.convertToTimeSlot(presentation);
+              return DatetimeUtil.doesOverlap(this.props.presentationDate, t);
+            });
+
           return <FacultySchedule
+            key={faculty._id}
             faculty={faculty}
             hoursArray={hoursArray}
             availableSlots={availableSlots}
             presentations={presentations}
+            isLastFaculty={i === this.props.faculties.length - 1}
           />
         })}
       </div>
