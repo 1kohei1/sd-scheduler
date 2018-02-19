@@ -86,8 +86,9 @@ class Index extends React.Component<Props, IndexState> {
 
   private async getAvailableSlots() {
     const ids = this.props.facultiesInSemester.map(f => f._id);
-    const query = `faculties=${ids.join(',')}&semester=${this.props.semester._id}`;
-    
+    const facultyQuery = this.props.facultiesInSemester.map(f => `faculty[$in]=${f._id}`);
+    const query = `semester=${this.props.semester._id}&${facultyQuery.join('&')}`;
+
     try {
       const availableSlots = await Api.getAvailableSlots(query);
       this.setState({

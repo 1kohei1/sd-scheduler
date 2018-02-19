@@ -11,17 +11,7 @@ module.exports.findAvailableSlots = (req: Request, res: Response) => {
     }
   };
 
-  const faculties = req.query.faculties.split(',');
-  const semester = req.query.semester;
-
-  const query = {
-    faculty: {
-      $in: faculties,
-    },
-    semester,
-  };
-
-  DBUtil.findAvailableSlots(query)
+  DBUtil.findAvailableSlots(req.query)
   .then(availableslots => {
     APIUtil.successResponse(info, availableslots, res);
   })
