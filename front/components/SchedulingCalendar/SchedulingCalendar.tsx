@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as Cookie from 'js-cookie';
 
 import { Semester } from '../../models/Semester';
 import Faculty from '../../models/Faculty';
@@ -17,17 +18,28 @@ export interface SchedulingCalendarProps {
 
 interface SchedulingCalendarState {
   presentationDatesIndex: number;
+  checkedFaculties: string[];
 }
+
+const COOKIE_KEY = 'faculties';
 
 export default class SchedulingCalendar extends React.Component<SchedulingCalendarProps, SchedulingCalendarState> {
   constructor(props: SchedulingCalendarProps) {
     super(props);
 
+    let checkedFaculties = this.props.faculties.map(f => f._id);
+    const ids = Cookie.get(COOKIE_KEY);
+    if (ids) {
+      checkedFaculties = ids.split(',');
+    }
+
     this.state = {
       presentationDatesIndex: 0,
+      checkedFaculties,
     };
 
     this.changeIndex = this.changeIndex.bind(this);
+    this.onUpdateFilter = this.onUpdateFilter.bind(this);
   }
 
   changeIndex(op: string) {
@@ -46,8 +58,19 @@ export default class SchedulingCalendar extends React.Component<SchedulingCalend
     }
   }
 
+  onUpdateFilter(ids: string[]) {
+    this.setState({
+      checkedFaculties: ids,
+    });
+    Cookie.set(COOKIE_KEY, ids.join(','));
+  }
+
   render() {
     const presentationDates = this.props.semester.presentationDates.map(DatetimeUtil.convertToTimeSlot)
+    const facultiesToDisplay = this.props.faculties.filter(f => {
+      return this.state.checkedFaculties.indexOf(f._id) >= 0;
+    });
+
     return (
       <div>
         <CalendarControl
@@ -61,7 +84,7 @@ export default class SchedulingCalendar extends React.Component<SchedulingCalend
               <CalendarBody
                 key={index}
                 presentationDate={date}
-                faculties={this.props.faculties}
+                faculties={facultiesToDisplay}
                 availableSlots={this.props.availableSlots}
                 presentations={this.props.presentations}
               />
