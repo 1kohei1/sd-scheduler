@@ -15,6 +15,7 @@ import SchedulingCalendar from '../components/SchedulingCalendar/SchedulingCalen
 import { DateConstants } from '../models/Constants';
 import Api from '../utils/Api';
 import Presentation from '../models/Presentation';
+import Loading from '../components/Loading';
 
 interface Props {
   facultiesInSemester: Faculty[];
@@ -126,17 +127,21 @@ class Index extends React.Component<Props, IndexState> {
           <Col
             {...columnLayout}
           >
-            <SchedulingFilter 
+            <SchedulingFilter
               checkedFaculties={this.state.checkedFaculties}
               faculties={this.props.facultiesInSemester}
               onUpdateFilter={this.onUpdateFilter}
             />
-            <SchedulingCalendar 
-              semester={this.props.semester}
-              faculties={this.props.facultiesInSemester}
-              availableSlots={this.state.availableSlots}
-              presentations={this.state.presentations}
-            />
+            {this.state.loading ? (
+              <Loading />
+            ) : (
+                <SchedulingCalendar
+                  semester={this.props.semester}
+                  faculties={this.props.facultiesInSemester}
+                  availableSlots={this.state.availableSlots}
+                  presentations={this.state.presentations}
+                />
+              )}
           </Col>
         </Row>
       </AppLayout>
