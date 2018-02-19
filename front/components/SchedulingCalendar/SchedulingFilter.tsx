@@ -76,7 +76,6 @@ class SchedulingFilter extends React.Component<SchedulingFilterProps, any> {
         </Form>
         <style jsx>{`
           .ko-filter-form {
-            margin: 16px 0;
             padding: 16px;
             background: #fbfbfb;
             border: 1px solid #d9d9d9;

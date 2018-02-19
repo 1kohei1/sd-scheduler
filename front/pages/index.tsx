@@ -4,6 +4,7 @@ import ObjectID from 'bson-objectid';
 import * as moment from 'moment-timezone';
 import Link from 'next/link'
 import * as Cookie from 'js-cookie';
+import * as CookieParser from 'cookie';
 
 import AppLayout from '../components/AppLayout';
 import InitialProps from '../models/InitialProps';
@@ -19,6 +20,7 @@ import Loading from '../components/Loading';
 
 interface Props {
   facultiesInSemester: Faculty[];
+  checkedFaculties: string[];
   semester: Semester;
 }
 
@@ -56,8 +58,20 @@ class Index extends React.Component<Props, IndexState> {
       return semester.faculties.indexOf(f._id) >= 0;
     });
 
+    let checkedFaculties = facultiesInSemester.map(f => f._id);
+    const ids = Cookie.get(COOKIE_KEY);
+    if (props.req) {
+      const parsedCookie = CookieParser.parse(props.req.headers.cookie as string);
+      if (parsedCookie.faculty) {
+        checkedFaculties = parsedCookie.faculties.split(',');
+      }
+    } else if (ids) {
+      checkedFaculties = ids.split(',');
+    }
+
     return {
       facultiesInSemester,
+      checkedFaculties,
       semester,
     };
   }
@@ -65,14 +79,8 @@ class Index extends React.Component<Props, IndexState> {
   constructor(props: Props) {
     super(props);
 
-    let checkedFaculties = this.props.facultiesInSemester.map(f => f._id);
-    const ids = Cookie.get(COOKIE_KEY);
-    if (ids) {
-      checkedFaculties = ids.split(',');
-    }
-
     this.state = {
-      checkedFaculties,
+      checkedFaculties: this.props.checkedFaculties,
       availableSlots: [],
       presentations: [],
       loading: true,
@@ -127,23 +135,32 @@ class Index extends React.Component<Props, IndexState> {
           <Col
             {...columnLayout}
           >
-            <SchedulingFilter
-              checkedFaculties={this.state.checkedFaculties}
-              faculties={this.props.facultiesInSemester}
-              onUpdateFilter={this.onUpdateFilter}
-            />
-            {this.state.loading ? (
-              <Loading />
-            ) : (
-                <SchedulingCalendar
-                  semester={this.props.semester}
-                  faculties={this.props.facultiesInSemester}
-                  availableSlots={this.state.availableSlots}
-                  presentations={this.state.presentations}
-                />
-              )}
+            <div className="section">
+              {this.state.loading ? (
+                <Loading />
+              ) : (
+                  <SchedulingCalendar
+                    semester={this.props.semester}
+                    faculties={this.props.facultiesInSemester}
+                    availableSlots={this.state.availableSlots}
+                    presentations={this.state.presentations}
+                  />
+                )}
+            </div>
+            <div className="section">
+              <SchedulingFilter
+                checkedFaculties={this.state.checkedFaculties}
+                faculties={this.props.facultiesInSemester}
+                onUpdateFilter={this.onUpdateFilter}
+              />
+            </div>
           </Col>
         </Row>
+        <style jsx>{`
+          .section {
+            margin: 16px 0;
+          }
+        `}</style>
       </AppLayout>
     )
   }
