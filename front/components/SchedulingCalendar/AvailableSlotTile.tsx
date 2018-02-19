@@ -18,7 +18,7 @@ export default class AvailableSlotTile extends React.Component<AvailableSlotTile
     const end = DatetimeUtil.convertToHourlyNumber(availableSlot.end);
 
     const left = `${(start - hoursArray[0]) * blockWidth}px`;
-    const width = `${(end - start) * blockWidth}px`;
+    const width = `${(end - start) * blockWidth * 2}px`;
 
     return (
       <div className="slot-tile">
