@@ -9,7 +9,6 @@ import InitialProps from '../models/InitialProps';
 import { Semester } from '../models/Semester';
 import Faculty from '../models/Faculty';
 import AvailableSlot from '../models/AvailableSlot';
-import SchedulingFilter from '../components/SchedulingCalendar/SchedulingFilter';
 import SchedulingCalendar from '../components/SchedulingCalendar/SchedulingCalendar';
 import { DateConstants } from '../models/Constants';
 import Api from '../utils/Api';

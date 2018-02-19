@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as Cookie from 'js-cookie';
+import { Card } from 'antd';
 
 import { Semester } from '../../models/Semester';
 import Faculty from '../../models/Faculty';
@@ -8,6 +9,7 @@ import AvailableSlot from '../../models/AvailableSlot';
 import CalendarControl from './CalendarControl';
 import DatetimeUtil from '../../utils/DatetimeUtil';
 import CalendarBody from './CalendarBody';
+import SchedulingFilter from './SchedulingFilter';
 
 export interface SchedulingCalendarProps {
   semester: Semester;
@@ -91,10 +93,18 @@ export default class SchedulingCalendar extends React.Component<SchedulingCalend
             ))}
           </div>
         </div>
+        <Card title="Filter faculties">
+          <SchedulingFilter
+            faculties={this.props.faculties}
+            checkedFaculties={this.state.checkedFaculties}
+            onUpdateFilter={this.onUpdateFilter}
+          />
+        </Card>
         <style jsx>{`
           .ko-calendar-wrapper {
             width: 100%;
             overflow: hidden;
+            margin-bottom: 32px;
           }
           .ko-calendar-window {
             display: flex;

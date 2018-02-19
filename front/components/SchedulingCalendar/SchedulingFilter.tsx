@@ -13,22 +13,6 @@ export interface SchedulingFilterProps {
   onUpdateFilter: (ids: string[]) => void;
 }
 
-const formItemLayout = {
-  labelCol: {
-    span: 4,
-  },
-  wrapperCol: {
-    span: 20,
-  }
-}
-
-const tailFormItemLayout = {
-  wrapperCol: {
-    span: 20,
-    offset: 4,
-  }
-}
-
 class SchedulingFilter extends React.Component<SchedulingFilterProps, any> {
   constructor(props: SchedulingFilterProps) {
     super(props);
@@ -53,10 +37,7 @@ class SchedulingFilter extends React.Component<SchedulingFilterProps, any> {
     return (
       <div className="ko-filter-form">
         <Form onSubmit={this.handleSubmit}>
-          <Form.Item
-            {...formItemLayout}
-            label="Faculties"
-          >
+          <Form.Item>
             {this.props.faculties.map(f => {
               return this.props.form.getFieldDecorator(f._id, {
                 initialValue: this.props.checkedFaculties.indexOf(f._id) >= 0,
@@ -66,9 +47,7 @@ class SchedulingFilter extends React.Component<SchedulingFilterProps, any> {
               )
             })}
           </Form.Item>
-          <Form.Item
-            {...tailFormItemLayout}
-          >
+          <Form.Item>
             <Button type="primary" htmlType="submit">
               Filter
             </Button>
@@ -76,10 +55,10 @@ class SchedulingFilter extends React.Component<SchedulingFilterProps, any> {
         </Form>
         <style jsx>{`
           .ko-filter-form {
-            padding: 16px;
-            background: #fbfbfb;
-            border: 1px solid #d9d9d9;
-            border-radius: 6px;
+            // padding: 16px;
+            // background: #fbfbfb;
+            // border: 1px solid #d9d9d9;
+            // border-radius: 6px;
           }
         `}
         </style>
