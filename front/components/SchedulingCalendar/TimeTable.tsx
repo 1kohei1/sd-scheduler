@@ -35,6 +35,8 @@ export default class TimeTable extends React.Component<TimeTableProps, any> {
             availableSlots = this.props.availableSlots[index].availableSlots.map(DatetimeUtil.convertToTimeSlot);
           }
 
+          availableSlots = availableSlots.filter(slot => DatetimeUtil.doesOverlap(slot, this.props.presentationDate));
+
           let presentations = this.props.presentations.filter(presentation => {
             return presentation.faculties.indexOf(faculty._id) >= 0
           })
