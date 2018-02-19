@@ -15,6 +15,7 @@ export default class AailableSlots extends React.Component<AailableSlotsProps, a
       <div className="availableslots-wrapper">
         {this.props.availableSlots.map(slot => (
           <AvailableSlotTile
+            key={slot._id}
             hoursArray={this.props.hoursArray}
             availableSlot={slot}
           />
