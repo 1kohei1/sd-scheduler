@@ -6,6 +6,7 @@ import Presentation from '../../models/Presentation';
 import DatetimeUtil from '../../utils/DatetimeUtil';
 import { SchedulingCalendarConstants, DateConstants } from '../../models/Constants';
 import HourLines from './HourLines';
+import AvailableSlots from './AvailableSlots';
 
 export interface FacultyScheduleProps {
   faculty: Faculty;
@@ -22,6 +23,10 @@ export default class FacultySchedule extends React.Component<FacultyScheduleProp
         <HourLines 
           {...this.props}
         />
+        <AvailableSlots
+          {...this.props}
+        />
+
         <style jsx>{`
           .ko-faculty-schedule {
             position: relative;

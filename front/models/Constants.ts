@@ -29,4 +29,6 @@ export const SchedulingCalendarConstants = {
 
   columnWidthNum: 100,
   columnWidth: '100px',
+
+  tileBackgroundColor: '#0070E0',  
 }
