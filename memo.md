@@ -91,3 +91,12 @@ Delete presentation:
 2. Student enter one of the group member's email
 3. System sends email and confirm the action
 
+### Changes required in the future
+
+I guess presentation date differs by admin faculties. If this is true, make these changes
+
+- [ ] Update date overview to reflect presentation dates per admin faculty
+- [ ] Update semester model to have admin_faculties property
+- [ ] Update semester model to have presentation dates per each admin faculty in admin_faculties property
+- [ ] Update faculty availability calendar to reflect all presentation dates per faculties (require hearing what change they would like to have)
+- [ ] Update index page to let students pick who is their SD2 faculty
