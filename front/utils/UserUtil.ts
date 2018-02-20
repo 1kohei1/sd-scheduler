@@ -4,8 +4,7 @@ import Router from 'next/router';
 import Api from './Api';
 import Faculty from '../models/Faculty';
 import InitialProps from '../models/InitialProps';
-
-const KEY = 'user';
+import CookieUtil from '../utils/CookieUtil';
 
 interface onUserUpdates {
   [key: string]: ((user: Faculty | undefined) => void);
@@ -15,20 +14,20 @@ export default class UserUtil {
   static onUserUpdates: onUserUpdates = {};
 
   static async getUser() {
-    let user = UserUtil.getUserFromCookie() as Faculty;
+    let user = CookieUtil.getUser(undefined) as Faculty;
 
     if (user) {
       return user;
     } else {
       user = await Api.getUser();
-      UserUtil.setUserToCookie(user);
+      CookieUtil.setUser(user);
       return user;
     }
   }
 
   static async logout() {
     const result = await Api.logout();
-    Cookie.remove('user');
+    CookieUtil.removeUser();
 
     const keys = Object.keys(UserUtil.onUserUpdates);
     keys.forEach(key => {
@@ -80,13 +79,5 @@ export default class UserUtil {
 
   static removeOnUserUpdates(key: string) {
     delete UserUtil.onUserUpdates[key];
-  }
-
-  private static getUserFromCookie() {
-    return Cookie.getJSON(KEY);
-  }
-
-  private static setUserToCookie(user: Faculty) {
-    Cookie.set(KEY, user);
   }
 }
