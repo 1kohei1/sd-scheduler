@@ -17,8 +17,7 @@ cat .env.production > .dist/.env.production
 cd .dist
 
 # Deploy to now
-now --public --dotenv=.env.production 
-now alias
+now && now alias
 
 # Move back to project parent folder
 cd ../

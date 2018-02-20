@@ -12,7 +12,9 @@
     "copy-static-assets": "ts-node copyStaticAssets.ts"
   },
   "now": {
-    "alias": "sd-scheduler.com"
+    "alias": "sd-scheduler.com",
+    "dotenv": ".env.production",
+    "public": true
   },
   "keywords": [],
   "author": "",
