@@ -7,6 +7,8 @@ import { Layout, Button, Dropdown, Menu, Icon } from 'antd';
 
 import UserUtil from '../utils/UserUtil';
 import Faculty from '../models/Faculty';
+import { Menus } from '../models/Semester';
+import SemesterUtil from '../utils/SemesterUtil';
 
 // Loading animation
 Router.onRouteChangeStart = (url) => NProgress.start();
@@ -22,8 +24,11 @@ const onClick = (obj: any) => {
 const menu = (
   <Menu onClick={onClick}>
     <Menu.Item key={0}>
-      <Link href="/dashboard">
-        <a>Dashboard</a>
+      <Link
+        href={`/dashboard?semester=${SemesterUtil.defaultSemester()}&menu=${Menus[1].key}`}
+        as={`/dashboard/${SemesterUtil.defaultSemester()}/${Menus[1].key}`}
+      >
+        <a>{Menus[1].displayName}</a>
       </Link>
     </Menu.Item>
     <Menu.Item key={1}>
