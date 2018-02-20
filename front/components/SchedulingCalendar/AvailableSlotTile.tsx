@@ -13,12 +13,11 @@ export default class AvailableSlotTile extends React.Component<AvailableSlotTile
   render() {
     const { hoursArray, availableSlot } = this.props;
 
-    const blockWidth = SchedulingCalendarConstants.columnWidthNum / 2;
     const start = DatetimeUtil.convertToHourlyNumber(availableSlot.start);
     const end = DatetimeUtil.convertToHourlyNumber(availableSlot.end);
 
-    const left = `${(start - hoursArray[0]) * blockWidth}px`;
-    const width = `${(end - start) * blockWidth * 2}px`;
+    const left = `${(start - hoursArray[0]) * SchedulingCalendarConstants.columnWidthNum}px`;
+    const width = `${(end - start) * SchedulingCalendarConstants.columnWidthNum}px`;
 
     return (
       <div className="slot-tile">
