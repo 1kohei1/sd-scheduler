@@ -35,34 +35,25 @@ class SchedulingFilter extends React.Component<SchedulingFilterProps, any> {
 
   render() {
     return (
-      <div className="ko-filter-form">
-        <Form onSubmit={this.handleSubmit}>
-          <Form.Item>
-            {this.props.faculties.map(f => {
-              return this.props.form.getFieldDecorator(f._id, {
+      <Form onSubmit={this.handleSubmit}>
+        <div style={{ display: 'flex' }}>
+          {this.props.faculties.map(f => (
+            <Form.Item key={f._id}>
+              {this.props.form.getFieldDecorator(f._id, {
                 initialValue: this.props.checkedFaculties.indexOf(f._id) >= 0,
                 valuePropName: 'checked',
               })(
-                <Checkbox key={f._id}>Dr. {f.firstName} {f.lastName}</Checkbox>
-              )
-            })}
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Filter
-            </Button>
-          </Form.Item>
-        </Form>
-        <style jsx>{`
-          .ko-filter-form {
-            // padding: 16px;
-            // background: #fbfbfb;
-            // border: 1px solid #d9d9d9;
-            // border-radius: 6px;
-          }
-        `}
-        </style>
-      </div>
+                <Checkbox>Dr. {f.firstName} {f.lastName}</Checkbox>
+              )}
+            </Form.Item>
+          ))}
+        </div>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Filter
+          </Button>
+        </Form.Item>
+      </Form>
     );
   }
 }

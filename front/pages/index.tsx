@@ -15,15 +15,19 @@ import Api from '../utils/Api';
 import Presentation from '../models/Presentation';
 import Loading from '../components/Loading';
 import DatetimeUtil from '../utils/DatetimeUtil';
+import SchedulingFilter from '../components/SchedulingCalendar/SchedulingFilter';
+import CookieUtil from '../utils/CookieUtil';
 
 interface Props {
   facultiesInSemester: Faculty[];
+  checkedFaculties: string[];
   semester: Semester;
 }
 
 interface IndexState {
   availableSlots: AvailableSlot[],
   presentations: Presentation[],
+  checkedFaculties: string[];
   loading: boolean;
   err: string;
 }
@@ -50,8 +54,14 @@ class Index extends React.Component<Props, IndexState> {
     const ids = semester.faculties.map(fid => `_id[$in]=${fid}`);
     const facultiesInSemester: Faculty[] = await Api.getFaculties(`${ids.join('&')}`);
 
+    const checkedFaculties = CookieUtil.getFaculties(
+      props,
+      semester.faculties.map(f => f._id),
+    );
+
     return {
       facultiesInSemester,
+      checkedFaculties,
       semester,
     };
   }
@@ -60,6 +70,7 @@ class Index extends React.Component<Props, IndexState> {
     super(props);
 
     this.state = {
+      checkedFaculties: this.props.checkedFaculties,
       availableSlots: [],
       presentations: [],
       loading: true,
@@ -68,6 +79,8 @@ class Index extends React.Component<Props, IndexState> {
 
     this.getAvailableSlots();
     this.getPresentations();
+
+    this.onUpdateFilter = this.onUpdateFilter.bind(this);
   }
 
   private async getAvailableSlots() {
@@ -94,6 +107,13 @@ class Index extends React.Component<Props, IndexState> {
     const query = `semester=${this.props.semester._id}`;
   }
 
+  onUpdateFilter(ids: string[]) {
+    CookieUtil.setFaculties(ids);
+    this.setState({
+      checkedFaculties: ids,
+    });
+  }
+
   render() {
     return (
       <AppLayout>
@@ -104,6 +124,7 @@ class Index extends React.Component<Props, IndexState> {
             <Tabs>
               {this.props.semester.presentationDates.map(date => {
                 const presentationDate = DatetimeUtil.convertToTimeSlot(date);
+                const facultiesToDisplay = this.props.facultiesInSemester.filter(f => this.state.checkedFaculties.indexOf(f._id) >= 0);
 
                 return (
                   <Tabs.TabPane
@@ -115,7 +136,7 @@ class Index extends React.Component<Props, IndexState> {
                     ) : (
                       <SchedulingCalendar
                         presentationDate={presentationDate}
-                        faculties={this.props.facultiesInSemester}
+                        faculties={facultiesToDisplay}
                         availableSlots={this.state.availableSlots}
                         presentations={this.state.presentations}
                       />
@@ -124,6 +145,11 @@ class Index extends React.Component<Props, IndexState> {
                 )
               })}
             </Tabs>
+            <SchedulingFilter
+              checkedFaculties={this.state.checkedFaculties}
+              faculties={this.props.facultiesInSemester}
+              onUpdateFilter={this.onUpdateFilter}
+            />
           </Col>
         </Row>
       </AppLayout>
