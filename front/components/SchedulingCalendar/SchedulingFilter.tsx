@@ -37,7 +37,7 @@ class SchedulingFilter extends React.Component<SchedulingFilterProps, any> {
   render() {
     return (
       <Form onSubmit={this.handleSubmit}>
-        <DividerWithLeftTitle 
+        <DividerWithLeftTitle
           title="Filter faculties in the calendar"
         />
         <div style={{ display: 'flex' }}>
