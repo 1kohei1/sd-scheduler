@@ -56,7 +56,7 @@ class Index extends React.Component<Props, IndexState> {
 
     const checkedFaculties = CookieUtil.getFaculties(
       props,
-      semester.faculties.map(f => f._id),
+      semester.faculties,
     );
 
     return {
