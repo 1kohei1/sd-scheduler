@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Row, Col, Button } from 'antd';
+import { Row, Col, Button, Tabs } from 'antd';
 import ObjectID from 'bson-objectid';
 import * as moment from 'moment-timezone';
 import Link from 'next/link'
@@ -14,6 +14,7 @@ import { DateConstants } from '../models/Constants';
 import Api from '../utils/Api';
 import Presentation from '../models/Presentation';
 import Loading from '../components/Loading';
+import DatetimeUtil from '../utils/DatetimeUtil';
 
 interface Props {
   facultiesInSemester: Faculty[];
@@ -100,16 +101,29 @@ class Index extends React.Component<Props, IndexState> {
           <Col
             {...columnLayout}
           >
-            {this.state.loading ? (
-              <Loading />
-            ) : (
-                <SchedulingCalendar
-                  semester={this.props.semester}
-                  faculties={this.props.facultiesInSemester}
-                  availableSlots={this.state.availableSlots}
-                  presentations={this.state.presentations}
-                />
-              )}
+            <Tabs>
+              {this.props.semester.presentationDates.map(date => {
+                const presentationDate = DatetimeUtil.convertToTimeSlot(date);
+
+                return (
+                  <Tabs.TabPane
+                    key={date._id}
+                    tab={DatetimeUtil.formatDate(presentationDate.start, DateConstants.dateFormat)}
+                  >
+                    {this.state.loading ? (
+                      <Loading />
+                    ) : (
+                      <SchedulingCalendar
+                        presentationDate={presentationDate}
+                        faculties={this.props.facultiesInSemester}
+                        availableSlots={this.state.availableSlots}
+                        presentations={this.state.presentations}
+                      />
+                    )}
+                  </Tabs.TabPane>
+                )
+              })}
+            </Tabs>
           </Col>
         </Row>
       </AppLayout>
