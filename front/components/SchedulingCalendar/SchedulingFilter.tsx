@@ -5,6 +5,7 @@ import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import { Semester } from '../../models/Semester';
 import Faculty from '../../models/Faculty';
+import DividerWithLeftTitle from '../DividerWithLeftTitle';
 
 export interface SchedulingFilterProps {
   form: WrappedFormUtils;
@@ -36,6 +37,9 @@ class SchedulingFilter extends React.Component<SchedulingFilterProps, any> {
   render() {
     return (
       <Form onSubmit={this.handleSubmit}>
+        <DividerWithLeftTitle 
+          title="Filter faculties in the calendar"
+        />
         <div style={{ display: 'flex' }}>
           {this.props.faculties.map(f => (
             <Form.Item key={f._id}>
