@@ -15,7 +15,7 @@ export interface CalendarBodyProps {
   availableSlots: AvailableSlot[];
   presentations: Presentation[];
   updateCheckedFaculties: (ids: string[]) => void;
-  presentationSlotPicked: (presentationSlot: { start: Moment, end: Moment}) => void;
+  presentationSlotPicked: (presentationSlot: { start: Moment, end: Moment}, facultyId: string) => void;
 }
 
 export default class CalendarBody extends React.Component<CalendarBodyProps, any> {

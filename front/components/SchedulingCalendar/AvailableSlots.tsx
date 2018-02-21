@@ -10,52 +10,15 @@ export interface AailableSlotsProps {
   hoursArray: number[];
   availableSlots: TimeSlot[];
   presentationDate: TimeSlot;
-  presentationSlotPicked: (presentationSlot: { start: Moment, end: Moment}) => void;
+  onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 export default class AailableSlots extends React.Component<AailableSlotsProps, any> {
-  constructor(props: AailableSlotsProps) {
-    super(props);
-
-    this.onClick = this.onClick.bind(this);
-  }
-
-  onClick(e: React.MouseEvent<HTMLDivElement>) {
-    const { presentationDate, hoursArray } = this.props;
-
-    const x = e.nativeEvent.offsetX;
-    const startH = hoursArray[0];
-    let hourlyNumber = startH + x / SchedulingCalendarConstants.columnWidthNum;
-    
-    if (hourlyNumber - Math.floor(hourlyNumber) >= 0.5) {
-      hourlyNumber = Math.floor(hourlyNumber) + 0.5;
-    } else {
-      hourlyNumber = Math.floor(hourlyNumber);
-    }
-
-    // Make sure the start of the presentation has 1 hour in given hoursArray
-    if (hoursArray[hoursArray.length - 1] + 1 - hourlyNumber <= 0.5) {
-      hourlyNumber -= 0.5;
-    }
-
-    // Get pure diff from the start time
-    const hourlyDiff = hourlyNumber - startH;
-
-    const presentationSlot = {
-      start: DatetimeUtil.addToMoment(presentationDate.start, hourlyDiff, 'h'),
-      end: DatetimeUtil.addToMoment(presentationDate.start, hourlyDiff + 1, 'h'),
-    }
-
-    // Pass created the presentation range to the parent component 
-    // Check if there is any presentation that overlaps in the range
-    this.props.presentationSlotPicked(presentationSlot);
-  }
-
   render() {
     return (
       <div
         className="availableslots-wrapper"
-        onClick={this.onClick}
+        onClick={this.props.onClick}
       >
         {this.props.availableSlots.map(slot => (
           <AvailableSlotTile

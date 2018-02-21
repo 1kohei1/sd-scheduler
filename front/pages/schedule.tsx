@@ -136,7 +136,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
    * Step 1
    */
 
-  presentationSlotPicked(presentationSlot: { start: Moment, end: Moment}) {
+  presentationSlotPicked(presentationSlot: { start: Moment, end: Moment}, facultyId: string) {
     // Check if given datetime overlaps with existing presentations
     
     this.setState((prevState: ScheduleState, props: ScheduleProps) => {

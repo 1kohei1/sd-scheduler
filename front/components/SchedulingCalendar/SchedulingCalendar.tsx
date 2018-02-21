@@ -19,7 +19,7 @@ export interface SchedulingCalendarProps {
   availableSlots: AvailableSlot[];
   presentations: Presentation[];
   loading: boolean;
-  presentationSlotPicked: (presentationSlot: { start: Moment, end: Moment}) => void;
+  presentationSlotPicked: (presentationSlot: { start: Moment, end: Moment}, facultyId: string) => void;
 }
 
 interface SchedulingCalendarState {

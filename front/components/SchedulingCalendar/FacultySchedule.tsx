@@ -16,10 +16,46 @@ export interface FacultyScheduleProps {
   presentations: Presentation[];
   presentationDate: TimeSlot;
   isLastFaculty: boolean;
-  presentationSlotPicked: (presentationSlot: { start: Moment, end: Moment}) => void;
+  presentationSlotPicked: (presentationSlot: { start: Moment, end: Moment}, facultyId: string) => void;
 }
 
 export default class FacultySchedule extends React.Component<FacultyScheduleProps, any> {
+  constructor(props: FacultyScheduleProps) {
+    super(props);
+
+    this.onClick = this.onClick.bind(this);
+  }
+
+
+  onClick(e: React.MouseEvent<HTMLDivElement>) {
+    const { presentationDate, hoursArray } = this.props;
+
+    const x = e.nativeEvent.offsetX;
+    const startH = hoursArray[0];
+    let hourlyNumber = startH + x / SchedulingCalendarConstants.columnWidthNum;
+    
+    if (hourlyNumber - Math.floor(hourlyNumber) >= 0.5) {
+      hourlyNumber = Math.floor(hourlyNumber) + 0.5;
+    } else {
+      hourlyNumber = Math.floor(hourlyNumber);
+    }
+
+    // Make sure the start of the presentation has 1 hour in given hoursArray
+    if (hoursArray[hoursArray.length - 1] + 1 - hourlyNumber <= 0.5) {
+      hourlyNumber -= 0.5;
+    }
+
+    // Get pure diff from the start time
+    const hourlyDiff = hourlyNumber - startH;
+
+    const presentationSlot = {
+      start: DatetimeUtil.addToMoment(presentationDate.start, hourlyDiff, 'h'),
+      end: DatetimeUtil.addToMoment(presentationDate.start, hourlyDiff + 1, 'h'),
+    }
+
+    this.props.presentationSlotPicked(presentationSlot, this.props.faculty._id);
+  }
+
   render() {
     return (
       <div className="ko-faculty-schedule">
@@ -28,6 +64,7 @@ export default class FacultySchedule extends React.Component<FacultyScheduleProp
         />
         <AvailableSlots
           {...this.props}
+          onClick={this.onClick}
         />
 
         <style jsx>{`
