@@ -71,6 +71,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     this.content = this.content.bind(this);
     this.changeCurrent = this.changeCurrent.bind(this);
     this.datetimePicked = this.datetimePicked.bind(this);
+    this.clearPresentationSlot = this.clearPresentationSlot.bind(this);
   }
 
   componentDidMount() {
@@ -116,6 +117,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
           />
           <SchedulingDate
             presentation={this.state.schedulingPresentation}
+            clearPresentationSlot={this.clearPresentationSlot}
           />
         </div>
       )
@@ -142,6 +144,19 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       let newMap = Map(prevState.schedulingPresentation);
       newMap = newMap.set('start', datetime.start.toISOString());
       newMap = newMap.set('end', datetime.end.toISOString());
+
+      const newState: any = {}
+      newState.schedulingPresentation = newMap.toObject();
+
+      return newState;
+    })
+  }
+
+  clearPresentationSlot() {
+    this.setState((prevState: ScheduleState, props: ScheduleProps) => {
+      let newMap = Map(prevState.schedulingPresentation);
+      newMap = newMap.set('start', '');
+      newMap = newMap.set('end', '');
 
       const newState: any = {}
       newState.schedulingPresentation = newMap.toObject();

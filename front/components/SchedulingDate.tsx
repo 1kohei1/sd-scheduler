@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Row, Col, Icon } from 'antd';
+import { Row, Col, Button, Icon } from 'antd';
 
 import Presentation from '../models/Presentation';
 import DatetimeUtil from '../utils/DatetimeUtil';
@@ -7,6 +7,7 @@ import { DateConstants } from '../models/Constants';
 
 export interface SchedulingDateProps {
   presentation: Presentation;
+  clearPresentationSlot: () => void;
 }
 
 export default class SchedulingDate extends React.Component<SchedulingDateProps, any> {
@@ -30,7 +31,10 @@ export default class SchedulingDate extends React.Component<SchedulingDateProps,
 
       return (
         <div>
-          <p>Your presentation is from {start} to {end} on {date}</p>
+          <p>Your presentation is from <b>{start}</b> to <b>{end}</b> on <b>{date}</b></p>
+          <p>
+            <Button size="small" onClick={this.props.clearPresentationSlot} icon="delete">Clear</Button>
+          </p>
         </div>
       )
     } else {
