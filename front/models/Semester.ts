@@ -1,7 +1,7 @@
 import TimeSlot from './TimeSlot';
 
 export interface Semester {
-  _id?: string;
+  _id: string;
   key: string;
   displayName: string;
   // presentationDates is not array of interface PresentationDate for below reason.

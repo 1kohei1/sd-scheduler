@@ -1,4 +1,5 @@
 import Group from './Group';
+import ObjectID from 'bson-objectid';
 
 export default interface Presentation {
   _id: string;
@@ -9,6 +10,28 @@ export default interface Presentation {
   faculties: string[]; // This property will not be populated on the server side
   midPresentationLink: string;
   committeeFormLink: string;
-  created_at: Date;
-  updated_at: Date;
+  created_at?: Date;
+  updated_at?: Date;
+}
+
+export const newPresentation = (semester: string) => {
+  return {
+    _id: ObjectID.generate(),
+    start: '',
+    end: '',
+    semester,
+    group: {
+      _id: ObjectID.generate(),
+      projectName: '',
+      semester,
+      members: [],
+      sponsors: [],
+      sponsorName: '',
+      groupNumber: 0,
+      adminFaculty: '',
+    },
+    faculties: [],
+    midPresentationLink: '',
+    committeeFormLink: '',
+  };
 }

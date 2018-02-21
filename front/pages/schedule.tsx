@@ -8,8 +8,9 @@ import Faculty from '../models/Faculty';
 import AvailableSlot from '../models/AvailableSlot';
 import SchedulingCalendar from '../components/SchedulingCalendar/SchedulingCalendar';
 import Api from '../utils/Api';
-import Presentation from '../models/Presentation';
+import Presentation, { newPresentation } from '../models/Presentation';
 import Loading from '../components/Loading';
+import SchedulingDate from '../components/SchedulingDate';
 
 interface ScheduleProps {
   facultiesInSemester: Faculty[];
@@ -17,6 +18,7 @@ interface ScheduleProps {
 }
 
 interface ScheduleState {
+  schedulingPresentation: Presentation,
   availableSlots: AvailableSlot[],
   presentations: Presentation[],
   loading: boolean;
@@ -56,6 +58,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     super(props);
 
     this.state = {
+      schedulingPresentation: newPresentation(this.props.semester._id),
       availableSlots: [],
       presentations: [],
       current: 0,
@@ -99,13 +102,18 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
   content() {
     if (this.state.current === 0) {
       return (
-        <SchedulingCalendar
-          semester={this.props.semester}
-          faculties={this.props.facultiesInSemester}
-          availableSlots={this.state.availableSlots}
-          presentations={this.state.presentations}
-          loading={this.state.loading}
-        />
+        <div>
+          <SchedulingCalendar
+            semester={this.props.semester}
+            faculties={this.props.facultiesInSemester}
+            availableSlots={this.state.availableSlots}
+            presentations={this.state.presentations}
+            loading={this.state.loading}
+          />
+          <SchedulingDate
+            presentation={this.state.schedulingPresentation}
+          />
+        </div>
       )
     }
   }
