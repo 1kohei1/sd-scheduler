@@ -55,6 +55,7 @@ export default class SchedulingCalendar extends React.Component<SchedulingCalend
             ) : (
               <CalendarBody
                 presentationDate={presentationDate}
+                checkedFaculties={this.state.checkedFaculties}
                 faculties={facultiesToDisplay}
                 availableSlots={this.props.availableSlots}
                 presentations={this.props.presentations}

@@ -9,6 +9,7 @@ import TimeTable from './TimeTable';
 
 export interface CalendarBodyProps {
   presentationDate: TimeSlot;
+  checkedFaculties: string[];
   faculties: Faculty[];
   availableSlots: AvailableSlot[];
   presentations: Presentation[];
