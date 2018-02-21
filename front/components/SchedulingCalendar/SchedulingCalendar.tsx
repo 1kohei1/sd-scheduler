@@ -36,6 +36,15 @@ export default class SchedulingCalendar extends React.Component<SchedulingCalend
     this.state = {
       checkedFaculties,
     }
+
+    this.updateCheckedFaculties = this.updateCheckedFaculties.bind(this);
+  }
+
+  updateCheckedFaculties(ids: string[]) {
+    this.setState({
+      checkedFaculties: ids,
+    });
+    CookieUtil.setFaculties(ids);
   }
 
   render() {
@@ -56,9 +65,10 @@ export default class SchedulingCalendar extends React.Component<SchedulingCalend
               <CalendarBody
                 presentationDate={presentationDate}
                 checkedFaculties={this.state.checkedFaculties}
-                faculties={facultiesToDisplay}
+                faculties={this.props.faculties}
                 availableSlots={this.props.availableSlots}
                 presentations={this.props.presentations}
+                updateCheckedFaculties={this.updateCheckedFaculties}
               />
             )}
           </Tabs.TabPane>

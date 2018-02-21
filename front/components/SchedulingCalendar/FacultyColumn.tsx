@@ -11,14 +11,42 @@ export interface FacultyColumnProps {
   presentationDate: TimeSlot;
   checkedFaculties: string[];
   faculties: Faculty[];
+  facultiesToDisplay: Faculty[];
+  updateCheckedFaculties: (ids: string[]) => void;
 }
 
-export default class FacultyColumn extends React.Component<FacultyColumnProps, any> {
+interface FacultyColumnState {
+  visibleFaculties: {
+    [key: string]: boolean;
+  }
+}
+
+export default class FacultyColumn extends React.Component<FacultyColumnProps, FacultyColumnState> {
   constructor(props: FacultyColumnProps) {
     super(props);
 
+    const newState: FacultyColumnState = {
+      visibleFaculties: {}
+    };
+    this.props.faculties.forEach(f => {
+      newState.visibleFaculties[f._id] = this.props.checkedFaculties.indexOf(f._id) >= 0;
+    });
+
+    this.state = newState;
+
     this.content = this.content.bind(this);
     this.onVisibleChange = this.onVisibleChange.bind(this);
+    this.onChange = this.onChange.bind(this);
+  }
+
+  onChange(_id: string, checked: boolean) {
+    this.setState((prevState: FacultyColumnState, props: FacultyColumnProps) => {
+      const { visibleFaculties } = prevState;
+      visibleFaculties[_id] = checked;
+      return {
+        visibleFaculties
+      };
+    })
   }
 
   content() {
@@ -26,7 +54,10 @@ export default class FacultyColumn extends React.Component<FacultyColumnProps, a
       <div>
         {this.props.faculties.map((f => (
           <div key={f._id}>
-            <Checkbox>
+            <Checkbox
+              checked={this.state.visibleFaculties[f._id]}
+              onChange={(e) => this.onChange(f._id, e.target.checked)}
+            >
               Dr. {f.firstName} {f.lastName}
             </Checkbox>
           </div>
@@ -37,7 +68,10 @@ export default class FacultyColumn extends React.Component<FacultyColumnProps, a
 
   onVisibleChange(visible: boolean) {
     if (!visible) {
-      // Fetch the checked faculty ids and call passed function
+      const ids = Object.entries(this.state.visibleFaculties)
+        .filter(([_id, checked]) => checked)
+        .map(([_id]) => _id);
+      this.props.updateCheckedFaculties(ids);
     }
   }
 
@@ -57,7 +91,7 @@ export default class FacultyColumn extends React.Component<FacultyColumnProps, a
             </Button>
           </Popover>
         </div>
-        {this.props.faculties.map(faculty => (
+        {this.props.facultiesToDisplay.map(faculty => (
           <div key={faculty._id} className="row">
             Dr. {faculty.firstName} {faculty.lastName}
           </div>

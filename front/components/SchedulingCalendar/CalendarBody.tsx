@@ -13,18 +13,29 @@ export interface CalendarBodyProps {
   faculties: Faculty[];
   availableSlots: AvailableSlot[];
   presentations: Presentation[];
+  updateCheckedFaculties: (ids: string[]) => void;
 }
 
 export default class CalendarBody extends React.Component<CalendarBodyProps, any> {
   render() {
+    const facultiesToDisplay = this.props.faculties.filter(f => this.props.checkedFaculties.indexOf(f._id) >= 0);
+    
     return (
       <div className="ko-calendar-body">
         <div style={{ display: 'flex' }}>
           <FacultyColumn 
             {...this.props}
+            presentationDate={this.props.presentationDate}
+            checkedFaculties={this.props.checkedFaculties}
+            faculties={this.props.faculties}
+            facultiesToDisplay={facultiesToDisplay}
+            updateCheckedFaculties={this.props.updateCheckedFaculties}
           />
           <TimeTable
-            {...this.props}
+            presentationDate={this.props.presentationDate}
+            faculties={facultiesToDisplay}
+            availableSlots={this.props.availableSlots}
+            presentations={this.props.presentations}
           />
         </div>
         <style jsx>{`
