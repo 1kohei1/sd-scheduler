@@ -16,7 +16,7 @@ export interface FacultyScheduleProps {
   presentations: Presentation[];
   presentationDate: TimeSlot;
   isLastFaculty: boolean;
-  presentationSlotPicked: (presentationSlot: { start: Moment, end: Moment}, facultyId: string) => void;
+  presentationSlotPicked: (presentationSlot: TimeSlot, faculty: Faculty) => void;
 }
 
 export default class FacultySchedule extends React.Component<FacultyScheduleProps, any> {
@@ -49,11 +49,12 @@ export default class FacultySchedule extends React.Component<FacultyScheduleProp
     const hourlyDiff = hourlyNumber - startH;
 
     const presentationSlot = {
+      _id: 'dummy id',
       start: DatetimeUtil.addToMoment(presentationDate.start, hourlyDiff, 'h'),
       end: DatetimeUtil.addToMoment(presentationDate.start, hourlyDiff + 1, 'h'),
     }
 
-    this.props.presentationSlotPicked(presentationSlot, this.props.faculty._id);
+    this.props.presentationSlotPicked(presentationSlot, this.props.faculty);
   }
 
   render() {

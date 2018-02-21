@@ -14,7 +14,7 @@ export interface TimeTableProps {
   faculties: Faculty[];
   availableSlots: AvailableSlot[];
   presentations: Presentation[];
-  presentationSlotPicked: (presentationSlot: { start: Moment, end: Moment}, facultyId: string) => void;
+  presentationSlotPicked: (presentationSlot: TimeSlot, faculty: Faculty) => void;
 }
 
 export default class TimeTable extends React.Component<TimeTableProps, any> {

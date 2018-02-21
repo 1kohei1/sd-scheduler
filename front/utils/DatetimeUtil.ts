@@ -97,6 +97,23 @@ export default class DatetimeUtil {
     }
   }
 
+  /**
+   * Return true when t1 time slot range contains t2 time slot range
+   */
+  static doesCover(t1: TimeSlot, t2: TimeSlot) {
+    if (t1._id === t2._id) {
+      return false;
+    }
+
+    const t1Start = t1.start.valueOf();
+    const t1End = t1.end.valueOf();
+    const t2Start = t2.start.valueOf();
+    const t2End = t2.end.valueOf();
+
+    // Based on the restriction that TimeSlot.start <= TimeSlot.end
+    return t1Start <= t2Start && t2End <= t1End;
+  }
+
   static getTimeOptions(includeMin: boolean = false) {
     const ampm = ['AM', 'PM'];
     const hours = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];

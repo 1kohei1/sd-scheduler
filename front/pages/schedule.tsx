@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Row, Col, Steps, Button } from 'antd';
+import { Row, Col, Steps, Button, message } from 'antd';
 import { Map } from 'immutable';
 import { Moment } from 'moment';
 
@@ -13,6 +13,8 @@ import Api from '../utils/Api';
 import Presentation, { newPresentation } from '../models/Presentation';
 import Loading from '../components/Loading';
 import SchedulingDate from '../components/SchedulingDate';
+import DatetimeUtil from '../utils/DatetimeUtil';
+import TimeSlot from '../models/TimeSlot';
 
 interface ScheduleProps {
   facultiesInSemester: Faculty[];
@@ -136,9 +138,26 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
    * Step 1
    */
 
-  presentationSlotPicked(presentationSlot: { start: Moment, end: Moment}, facultyId: string) {
-    // Check if given datetime overlaps with existing presentations
-    
+  presentationSlotPicked(presentationSlot: TimeSlot, faculty: Faculty) {
+    const { _id } = faculty;
+    // Check if specified faculty has availableSlot instance
+    const availableSlot = this.state.availableSlots.find(slot => slot.faculty === _id);
+    if (!availableSlot) {
+      message.error(`Dr. ${faculty.firstName} ${faculty.lastName} is not available at specified time`);
+      return;
+    }
+
+    // Check if specified faculty is available on specified time
+    const facultyAvailableSlot = availableSlot.availableSlots;
+    const isFacultyAvailable = facultyAvailableSlot.map(DatetimeUtil.convertToTimeSlot)
+      .filter(slot => DatetimeUtil.doesCover(slot, presentationSlot))
+      .length > 0;
+
+    if (!isFacultyAvailable) {
+      message.error(`Dr. ${faculty.firstName} ${faculty.lastName} is not available at specified time`);
+      return;
+    }
+
     this.setState((prevState: ScheduleState, props: ScheduleProps) => {
       // Use Map to get new object in the memory
       let newMap = Map(prevState.schedulingPresentation);

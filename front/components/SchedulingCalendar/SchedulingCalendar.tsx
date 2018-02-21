@@ -12,6 +12,7 @@ import CalendarBody from './CalendarBody';
 import DatetimeUtil from '../../utils/DatetimeUtil';
 import { DateConstants } from '../../models/Constants';
 import CookieUtil from '../../utils/CookieUtil';
+import TimeSlot from '../../models/TimeSlot';
 
 export interface SchedulingCalendarProps {
   semester: Semester;
@@ -19,7 +20,7 @@ export interface SchedulingCalendarProps {
   availableSlots: AvailableSlot[];
   presentations: Presentation[];
   loading: boolean;
-  presentationSlotPicked: (presentationSlot: { start: Moment, end: Moment}, facultyId: string) => void;
+  presentationSlotPicked: (presentationSlot: TimeSlot, faculty: Faculty) => void;
 }
 
 interface SchedulingCalendarState {
