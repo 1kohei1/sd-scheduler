@@ -119,6 +119,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
           />
           <SchedulingDate
             presentation={this.state.schedulingPresentation}
+            faculties={this.props.facultiesInSemester}
             clearPresentationSlot={this.clearPresentationSlot}
           />
         </div>
@@ -140,6 +141,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
 
   presentationSlotPicked(presentationSlot: TimeSlot, faculty: Faculty) {
     const { _id } = faculty;
+
     // Check if specified faculty has availableSlot instance
     const availableSlot = this.state.availableSlots.find(slot => slot.faculty === _id);
     if (!availableSlot) {
@@ -158,12 +160,34 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       return;
     }
 
-    this.setState((prevState: ScheduleState, props: ScheduleProps) => {
-      // Use Map to get new object in the memory
-      let newMap = Map(prevState.schedulingPresentation);
-      newMap = newMap.set('start', presentationSlot.start.toISOString());
-      newMap = newMap.set('end', presentationSlot.end.toISOString());
+    // Check if there is other presentations that overlaps with requested time range
+    const isOtherGroupRequesting = this.state.presentations.map(DatetimeUtil.convertToTimeSlot)
+      .filter(slot => DatetimeUtil.doesOverlap(slot, presentationSlot))
+      .length > 0;
+    if (isOtherGroupRequesting) {
+      message.error(`Other group is requesting the similar time slot`);
+      return;
+    }
 
+    // All validation passed. Update schedulingPresentation
+    this.setState((prevState: ScheduleState, props: ScheduleProps) => {
+      const { schedulingPresentation } = prevState;
+
+      const startM = DatetimeUtil.getMomentFromISOString(schedulingPresentation.start);
+      // If presentation slot has changed, clear the faculties
+      if (startM.valueOf() !== presentationSlot.start.valueOf()) {
+        schedulingPresentation.faculties = [];
+      }
+
+      if (schedulingPresentation.faculties.indexOf(_id) === -1) {
+        schedulingPresentation.faculties.push(_id);
+      }
+
+      schedulingPresentation.start = presentationSlot.start.toISOString();
+      schedulingPresentation.end = presentationSlot.end.toISOString();
+      
+      // Use Map to get new object in the memory
+      const newMap = Map(schedulingPresentation);
       const newState: any = {}
       newState.schedulingPresentation = newMap.toObject();
 
@@ -176,6 +200,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       let newMap = Map(prevState.schedulingPresentation);
       newMap = newMap.set('start', '');
       newMap = newMap.set('end', '');
+      newMap = newMap.set('faculties', []);
 
       const newState: any = {}
       newState.schedulingPresentation = newMap.toObject();
@@ -195,8 +220,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
               <Steps
                 current={this.state.current}
               >
-                <Steps.Step title="Pick presentation time" description="from the calendar below" />
-                <Steps.Step title="Pick faculties" description="Select committee member" />
+                <Steps.Step title="Pick time and faculties" description="from the calendar below" />
                 <Steps.Step title="Register your grroup" description="Please register your group" />
                 <Steps.Step title="Done" />
               </Steps>
