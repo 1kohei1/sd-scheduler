@@ -174,7 +174,6 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
             border-top: 1px solid #eee;
             display: flex;
             padding: 16px 0;
-            margin-top: 16px;
             justify-content: space-between;
           }
         `}</style>
