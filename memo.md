@@ -65,7 +65,9 @@ TODO:
 - [x] Find a way to read cookies from the server side since index constructor is executed on the server side
 - [x] Use tab for calendar dates
 - [ ] Research how to decrease the bundle size (probably no .map file)
-- [ ] Implement displaying presentations in the SchedulingCalendar
+- [ ] Check if selected presentation time range is already taken by someone
+- [ ] Display selected presentation time in the calendar
+
 
 NOTES:
 
