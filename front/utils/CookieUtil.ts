@@ -13,20 +13,13 @@ export default class CookieUtil {
    * index page faculties filter
    */
 
-  static getFaculties(props: InitialProps, defaultValue: string[] = []) {
-    let faculties = defaultValue;
-
-    const ids = Cookie.get(FACULTY_COOKIE_KEY);
-    if (props.req) {
-      const cookies = CookieParser.parse(props.req.headers.cookie as string);
-      if (cookies[FACULTY_COOKIE_KEY]) {
-        faculties = cookies[FACULTY_COOKIE_KEY].split(',');
-      }
-    } else if (ids) {
-      faculties = ids.split(',');
+  static getFaculties() {
+    const vals = Cookie.get(FACULTY_COOKIE_KEY);
+    if (vals) {
+      return vals.split(',');
+    } else {
+      undefined;
     }
-
-    return faculties;
   }
 
   static setFaculties(ids: string[]) {

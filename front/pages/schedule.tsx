@@ -1,8 +1,5 @@
 import * as React from 'react';
-import { Row, Col, Button, Tabs } from 'antd';
-import ObjectID from 'bson-objectid';
-import * as moment from 'moment-timezone';
-import Link from 'next/link'
+import { Row, Col } from 'antd';
 
 import AppLayout from '../components/AppLayout';
 import InitialProps from '../models/InitialProps';
@@ -10,24 +7,18 @@ import { Semester } from '../models/Semester';
 import Faculty from '../models/Faculty';
 import AvailableSlot from '../models/AvailableSlot';
 import SchedulingCalendar from '../components/SchedulingCalendar/SchedulingCalendar';
-import { DateConstants } from '../models/Constants';
 import Api from '../utils/Api';
 import Presentation from '../models/Presentation';
 import Loading from '../components/Loading';
-import DatetimeUtil from '../utils/DatetimeUtil';
-import SchedulingFilter from '../components/SchedulingCalendar/SchedulingFilter';
-import CookieUtil from '../utils/CookieUtil';
 
 interface ScheduleProps {
   facultiesInSemester: Faculty[];
-  checkedFaculties: string[];
   semester: Semester;
 }
 
 interface ScheduleState {
   availableSlots: AvailableSlot[],
   presentations: Presentation[],
-  checkedFaculties: string[];
   loading: boolean;
   err: string;
 }
@@ -54,14 +45,8 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     const ids = semester.faculties.map(fid => `_id[$in]=${fid}`);
     const facultiesInSemester: Faculty[] = await Api.getFaculties(`${ids.join('&')}`);
 
-    const checkedFaculties = CookieUtil.getFaculties(
-      props,
-      semester.faculties,
-    );
-
     return {
       facultiesInSemester,
-      checkedFaculties,
       semester,
     };
   }
@@ -70,17 +55,16 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     super(props);
 
     this.state = {
-      checkedFaculties: this.props.checkedFaculties,
       availableSlots: [],
       presentations: [],
       loading: true,
       err: '',
     };
+  }
 
+  componentDidMount() {
     this.getAvailableSlots();
     this.getPresentations();
-
-    this.onUpdateFilter = this.onUpdateFilter.bind(this);
   }
 
   private async getAvailableSlots() {
@@ -107,13 +91,6 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     const query = `semester=${this.props.semester._id}`;
   }
 
-  onUpdateFilter(ids: string[]) {
-    CookieUtil.setFaculties(ids);
-    this.setState({
-      checkedFaculties: ids,
-    });
-  }
-
   render() {
     return (
       <AppLayout>
@@ -121,34 +98,12 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
           <Col
             {...columnLayout}
           >
-            <Tabs>
-              {this.props.semester.presentationDates.map(date => {
-                const presentationDate = DatetimeUtil.convertToTimeSlot(date);
-                const facultiesToDisplay = this.props.facultiesInSemester.filter(f => this.state.checkedFaculties.indexOf(f._id) >= 0);
-
-                return (
-                  <Tabs.TabPane
-                    key={date._id}
-                    tab={DatetimeUtil.formatDate(presentationDate.start, DateConstants.dateFormat)}
-                  >
-                    {this.state.loading ? (
-                      <Loading />
-                    ) : (
-                      <SchedulingCalendar
-                        presentationDate={presentationDate}
-                        faculties={facultiesToDisplay}
-                        availableSlots={this.state.availableSlots}
-                        presentations={this.state.presentations}
-                      />
-                    )}
-                  </Tabs.TabPane>
-                )
-              })}
-            </Tabs>
-            <SchedulingFilter
-              checkedFaculties={this.state.checkedFaculties}
+            <SchedulingCalendar
+              semester={this.props.semester}
               faculties={this.props.facultiesInSemester}
-              onUpdateFilter={this.onUpdateFilter}
+              availableSlots={this.state.availableSlots}
+              presentations={this.state.presentations}
+              loading={this.state.loading}
             />
           </Col>
         </Row>
