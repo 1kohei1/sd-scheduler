@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Moment } from 'moment';
 
 import Faculty from '../../models/Faculty';
 import TimeSlot from '../../models/TimeSlot';
@@ -13,7 +14,9 @@ export interface FacultyScheduleProps {
   hoursArray: number[];
   availableSlots: TimeSlot[];
   presentations: Presentation[];
+  presentationDate: TimeSlot;
   isLastFaculty: boolean;
+  datetimePicked: (datetime: { start: Moment, end: Moment}) => void;
 }
 
 export default class FacultySchedule extends React.Component<FacultyScheduleProps, any> {

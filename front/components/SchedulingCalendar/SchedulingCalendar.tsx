@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Tabs } from 'antd';
+import { Moment } from 'moment';
 
 import Faculty from '../../models/Faculty';
 import AvailableSlot from '../../models/AvailableSlot';
@@ -18,6 +19,7 @@ export interface SchedulingCalendarProps {
   availableSlots: AvailableSlot[];
   presentations: Presentation[];
   loading: boolean;
+  datetimePicked: (datetime: { start: Moment, end: Moment}) => void;
 }
 
 interface SchedulingCalendarState {
@@ -69,6 +71,7 @@ export default class SchedulingCalendar extends React.Component<SchedulingCalend
                 availableSlots={this.props.availableSlots}
                 presentations={this.props.presentations}
                 updateCheckedFaculties={this.updateCheckedFaculties}
+                datetimePicked={this.props.datetimePicked}
               />
             )}
           </Tabs.TabPane>

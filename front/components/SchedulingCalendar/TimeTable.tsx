@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Moment } from 'moment';
 
 import TimeSlot from '../../models/TimeSlot';
 import DatetimeUtil from '../../utils/DatetimeUtil';
@@ -13,6 +14,7 @@ export interface TimeTableProps {
   faculties: Faculty[];
   availableSlots: AvailableSlot[];
   presentations: Presentation[];
+  datetimePicked: (datetime: { start: Moment, end: Moment}) => void;
 }
 
 export default class TimeTable extends React.Component<TimeTableProps, any> {
@@ -51,7 +53,9 @@ export default class TimeTable extends React.Component<TimeTableProps, any> {
             hoursArray={hoursArray}
             availableSlots={availableSlots}
             presentations={presentations}
+            presentationDate={this.props.presentationDate}
             isLastFaculty={i === this.props.faculties.length - 1}
+            datetimePicked={this.props.datetimePicked}
           />
         })}
       </div>

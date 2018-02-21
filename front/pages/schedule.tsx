@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { Row, Col, Steps, Button } from 'antd';
+import { Map } from 'immutable';
+import { Moment } from 'moment';
 
 import AppLayout from '../components/AppLayout';
 import InitialProps from '../models/InitialProps';
@@ -68,6 +70,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
 
     this.content = this.content.bind(this);
     this.changeCurrent = this.changeCurrent.bind(this);
+    this.datetimePicked = this.datetimePicked.bind(this);
   }
 
   componentDidMount() {
@@ -109,6 +112,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
             availableSlots={this.state.availableSlots}
             presentations={this.state.presentations}
             loading={this.state.loading}
+            datetimePicked={this.datetimePicked}
           />
           <SchedulingDate
             presentation={this.state.schedulingPresentation}
@@ -129,6 +133,22 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
   /**
    * Step 1
    */
+
+  datetimePicked(datetime: { start: Moment, end: Moment}) {
+    // Check if given datetime overlaps with existing presentations
+    
+    this.setState((prevState: ScheduleState, props: ScheduleProps) => {
+      // Use Map to get new object in the memory
+      let newMap = Map(prevState.schedulingPresentation);
+      newMap = newMap.set('start', datetime.start.toISOString());
+      newMap = newMap.set('end', datetime.end.toISOString());
+
+      const newState: any = {}
+      newState.schedulingPresentation = newMap.toObject();
+
+      return newState;
+    })
+  }
 
   render() {
     return (

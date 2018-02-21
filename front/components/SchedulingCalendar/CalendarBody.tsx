@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Moment } from 'moment';
 
 import TimeSlot from '../../models/TimeSlot';
 import Faculty from '../../models/Faculty';
@@ -14,6 +15,7 @@ export interface CalendarBodyProps {
   availableSlots: AvailableSlot[];
   presentations: Presentation[];
   updateCheckedFaculties: (ids: string[]) => void;
+  datetimePicked: (datetime: { start: Moment, end: Moment}) => void;
 }
 
 export default class CalendarBody extends React.Component<CalendarBodyProps, any> {
@@ -36,6 +38,7 @@ export default class CalendarBody extends React.Component<CalendarBodyProps, any
             faculties={facultiesToDisplay}
             availableSlots={this.props.availableSlots}
             presentations={this.props.presentations}
+            datetimePicked={this.props.datetimePicked}
           />
         </div>
         <style jsx>{`
