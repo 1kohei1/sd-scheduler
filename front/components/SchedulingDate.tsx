@@ -22,10 +22,10 @@ export default class SchedulingDate extends React.Component<SchedulingDateProps,
 
     if (presentation.start) {
       const startM = DatetimeUtil.getMomentFromISOString(presentation.start);
-      const start = DatetimeUtil.formatDate(startM, DateConstants.hourFormat);
+      const start = DatetimeUtil.formatDate(startM, DateConstants.hourMinFormat);
 
       const endM = DatetimeUtil.getMomentFromISOString(presentation.end);
-      const end = DatetimeUtil.formatDate(endM, DateConstants.hourFormat);
+      const end = DatetimeUtil.formatDate(endM, DateConstants.hourMinFormat);
 
       const date = DatetimeUtil.formatDate(startM, DateConstants.dateFormat);
 
