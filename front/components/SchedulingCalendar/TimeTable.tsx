@@ -14,7 +14,7 @@ export interface TimeTableProps {
   faculties: Faculty[];
   availableSlots: AvailableSlot[];
   presentations: Presentation[];
-  datetimePicked: (datetime: { start: Moment, end: Moment}) => void;
+  presentationSlotPicked: (presentationSlot: { start: Moment, end: Moment}) => void;
 }
 
 export default class TimeTable extends React.Component<TimeTableProps, any> {
@@ -55,7 +55,7 @@ export default class TimeTable extends React.Component<TimeTableProps, any> {
             presentations={presentations}
             presentationDate={this.props.presentationDate}
             isLastFaculty={i === this.props.faculties.length - 1}
-            datetimePicked={this.props.datetimePicked}
+            presentationSlotPicked={this.props.presentationSlotPicked}
           />
         })}
       </div>

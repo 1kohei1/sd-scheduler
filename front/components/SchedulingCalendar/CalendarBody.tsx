@@ -15,7 +15,7 @@ export interface CalendarBodyProps {
   availableSlots: AvailableSlot[];
   presentations: Presentation[];
   updateCheckedFaculties: (ids: string[]) => void;
-  datetimePicked: (datetime: { start: Moment, end: Moment}) => void;
+  presentationSlotPicked: (presentationSlot: { start: Moment, end: Moment}) => void;
 }
 
 export default class CalendarBody extends React.Component<CalendarBodyProps, any> {
@@ -38,7 +38,7 @@ export default class CalendarBody extends React.Component<CalendarBodyProps, any
             faculties={facultiesToDisplay}
             availableSlots={this.props.availableSlots}
             presentations={this.props.presentations}
-            datetimePicked={this.props.datetimePicked}
+            presentationSlotPicked={this.props.presentationSlotPicked}
           />
         </div>
         <style jsx>{`

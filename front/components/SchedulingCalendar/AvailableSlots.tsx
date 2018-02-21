@@ -10,7 +10,7 @@ export interface AailableSlotsProps {
   hoursArray: number[];
   availableSlots: TimeSlot[];
   presentationDate: TimeSlot;
-  datetimePicked: (datetime: { start: Moment, end: Moment}) => void;
+  presentationSlotPicked: (presentationSlot: { start: Moment, end: Moment}) => void;
 }
 
 export default class AailableSlots extends React.Component<AailableSlotsProps, any> {
@@ -48,7 +48,7 @@ export default class AailableSlots extends React.Component<AailableSlotsProps, a
 
     // Pass created the presentation range to the parent component 
     // Check if there is any presentation that overlaps in the range
-    this.props.datetimePicked(presentationSlot);
+    this.props.presentationSlotPicked(presentationSlot);
   }
 
   render() {

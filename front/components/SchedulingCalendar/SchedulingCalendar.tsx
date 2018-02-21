@@ -19,7 +19,7 @@ export interface SchedulingCalendarProps {
   availableSlots: AvailableSlot[];
   presentations: Presentation[];
   loading: boolean;
-  datetimePicked: (datetime: { start: Moment, end: Moment}) => void;
+  presentationSlotPicked: (presentationSlot: { start: Moment, end: Moment}) => void;
 }
 
 interface SchedulingCalendarState {
@@ -71,7 +71,7 @@ export default class SchedulingCalendar extends React.Component<SchedulingCalend
                 availableSlots={this.props.availableSlots}
                 presentations={this.props.presentations}
                 updateCheckedFaculties={this.updateCheckedFaculties}
-                datetimePicked={this.props.datetimePicked}
+                presentationSlotPicked={this.props.presentationSlotPicked}
               />
             )}
           </Tabs.TabPane>

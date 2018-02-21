@@ -16,7 +16,7 @@ export interface FacultyScheduleProps {
   presentations: Presentation[];
   presentationDate: TimeSlot;
   isLastFaculty: boolean;
-  datetimePicked: (datetime: { start: Moment, end: Moment}) => void;
+  presentationSlotPicked: (presentationSlot: { start: Moment, end: Moment}) => void;
 }
 
 export default class FacultySchedule extends React.Component<FacultyScheduleProps, any> {
