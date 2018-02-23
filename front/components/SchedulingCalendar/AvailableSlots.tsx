@@ -34,6 +34,7 @@ export default class AailableSlots extends React.Component<AailableSlotsProps, a
             top: 0;
             height: ${SchedulingCalendarConstants.rowHeight};
             width: ${SchedulingCalendarConstants.columnWidthNum * this.props.hoursArray.length}px;
+            z-index: 5;
           }
         `}</style>
       </div>

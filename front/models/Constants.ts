@@ -34,5 +34,6 @@ export const SchedulingCalendarConstants = {
 
   tileBackgroundColor: '#0070E0',  
   tileHeight: '18px',
-  
+
+  presentationTileBackgroundColor: '#FFEB3B',
 }

@@ -8,6 +8,7 @@ import DatetimeUtil from '../../utils/DatetimeUtil';
 import { SchedulingCalendarConstants, DateConstants } from '../../models/Constants';
 import HourLines from './HourLines';
 import AvailableSlots from './AvailableSlots';
+import PresentationSlot from './PresentationSlots';
 
 export interface FacultyScheduleProps {
   faculty: Faculty;
@@ -33,7 +34,7 @@ export default class FacultySchedule extends React.Component<FacultyScheduleProp
     const x = e.nativeEvent.offsetX;
     const startH = hoursArray[0];
     let hourlyNumber = startH + x / SchedulingCalendarConstants.columnWidthNum;
-    
+
     if (hourlyNumber - Math.floor(hourlyNumber) >= 0.5) {
       hourlyNumber = Math.floor(hourlyNumber) + 0.5;
     } else {
@@ -60,12 +61,15 @@ export default class FacultySchedule extends React.Component<FacultyScheduleProp
   render() {
     return (
       <div className="ko-faculty-schedule">
-        <HourLines 
+        <HourLines
           {...this.props}
         />
         <AvailableSlots
           {...this.props}
           onClick={this.onClick}
+        />
+        <PresentationSlot
+          {...this.props}
         />
 
         <style jsx>{`
