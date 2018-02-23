@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Row, Col, Steps, Button, message } from 'antd';
-import { Map } from 'immutable';
+import { Map, List } from 'immutable';
 import { Moment } from 'moment';
 
 import AppLayout from '../components/AppLayout';
@@ -107,13 +107,16 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
 
   content() {
     if (this.state.current === 0) {
+      let presentations: any = List(this.state.presentations);
+      presentations = presentations.push(this.state.schedulingPresentation);
+
       return (
         <div>
           <SchedulingCalendar
             semester={this.props.semester}
             faculties={this.props.facultiesInSemester}
             availableSlots={this.state.availableSlots}
-            presentations={this.state.presentations}
+            presentations={presentations.toArray()}
             loading={this.state.loading}
             presentationSlotPicked={this.presentationSlotPicked}
           />

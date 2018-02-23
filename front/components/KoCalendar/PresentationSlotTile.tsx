@@ -95,7 +95,7 @@ export default class PresentationSlotTile extends React.Component<PresentationSl
             height: ${height}
             width: calc(100% - 5px);
             opacity: 0.8;
-            background-color: #FFEB3B;
+            background-color: ${KoCalendarConstants.presentationTileBackgroundColor};
             font-size: 12px;
             z-index: 3;
             display: flex;

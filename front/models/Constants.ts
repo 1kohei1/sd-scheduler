@@ -13,6 +13,8 @@ export const KoCalendarConstants = {
   tileBackgroundColor: '#0070E0',
   tileTimeFormat: 'h:mma',
 
+  presentationTileBackgroundColor: '#FFEB3B',
+
   helpVideoLink: 'https://youtu.be/kCc5v-SuLX4',
 }
 
@@ -31,4 +33,6 @@ export const SchedulingCalendarConstants = {
   columnWidth: '100px',
 
   tileBackgroundColor: '#0070E0',  
+  tileHeight: '18px',
+  
 }

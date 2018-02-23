@@ -27,6 +27,8 @@ export default class AvailableSlotTile extends React.Component<AvailableSlotTile
             position: absolute;
             opacity: 0.8;
             left: ${left};
+            top: 0;
+            height: ${SchedulingCalendarConstants.tileHeight};
             width: ${width};
             background-color: ${SchedulingCalendarConstants.tileBackgroundColor};
             color: white;
