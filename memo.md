@@ -46,9 +46,8 @@ TODO:
 - [ ] Explore what is the best word for registered/available faculties
 - [x] Update Date.tsx to handle date object
 - [ ] Check why initial component layout is broken (v3)
-- [ ] Create a video to explain how to put available time
-- [ ] Make redirect to where user used to be after success login (Wait release of Next 5: https://zeit.co/blog/next-canary) (v3)
-- [ ] Remove .env devendencies by adding babel configuration. Resource: https://github.com/zeit/next.js/tree/canary/examples/with-dotenv (v3)
+- [x] Create a video to explain how to put available time
+- [x] Make redirect to where user used to be after success login (Wait release of Next 5: https://zeit.co/blog/next-canary) (v3)
 - [ ] Do not flash right action button when moving across the page. This happens because header component is remounted every time page changes (v3)
 - [x] Update auth guard to better way (v3)
 - [x] Display loading while data in overview is updating
@@ -66,8 +65,7 @@ TODO:
 - [x] Use tab for calendar dates
 - [ ] Research how to decrease the bundle size (probably no .map file)
 - [x] Check if selected presentation time range is already taken by someone
-- [ ] Display selected presentation time in the calendar
-
+- [x] Display selected presentation time in the calendar
 
 NOTES:
 
