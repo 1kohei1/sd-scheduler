@@ -133,9 +133,9 @@ class PresentationDate2 extends React.Component<PresentationDate2Props, Presenta
 
   toggleForm() {
     this.setState((prevState: PresentationDate2State, props: PresentationDate2Props) => {
-      this.setState({
+      return {
         editing: !prevState.editing,
-      })
+      }
     })
   }
 
