@@ -9,11 +9,6 @@ const SemesterSchema = new Schema({
     type: String,
     required: true,
   },
-  presentationDates: [{
-    start: Date,
-    end: Date
-  }],
-  location: String,
   faculties: [{
     type: Schema.Types.ObjectId,
     ref: 'Faculty',
@@ -30,16 +25,5 @@ SemesterSchema.pre('save', function(this: any, next) {
 
   next();
 });
-
-SemesterSchema.path('presentationDates').validate((values: Document[]) => {
-  let isValid = true;
-  values.forEach(value => {
-    const presentationDate: any = value.toJSON();
-    if (presentationDate.end.valueOf() <= presentationDate.start.valueOf()) {
-      isValid = false;
-    }
-  });
-  return isValid;
-}, 'Presentation start time must come before end time');
 
 export default model('Semester', SemesterSchema);
