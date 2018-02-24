@@ -131,11 +131,32 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
   }
 
   changeCurrent(diff: number) {
-    this.setState((prevState: ScheduleState, props: ScheduleProps) => {
-      return {
-        current: prevState.current + diff,
+    const msg = this.validateMessage();
+    if (msg) {
+      message.error(msg);
+    } else {
+      this.setState((prevState: ScheduleState, props: ScheduleProps) => {
+        return {
+          current: prevState.current + diff,
+        }
+      });
+    }
+  }
+
+  validateMessage() {
+    if (this.state.current === 0) {
+      const numFaculties = this.state.schedulingPresentation.faculties.length;
+      const isAdminSelected = this.state.schedulingPresentation.faculties.filter(fid => {
+        const faculty = this.props.facultiesInSemester.find(faculty => faculty._id === fid);
+        return faculty && faculty.isAdmin;
+      })
+        .length > 0;
+
+      if (numFaculties < 4 || !isAdminSelected) {
+        return 'Please select 4 faculties including your senior design 2 faculty';
       }
-    });
+    }
+    return undefined;
   }
 
   /**
@@ -188,7 +209,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
 
       schedulingPresentation.start = presentationSlot.start.toISOString();
       schedulingPresentation.end = presentationSlot.end.toISOString();
-      
+
       // Use Map to get new object in the memory
       const newMap = Map(schedulingPresentation);
       const newState: any = {}
@@ -238,12 +259,14 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
               >
                 Previous
               </Button>
-              <Button
-                type="primary"
-                onClick={e => this.changeCurrent(1)}
-              >
-                Next
-              </Button>
+              <div style={{ display: 'flex' }}>
+                <Button
+                  type="primary"
+                  onClick={e => this.changeCurrent(1)}
+                >
+                  Next
+                </Button>
+              </div>
             </div>
           </Col>
         </Row>
