@@ -30,16 +30,9 @@ module.exports.updateSemester = (req: Request, res: Response) => {
     }
   }
 
-  let body = req.body;
-  if (body.hasOwnProperty('presentationDates')) {
-    body.presentationDates.sort((a: any, b: any) => {
-      return moment(a.start).valueOf() - moment(b.start).valueOf();
-    })
-  }
-
-  DBUtil.updateSemesterById(req.params._id, body)
+  DBUtil.updateSemesterById(req.params._id, req.body)
     .then(result => {
-      APIUtil.successResponse(info, body, res);
+      APIUtil.successResponse(info, req.body, res);
     })
     .catch(err => {
       info.debugInfo.message = err.message;
