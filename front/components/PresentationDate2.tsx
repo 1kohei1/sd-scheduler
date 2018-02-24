@@ -1,19 +1,16 @@
 import * as React from 'react';
-import ObjectID from 'bson-objectid';
-import { List } from 'immutable';
-import { Form, Icon, Select, DatePicker, Card, Button, Alert, Tag } from 'antd';
-import { WrappedFormUtils } from 'antd/lib/form/Form';
+import { Card, Button, Alert } from 'antd';
 
 import { Semester } from '../models/Semester';
 import { DateConstants } from '../models/Constants';
-import DatetimeUtil from '../utils/DatetimeUtil';
+import DatetimeUtil, { TimeSlotLikeObject } from '../utils/DatetimeUtil';
 import PresentationDate from '../models/PresentationDate';
 import Loading from './Loading';
 import Api from '../utils/Api';
 import Faculty from '../models/Faculty';
+import PresentationDateEditing from './PresentationDateEditing';
 
 export interface PresentationDate2Props {
-  form: WrappedFormUtils;
   semester: Semester;
   isAdmin: boolean;
   facultyId: string;
@@ -28,7 +25,7 @@ interface PresentationDate2State {
   faculties: Faculty[];
 }
 
-class PresentationDate2 extends React.Component<PresentationDate2Props, PresentationDate2State> {
+export default class PresentationDate2 extends React.Component<PresentationDate2Props, PresentationDate2State> {
   constructor(props: PresentationDate2Props) {
     super(props);
 
@@ -41,13 +38,10 @@ class PresentationDate2 extends React.Component<PresentationDate2Props, Presenta
       faculties: Array<Faculty>(),
     }
 
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.extra = this.extra.bind(this);
     this.info = this.info.bind(this);
-    this.form = this.form.bind(this);
-    this.deleteDate = this.deleteDate.bind(this);
-    this.addDate = this.addDate.bind(this);
     this.toggleForm = this.toggleForm.bind(this);
+    this.updatePresentationDate = this.updatePresentationDate.bind(this);
   }
 
   componentDidMount() {
@@ -68,14 +62,14 @@ class PresentationDate2 extends React.Component<PresentationDate2Props, Presenta
     }
   }
 
-  async setPresentationDates(semesterId?: string) {
+  private async setPresentationDates(semesterId?: string) {
     let _id = this.props.semester._id;
     if (semesterId) {
       _id = semesterId;
     }
     try {
       const presentationDates = await Api.getPresentationDates(`semester=${_id}`) as PresentationDate[];
-      
+
       const fids = presentationDates.map(date => date.admin);
       const fQuery = fids.map(fid => `_id[$in]=${fid}`).join('&');
 
@@ -96,6 +90,7 @@ class PresentationDate2 extends React.Component<PresentationDate2Props, Presenta
     }
   }
 
+  /*
   handleSubmit(e: React.FormEvent<any>) {
     e.preventDefault();
 
@@ -129,6 +124,25 @@ class PresentationDate2 extends React.Component<PresentationDate2Props, Presenta
       // }
       // this.props.updateSemester(updateObj, this.props.prop);
     })
+  }
+  */
+
+  getInitialValue(date: TimeSlotLikeObject, property: string) {
+    if (property === 'date' && date.start) {
+      return DatetimeUtil.formatISOString(date.start, DateConstants.dateFormat);
+    } else if (property === 'dateMoment' && date.start) {
+      return DatetimeUtil.getMomentFromISOString(date.start);
+    } else if (property === 'startTime' && date.start) {
+      return DatetimeUtil.formatISOString(date.start, DateConstants.hourFormat);
+    } else if (property === 'endTime' && date.end) {
+      return DatetimeUtil.formatISOString(date.end, DateConstants.hourFormat);
+    } else {
+      return undefined;
+    }
+  }
+
+  updatePresentationDate(dates: TimeSlotLikeObject[]) {
+
   }
 
   toggleForm() {
@@ -171,146 +185,48 @@ class PresentationDate2 extends React.Component<PresentationDate2Props, Presenta
     }
     return (
       <div>
-        Think later how to display here
-        {/* {this.state.presentationDates.map(date => (
-          <div key={date._id}>
-            {this.getInitialValue(date._id, 'date')}&nbsp;
-            {this.getInitialValue(date._id, 'startTime')} -&nbsp;
-            {this.getInitialValue(date._id, 'endTime')}
-          </div>
-        ))} */}
+        {this.state.presentationDates.map(presentationDate => {
+          const faculty = this.state.faculties.find(f => f._id === presentationDate.admin) as Faculty;
+
+          return (
+            <div key={presentationDate._id} style={{ marginBottom: '1em' }}>
+              <h4>Dr. {faculty.firstName} {faculty.lastName} presentation dates</h4>
+              {presentationDate.dates.length === 0 && (
+                <div>No date is defined yet.</div>
+              )}
+              <ul>
+                {presentationDate.dates.map(date => (
+                  <li key={date._id}>
+                    {this.getInitialValue(date, 'date')}&nbsp;
+                    {this.getInitialValue(date, 'startTime')} -&nbsp;
+                    {this.getInitialValue(date, 'endTime')}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        })}
       </div>
     );
   }
 
-  addDate() {
-    // this.setState((prevState: PresentationDate2State, props: PresentationDate2Props) => {
-    //   return {
-    //     objectIdsInForm: prevState.objectIdsInForm.push(`${ObjectID.generate()}`)
-    //   }
-    // });
-  }
-
-  deleteDate(objectId: string | undefined) {
-    // if (!objectId) {
-    //   return;
-    // }
-
-    // this.setState((prevState: PresentationDate2State, props: PresentationDate2Props) => {
-    //   const index = prevState.objectIdsInForm.indexOf(objectId);
-    //   return {
-    //     objectIdsInForm: prevState.objectIdsInForm.delete(index)
-    //   }
-    // });
-  }
-
-  getInitialValue(objectId: string | undefined, property: string) {
-    if (!objectId) {
-      return undefined;
-    }
-
-    const date = this.state.presentationDates.find((date: any) => date._id === objectId);
-
-    if (!date) {
-      return undefined;
-    }
-
-    // if (property === 'date') {
-    //   return DatetimeUtil.formatISOString(date.start, DateConstants.dateFormat);
-    // } else if (property === 'dateMoment') {
-    //   return DatetimeUtil.getMomentFromISOString(date.start);
-    // } else if (property === 'startTime') {
-    //   return DatetimeUtil.formatISOString(date.start, DateConstants.hourFormat);
-    // } else if (property === 'endTime') {
-    //   return DatetimeUtil.formatISOString(date.end, DateConstants.hourFormat);
-    // } else {
-    //   return undefined;
-    // }
-  }
-
-  form() {
-    return (
-      <Form onSubmit={this.handleSubmit}>
-        <Form.Item>
-          Editing is <Tag>Admin only</Tag>feature
-        </Form.Item>
-        {this.state.err.length > 0 && (
-          <Form.Item>
-            <Alert message={this.state.err} type="error" />
-          </Form.Item>
-        )}
-        {/* {this.state.objectIdsInForm.map((id) => (
-          <div style={{ display: 'flex', flexDirection: 'row' }} key={id}>
-            <Form.Item style={{ marginRight: 8 }}>
-              {this.props.form.getFieldDecorator(`presentationDates[${id}].date`, {
-                initialValue: this.getInitialValue(id, 'dateMoment')
-              })(
-                <DatePicker placeholder="Presentation date" />
-                )}
-            </Form.Item>
-            <Form.Item style={{ marginRight: 8 }}>
-              {this.props.form.getFieldDecorator(`presentationDates[${id}].startTime`, {
-                initialValue: this.getInitialValue(id, 'startTime')
-              })(
-                <Select placeholder="Start time" style={{ width: 120 }}>
-                  {DatetimeUtil.getTimeOptions().map((val: string) => (
-                    <Select.Option value={val} key={val}>{val}</Select.Option>
-                  ))}
-                </Select>
-                )}
-            </Form.Item>
-            <Form.Item style={{ marginRight: 8 }}>
-              {this.props.form.getFieldDecorator(`presentationDates[${id}].endTime`, {
-                initialValue: this.getInitialValue(id, 'endTime')
-              })(
-                <Select placeholder="End time" style={{ width: 120 }}>
-                  {DatetimeUtil.getTimeOptions().map((val: string) => (
-                    <Select.Option value={val} key={val}>{val}</Select.Option>
-                  ))}
-                </Select>
-                )}
-            </Form.Item>
-            <Form.Item>
-              <Button icon="delete" shape="circle" onClick={(e) => this.deleteDate(id)} />
-            </Form.Item>
-          </div>
-        ))} */}
-        <Form.Item>
-          <Button
-            type="dashed"
-            onClick={this.addDate}
-            style={{ width: '200px' }}
-          >
-            <Icon type="plus" /> Add new date
-          </Button>
-        </Form.Item>
-        <Form.Item>
-          <Button
-            htmlType="submit"
-            type="primary"
-            loading={this.state.updating}
-            style={{ marginRight: '16px' }}
-          >
-            Update
-          </Button>
-          <Button
-            onClick={(e) => this.toggleForm()}
-            loading={this.state.updating}
-          >
-            Cancel
-          </Button>
-        </Form.Item>
-      </Form>
-    )
-  }
-
   render() {
+    const presentationDate = this.state.presentationDates
+      .find(presentationDate => presentationDate.admin === this.props.facultyId) as PresentationDate;
+
     return (
       <Card title="Presentation dates" extra={this.extra()} style={{ marginBottom: '16px' }}>
-        {this.state.editing ? this.form() : this.info()}
+        {this.state.editing ? (
+          <PresentationDateEditing
+            err={this.state.err}
+            updating={this.state.updating}
+            presentationDate={presentationDate}
+            updatePresentationDate={this.updatePresentationDate}
+            toggleForm={this.toggleForm}
+            getInitialValue={this.getInitialValue}
+          />
+        ) : this.info()}
       </Card>
     );
   }
 }
-
-export default Form.create()(PresentationDate2);

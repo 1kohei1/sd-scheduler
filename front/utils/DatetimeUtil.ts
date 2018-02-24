@@ -5,7 +5,7 @@ import { Range } from 'immutable';
 import { DateConstants } from '../models/Constants';
 import TimeSlot from '../models/TimeSlot';
 
-interface TimeSlotLikeObject {
+export interface TimeSlotLikeObject {
   _id: string;
   start: string;
   end: string;
