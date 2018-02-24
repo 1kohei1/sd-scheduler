@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 import Semester from '../models/Semester.model';
 import Faculty from '../models/Faculty.model';
 import AvailableSlot from '../models/AvailableSlot.model';
+import Group from '../models/Group.model';
 
 const updateOption = {
   runValidators: true,
@@ -71,6 +72,7 @@ export default class DBUtil {
   /**
    * AvailableSlot
    */
+
   static findAvailableSlots(query: Object = {}) {
     return AvailableSlot.find(query);
   }
@@ -91,5 +93,13 @@ export default class DBUtil {
   static updateAvailalbleSlotById(_id: string | number | object, update: Object) {
     return AvailableSlot.update({ _id }, update, updateOption);
   }
+
+  /**
+   * Group
+   */
+
+   static findGroups(query: object = {}) {
+     return Group.find(query);
+   }
 }
 
