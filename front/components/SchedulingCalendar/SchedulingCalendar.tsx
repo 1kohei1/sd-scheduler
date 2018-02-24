@@ -11,7 +11,6 @@ import Loading from '../Loading';
 import CalendarBody from './CalendarBody';
 import DatetimeUtil from '../../utils/DatetimeUtil';
 import { DateConstants } from '../../models/Constants';
-import CookieUtil from '../../utils/CookieUtil';
 import TimeSlot from '../../models/TimeSlot';
 
 export interface SchedulingCalendarProps {
@@ -31,13 +30,8 @@ export default class SchedulingCalendar extends React.Component<SchedulingCalend
   constructor(props: SchedulingCalendarProps) {
     super(props);
 
-    let checkedFaculties = CookieUtil.getFaculties();
-    if (!checkedFaculties) {
-      checkedFaculties = this.props.faculties.map(f => f._id);
-    }
-
     this.state = {
-      checkedFaculties,
+      checkedFaculties: this.props.faculties.map(f => f._id),
     }
 
     this.updateCheckedFaculties = this.updateCheckedFaculties.bind(this);
@@ -47,7 +41,6 @@ export default class SchedulingCalendar extends React.Component<SchedulingCalend
     this.setState({
       checkedFaculties: ids,
     });
-    CookieUtil.setFaculties(ids);
   }
 
   render() {

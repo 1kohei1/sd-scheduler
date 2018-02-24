@@ -10,23 +10,6 @@ const USER_COOKIE_KEY = 'user';
 export default class CookieUtil {
 
   /**
-   * index page faculties filter
-   */
-
-  static getFaculties() {
-    const vals = Cookie.get(FACULTY_COOKIE_KEY);
-    if (vals) {
-      return vals.split(',');
-    } else {
-      undefined;
-    }
-  }
-
-  static setFaculties(ids: string[]) {
-    Cookie.set(FACULTY_COOKIE_KEY, ids.join(','));
-  }
-
-  /**
    * user info cookie
    */
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Row, Col, Button, Icon } from 'antd';
+import { Row, Col, Button, Alert, Icon } from 'antd';
 
 import Presentation from '../models/Presentation';
 import DatetimeUtil from '../utils/DatetimeUtil';
@@ -57,6 +57,12 @@ export default class SchedulingDate extends React.Component<SchedulingDateProps,
         </div>
       )
     } else {
+      const isAdminSelected = this.props.presentation.faculties.filter(fid => {
+        const faculty = this.props.faculties.find(faculty => faculty._id === fid);
+        return faculty && faculty.isAdmin;
+      })
+        .length > 0;
+
       return (
         <div>
           {this.props.presentation.faculties.map(fid => {
@@ -67,6 +73,16 @@ export default class SchedulingDate extends React.Component<SchedulingDateProps,
               return null;
             }
           })}
+          {this.props.presentation.faculties.length < 4 && (
+            <div style={{ marginBottom: '1em' }}>
+              <Alert message="Please select 4 faculties including your senior design 2 faculty." type="warning" showIcon />
+            </div>
+          )}
+          {!isAdminSelected && (
+            <div style={{ marginBottom: '1em' }}>
+              <Alert message="Please select the faculty of your senior design 2 class." type="warning" showIcon />
+            </div>
+          )}
         </div>
       )
     }
