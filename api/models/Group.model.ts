@@ -15,6 +15,11 @@ const GroupSchema = new Schema({
     lastName: String,
     email: String,
   }],
+  sponsors: [{
+    firstName: String,
+    lastName: String,
+    email: String,
+  }],
   sponsorName: {
     type: String,
     required: true,
