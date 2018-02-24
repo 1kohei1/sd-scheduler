@@ -106,7 +106,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
   }
 
   content() {
-    if (this.state.current === 0) {
+    if (this.state.current === 1) {
       let presentations: any = List(this.state.presentations);
       presentations = presentations.push(this.state.schedulingPresentation);
 
@@ -244,9 +244,10 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
               <Steps
                 current={this.state.current}
               >
+                <Steps.Step title="Pick your SD 2 faculty" description="" />
                 <Steps.Step title="Pick time and faculties" description="from the calendar below" />
-                <Steps.Step title="Register your grroup" description="Please register your group" />
-                <Steps.Step title="Done" />
+                <Steps.Step title="Pick your group" description="from the list" />
+                <Steps.Step title="Confirm" description="your presentation" />
               </Steps>
             </div>
             <div className="steps-content">

@@ -16,7 +16,7 @@ interface loginBody {
 
 export default class Api {
   static async getSample() {
-    return await this.makeRequest(RequestMethod.GET, '/api/sample');
+    return await Api.makeRequest(RequestMethod.GET, '/api/sample');
   }
 
   /**
@@ -24,16 +24,16 @@ export default class Api {
    */
 
   static async getUser(cookie: string = '') {
-    return await this.makeRequest(RequestMethod.GET, '/api/users', {}, cookie);
+    return await Api.makeRequest(RequestMethod.GET, '/api/users', {}, cookie);
   }
 
 
   static async login(body: loginBody) {
-    return await this.makeRequest(RequestMethod.POST, `/api/users/login`, body);
+    return await Api.makeRequest(RequestMethod.POST, `/api/users/login`, body);
   }
 
   static async logout() {
-    return await this.makeRequest(RequestMethod.POST, '/api/users/logout');
+    return await Api.makeRequest(RequestMethod.POST, '/api/users/logout');
   }
 
   /**
@@ -41,11 +41,11 @@ export default class Api {
    */
 
   static async getSemesters(query: string = '') {
-    return await this.makeRequest(RequestMethod.GET, `/api/semesters?${query}`);
+    return await Api.makeRequest(RequestMethod.GET, `/api/semesters?${query}`);
   }
 
   static async updateSemester(_id: string, update: Object = {}) {
-    return await this.makeRequest(RequestMethod.PUT, `/api/semesters/${_id}`, update);
+    return await Api.makeRequest(RequestMethod.PUT, `/api/semesters/${_id}`, update);
   }
 
   /**
@@ -53,15 +53,15 @@ export default class Api {
    */
 
   static async getAvailableSlots(query: string = '') {
-    return await this.makeRequest(RequestMethod.GET, `/api/availableslots?${query}`);
+    return await Api.makeRequest(RequestMethod.GET, `/api/availableslots?${query}`);
   }
 
   static async createAvailableSlot(body: Object) {
-    return await this.makeRequest(RequestMethod.POST, `/api/availableslots`, body);
+    return await Api.makeRequest(RequestMethod.POST, `/api/availableslots`, body);
   }
 
   static async updateAvailableSlot(_id: string, update: Object = {}) {
-    return await this.makeRequest(RequestMethod.PUT, `/api/availableslots/${_id}`, update);
+    return await Api.makeRequest(RequestMethod.PUT, `/api/availableslots/${_id}`, update);
   }
 
   /**
@@ -69,28 +69,36 @@ export default class Api {
    */
 
   static async getFaculties(query: string = '') {
-    return await this.makeRequest(RequestMethod.GET, `/api/faculties?${query}`);
+    return await Api.makeRequest(RequestMethod.GET, `/api/faculties?${query}`);
   }
 
   static async createFaculty(body: object = {}) {
-    return await this.makeRequest(RequestMethod.POST, `/api/faculties`, body);
+    return await Api.makeRequest(RequestMethod.POST, `/api/faculties`, body);
   }
 
   static async updateFaculty(_id: string, update: object = {}) {
-     return await this.makeRequest(RequestMethod.PUT, `/api/faculties/${_id}`, update);
+     return await Api.makeRequest(RequestMethod.PUT, `/api/faculties/${_id}`, update);
    }
 
    static async updateFacultyByToken(_id: string, token: string, update: object = {}) {
-     return await this.makeRequest(RequestMethod.PUT, `/api/faculties/${_id}/${token}`, update);
+     return await Api.makeRequest(RequestMethod.PUT, `/api/faculties/${_id}/${token}`, update);
    }
 
    static async sendPasswordreset(body: object = {}) {
-     return await this.makeRequest(RequestMethod.POST, '/api/faculties/password', body);
+     return await Api.makeRequest(RequestMethod.POST, '/api/faculties/password', body);
    }
 
    static async sendVerify(_id: string) {
-     return await this.makeRequest(RequestMethod.POST, `/api/faculties/${_id}/verify`);
+     return await Api.makeRequest(RequestMethod.POST, `/api/faculties/${_id}/verify`);
    }
+
+   /**
+    * Group
+    */
+
+    static async getGroups(query: string = '') {
+      return await Api.makeRequest(RequestMethod.GET, `/api/groups?${query}`);
+    }
 
   /**
    * Utility functions
@@ -125,7 +133,7 @@ export default class Api {
 
   private static async makeRequest(method: RequestMethod, path: string, body: Object = {}, cookie: string = '') {
     let res = await fetch(
-      `${this.getBackendUrl()}${path}`,
+      `${Api.getBackendUrl()}${path}`,
       Api.fetchOption(method, body, cookie),
     )
     res = await res.json();
