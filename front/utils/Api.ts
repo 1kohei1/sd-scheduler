@@ -100,6 +100,14 @@ export default class Api {
       return await Api.makeRequest(RequestMethod.GET, `/api/groups?${query}`);
     }
 
+    /**
+     * PresentationDate
+     */
+
+     static async getPresentationDates(query: string = '') {
+       return await Api.makeRequest(RequestMethod.GET, `/api/presentationdates?${query}`);
+     }
+
   /**
    * Utility functions
    */

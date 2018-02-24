@@ -3,6 +3,7 @@ import { Map } from 'immutable';
 import { message } from 'antd';
 
 import PresentationDate from './PresentationDate';
+import PresentationDate2 from './PresentationDate2';
 import Location from './Location';
 import Faculties from './Faculties';
 import { Semester } from '../models/Semester';
@@ -125,11 +126,15 @@ export default class Overview extends React.Component<OverviewProps, OverviewSta
 
   render() {
     const isAdmin = this.state.user && this.state.user.isAdmin ? true : false;
+    let facultyId = '';
+    if (this.state.user) {
+      facultyId = this.state.user._id;
+    }
 
     return (
       <div>
         <h1>Overview</h1>
-        <PresentationDate
+        {/* <PresentationDate
           prop="presentationDates"
           isAdmin={isAdmin}
           semester={this.state.semester}
@@ -138,6 +143,11 @@ export default class Overview extends React.Component<OverviewProps, OverviewSta
           error={this.state.presentationDatesError}
           toggleForm={this.toggleForm}
           updateSemester={this.updateSemester}
+        /> */}
+        <PresentationDate2
+          isAdmin={isAdmin}
+          semester={this.state.semester}
+          facultyId={facultyId}
         />
         <Location
           prop="location"
