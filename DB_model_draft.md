@@ -3,15 +3,27 @@
 _id: ObjectId;
 key: string; ex) 2018_spring, 2017_fall
 displayName: ex) 2018 Spring, 2017 Fall
-presentationDates: [{
+faculties: [Ref Faculty ObjectId]
+created_at: date
+updated_at: date
+
+### PresentationDate
+
+_id: ObjectId;
+semester: [Ref Semester ObjectId]
+admin: [Ref Faculty ObjectId]
+dates: [{
   _id: ObjectId
   start: date
   end: date
 }]
-location: string; ex) HEC 405
-faculties: [Ref Faculty ObjectId]
-created_at: date
-updated_at: date
+
+### Location
+
+_id: ObjectId
+semester: [Ref Semester ObjectId]
+admin: [Ref Faculty ObjectId]
+location: string
 
 ### Faculty
 
