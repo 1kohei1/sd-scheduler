@@ -2,8 +2,7 @@ import * as React from 'react';
 import { Map } from 'immutable';
 import { message } from 'antd';
 
-import PresentationDate from './PresentationDate';
-import PresentationDate2 from './PresentationDate2';
+import PresentationDateView from './PresentationDateView';
 import Location from './Location';
 import Faculties from './Faculties';
 import { Semester } from '../models/Semester';
@@ -134,17 +133,7 @@ export default class Overview extends React.Component<OverviewProps, OverviewSta
     return (
       <div>
         <h1>Overview</h1>
-        {/* <PresentationDate
-          prop="presentationDates"
-          isAdmin={isAdmin}
-          semester={this.state.semester}
-          editing={this.state.presentationDatesEditing}
-          updating={this.state.presentationDatesUpdating}
-          error={this.state.presentationDatesError}
-          toggleForm={this.toggleForm}
-          updateSemester={this.updateSemester}
-        /> */}
-        <PresentationDate2
+        <PresentationDateView
           isAdmin={isAdmin}
           semester={this.state.semester}
           facultyId={facultyId}

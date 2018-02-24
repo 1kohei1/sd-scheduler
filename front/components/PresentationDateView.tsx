@@ -10,13 +10,13 @@ import Api from '../utils/Api';
 import Faculty from '../models/Faculty';
 import PresentationDateEditing from './PresentationDateEditing';
 
-export interface PresentationDate2Props {
+export interface PresentationDateViewProps {
   semester: Semester;
   isAdmin: boolean;
   facultyId: string;
 }
 
-interface PresentationDate2State {
+interface PresentationDateViewState {
   loading: boolean;
   editing: boolean;
   updating: boolean;
@@ -25,8 +25,8 @@ interface PresentationDate2State {
   faculties: Faculty[];
 }
 
-export default class PresentationDate2 extends React.Component<PresentationDate2Props, PresentationDate2State> {
-  constructor(props: PresentationDate2Props) {
+export default class PresentationDateView extends React.Component<PresentationDateViewProps, PresentationDateViewState> {
+  constructor(props: PresentationDateViewProps) {
     super(props);
 
     this.state = {
@@ -49,7 +49,7 @@ export default class PresentationDate2 extends React.Component<PresentationDate2
     this.setPresentationDates();
   }
 
-  componentWillReceiveProps(nextProps: PresentationDate2Props) {
+  componentWillReceiveProps(nextProps: PresentationDateViewProps) {
     if (nextProps.semester !== this.props.semester) {
       this.setState({
         loading: true,
@@ -146,7 +146,7 @@ export default class PresentationDate2 extends React.Component<PresentationDate2
   }
 
   toggleForm() {
-    this.setState((prevState: PresentationDate2State, props: PresentationDate2Props) => {
+    this.setState((prevState: PresentationDateViewState, props: PresentationDateViewProps) => {
       return {
         editing: !prevState.editing,
       }
