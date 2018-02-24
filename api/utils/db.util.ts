@@ -4,6 +4,7 @@ import Semester from '../models/Semester.model';
 import Faculty from '../models/Faculty.model';
 import AvailableSlot from '../models/AvailableSlot.model';
 import Group from '../models/Group.model';
+import PresentationDate from '../models/PresentationDate.model';
 
 const updateOption = {
   runValidators: true,
@@ -101,5 +102,13 @@ export default class DBUtil {
    static findGroups(query: object = {}) {
      return Group.find(query);
    }
+
+   /**
+    * PresentationDate
+    */
+
+    static findPresentationDates(query: object = {}) {
+      return PresentationDate.find(query);
+    }
 }
 
