@@ -5,9 +5,9 @@ import { Semester } from '../models/Semester';
 import { DateConstants } from '../models/Constants';
 import DatetimeUtil, { TimeSlotLikeObject } from '../utils/DatetimeUtil';
 import PresentationDate from '../models/PresentationDate';
-import Loading from './Loading';
 import Api from '../utils/Api';
 import Faculty from '../models/Faculty';
+import PresentationDateInfo from './PresentationDateInfo';
 import PresentationDateEditing from './PresentationDateEditing';
 
 export interface PresentationDateViewProps {
@@ -39,7 +39,6 @@ export default class PresentationDateView extends React.Component<PresentationDa
     }
 
     this.extra = this.extra.bind(this);
-    this.info = this.info.bind(this);
     this.toggleForm = this.toggleForm.bind(this);
     this.updatePresentationDate = this.updatePresentationDate.bind(this);
   }
@@ -179,37 +178,6 @@ export default class PresentationDateView extends React.Component<PresentationDa
     }
   }
 
-  info() {
-    if (this.state.loading) {
-      return <Loading />
-    }
-    return (
-      <div>
-        {this.state.presentationDates.map(presentationDate => {
-          const faculty = this.state.faculties.find(f => f._id === presentationDate.admin) as Faculty;
-
-          return (
-            <div key={presentationDate._id} style={{ marginBottom: '1em' }}>
-              <h4>Dr. {faculty.firstName} {faculty.lastName} presentation dates</h4>
-              {presentationDate.dates.length === 0 && (
-                <div>No date is defined yet.</div>
-              )}
-              <ul>
-                {presentationDate.dates.map(date => (
-                  <li key={date._id}>
-                    {this.getInitialValue(date, 'date')}&nbsp;
-                    {this.getInitialValue(date, 'startTime')} -&nbsp;
-                    {this.getInitialValue(date, 'endTime')}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )
-        })}
-      </div>
-    );
-  }
-
   render() {
     const presentationDate = this.state.presentationDates
       .find(presentationDate => presentationDate.admin === this.props.facultyId) as PresentationDate;
@@ -225,7 +193,14 @@ export default class PresentationDateView extends React.Component<PresentationDa
             toggleForm={this.toggleForm}
             getInitialValue={this.getInitialValue}
           />
-        ) : this.info()}
+        ) : (
+          <PresentationDateInfo
+            loading={this.state.loading}
+            presentationDates={this.state.presentationDates}
+            faculties={this.state.faculties}
+            getInitialValue={this.getInitialValue}
+          />
+        )}
       </Card>
     );
   }
