@@ -6,6 +6,7 @@ import Faculty from '../models/Faculty.model';
 import AvailableSlot from '../models/AvailableSlot.model';
 import Group from '../models/Group.model';
 import PresentationDate from '../models/PresentationDate.model';
+import Location from '../models/Location.model';
 
 export default class DBUtil {
   /**
@@ -109,6 +110,18 @@ export default class DBUtil {
   static updatePresentationDateById(_id: string | number | object, update: object = {}) {
     return DBUtil.updateById(PresentationDate, _id, update);
   }
+
+  /**
+   * Locations
+   */
+
+   static findLocations(query: object = {}) {
+     return Location.find(query);
+   }
+
+   static updateLocationById(_id: string | number | object, update: object = {}) {
+     return DBUtil.updateById(Location, _id, update);
+   }
 
   /**
    * Private functions
