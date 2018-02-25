@@ -58,7 +58,7 @@ TODO:
 - [ ] Add validation for req.body using express-validator (https://github.com/ctavan/express-validator) (v3)
 - [ ] Return error if specified resource does not exist (v3)
 - [ ] Set up the mailing server and use queueing service to send emails (v4)
-- [ ] Log email fail/success
+- [x] Log email fail/success
 - [x] Use production ready session store (v3)
 - [ ] Maybe MLab sandbox should not be enough for the project. Think other way to store session free
 - [x] Find a way to read cookies from the server side since index constructor is executed on the server side

@@ -33,18 +33,30 @@ let transporter = nodemailer.createTransport({
 
 export default class Mailer {
   static send(type: MailType, option: MailOption) {
+    let p = undefined;
+    const key = MailType[type];
+
     // Log send status and handle error here
     if (type === MailType.invitation) {
-      return this.sendInvitation(option);
+      p = this.sendInvitation(option);
     } else if (type === MailType.passwordreset) {
-      return this.sendPasswordreset(option);
+      p = this.sendPasswordreset(option);
     } else if (type === MailType.verify) {
-      return this.sendVerify(option);
+      p = this.sendVerify(option);
     } else if (type === MailType.welcome) {
-      return this.sendWelcome(option);
-    } {
+      p = this.sendWelcome(option);
+    } else {
       return Promise.resolve({});
     }
+
+    return p
+      .then((result: any) => {
+        console.log(`Email: ${key}. Accepted: ${result.accepted.join(', ')} ${result.rejected.length > 0 ? `Rejected: ${result.rejected.join(', ')}` : ''}`);
+      })
+      .catch((err: any) => {
+        console.log(`Error:Email: ${key}`);
+        console.log(err);
+      })
   }
 
   private static sendInvitation(option: MailOption) {
@@ -366,7 +378,7 @@ class MailTemplate {
 
   static htmlTemplate(content: string) {
     return `
-      <div style="max-width: 500px; margin: auto">
+      <div style="max-width: 500px; margin: auto; font-family: Helvetica Neue For Number,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Helvetica Neue,Helvetica,Arial,sans-serif; font-size: 14px">
         <div style="height: 64px; line-height: 64px; background-color: #041528; color: #fff; padding: 0 16px; font-size: 14px;">
           SD Scheduler
         </div>
