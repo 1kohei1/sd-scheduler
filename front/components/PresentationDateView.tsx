@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Card, Button, Alert } from 'antd';
+import { Card, Button, message } from 'antd';
+import { List } from 'immutable';
 
 import { Semester } from '../models/Semester';
 import { DateConstants } from '../models/Constants';
@@ -89,43 +90,6 @@ export default class PresentationDateView extends React.Component<PresentationDa
     }
   }
 
-  /*
-  handleSubmit(e: React.FormEvent<any>) {
-    e.preventDefault();
-
-    this.props.form.validateFields((err, values) => {
-      if (err) {
-        return
-      }
-
-      // Format dates object to be DB format
-      const presentationDates: any = [];
-      for (let id in values.presentationDates) {
-        const formValue = values.presentationDates[id];
-
-        // If all data is not given, skip it
-        if (!formValue.date || !formValue.startTime || !formValue.endTime) {
-          continue;
-        }
-
-        const dateString = DatetimeUtil.formatDate(formValue.date, DateConstants.dateFormat);
-
-        presentationDates.push({
-          _id: id,
-          start: DatetimeUtil.getISOString(dateString, formValue.startTime),
-          end: DatetimeUtil.getISOString(dateString, formValue.endTime),
-        });
-      }
-      // Update PresentationDate
-
-      // const updateObj = {
-      //   presentationDates,
-      // }
-      // this.props.updateSemester(updateObj, this.props.prop);
-    })
-  }
-  */
-
   getInitialValue(date: TimeSlotLikeObject, property: string) {
     if (property === 'date' && date.start) {
       return DatetimeUtil.formatISOString(date.start, DateConstants.dateFormat);
@@ -140,8 +104,40 @@ export default class PresentationDateView extends React.Component<PresentationDa
     }
   }
 
-  updatePresentationDate(dates: TimeSlotLikeObject[]) {
+  async updatePresentationDate(dates: TimeSlotLikeObject[]) {
+    const index = this.state.presentationDates
+    .findIndex(presentationDate => presentationDate.admin === this.props.facultyId);
 
+    if (index >= 0) {
+      this.setState({
+        err: '',
+        updating: true,
+      });
+
+      const presentationDate = this.state.presentationDates[index];
+
+      try {
+        const updatedPresentationDate = await Api.updatePresentationDate(presentationDate._id, { dates })
+
+        this.setState((prevState: PresentationDateViewState, props: PresentationDateViewProps) => {
+          let newPresentationDates = List(prevState.presentationDates);
+          newPresentationDates = newPresentationDates.set(index, updatedPresentationDate);
+
+          message.success('Successfully updated the presentation dates');
+
+          return {
+            updating: false,
+            editing: false,
+            presentationDates: newPresentationDates.toArray(),
+          }
+        });
+      } catch (err) {
+        this.setState({
+          updating: false,
+          err: err.message,
+        });
+      }
+    }
   }
 
   toggleForm() {
@@ -194,13 +190,13 @@ export default class PresentationDateView extends React.Component<PresentationDa
             getInitialValue={this.getInitialValue}
           />
         ) : (
-          <PresentationDateInfo
-            loading={this.state.loading}
-            presentationDates={this.state.presentationDates}
-            faculties={this.state.faculties}
-            getInitialValue={this.getInitialValue}
-          />
-        )}
+            <PresentationDateInfo
+              loading={this.state.loading}
+              presentationDates={this.state.presentationDates}
+              faculties={this.state.faculties}
+              getInitialValue={this.getInitialValue}
+            />
+          )}
       </Card>
     );
   }

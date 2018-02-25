@@ -1,4 +1,5 @@
 import { Model, model, Schema, Document } from 'mongoose';
+import * as moment from 'moment-timezone';
 
 const PresentationDateSchema = new Schema({
   semester: {
@@ -25,6 +26,10 @@ PresentationDateSchema.pre('save', function (this: any, next) {
     this.created_at = new Date();
   }
   this.updated_at = new Date();
+
+  this.dates.sort((a: any, b: any) => {
+    return moment(a.start).valueOf() - moment(b.start).valueOf();
+  });
 
   next();
 });

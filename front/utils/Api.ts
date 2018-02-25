@@ -77,42 +77,46 @@ export default class Api {
   }
 
   static async updateFaculty(_id: string, update: object = {}) {
-     return await Api.makeRequest(RequestMethod.PUT, `/api/faculties/${_id}`, update);
-   }
+    return await Api.makeRequest(RequestMethod.PUT, `/api/faculties/${_id}`, update);
+  }
 
-   static async updateFacultyByToken(_id: string, token: string, update: object = {}) {
-     return await Api.makeRequest(RequestMethod.PUT, `/api/faculties/${_id}/${token}`, update);
-   }
+  static async updateFacultyByToken(_id: string, token: string, update: object = {}) {
+    return await Api.makeRequest(RequestMethod.PUT, `/api/faculties/${_id}/${token}`, update);
+  }
 
-   static async sendPasswordreset(body: object = {}) {
-     return await Api.makeRequest(RequestMethod.POST, '/api/faculties/password', body);
-   }
+  static async sendPasswordreset(body: object = {}) {
+    return await Api.makeRequest(RequestMethod.POST, '/api/faculties/password', body);
+  }
 
-   static async sendVerify(_id: string) {
-     return await Api.makeRequest(RequestMethod.POST, `/api/faculties/${_id}/verify`);
-   }
+  static async sendVerify(_id: string) {
+    return await Api.makeRequest(RequestMethod.POST, `/api/faculties/${_id}/verify`);
+  }
 
-   /**
-    * Group
-    */
+  /**
+   * Group
+   */
 
-    static async getGroups(query: string = '') {
-      return await Api.makeRequest(RequestMethod.GET, `/api/groups?${query}`);
-    }
+  static async getGroups(query: string = '') {
+    return await Api.makeRequest(RequestMethod.GET, `/api/groups?${query}`);
+  }
 
-    /**
-     * PresentationDate
-     */
+  /**
+   * PresentationDate
+   */
 
-     static async getPresentationDates(query: string = '') {
-       return await Api.makeRequest(RequestMethod.GET, `/api/presentationdates?${query}`);
-     }
+  static async getPresentationDates(query: string = '') {
+    return await Api.makeRequest(RequestMethod.GET, `/api/presentationdates?${query}`);
+  }
+
+  static async updatePresentationDate(_id: string, update: object = {}) {
+    return await Api.makeRequest(RequestMethod.PUT, `/api/presentationdates/${_id}`, update);
+  }
 
   /**
    * Utility functions
    */
 
-  static redirect(context: InitialProps | undefined, path: string, query: {[key: string]: string} = {}, asPath?: string) {
+  static redirect(context: InitialProps | undefined, path: string, query: { [key: string]: string } = {}, asPath?: string) {
     if (context && context.res) {
       const queryString = Object.entries(query).map(([key, val]) => `${key}=${val}`).join('&');
       context.res.writeHead(302, {

@@ -9,6 +9,7 @@ import PresentationDate from '../models/PresentationDate.model';
 const updateOption = {
   runValidators: true,
   context: 'query',
+  new: true,
 }
 
 export default class DBUtil {
@@ -109,6 +110,10 @@ export default class DBUtil {
 
     static findPresentationDates(query: object = {}) {
       return PresentationDate.find(query);
+    }
+
+    static updatePresentationDateById(_id: string | number | object, update: object = {}) {
+      return PresentationDate.findByIdAndUpdate(_id, update, updateOption);
     }
 }
 

@@ -38,7 +38,29 @@ class PresentationDateEditing extends React.Component<PresentationDateEditingPro
   }
 
   handleSubmit(e: React.FormEvent<any>) {
+    e.preventDefault();
 
+    this.props.form.validateFields((err, values) => {
+      if (err) {
+        return;
+      }
+
+      const dates = Object.entries(values)
+        .filter(([_id, date]: [string, any]) => {
+          return date.date && date.startTime && date.endTime;
+        })
+        .map(([_id, date]: [string, any]) => {
+          const dateStr = DatetimeUtil.formatDate(date.date, DateConstants.dateFormat);
+
+          return {
+            _id,
+            start: DatetimeUtil.getISOString(dateStr, date.startTime),
+            end: DatetimeUtil.getISOString(dateStr, date.endTime),
+          }
+        });
+
+      this.props.updatePresentationDate(dates);
+    })
   }
 
   addDate() {
@@ -90,14 +112,14 @@ class PresentationDateEditing extends React.Component<PresentationDateEditingPro
         {this.state.dates.map((date: TimeSlotLikeObject) => (
           <div style={{ display: 'flex', flexDirection: 'row' }} key={date._id}>
             <Form.Item style={{ marginRight: 8 }}>
-              {this.props.form.getFieldDecorator(`dates[${date._id}].date`, {
+              {this.props.form.getFieldDecorator(`[${date._id}].date`, {
                 initialValue: this.props.getInitialValue(date, 'dateMoment')
               })(
                 <DatePicker placeholder="Presentation date" />
               )}
             </Form.Item>
             <Form.Item style={{ marginRight: 8 }}>
-              {this.props.form.getFieldDecorator(`dates[${date._id}].startTime`, {
+              {this.props.form.getFieldDecorator(`[${date._id}].startTime`, {
                 initialValue: this.props.getInitialValue(date, 'startTime')
               })(
                 <Select placeholder="Start time" style={{ width: 120 }}>
@@ -108,7 +130,7 @@ class PresentationDateEditing extends React.Component<PresentationDateEditingPro
               )}
             </Form.Item>
             <Form.Item style={{ marginRight: 8 }}>
-              {this.props.form.getFieldDecorator(`dates[${date._id}].endTime`, {
+              {this.props.form.getFieldDecorator(`[${date._id}].endTime`, {
                 initialValue: this.props.getInitialValue(date, 'endTime')
               })(
                 <Select placeholder="End time" style={{ width: 120 }}>
