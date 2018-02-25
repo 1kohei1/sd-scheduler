@@ -66,6 +66,7 @@ TODO:
 - [ ] Research how to decrease the bundle size (probably no .map file)
 - [x] Check if selected presentation time range is already taken by someone
 - [x] Display selected presentation time in the calendar
+- [ ] Support faculties to be displayed in EE/CS schedule (v3)
 
 NOTES:
 
