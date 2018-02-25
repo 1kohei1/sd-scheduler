@@ -75,6 +75,14 @@ export default class PresentationDateView extends React.Component<PresentationDa
 
       const faculties = await Api.getFaculties(fQuery) as Faculty[];
 
+      // Sort by faculty's alphabetical order
+      presentationDates.sort((a: PresentationDate, b: PresentationDate) => {
+        const index1 = faculties.map(f => f._id).indexOf(a.admin);
+        const index2 = faculties.map(f => f._id).indexOf(b.admin);
+
+        return index1 - index2;
+      });
+
       this.setState({
         loading: false,
         presentationDates,
@@ -106,7 +114,7 @@ export default class PresentationDateView extends React.Component<PresentationDa
 
   async updatePresentationDate(dates: TimeSlotLikeObject[]) {
     const index = this.state.presentationDates
-    .findIndex(presentationDate => presentationDate.admin === this.props.facultyId);
+      .findIndex(presentationDate => presentationDate.admin === this.props.facultyId);
 
     if (index >= 0) {
       this.setState({

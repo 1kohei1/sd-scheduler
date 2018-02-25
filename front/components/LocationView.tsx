@@ -76,6 +76,14 @@ export default class LocationView extends React.Component<LocationViewProps, Loc
 
       const faculties = await Api.getFaculties(fQuery) as Faculty[];
 
+      // Sort by faculty's alphabetical order
+      locations.sort((a: Location, b: Location) => {
+        const index1 = faculties.map(f => f._id).indexOf(a.admin);
+        const index2 = faculties.map(f => f._id).indexOf(b.admin);
+
+        return index1 - index2;
+      });
+
       this.setState({
         loading: false,
         locations,
