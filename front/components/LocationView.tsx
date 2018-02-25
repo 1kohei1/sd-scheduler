@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, Button, message } from 'antd';
+import { Card, Button, Alert, message } from 'antd';
 import { List } from 'immutable';
 
 import { Semester } from '../models/Semester';
@@ -157,6 +157,9 @@ export default class LocationView extends React.Component<LocationViewProps, Loc
 
     return (
       <Card title="Presentation location" extra={this.extra()} style={{ marginBottom: '16px' }}>
+        {this.state.err && (
+          <Alert message={this.state.err} type="error" />
+        )}
         {this.state.editing ? (
           <LocationEditing
             err={this.state.err}
