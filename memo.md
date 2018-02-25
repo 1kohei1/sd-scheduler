@@ -66,7 +66,6 @@ TODO:
 - [ ] Research how to decrease the bundle size (probably no .map file)
 - [x] Check if selected presentation time range is already taken by someone
 - [x] Display selected presentation time in the calendar
-- [ ] Update server DBUtil update to use `findByIdAndUpdate`. This returns updated document
 
 NOTES:
 
