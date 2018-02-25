@@ -60,8 +60,8 @@ module.exports.updateAvailableSlot = (req: Request, res: Response) => {
   };
 
   DBUtil.updateAvailalbleSlotById(req.params._id, req.body)
-  .then(result => {
-    APIUtil.successResponse(info, {}, res);
+  .then(updateAvailableSlot => {
+    APIUtil.successResponse(info, updateAvailableSlot, res);
   })
   .catch(err => {
     info.debugInfo.message = err.message;

@@ -1,16 +1,11 @@
 const bcrypt = require('bcryptjs');
+import { Model, Document } from 'mongoose';
 
 import Semester from '../models/Semester.model';
 import Faculty from '../models/Faculty.model';
 import AvailableSlot from '../models/AvailableSlot.model';
 import Group from '../models/Group.model';
 import PresentationDate from '../models/PresentationDate.model';
-
-const updateOption = {
-  runValidators: true,
-  context: 'query',
-  new: true,
-}
 
 export default class DBUtil {
   /**
@@ -28,7 +23,7 @@ export default class DBUtil {
   }
 
   static updateSemesterById(_id: string | number | object, update: Object) {
-    return Semester.update({ _id }, update, updateOption);
+    return DBUtil.updateById(Semester, _id, update);
   }
 
   /**
@@ -59,7 +54,6 @@ export default class DBUtil {
     }
     const newFaculty = new Faculty(body);
 
-    // Would like not to include password field. Research how to omit the field in save() callback
     return newFaculty.save();
   }
 
@@ -68,7 +62,7 @@ export default class DBUtil {
       const salt = bcrypt.genSaltSync(10);
       update.password = bcrypt.hashSync(update.password, salt);
     }
-    return Faculty.update({ _id }, update, updateOption);
+    return DBUtil.updateById(Faculty, _id, update);
   }
 
   /**
@@ -93,27 +87,43 @@ export default class DBUtil {
   }
 
   static updateAvailalbleSlotById(_id: string | number | object, update: Object) {
-    return AvailableSlot.update({ _id }, update, updateOption);
+    return DBUtil.updateById(AvailableSlot, _id, update);
   }
 
   /**
    * Group
    */
 
-   static findGroups(query: object = {}) {
-     return Group.find(query);
-   }
+  static findGroups(query: object = {}) {
+    return Group.find(query);
+  }
 
-   /**
-    * PresentationDate
-    */
+  /**
+   * PresentationDate
+   */
 
-    static findPresentationDates(query: object = {}) {
-      return PresentationDate.find(query);
-    }
+  static findPresentationDates(query: object = {}) {
+    return PresentationDate.find(query);
+  }
 
-    static updatePresentationDateById(_id: string | number | object, update: object = {}) {
-      return PresentationDate.findByIdAndUpdate(_id, update, updateOption);
-    }
+  static updatePresentationDateById(_id: string | number | object, update: object = {}) {
+    return DBUtil.updateById(PresentationDate, _id, update);
+  }
+
+  /**
+   * Private functions
+   */
+
+  private static updateById(model: Model<Document>, _id: string | number | object, update: object = {}) {
+    return model.findById(_id)
+      .then(doc => {
+        if (doc) {
+          doc.set(update);
+          return doc.save();
+        } else {
+          return Promise.reject('Document is not found');
+        }
+      })
+  }
 }
 

@@ -30,8 +30,8 @@ module.exports.updateSemester = (req: Request, res: Response) => {
   }
 
   DBUtil.updateSemesterById(req.params._id, req.body)
-    .then(result => {
-      APIUtil.successResponse(info, req.body, res);
+    .then(updatedSemester => {
+      APIUtil.successResponse(info, updatedSemester, res);
     })
     .catch(err => {
       info.debugInfo.message = err.message;

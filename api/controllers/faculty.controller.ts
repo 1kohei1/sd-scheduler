@@ -38,7 +38,7 @@ module.exports.createFaculty = (req: Request, res: Response) => {
     .then(newFaculty => {
       APIUtil.successResponse(info, newFaculty, res);
 
-      // Generate token and when it expires. Save them to the created faculty
+      // Generate token. Save them to the created faculty
       token = crypto.randomBytes(48).toString('hex');
       const expire_at = new Date();
       expire_at.setDate(expire_at.getDate() + 7); // Set token expire in 7 days
@@ -51,7 +51,7 @@ module.exports.createFaculty = (req: Request, res: Response) => {
         expire_at,
       });
     })
-    .then(result => {
+    .then(updatedFaculty => {
       // Send invitation email
       Mailer.send(MailType.invitation, {
         to: req.body.email,
@@ -109,8 +109,8 @@ module.exports.sendPasswordResetEmail = (req: Request, res: Response) => {
         expire_at,
       })
     })
-    .then(result => {
-      APIUtil.successResponse(info, true, res);
+    .then(updatedFaculty => {
+      APIUtil.successResponse(info, updatedFaculty, res);
     })
     .then(result => {
       Mailer.send(MailType.passwordreset, {
@@ -163,8 +163,8 @@ module.exports.updateFaculty = (req: Request, res: Response) => {
         return DBUtil.updateFacultyById(req.params._id, req.body);
       }
     })
-    .then(result => {
-      APIUtil.successResponse(info, req.body, res);
+    .then(updatedFaculty => {
+      APIUtil.successResponse(info, updatedFaculty, res);
       Mailer.send(MailType.verify, {
         to: faculty.email,
         extra: {
@@ -204,8 +204,8 @@ module.exports.verify = (req: Request, res: Response) => {
         });
       }
     })
-    .then(result => {
-      APIUtil.successResponse(info, true, res);
+    .then(updatedFaculty => {
+      APIUtil.successResponse(info, updatedFaculty, res);
       Mailer.send(MailType.verify, {
         to: faculty.email,
         extra: {
@@ -230,7 +230,7 @@ module.exports.updatePassword = (req: Request, res: Response) => {
     }
   };
 
-  const update: any = {};
+  let update: any = {};
   if (req.body.password) {
     update.password = req.body.password;
   } else {
@@ -240,42 +240,35 @@ module.exports.updatePassword = (req: Request, res: Response) => {
   }
 
   const _id = req.params._id;
-  let faculty: any | undefined = undefined;
+  let shouldSendWelcomeEmail = false;
 
-  DBUtil.findFacultyById(_id)
-    .then(f => {
-      if (f) {
-        faculty = f.toJSON();
-        return DBUtil.updateFacultyById(_id, update);
-      } else {
-        return Promise.reject('Specified faculty does not exist')
-      }
-    })
-    .then(result => {
-      const obj: any = {
+  DBUtil.updateFacultyById(_id, update)
+    .then(updatedFaculty => {
+      update = {
         token: '',
         expire_at: null,
         password_at: new Date(),
       }
-      if (!faculty.signup_at) {
-        obj.signup_at = new Date();
+      if (!updatedFaculty.get('signup_at')) {
+        shouldSendWelcomeEmail = true;
+        update.signup_at = new Date();
       }
       // To successfully come here, they have to receive token by the email. So set emailVerified true.
-      if (!faculty.emailVerified) {
-        obj.emailVerified = true;
-        obj.verify_at = new Date();
+      if (!updatedFaculty.get('emailVerified')) {
+        update.emailVerified = true;
+        update.verify_at = new Date();
       }
-      return DBUtil.updateFacultyById(req.params._id, obj);
+      return DBUtil.updateFacultyById(_id, update);
     })
-    .then(result => {
+    .then(updatedFaculty => {
       // Return API response first.
-      APIUtil.successResponse(info, null, res);
+      APIUtil.successResponse(info, updatedFaculty, res);
 
-      if (!faculty.signup_at) {
+      if (shouldSendWelcomeEmail) {
         Mailer.send(MailType.welcome, {
-          to: faculty.email,
+          to: updatedFaculty.get('email'),
           extra: {
-            name: `Dr. ${faculty.firstName} ${faculty.lastName}`,
+            name: `Dr. ${updatedFaculty.get('firstName')} ${updatedFaculty.get('lastName')}`,
           }
         })
       }
