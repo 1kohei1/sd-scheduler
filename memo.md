@@ -93,12 +93,9 @@ Delete presentation:
 2. Student enter one of the group member's email
 3. System sends email and confirm the action
 
-### Changes required in the future
+### Concerns about multiple admin professors
 
-I guess presentation date differs by admin faculties. If this is true, make these changes
+What if the same presentation dates, but different locations?
+With current implementation, 2 student group from different faculties can request presentations in a row. 
 
-- [ ] Update date overview to reflect presentation dates per admin faculty
-- [ ] Update semester model to have admin_faculties property
-- [ ] Update semester model to have presentation dates per each admin faculty in admin_faculties property
-- [ ] Update faculty availability calendar to reflect all presentation dates per faculties (require hearing what change they would like to have)
-- [ ] Update index page to let students pick who is their SD2 faculty
+Solution: When faculty is reserved for the presentation, modify in scheduling page to make that faculty unavailable for the other presentation groups.
