@@ -150,18 +150,6 @@ export default class DBUtil {
   }
 
   /**
-   * Locations
-   */
-
-   static findLocations(query: object = {}) {
-     return Location.find(query);
-   }
-
-   static updateLocationById(_id: string | number | object, update: object = {}) {
-     return DBUtil.updateById(Location, _id, update);
-   }
-
-  /**
    * Private functions
    */
 
