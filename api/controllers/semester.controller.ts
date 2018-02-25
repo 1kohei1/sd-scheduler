@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import * as moment from 'moment-timezone';
 
 import DBUtil from '../utils/db.util';
 import APIUtil from '../utils/api.util';
