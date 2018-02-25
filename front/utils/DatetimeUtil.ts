@@ -54,6 +54,22 @@ export default class DatetimeUtil {
     return m.clone().add(amount, unit);
   }
 
+  static smaller(m1: Moment, m2: Moment) {
+    if (m1.valueOf() < m2.valueOf()) {
+      return m1;
+    } else {
+      return m2;
+    }
+  }
+
+  static larger(m1: Moment, m2: Moment) {
+    if (m1.valueOf() > m2.valueOf()) {
+      return m1;
+    } else {
+      return m2;
+    }
+  }
+
   static convertToTimeSlot(slot: TimeSlotLikeObject): TimeSlot {
     return {
       _id: slot._id,

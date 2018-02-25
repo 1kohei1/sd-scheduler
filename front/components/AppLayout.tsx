@@ -25,10 +25,9 @@ const menu = (
   <Menu onClick={onClick}>
     <Menu.Item key={0}>
       <Link
-        href={`/dashboard?semester=${SemesterUtil.defaultSemester()}&menu=${Menus[1].key}`}
-        as={`/dashboard/${SemesterUtil.defaultSemester()}/${Menus[1].key}`}
+        href={`/dashboard`}
       >
-        <a>{Menus[1].displayName}</a>
+        <a>Dashboard</a>
       </Link>
     </Menu.Item>
     <Menu.Item key={1}>

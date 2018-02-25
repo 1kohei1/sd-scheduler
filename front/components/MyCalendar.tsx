@@ -2,13 +2,13 @@ import * as React from 'react';
 import { List } from 'immutable';
 import ObjectID from 'bson-objectid';
 import * as moment from 'moment-timezone';
-import { Button, Icon, message, Alert } from 'antd';
+import { Button, Icon, message, Alert, Popover } from 'antd';
 
 import KoCalendar from './KoCalendar/KoCalendar';
 import Presentation from '../models/Presentation';
 import { DateConstants, KoCalendarConstants } from '../models/Constants';
 import { Semester } from '../models/Semester';
-import DatetimeUtil from '../utils/DatetimeUtil';
+import DatetimeUtil, { TimeSlotLikeObject } from '../utils/DatetimeUtil';
 import TimeSlot from '../models/TimeSlot';
 import Loading from './Loading';
 import UserUtil from '../utils/UserUtil';
@@ -25,7 +25,7 @@ interface MyCalendarState {
   errors: List<string>;
   presentations: List<Presentation>;
   availableSlots: List<TimeSlot>;
-  presentationDates: PresentationDate[];
+  presentationDates: TimeSlot[];
 }
 
 export default class MyCalendar extends React.Component<MyCalendarProps, MyCalendarState> {
@@ -60,9 +60,47 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
 
   private async getPresentationDates() {
     try {
-      const presentationDates = await Api.getPresentationDates(`semester=${this.props.semester._id}`);
+      const presentationDates = await Api.getPresentationDates(`semester=${this.props.semester._id}`) as PresentationDate[];
+
+      const presentationSlots = presentationDates
+        .map((pd: PresentationDate) => pd.dates)
+        // Flatten array of array
+        .reduce((accumulator: TimeSlotLikeObject[], dates: TimeSlotLikeObject[]) => {
+          dates.forEach(date => {
+            accumulator.push(date);
+          });
+          return accumulator;
+        }, [])
+        .map(DatetimeUtil.convertToTimeSlot)
+        .sort((a: TimeSlot, b: TimeSlot) => {
+          return a.start.valueOf() - b.start.valueOf();
+        });
+
+      // Store the formated dates of presentation dates. 
+      // This works as index locator and check of duplicates
+      const dateStrs: string[] = [];
+      // Stores the TimeSlot of presentation dates that doesn't contain the duplicate of the presentation dates
+      const noDupSlots: TimeSlot[] = [];
+
+      presentationSlots.forEach((slot: TimeSlot) => {
+        const dateStr = DatetimeUtil.formatDate(slot.start, DateConstants.dateFormat);
+        const index = dateStrs.indexOf(dateStr);
+
+        // Duplicate presentation date is found. Take smaller start and large end
+        if (index >= 0) {
+          const existingSlot: TimeSlot = noDupSlots[index];
+          noDupSlots[index].start = DatetimeUtil.smaller(existingSlot.start, slot.start);
+          noDupSlots[index].end = DatetimeUtil.larger(existingSlot.end, slot.end);
+        }
+        // This presentation date is not found yet. Add it to noDupSlots
+        else {
+          dateStrs.push(dateStr);
+          noDupSlots.push(slot);
+        }
+      })
+
       this.setState({
-        presentationDates,
+        presentationDates: noDupSlots,
       });
       this.onDataFetched('presentationDates');
     } catch (err) {
@@ -201,25 +239,34 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
             Check how to put available time
         </Button>
         </p>
-        {this.state.presentationDates.map(presentationDate => {
-          const dates = presentationDate.dates.map(DatetimeUtil.convertToTimeSlot);
+        <p>
+          You will not be booked in a row if you need to move to a different location.
+          <Popover
+            title="What does this mean?"
+            content={this.content()}
+            placement="bottom"
+          >
+            <Icon type="question-circle" style={{ marginLeft: '8px' }} />
+          </Popover>
+        </p>
+        {this.state.presentationDates.length === 0 ? (
+          <div>Presentation dates are not defined. Once the date is set, the system sends email. Please check later!</div>
+        ) : (
+            <KoCalendar
+              presentationDates={this.state.presentationDates}
+              presentations={this.state.presentations.toArray()}
+              availableSlots={this.state.availableSlots.toArray()}
+              onAvailableSlotChange={this.onAvailableSlotChange}
+            />
+          )}
+      </div>
+    )
+  }
 
-          return (
-            <div key={presentationDate._id}>
-              <h3>Class of Dr. {presentationDate.admin.firstName} {presentationDate.admin.lastName}</h3>
-              {dates.length === 0 ? (
-                <div>Presentation dates are not defined. Once the date is set, the system sends email. Please check later!</div>
-              ) : (
-                  <KoCalendar
-                    presentationDates={dates}
-                    presentations={this.state.presentations.toArray()}
-                    availableSlots={this.state.availableSlots.toArray()}
-                    onAvailableSlotChange={this.onAvailableSlotChange}
-                  />
-                )}
-            </div>
-          )
-        })}
+  content() {
+    return (
+      <div style={{ width: '500px' }}>
+        There could be a case that two senior design class holds presentations on the same date at different location. In that case, the system doesn't allow you to be booked in a row from a different class.
       </div>
     )
   }
