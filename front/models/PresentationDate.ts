@@ -1,7 +1,9 @@
+import Faculty from './Faculty';
+
 export default interface PresentationDate {
   _id: string;
   semester: string;
-  admin: string;
+  admin: Faculty;
   dates: {
     _id: string;
     start: string;

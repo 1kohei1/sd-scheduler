@@ -8,7 +8,6 @@ import DatetimeUtil, { TimeSlotLikeObject } from '../utils/DatetimeUtil';
 import PresentationDate from '../models/PresentationDate';
 import Api from '../utils/Api';
 import Location from '../models/Location';
-import Faculty from '../models/Faculty';
 import LocationInfo from './LocationInfo';
 import LocationEditing from './LocationEditing';
 
@@ -24,7 +23,6 @@ interface LocationViewState {
   updating: boolean;
   err: string;
   locations: Location[];
-  faculties: Faculty[];
 }
 
 export default class LocationView extends React.Component<LocationViewProps, LocationViewState> {
@@ -37,7 +35,6 @@ export default class LocationView extends React.Component<LocationViewProps, Loc
       updating: false,
       err: '',
       locations: Array<Location>(),
-      faculties: Array<Faculty>(),
     }
 
     this.extra = this.extra.bind(this);
@@ -71,37 +68,22 @@ export default class LocationView extends React.Component<LocationViewProps, Loc
     try {
       const locations = await Api.getLocations(`semester=${_id}`) as Location[];
 
-      const fids = locations.map(location => location.admin);
-      const fQuery = fids.map(fid => `_id[$in]=${fid}`).join('&');
-
-      const faculties = await Api.getFaculties(fQuery) as Faculty[];
-
-      // Sort by faculty's alphabetical order
-      locations.sort((a: Location, b: Location) => {
-        const index1 = faculties.map(f => f._id).indexOf(a.admin);
-        const index2 = faculties.map(f => f._id).indexOf(b.admin);
-
-        return index1 - index2;
-      });
-
       this.setState({
         loading: false,
         locations,
-        faculties,
       });
     } catch (err) {
       this.setState({
         loading: false,
         err: err.message,
         locations: [],
-        faculties: [],
       })
     }
   }
 
   async updateLocation(locationStr: string) {
     const index = this.state.locations
-    .findIndex(location => location.admin === this.props.facultyId);
+    .findIndex(location => location.admin._id === this.props.facultyId);
 
     if (index >= 0) {
       this.setState({
@@ -171,7 +153,7 @@ export default class LocationView extends React.Component<LocationViewProps, Loc
 
   render() {
     const location = this.state.locations
-      .find(location => location.admin === this.props.facultyId) as Location;
+      .find(location => location.admin._id === this.props.facultyId) as Location;
 
     return (
       <Card title="Presentation location" extra={this.extra()} style={{ marginBottom: '16px' }}>
@@ -187,7 +169,6 @@ export default class LocationView extends React.Component<LocationViewProps, Loc
             <LocationInfo
               loading={this.state.loading}
               locations={this.state.locations}
-              faculties={this.state.faculties}
             />
           )}
       </Card>

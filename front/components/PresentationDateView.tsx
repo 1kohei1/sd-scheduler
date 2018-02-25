@@ -7,7 +7,6 @@ import { DateConstants } from '../models/Constants';
 import DatetimeUtil, { TimeSlotLikeObject } from '../utils/DatetimeUtil';
 import PresentationDate from '../models/PresentationDate';
 import Api from '../utils/Api';
-import Faculty from '../models/Faculty';
 import PresentationDateInfo from './PresentationDateInfo';
 import PresentationDateEditing from './PresentationDateEditing';
 
@@ -23,7 +22,6 @@ interface PresentationDateViewState {
   updating: boolean;
   err: string;
   presentationDates: PresentationDate[];
-  faculties: Faculty[];
 }
 
 export default class PresentationDateView extends React.Component<PresentationDateViewProps, PresentationDateViewState> {
@@ -36,7 +34,6 @@ export default class PresentationDateView extends React.Component<PresentationDa
       updating: false,
       err: '',
       presentationDates: Array<PresentationDate>(),
-      faculties: Array<Faculty>(),
     }
 
     this.extra = this.extra.bind(this);
@@ -70,30 +67,15 @@ export default class PresentationDateView extends React.Component<PresentationDa
     try {
       const presentationDates = await Api.getPresentationDates(`semester=${_id}`) as PresentationDate[];
 
-      const fids = presentationDates.map(date => date.admin);
-      const fQuery = fids.map(fid => `_id[$in]=${fid}`).join('&');
-
-      const faculties = await Api.getFaculties(fQuery) as Faculty[];
-
-      // Sort by faculty's alphabetical order
-      presentationDates.sort((a: PresentationDate, b: PresentationDate) => {
-        const index1 = faculties.map(f => f._id).indexOf(a.admin);
-        const index2 = faculties.map(f => f._id).indexOf(b.admin);
-
-        return index1 - index2;
-      });
-
       this.setState({
         loading: false,
         presentationDates,
-        faculties,
       });
     } catch (err) {
       this.setState({
         loading: false,
         err: err.message,
         presentationDates: [],
-        faculties: [],
       })
     }
   }
@@ -114,7 +96,7 @@ export default class PresentationDateView extends React.Component<PresentationDa
 
   async updatePresentationDate(dates: TimeSlotLikeObject[]) {
     const index = this.state.presentationDates
-      .findIndex(presentationDate => presentationDate.admin === this.props.facultyId);
+      .findIndex(presentationDate => presentationDate.admin._id === this.props.facultyId);
 
     if (index >= 0) {
       this.setState({
@@ -184,7 +166,7 @@ export default class PresentationDateView extends React.Component<PresentationDa
 
   render() {
     const presentationDate = this.state.presentationDates
-      .find(presentationDate => presentationDate.admin === this.props.facultyId) as PresentationDate;
+      .find(presentationDate => presentationDate.admin._id === this.props.facultyId) as PresentationDate;
 
     return (
       <Card title="Presentation dates" extra={this.extra()} style={{ marginBottom: '16px' }}>
@@ -201,7 +183,6 @@ export default class PresentationDateView extends React.Component<PresentationDa
             <PresentationDateInfo
               loading={this.state.loading}
               presentationDates={this.state.presentationDates}
-              faculties={this.state.faculties}
               getInitialValue={this.getInitialValue}
             />
           )}

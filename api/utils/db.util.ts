@@ -104,11 +104,24 @@ export default class DBUtil {
    */
 
   static findPresentationDates(query: object = {}) {
-    return PresentationDate.find(query);
+    return PresentationDate.find(query)
+      .populate('admin')
+      // Didn't come up with a simple and readable way to sort by populated fieles. 
+      // So resolve values and sort manually
+      .then(presentationDates => {
+        presentationDates.sort((a: Document, b: Document) => {
+          if (a.get('admin').firstName !== b.get('admin').firstName) {
+            return a.get('admin').firstName.localeCompare(b.get('admin').firstName);
+          } else {
+            a.get('admin').lastName.localeCompare(b.get('admin').lastName);
+          }
+        });
+        return Promise.resolve(presentationDates);
+      })
   }
 
   static updatePresentationDateById(_id: string | number | object, update: object = {}) {
-    return DBUtil.updateById(PresentationDate, _id, update);
+    return DBUtil.updateById(PresentationDate, _id, update, 'admin');
   }
 
   /**
@@ -116,19 +129,37 @@ export default class DBUtil {
    */
 
   static findLocations(query: object = {}) {
-    return Location.find(query);
+    return Location.find(query)
+      .populate('admin')
+      // Didn't come up with a simple and readable way to sort by populated fieles. 
+      // So resolve values and sort manually
+      .then(locations => {
+        locations.sort((a: Document, b: Document) => {
+          if (a.get('admin').firstName !== b.get('admin').firstName) {
+            return a.get('admin').firstName.localeCompare(b.get('admin').firstName);
+          } else {
+            a.get('admin').lastName.localeCompare(b.get('admin').lastName);
+          }
+        });
+        return Promise.resolve(locations);
+      });
   }
 
   static updateLocationById(_id: string | number | object, update: object = {}) {
-    return DBUtil.updateById(Location, _id, update);
+    return DBUtil.updateById(Location, _id, update, 'admin');
   }
 
   /**
    * Private functions
    */
 
-  private static updateById(model: Model<Document>, _id: string | number | object, update: object = {}) {
-    return model.findById(_id)
+  private static updateById(model: Model<Document>, _id: string | number | object, update: object = {}, populate: string | object | undefined = undefined) {
+    let findQ = model.findById(_id);
+    if (populate) {
+      findQ = findQ.populate(populate);
+    }
+
+    return findQ
       .then(doc => {
         if (doc) {
           doc.set(update);
