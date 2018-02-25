@@ -69,7 +69,7 @@ export default class LocationView extends React.Component<LocationViewProps, Loc
       _id = semesterId;
     }
     try {
-      const locations = await Api.getPresentationDates(`semester=${_id}`) as Location[];
+      const locations = await Api.getLocations(`semester=${_id}`) as Location[];
 
       const fids = locations.map(location => location.admin);
       const fQuery = fids.map(fid => `_id[$in]=${fid}`).join('&');
@@ -99,7 +99,7 @@ export default class LocationView extends React.Component<LocationViewProps, Loc
     }
   }
 
-  async updateLocation(location: string) {
+  async updateLocation(locationStr: string) {
     const index = this.state.locations
     .findIndex(location => location.admin === this.props.facultyId);
 
@@ -112,20 +112,20 @@ export default class LocationView extends React.Component<LocationViewProps, Loc
       const location = this.state.locations[index];
 
       try {
-        // const updatedPresentationDate = await Api.updateLocation(presentationDate._id, { dates })
+        const updatedLocation = await Api.updateLocation(location._id, { location: locationStr });
 
-        // this.setState((prevState: LocationViewState, props: LocationViewProps) => {
-        //   let newPresentationDates = List(prevState.presentationDates);
-        //   newPresentationDates = newPresentationDates.set(index, updatedPresentationDate);
+        this.setState((prevState: LocationViewState, props: LocationViewProps) => {
+          let newLocations = List(prevState.locations);
+          newLocations = newLocations.set(index, updatedLocation);
 
-        //   message.success('Successfully updated the presentation dates');
+          message.success('Successfully updated the presentation dates');
 
-        //   return {
-        //     updating: false,
-        //     editing: false,
-        //     presentationDates: newPresentationDates.toArray(),
-        //   }
-        // });
+          return {
+            updating: false,
+            editing: false,
+            locations: newLocations.toArray(),
+          }
+        });
       } catch (err) {
         this.setState({
           updating: false,
