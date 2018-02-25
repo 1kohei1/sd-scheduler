@@ -1,5 +1,8 @@
-import { Model, model, Schema } from 'mongoose';
+import { Model, model, Schema, Document } from 'mongoose';
+import * as crypto from 'crypto';
 const uniqueValidator = require('mongoose-unique-validator');
+
+import Mailer, { MailType } from '../utils/mail.util';
 
 const FacultySchema = new Schema({
   email: {
@@ -33,13 +36,20 @@ const FacultySchema = new Schema({
   },
   token: {
     type: String,
-    default: '',
+    default: crypto.randomBytes(48).toString('hex'),
   },
   verifyToken: {
     type: String,
     default: '',
   },
-  expire_at: Date,
+  expire_at: {
+    type: Date,
+    default: () => {
+      const expire_at = new Date();
+      expire_at.setDate(expire_at.getDate() + 7); // Set token expire in 7 days
+      return expire_at;
+    },
+  },
   verify_at: Date,
   signup_at: Date, // When the password is set
   password_at: Date, // When the password is set
@@ -47,7 +57,7 @@ const FacultySchema = new Schema({
   updated_at: Date,
 });
 
-FacultySchema.pre('save', function(this: any, next) {
+FacultySchema.pre('save', function (this: any, next) {
   if (!this.created_at) {
     this.created_at = new Date();
   }
@@ -56,8 +66,22 @@ FacultySchema.pre('save', function(this: any, next) {
   next();
 });
 
+FacultySchema.plugin(require('mongoose-lifecycle'));
+
 FacultySchema.plugin(uniqueValidator, {
   message: '{VALUE} is already registered',
 });
 
-export default model('Faculty', FacultySchema);
+const FacultyModel = model('Faculty', FacultySchema);
+
+FacultyModel.on('afterInsert', (faculty: Document) => {
+  Mailer.send(MailType.invitation, {
+    to: faculty.get('email'),
+    extra: {
+      fromWhom: `Dr. ${faculty.get('firstName')} ${faculty.get('lastName')}`,
+      token: faculty.get('token'),
+    }
+  })
+})
+
+export default FacultyModel;

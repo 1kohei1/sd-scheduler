@@ -32,42 +32,13 @@ module.exports.createFaculty = (req: Request, res: Response) => {
     }
   };
 
-  let token: string | undefined = undefined;
-
   DBUtil.createFaculty(req.body)
     .then(newFaculty => {
       APIUtil.successResponse(info, newFaculty, res);
-
-      // Generate token. Save them to the created faculty
-      token = crypto.randomBytes(48).toString('hex');
-      const expire_at = new Date();
-      expire_at.setDate(expire_at.getDate() + 7); // Set token expire in 7 days
-
-      // Save these data so that we can look up.
-      info.debugInfo._id = newFaculty.get('_id');
-
-      return DBUtil.updateFacultyById(newFaculty.get('_id'), {
-        token,
-        expire_at,
-      });
-    })
-    .then(updatedFaculty => {
-      // Send invitation email
-      Mailer.send(MailType.invitation, {
-        to: req.body.email,
-        extra: {
-          fromWhom: `Dr. ${req.user.firstName} ${req.user.lastName}`,
-          token,
-        }
-      })
     })
     .catch(err => {
       info.debugInfo.message = err.message;
-      if (res.headersSent) {
-        APIUtil.logError(info);
-      } else {
-        APIUtil.errorResponse(info, err.message, {}, res);
-      }
+      APIUtil.errorResponse(info, err.message, {}, res);
     });
 }
 
@@ -85,9 +56,6 @@ module.exports.sendPasswordResetEmail = (req: Request, res: Response) => {
     return APIUtil.errorResponse(info, 'Emails is not given to API', {}, res);
   }
 
-  let faculty: any = null;
-  let token: string | undefined = undefined;
-
   DBUtil.findFaculties({ email })
     .then(faculties => {
       if (!faculties || faculties.length === 0) {
@@ -96,9 +64,9 @@ module.exports.sendPasswordResetEmail = (req: Request, res: Response) => {
         });
       }
 
-      faculty = faculties[0];
+      const faculty = faculties[0];
 
-      token = crypto.randomBytes(48).toString('hex');
+      const token = crypto.randomBytes(48).toString('hex');
       const expire_at = new Date();
       expire_at.setMinutes(expire_at.getMinutes() + 30); // Set token expire in 30 minutes
 
@@ -111,26 +79,17 @@ module.exports.sendPasswordResetEmail = (req: Request, res: Response) => {
     })
     .then(updatedFaculty => {
       APIUtil.successResponse(info, updatedFaculty, res);
-    })
-    .then(result => {
       Mailer.send(MailType.passwordreset, {
         to: email,
         extra: {
-          name: `Dr. ${faculty.firstName} ${faculty.lastName}`,
-          token,
+          name: `Dr. ${updatedFaculty.get('firstName')} ${updatedFaculty.get('lastName')}`,
+          token: updatedFaculty.get('token'),
         }
       });
     })
     .catch(err => {
-      let message = '';
-      if (err.message) {
-        message = err.message;
-        info.debugInfo.message = err.message;
-      } else {
-        message = 'Failed to send password reset email. System administrator will take a look';
-        info.debugInfo.err = err;
-      }
-      APIUtil.errorResponse(info, message, {}, res);
+      info.debugInfo.message = err.message;
+      APIUtil.errorResponse(info, err.message, {}, res);
     })
 }
 
@@ -144,34 +103,39 @@ module.exports.updateFaculty = (req: Request, res: Response) => {
     }
   };
 
-  let faculty: any | undefined = undefined;
-  let token: string | undefined = undefined;
-  const sendVerify = req.body.hasOwnProperty('emailVerified') && !req.body.emailVerified;
+  const _id = req.params._id;
+  const update: any = req.body;
+  let shouldSendVerifyEmail = false;
 
-  DBUtil.findFacultyById(req.params._id)
-    .then(f => {
-      if (!f) {
+  DBUtil.findFacultyById(_id)
+    .then(faculty => {
+      if (!faculty) {
         return Promise.reject({
-          message: 'Specified faculty does not exist',
+          message: 'Document is not found',
         })
       } else {
-        faculty = f.toJSON();
-        if (sendVerify) {
-          token = crypto.randomBytes(48).toString('hex');;
-          req.body.verifyToken = token;
+        if (update.hasOwnProperty('email') && update.email !== faculty.get('email')) {
+          update.emailVerified = false;
+          update.verifyToken = crypto.randomBytes(48).toString('hex');
+        
+          shouldSendVerifyEmail = true;
         }
-        return DBUtil.updateFacultyById(req.params._id, req.body);
+
+        return DBUtil.updateFacultyById(_id, update);
       }
     })
     .then(updatedFaculty => {
       APIUtil.successResponse(info, updatedFaculty, res);
-      Mailer.send(MailType.verify, {
-        to: faculty.email,
-        extra: {
-          name: `Dr. ${faculty.firstName} ${faculty.lastName}`,
-          token,
-        }
-      });
+      
+      if (shouldSendVerifyEmail) {
+        Mailer.send(MailType.verify, {
+          to: updatedFaculty.get('email'),
+          extra: {
+            name: `Dr. ${updatedFaculty.get('firstName')} ${updatedFaculty.get('lastName')}`,
+            token: updatedFaculty.get('verifyToken'),
+          }
+        })
+      }
     })
     .catch(err => {
       info.debugInfo.message = err.message;
@@ -187,30 +151,18 @@ module.exports.verify = (req: Request, res: Response) => {
     }
   };
 
-  const _id = req.params._id;
-  const token = crypto.randomBytes(48).toString('hex');
-  let faculty: any | undefined = undefined;
+  const verifyToken = crypto.randomBytes(48).toString('hex');
 
-  DBUtil.findFacultyById(_id)
-    .then(f => {
-      if (f) {
-        faculty = f.toJSON();
-        return DBUtil.updateFacultyById(_id, {
-          verifyToken: token,
-        });
-      } else {
-        return Promise.reject({
-          message: 'Specified faculty does not exist',
-        });
-      }
-    })
+  DBUtil.updateFacultyById(req.params._id, {
+    verifyToken,
+  })
     .then(updatedFaculty => {
       APIUtil.successResponse(info, updatedFaculty, res);
       Mailer.send(MailType.verify, {
-        to: faculty.email,
+        to: updatedFaculty.get('email'),
         extra: {
-          name: `Dr. ${faculty.firstName} ${faculty.lastName}`,
-          token,
+          name: `Dr. ${updatedFaculty.get('firstName')} ${updatedFaculty.get('lastName')}`,
+          token: updatedFaculty.get('verifyToken'),
         }
       })
     })

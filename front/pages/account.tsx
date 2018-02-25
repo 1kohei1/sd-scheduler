@@ -69,6 +69,7 @@ class Account extends React.Component<AccountProps, AccountState> {
       }
       if (this.state.user) {
         this.setState({
+          err: '',
           updating: true,
         });
         if (this.state.user && values.email !== this.state.user.email) {
@@ -79,7 +80,8 @@ class Account extends React.Component<AccountProps, AccountState> {
           // By calling this, all components using login user gets updated user.
           UserUtil.updateUser();
           message.success('Your account information is successfully updated');
-          if (values.hasOwnProperty('emailVerified') && !values.emailVerified) {
+          // Show this message only when email changes
+          if (values.emailVerified === false) {
             message.success('Verification email is queued in the system');
           }
         } catch (err) {

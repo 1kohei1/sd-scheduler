@@ -4158,6 +4158,10 @@ mongoose-legacy-pluralize@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/mongoose-legacy-pluralize/-/mongoose-legacy-pluralize-1.0.1.tgz#31ae25db45c30f1448c0f93f52769e903367c701"
 
+mongoose-lifecycle@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/mongoose-lifecycle/-/mongoose-lifecycle-1.0.0.tgz#3bac3f3924a845d147784fc6558dee900b0151e2"
+
 mongoose-unique-validator@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/mongoose-unique-validator/-/mongoose-unique-validator-2.0.0.tgz#76e406cd0b322bbbb79496e2b7425d885ce661c4"
