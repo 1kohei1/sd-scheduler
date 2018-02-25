@@ -14,6 +14,7 @@ import Loading from './Loading';
 import UserUtil from '../utils/UserUtil';
 import Api from '../utils/Api';
 import AvailableSlot from '../models/AvailableSlot';
+import PresentationDate from '../models/PresentationDate';
 
 export interface MyCalendarProps {
   semester: Semester;
@@ -24,23 +25,26 @@ interface MyCalendarState {
   errors: List<string>;
   presentations: List<Presentation>;
   availableSlots: List<TimeSlot>;
+  presentationDates: PresentationDate[];
 }
 
 export default class MyCalendar extends React.Component<MyCalendarProps, MyCalendarState> {
-  availableSpotId: string | undefined = undefined;
-  presentationDates: TimeSlot[];
+  availableSlotId: string | undefined = undefined;
+  dataFetchStatus = {
+    presentationDates: false,
+    availableSlots: false,
+    presentations: false,
+  }
 
   constructor(props: MyCalendarProps) {
     super(props);
-
-    // Semester.presentationDates are in string format. So convert them to moment.
-    this.presentationDates = props.semester.presentationDates.map(DatetimeUtil.convertToTimeSlot);
 
     this.state = {
       loading: true,
       errors: List<string>(),
       presentations: List<Presentation>(),
       availableSlots: List<TimeSlot>(),
+      presentationDates: [],
     };
 
     this.onAvailableSlotChange = this.onAvailableSlotChange.bind(this);
@@ -49,8 +53,25 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
   }
 
   componentDidMount() {
+    this.getPresentationDates();
     this.getAvailableSlot();
     this.getPresentations();
+  }
+
+  private async getPresentationDates() {
+    try {
+      const presentationDates = await Api.getPresentationDates(`semester=${this.props.semester._id}`);
+      this.setState({
+        presentationDates,
+      });
+      this.onDataFetched('presentationDates');
+    } catch (err) {
+      this.setState((prevState: MyCalendarState, props: MyCalendarProps) => {
+        return {
+          errors: prevState.errors.push(err.message),
+        }
+      });
+    }
   }
 
   private async getAvailableSlot() {
@@ -74,7 +95,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
   }
 
   private onAvailableSlotGet(availableSlot: AvailableSlot) {
-    this.availableSpotId = availableSlot._id;
+    this.availableSlotId = availableSlot._id;
     let availableSlots = List<TimeSlot>();
 
     availableSlot.availableSlots.forEach(slot => {
@@ -83,12 +104,23 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
 
     this.setState({
       availableSlots,
-      loading: false,
     });
+    this.onDataFetched('availableSlots');
   }
 
   private async getPresentations() {
+    this.onDataFetched('presentations');
+  }
 
+  private onDataFetched(key: 'presentationDates' | 'availableSlots' | 'presentations') {
+    this.dataFetchStatus[key] = true;
+    const isAllFetched = Object.values(this.dataFetchStatus).filter(isDone => isDone).length === Object.keys(this.dataFetchStatus).length;
+
+    if (isAllFetched) {
+      this.setState({
+        loading: false,
+      })
+    }
   }
 
   onAvailableSlotChange(updatedSlot: TimeSlot, isDelete: boolean, updateDB: boolean = false) {
@@ -137,8 +169,8 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
 
   private async updateDBAvailableSlot(newAvailableSlots: TimeSlot[]) {
     try {
-      if (this.availableSpotId) {
-        await Api.updateAvailableSlot(this.availableSpotId, {
+      if (this.availableSlotId) {
+        await Api.updateAvailableSlot(this.availableSlotId, {
           availableSlots: newAvailableSlots
         });
         message.success('Successfully updated your available time!');
@@ -156,30 +188,40 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
     if (this.state.loading) {
       return <Loading />
     }
-    if (this.props.semester.presentationDates && this.props.semester.presentationDates.length > 0) {
-      return (
-        <div>
-          <p className="ko-description">
-            You can put your available time and check assigned presentations.
-            <Button
-              icon="question-circle"
-              href={KoCalendarConstants.helpVideoLink}
-              target="blank"
-            >
-              Check how to put available time
-            </Button>
-          </p>
-          <KoCalendar
-            presentationDates={this.presentationDates}
-            presentations={this.state.presentations.toArray()}
-            availableSlots={this.state.availableSlots.toArray()}
-            onAvailableSlotChange={this.onAvailableSlotChange}
-          />
-        </div>
-      )
-    } else {
-      return <div>Presentation dates are not defined. Once the date is set, the system sends email. Please check later!</div>
-    }
+
+    return (
+      <div>
+        <p className="ko-description">
+          You can put your available time and check assigned presentations.
+          <Button
+            icon="question-circle"
+            href={KoCalendarConstants.helpVideoLink}
+            target="blank"
+          >
+            Check how to put available time
+        </Button>
+        </p>
+        {this.state.presentationDates.map(presentationDate => {
+          const dates = presentationDate.dates.map(DatetimeUtil.convertToTimeSlot);
+
+          return (
+            <div key={presentationDate._id}>
+              <h3>Class of Dr. {presentationDate.admin.firstName} {presentationDate.admin.lastName}</h3>
+              {dates.length === 0 ? (
+                <div>Presentation dates are not defined. Once the date is set, the system sends email. Please check later!</div>
+              ) : (
+                  <KoCalendar
+                    presentationDates={dates}
+                    presentations={this.state.presentations.toArray()}
+                    availableSlots={this.state.availableSlots.toArray()}
+                    onAvailableSlotChange={this.onAvailableSlotChange}
+                  />
+                )}
+            </div>
+          )
+        })}
+      </div>
+    )
   }
 
   alert(message: string, index: number) {
@@ -201,30 +243,13 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
   render() {
     return (
       <div className="ko-mycalendar-wrapper">
+        <div className="errors">
+          {this.state.errors.map(this.alert)}
+        </div>
         <div>
           <h1>My Calendar</h1>
           {this.calendar()}
         </div>
-        <div className="errors">
-          {this.state.errors.map(this.alert)}
-        </div>
-        <style jsx>{`
-          .ko-mycalendar-wrapper {
-            display: flex;
-            justify-content: row;
-          }
-          .ko-mycalendar-wrapper .errors {
-            flex-grow: 1;
-            margin-left: 16px;
-          }
-          .ko-mycalendar-wrapper .ko-description {
-            display: flex;
-            width: ${ `${KoCalendarConstants.rulerColumnWidthNum + KoCalendarConstants.dayColumnWidthNum * this.props.semester.presentationDates.length}px`};
-            align-items: baseline;
-            justify-content: space-between;
-          }
-        `}
-        </style>
       </div>
     );
   }
