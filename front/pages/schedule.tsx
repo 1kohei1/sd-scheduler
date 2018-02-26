@@ -15,6 +15,8 @@ import Loading from '../components/Loading';
 import SchedulingDate from '../components/SchedulingDate';
 import DatetimeUtil from '../utils/DatetimeUtil';
 import TimeSlot from '../models/TimeSlot';
+import PresentationDate from '../models/PresentationDate';
+import SelectAdmin from '../components/SelectAdmin';
 
 interface ScheduleProps {
   facultiesInSemester: Faculty[];
@@ -25,6 +27,8 @@ interface ScheduleState {
   schedulingPresentation: Presentation,
   availableSlots: AvailableSlot[],
   presentations: Presentation[],
+  adminFaculty: Faculty | undefined;
+  presentationDate: PresentationDate | undefined;
   loading: boolean;
   current: number;
   err: string;
@@ -64,6 +68,8 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     this.state = {
       schedulingPresentation: newPresentation(this.props.semester._id),
       availableSlots: [],
+      adminFaculty: undefined,
+      presentationDate: undefined,
       presentations: [],
       current: 0,
       loading: true,
@@ -72,13 +78,116 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
 
     this.content = this.content.bind(this);
     this.changeCurrent = this.changeCurrent.bind(this);
+
+    // Step 1
+    this.onAdminSelected = this.onAdminSelected.bind(this);
+
+    // Step 2
     this.presentationSlotPicked = this.presentationSlotPicked.bind(this);
     this.clearPresentationSlot = this.clearPresentationSlot.bind(this);
   }
 
-  componentDidMount() {
-    this.getAvailableSlots();
-    this.getPresentations();
+  content() {
+    if (this.state.current === 0) {
+      return (
+        <SelectAdmin
+          faculties={this.props.facultiesInSemester}
+          adminFaculty={this.state.adminFaculty}
+          onAdminSelected={this.onAdminSelected}
+        />
+      )
+    } else if (this.state.current === 1) {
+      let presentations: any = List(this.state.presentations);
+      presentations = presentations.push(this.state.schedulingPresentation);
+
+      return (
+        <div>
+          <SchedulingCalendar
+            semester={this.props.semester}
+            faculties={this.props.facultiesInSemester}
+            availableSlots={this.state.availableSlots}
+            presentations={presentations.toArray()}
+            loading={this.state.loading}
+            presentationSlotPicked={this.presentationSlotPicked}
+          />
+          <SchedulingDate
+            presentation={this.state.schedulingPresentation}
+            faculties={this.props.facultiesInSemester}
+            clearPresentationSlot={this.clearPresentationSlot}
+          />
+        </div>
+      )
+    }
+  }
+
+  changeCurrent(diff: number) {
+    if (diff > 0) {
+      const msg = this.validateMessage();
+      if (msg) {
+        message.error(msg);
+        return;
+      }
+    }
+
+    this.setState((prevState: ScheduleState, props: ScheduleProps) => {
+      const newCurrent = prevState.current + diff;
+
+      const newState: any = {};
+      newState.current = newCurrent;
+
+      // Only entering step 2, fetch available slots and presentations
+      if (diff > 0 && newCurrent === 1) {
+        newState.loading = true;
+        this.onPickStepSelected();
+      }
+
+      return newState;
+    });
+  }
+
+  validateMessage() {
+    if (this.state.current === 1) {
+      const numFaculties = this.state.schedulingPresentation.faculties.length;
+      const isAdminSelected = this.state.schedulingPresentation.faculties.filter(fid => {
+        const faculty = this.props.facultiesInSemester.find(faculty => faculty._id === fid);
+        return faculty && faculty.isAdmin;
+      })
+        .length > 0;
+
+      if (numFaculties < 4 || !isAdminSelected) {
+        return 'Please select 4 faculties including your senior design 2 faculty';
+      }
+    }
+    return undefined;
+  }
+
+  /**
+   * Step 1
+   */
+
+  onAdminSelected(faculty: Faculty) {
+    this.setState({
+      adminFaculty: faculty,
+    });
+  }
+
+  /**
+   * Step 2
+   */
+
+  private async onPickStepSelected() {
+    await Promise.all([
+      this.getPresentationDate(),
+      this.getAvailableSlots(),
+      this.getPresentations(),
+    ]);
+    this.setState({
+      loading: false,
+    })
+  }
+
+  private async getPresentationDate() {
+
   }
 
   private async getAvailableSlots() {
@@ -104,64 +213,6 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     // Get presentations
     const query = `semester=${this.props.semester._id}`;
   }
-
-  content() {
-    if (this.state.current === 1) {
-      let presentations: any = List(this.state.presentations);
-      presentations = presentations.push(this.state.schedulingPresentation);
-
-      return (
-        <div>
-          <SchedulingCalendar
-            semester={this.props.semester}
-            faculties={this.props.facultiesInSemester}
-            availableSlots={this.state.availableSlots}
-            presentations={presentations.toArray()}
-            loading={this.state.loading}
-            presentationSlotPicked={this.presentationSlotPicked}
-          />
-          <SchedulingDate
-            presentation={this.state.schedulingPresentation}
-            faculties={this.props.facultiesInSemester}
-            clearPresentationSlot={this.clearPresentationSlot}
-          />
-        </div>
-      )
-    }
-  }
-
-  changeCurrent(diff: number) {
-    const msg = this.validateMessage();
-    if (msg) {
-      message.error(msg);
-    } else {
-      this.setState((prevState: ScheduleState, props: ScheduleProps) => {
-        return {
-          current: prevState.current + diff,
-        }
-      });
-    }
-  }
-
-  validateMessage() {
-    if (this.state.current === 0) {
-      const numFaculties = this.state.schedulingPresentation.faculties.length;
-      const isAdminSelected = this.state.schedulingPresentation.faculties.filter(fid => {
-        const faculty = this.props.facultiesInSemester.find(faculty => faculty._id === fid);
-        return faculty && faculty.isAdmin;
-      })
-        .length > 0;
-
-      if (numFaculties < 4 || !isAdminSelected) {
-        return 'Please select 4 faculties including your senior design 2 faculty';
-      }
-    }
-    return undefined;
-  }
-
-  /**
-   * Step 1
-   */
 
   presentationSlotPicked(presentationSlot: TimeSlot, faculty: Faculty) {
     const { _id } = faculty;
@@ -276,6 +327,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
             margin: 16px 0;
           }
           .steps-action {
+            margin-top: 16px;
             border-top: 1px solid #eee;
             display: flex;
             padding: 16px 0;

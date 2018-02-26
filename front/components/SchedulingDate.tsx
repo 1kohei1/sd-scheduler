@@ -110,7 +110,6 @@ export default class SchedulingDate extends React.Component<SchedulingDateProps,
         </p>
         <style jsx>{`
           .scheduling-date {
-            margin: 16px 0;
             padding: 16px;
             background-color: #fbfbfb;
             border: 1px solid #d9d9d9;

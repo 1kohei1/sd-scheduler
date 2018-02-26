@@ -45,33 +45,33 @@ export default class SchedulingCalendar extends React.Component<SchedulingCalend
 
   render() {
     return (
-      <Tabs>
-      {this.props.semester.presentationDates.map(date => {
-        const presentationDate = DatetimeUtil.convertToTimeSlot(date);
-        const facultiesToDisplay = this.props.faculties.filter(f => this.state.checkedFaculties.indexOf(f._id) >= 0);
+      <Tabs style={{ marginBottom: '16px' }}>
+        {this.props.semester.presentationDates.map(date => {
+          const presentationDate = DatetimeUtil.convertToTimeSlot(date);
+          const facultiesToDisplay = this.props.faculties.filter(f => this.state.checkedFaculties.indexOf(f._id) >= 0);
 
-        return (
-          <Tabs.TabPane
-            key={date._id}
-            tab={DatetimeUtil.formatDate(presentationDate.start, DateConstants.dateFormat)}
-          >
-            {this.props.loading ? (
-              <Loading />
-            ) : (
-              <CalendarBody
-                presentationDate={presentationDate}
-                checkedFaculties={this.state.checkedFaculties}
-                faculties={this.props.faculties}
-                availableSlots={this.props.availableSlots}
-                presentations={this.props.presentations}
-                updateCheckedFaculties={this.updateCheckedFaculties}
-                presentationSlotPicked={this.props.presentationSlotPicked}
-              />
-            )}
-          </Tabs.TabPane>
-        )
-      })}
-    </Tabs>
+          return (
+            <Tabs.TabPane
+              key={date._id}
+              tab={DatetimeUtil.formatDate(presentationDate.start, DateConstants.dateFormat)}
+            >
+              {this.props.loading ? (
+                <Loading />
+              ) : (
+                  <CalendarBody
+                    presentationDate={presentationDate}
+                    checkedFaculties={this.state.checkedFaculties}
+                    faculties={this.props.faculties}
+                    availableSlots={this.props.availableSlots}
+                    presentations={this.props.presentations}
+                    updateCheckedFaculties={this.updateCheckedFaculties}
+                    presentationSlotPicked={this.props.presentationSlotPicked}
+                  />
+                )}
+            </Tabs.TabPane>
+          )
+        })}
+      </Tabs>
     );
   }
 }
