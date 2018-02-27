@@ -16,10 +16,12 @@ import { DateConstants } from '../models/Constants';
 import Api from '../utils/Api';
 import UserUtil from '../utils/UserUtil';
 import SemesterUtil from '../utils/SemesterUtil';
+import Faculty from '../models/Faculty';
 
 export interface DashboardProps {
   url: InitialProps;
   semesters: Semester[];
+  user: Faculty;
 }
 
 interface DashboardState {
@@ -30,11 +32,12 @@ interface DashboardState {
 
 export default class Dashboard extends React.Component<DashboardProps, DashboardState> {
   static async getInitialProps(context: InitialProps) {
-    await UserUtil.checkAuthentication(context);
+    const user = await UserUtil.checkAuthentication(context);
 
     const semesters = await Api.getSemesters();
 
     return {
+      user,
       semesters,
     }
   }
@@ -114,6 +117,7 @@ export default class Dashboard extends React.Component<DashboardProps, Dashboard
               semesters={this.props.semesters}
               openKeys={this.state.openKeys.toArray()}
               selectedKeys={[`${this.state.semester}_${this.state.menu}`]}
+              user={this.props.user}
               onSubMenuTitleClick={this.onSubMenuTitleClick}
             />
           </Layout.Sider>

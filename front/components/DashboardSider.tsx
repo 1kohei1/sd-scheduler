@@ -2,14 +2,16 @@ import * as React from 'react';
 import Router from 'next/router';
 import { Menu } from 'antd';
 import Link from 'next/link'
+import { ClickParam } from 'antd/lib/menu';
 
 import { Semester, Menus } from '../models/Semester';
-import { ClickParam } from 'antd/lib/menu';
+import Faculty from '../models/Faculty';
 
 export interface DashboardSiderProps {
   semesters: Semester[];
   openKeys: string[];
   selectedKeys: string[];
+  user: Faculty;
   onSubMenuTitleClick: (param: ClickParam) => void;
 }
 
@@ -32,7 +34,7 @@ export default class DashboardSider extends React.Component<DashboardSiderProps,
             title={semester.displayName}
             onTitleClick={this.props.onSubMenuTitleClick}
           >
-            {Menus.map(menu => (
+            {Menus.map(menu => menu.shouldDisplay(this.props.user) ? (
               <Menu.Item key={`${semester.key}_${menu.key}`}>
                 <Link
                   as={`/dashboard/${semester.key}/${menu.key}`}
@@ -41,8 +43,7 @@ export default class DashboardSider extends React.Component<DashboardSiderProps,
                   <a>{menu.displayName}</a>
                 </Link>
               </Menu.Item>
-
-            ))}
+            ) : null)}
           </Menu.SubMenu>
         ))}
 

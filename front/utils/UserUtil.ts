@@ -59,6 +59,8 @@ export default class UserUtil {
         query.asPath = context.asPath;
       }
       Api.redirect(context, '/login', query);
+    } else {
+      return user;
     }
   }
 
