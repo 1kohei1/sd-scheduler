@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Row, Col, Steps, Button, message } from 'antd';
+import { Row, Col, Steps, Button, Alert, message } from 'antd';
 import { Map, List } from 'immutable';
 import { Moment } from 'moment';
 
@@ -31,7 +31,7 @@ interface ScheduleState {
   presentationDate: PresentationDate | undefined;
   loading: boolean;
   current: number;
-  err: string;
+  errs: string[];
 }
 
 const columnLayout = {
@@ -72,8 +72,8 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       presentationDate: undefined,
       presentations: [],
       current: 0,
-      loading: true,
-      err: '',
+      loading: false,
+      errs: Array<string>(),
     };
 
     this.content = this.content.bind(this);
@@ -88,6 +88,9 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
   }
 
   content() {
+    if (this.state.loading) {
+      return <Loading />
+    }
     if (this.state.current === 0) {
       return (
         <SelectAdmin
@@ -103,11 +106,10 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       return (
         <div>
           <SchedulingCalendar
-            semester={this.props.semester}
+            presentationDate={this.state.presentationDate as PresentationDate}
             faculties={this.props.facultiesInSemester}
             availableSlots={this.state.availableSlots}
             presentations={presentations.toArray()}
-            loading={this.state.loading}
             presentationSlotPicked={this.presentationSlotPicked}
           />
           <SchedulingDate
@@ -146,7 +148,11 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
   }
 
   validateMessage() {
-    if (this.state.current === 1) {
+    if (this.state.current === 0) {
+      if (!this.state.adminFaculty) {
+        return 'Pleas select the faculty of your senior design';
+      }
+    } else if (this.state.current === 1) {
       const numFaculties = this.state.schedulingPresentation.faculties.length;
       const isAdminSelected = this.state.schedulingPresentation.faculties.filter(fid => {
         const faculty = this.props.facultiesInSemester.find(faculty => faculty._id === fid);
@@ -187,7 +193,28 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
   }
 
   private async getPresentationDate() {
+    let query = `semester=${this.props.semester._id}`;
+    if (this.state.adminFaculty) {
+      query += `&admin=${this.state.adminFaculty._id}`;
+    }
 
+    try {
+      const presentationDates = await Api.getPresentationDates(query);
+      const presentationDate = presentationDates[0];
+
+      this.setState({
+        presentationDate,
+      });
+    } catch (err) {
+      this.setState((prevState: ScheduleState, props: ScheduleProps) => {
+        let newErrs = List(prevState.errs);
+        newErrs = newErrs.push(err.message);
+
+        return {
+          errs: newErrs.toArray(),
+        }
+      })
+    }
   }
 
   private async getAvailableSlots() {
@@ -198,13 +225,16 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     try {
       const availableSlots = await Api.getAvailableSlots(query);
       this.setState({
-        loading: false,
         availableSlots,
       });
     } catch (err) {
-      this.setState({
-        err: err.message,
-        loading: false,
+      this.setState((prevState: ScheduleState, props: ScheduleProps) => {
+        let newErrs = List(prevState.errs);
+        newErrs = newErrs.push(err.message);
+
+        return {
+          errs: newErrs.toArray(),
+        }
       })
     }
   }
@@ -302,6 +332,9 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
               </Steps>
             </div>
             <div className="steps-content">
+              {this.state.errs.map((err, index) => (
+                <Alert type="error" message={err} key={index} />
+              ))}
               {this.content()}
             </div>
             <div className="steps-action">
