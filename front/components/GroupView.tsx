@@ -65,7 +65,7 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
         </p>
         <p className="ant-upload-text">Click or drag file to this area to import groups</p>
         <p className="ant-upload-hint" style={{ fontSize: '16px' }}>
-          <Icon type="info-circle" /> If the same group number already exists in the DB, the system overrides existing data with uploaded data.
+          Please download the sample import file to check the format.
         </p>
       </Upload.Dragger>
     ) : (
@@ -93,6 +93,11 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
     return (
       <div>
         <h1>Group</h1>
+        <p>
+          <Button href="https://docs.google.com/spreadsheets/d/1a9jLYpqexqwzc1CdgLayrknYEGNIi743DTOGakSoHK4/export?format=xlsx">
+            Download sample import file
+          </Button>
+        </p>
         {this.state.loading ? (
           <Loading />
         ) : this.content()}
