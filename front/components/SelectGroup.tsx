@@ -6,10 +6,12 @@ import Group from '../models/Group';
 
 export interface SelectGroupProps {
   groups: Group[];
+  selectedGroup: Group | undefined;
+  onGroupSelected: (groupId: string) => void;
+  onSendIdentityVerification: (email: string) => void;
 }
 
 interface SelectGroupState {
-  groupId: string;
   email: string;
 }
 
@@ -18,18 +20,10 @@ export default class SelectGroup extends React.Component<SelectGroupProps, Selec
     super(props);
 
     this.state = {
-      groupId: '',
       email: '',
     }
 
-    this.onGroupChange = this.onGroupChange.bind(this);
     this.onEmailChange = this.onEmailChange.bind(this);
-  }
-
-  onGroupChange(groupId: string) {
-    this.setState({
-      groupId,
-    });
   }
 
   onEmailChange(email: string) {
@@ -39,7 +33,7 @@ export default class SelectGroup extends React.Component<SelectGroupProps, Selec
   }
 
   render() {
-    const group = this.props.groups.find(group => group._id === this.state.groupId);
+    const group = this.props.selectedGroup;
 
     return (
       <FormLayout>
@@ -48,7 +42,7 @@ export default class SelectGroup extends React.Component<SelectGroupProps, Selec
             We have to verify you are member of the group.
             Please select your group.
             <Select
-              onChange={this.onGroupChange}
+              onChange={this.props.onGroupSelected}
               placeholder="Select your group"
             >
               {this.props.groups.map(group => (
@@ -83,11 +77,11 @@ export default class SelectGroup extends React.Component<SelectGroupProps, Selec
             <Button
               disabled={!this.state.email}
               type="primary"
+              onClick={e => this.props.onSendIdentityVerification(this.state.email)}
             >
               Send verification code
-           </Button>
+            </Button>
           </Form.Item>
-
         </Form>
       </FormLayout>
     );

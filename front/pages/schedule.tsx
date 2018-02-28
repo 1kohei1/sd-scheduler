@@ -31,10 +31,12 @@ interface ScheduleState {
   presentations: Presentation[],
   adminFaculty: Faculty | undefined;
   presentationDate: PresentationDate | undefined;
+  selectedGroup: Group | undefined;
   groups: Group[];
   loading: boolean;
   current: number;
   errs: string[];
+  identityVerified: boolean;
 }
 
 const columnLayout = {
@@ -74,10 +76,12 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       adminFaculty: undefined,
       presentationDate: undefined,
       presentations: Array<Presentation>(),
+      selectedGroup: undefined,
       groups: Array<Group>(),
       current: 0,
       loading: false,
       errs: Array<string>(),
+      identityVerified: false,
     };
 
     this.content = this.content.bind(this);
@@ -89,6 +93,10 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     // Step 2
     this.presentationSlotPicked = this.presentationSlotPicked.bind(this);
     this.clearPresentationSlot = this.clearPresentationSlot.bind(this);
+
+    // Step 3
+    this.onGroupSelected = this.onGroupSelected.bind(this);
+    this.onSendIdentityVerification = this.onSendIdentityVerification.bind(this);
   }
 
   content() {
@@ -127,6 +135,9 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       return (
         <SelectGroup
           groups={this.state.groups}
+          selectedGroup={this.state.selectedGroup}
+          onGroupSelected={this.onGroupSelected}
+          onSendIdentityVerification={this.onSendIdentityVerification}
         />
       )
     }
@@ -175,6 +186,13 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
 
       if (numFaculties < 4 || !isAdminSelected) {
         return 'Please select 4 faculties including your senior design 2 faculty';
+      }
+    } else if (this.state.current === 2) {
+      if (!this.state.selectedGroup) {
+        return 'Please select the group';
+      }
+      if (!this.state.identityVerified) {
+        return 'Please verify you are one of the group member';
       }
     }
     return undefined;
@@ -344,6 +362,18 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     }
   }
 
+  onGroupSelected(groupId: string) {
+    const group = this.state.groups.find(g => g._id === groupId);
+
+    this.setState({
+      selectedGroup: group,
+    });
+  }
+
+  onSendIdentityVerification(email: string) {
+    // Use email and group id to send verification email
+  }
+
   render() {
     return (
       <AppLayout>
@@ -355,10 +385,10 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
               <Steps
                 current={this.state.current}
               >
-                <Steps.Step title="Pick your SD 2 faculty" description="" />
-                <Steps.Step title="Pick time and faculties" description="from the calendar below" />
-                <Steps.Step title="Pick your group" description="from the list" />
-                <Steps.Step title="Confirm" description="your presentation" />
+                <Steps.Step title="Pick your SD 2 faculty" />
+                <Steps.Step title="Pick time and faculties" />
+                <Steps.Step title="Pick your group" />
+                <Steps.Step title="Fill group info" />
               </Steps>
             </div>
             <div className="steps-content">
@@ -378,6 +408,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
                 <Button
                   type="primary"
                   onClick={e => this.changeCurrent(1)}
+                  disabled={this.state.current === 3}
                 >
                   Next
                 </Button>
