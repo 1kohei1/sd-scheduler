@@ -17,6 +17,8 @@ import DatetimeUtil from '../utils/DatetimeUtil';
 import TimeSlot from '../models/TimeSlot';
 import PresentationDate from '../models/PresentationDate';
 import SelectAdmin from '../components/SelectAdmin';
+import Group from '../models/Group';
+import SelectGroup from '../components/SelectGroup';
 
 interface ScheduleProps {
   facultiesInSemester: Faculty[];
@@ -29,6 +31,7 @@ interface ScheduleState {
   presentations: Presentation[],
   adminFaculty: Faculty | undefined;
   presentationDate: PresentationDate | undefined;
+  groups: Group[];
   loading: boolean;
   current: number;
   errs: string[];
@@ -70,7 +73,8 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       availableSlots: [],
       adminFaculty: undefined,
       presentationDate: undefined,
-      presentations: [],
+      presentations: Array<Presentation>(),
+      groups: Array<Group>(),
       current: 0,
       loading: false,
       errs: Array<string>(),
@@ -119,6 +123,12 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
           />
         </div>
       )
+    } else if (this.state.current === 2) {
+      return (
+        <SelectGroup
+          groups={this.state.groups}
+        />
+      )
     }
   }
 
@@ -140,7 +150,10 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       // Only entering step 2, fetch available slots and presentations
       if (diff > 0 && newCurrent === 1) {
         newState.loading = true;
-        this.onPickStepSelected();
+        this.onScheduleTime();
+      } else if (diff > 0 && newCurrent === 2) {
+        newState.loading = true;
+        this.onGroups();
       }
 
       return newState;
@@ -167,6 +180,17 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     return undefined;
   }
 
+  onError(err: any) {
+    this.setState((prevState: ScheduleState, props: ScheduleProps) => {
+      let newErrs = List(prevState.errs);
+      newErrs = newErrs.push(err.message);
+
+      return {
+        errs: newErrs.toArray(),
+      }
+    })
+  }
+
   /**
    * Step 1
    */
@@ -181,7 +205,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
    * Step 2
    */
 
-  private async onPickStepSelected() {
+  private async onScheduleTime() {
     await Promise.all([
       this.getPresentationDate(),
       this.getAvailableSlots(),
@@ -206,14 +230,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
         presentationDate,
       });
     } catch (err) {
-      this.setState((prevState: ScheduleState, props: ScheduleProps) => {
-        let newErrs = List(prevState.errs);
-        newErrs = newErrs.push(err.message);
-
-        return {
-          errs: newErrs.toArray(),
-        }
-      })
+      this.onError(err);
     }
   }
 
@@ -228,14 +245,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
         availableSlots,
       });
     } catch (err) {
-      this.setState((prevState: ScheduleState, props: ScheduleProps) => {
-        let newErrs = List(prevState.errs);
-        newErrs = newErrs.push(err.message);
-
-        return {
-          errs: newErrs.toArray(),
-        }
-      })
+      this.onError(err);
     }
   }
 
@@ -312,6 +322,26 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
 
       return newState;
     })
+  }
+
+  /**
+   * Step 3
+   */
+
+  async onGroups() {
+    if (this.state.adminFaculty) {
+      const query = `semester=${this.props.semester._id}&adminFaculty=${this.state.adminFaculty._id}`;
+
+      try {
+        const groups = await Api.getGroups(query);
+        this.setState({
+          groups,
+          loading: false,
+        });
+      } catch (err) {
+        this.onError(err);
+      }
+    }
   }
 
   render() {
