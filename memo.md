@@ -96,6 +96,18 @@ Delete presentation:
 2. Student enter one of the group member's email
 3. System sends email and confirm the action
 
+Import groups
+
+The flow of importing groups is not optimized. Let's do simple minimum flow and update it step by step
+
+1. Professor sends xlsx file to me (karai@knights.ucf.edu)
+2. I modify these data and import them to the system
+3. Admin faculty can see the list of groups, but they cannot modify
+4. When they need to make change, they first have to let me know and I update them.
+
+For step 4, it's trouble some for faculties, but making change to the group info should not happen often. So, current flow is OK based on this assumption.
+If this assumption is wrong, change the flow accordingly.
+
 ### Concerns about multiple admin professors
 
 What if the same presentation dates, but different locations?
