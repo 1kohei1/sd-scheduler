@@ -17,6 +17,7 @@ import Api from '../utils/Api';
 import UserUtil from '../utils/UserUtil';
 import SemesterUtil from '../utils/SemesterUtil';
 import Faculty from '../models/Faculty';
+import GroupView from '../components/GroupView';
 
 export interface DashboardProps {
   url: InitialProps;
@@ -111,6 +112,12 @@ export default class Dashboard extends React.Component<DashboardProps, Dashboard
           semester={semester}
         />
       )
+    } else if (menu === 'group') {
+      return (
+        <GroupView
+          user={this.props.user}
+          semester={semester}
+        />)
     } else {
       return <div>Unknow menu is selected</div>
     }
