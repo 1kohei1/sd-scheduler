@@ -4,7 +4,6 @@ const GroupSchema = new Schema({
   projectName: {
     type: String,
     default: '',
-    required: true,
   },
   semester: {
     type: Schema.Types.ObjectId,
@@ -24,7 +23,6 @@ const GroupSchema = new Schema({
   sponsorName: {
     type: String,
     default: '',
-    required: true,
   },
   groupNumber: {
     type: Number,

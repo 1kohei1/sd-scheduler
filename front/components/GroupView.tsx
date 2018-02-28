@@ -36,7 +36,7 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
   }
 
   private async getGroups() {
-    const query = `semester=${this.props.semester._id}&admin=${this.props.user._id}`;
+    const query = `semester=${this.props.semester._id}&adminFaculty=${this.props.user._id}`;
     const groups = await Api.getGroups(query) as Group[];
 
     this.setState({

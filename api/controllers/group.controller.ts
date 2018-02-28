@@ -90,6 +90,7 @@ module.exports.createGroup = (req: MyRequest, res: Response) => {
       members,
       adminFaculty,
       sponsors: [],
+      groupNumber: groupData['Group number'],
     }
 
     return DBUtil.createGroup(body);

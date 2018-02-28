@@ -103,6 +103,7 @@ export default class Admin extends React.Component<AdminProps, AdminState> {
       name: 'groups',
       action: '/api/groups',
       withCredentials: true,
+      disabled: !this.state.selectedSemesterId || !this.state.selectedFacultyId,
       data: {
         semester: this.state.selectedSemesterId,
         adminFaculty: this.state.selectedFacultyId,
