@@ -63,15 +63,18 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
 
   content() {
     const control = this.state.groups.length === 0 ? (
-      <Upload.Dragger {...this.draggerProps()}>
-        <p className="ant-upload-drag-icon">
-          <Icon type="inbox" />
-        </p>
-        <p className="ant-upload-text">Click or drag file to this area to import groups</p>
-        <p className="ant-upload-hint" style={{ fontSize: '16px' }}>
-          Please download the sample import file to check the format.
-        </p>
-      </Upload.Dragger>
+      // <Upload.Dragger {...this.draggerProps()}>
+      //   <p className="ant-upload-drag-icon">
+      //     <Icon type="inbox" />
+      //   </p>
+      //   <p className="ant-upload-text">Click or drag file to this area to import groups</p>
+      //   <p className="ant-upload-hint" style={{ fontSize: '16px' }}>
+      //     Please download the sample import file to check the format.
+      //   </p>
+      // </Upload.Dragger>
+      <div>
+        No groups are found in your class. Please send your group spreadsheet to tobecomebig@gmail.com
+      </div>
     ) : (
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <Button
