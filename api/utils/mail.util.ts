@@ -51,10 +51,10 @@ export default class Mailer {
 
     return p
       .then((result: any) => {
-        console.log(`Email: ${key}. Accepted: ${result.accepted.join(', ')} ${result.rejected.length > 0 ? `Rejected: ${result.rejected.join(', ')}` : ''}`);
+        console.log(`Email: ${key}. option: ${option}. Accepted: ${result.accepted.join(', ')} ${result.rejected.length > 0 ? `Rejected: ${result.rejected.join(', ')}` : ''}`);
       })
       .catch((err: any) => {
-        console.log(`Error:Email: ${key}`);
+        console.log(`Error:Email: ${key}. option: ${option}`);
         console.log(err);
       })
   }
