@@ -11,12 +11,13 @@ import { Semester } from '../models/Semester';
 import DatetimeUtil, { TimeSlotLikeObject } from '../utils/DatetimeUtil';
 import TimeSlot from '../models/TimeSlot';
 import Loading from './Loading';
-import UserUtil from '../utils/UserUtil';
 import Api from '../utils/Api';
 import AvailableSlot from '../models/AvailableSlot';
 import PresentationDate from '../models/PresentationDate';
+import Faculty from '../models/Faculty';
 
 export interface MyCalendarProps {
+  user: Faculty;
   semester: Semester;
 }
 
@@ -114,8 +115,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
 
   private async getAvailableSlot() {
     const semesterId = this.props.semester._id;
-    const loginUser = await UserUtil.getUser();
-    const facultyId = loginUser._id;
+    const facultyId = this.props.user._id;
 
     const availableSlots = await Api.getAvailableSlots(`semester=${semesterId}&faculty=${facultyId}`) as AvailableSlot[];
 

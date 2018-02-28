@@ -8,10 +8,10 @@ import Faculties from './Faculties';
 import { Semester } from '../models/Semester';
 import Api from '../utils/Api';
 import Faculty from '../models/Faculty';
-import UserUtil from '../utils/UserUtil';
 import InviteFaculty from './InviteFaculty';
 
 export interface OverviewProps {
+  user: Faculty;
   semester: Semester;
 }
 
@@ -26,13 +26,10 @@ interface OverviewState {
   facultiesEditing: boolean;
   facultiesUpdating: boolean;
   facultiesError: string;
-  user: Faculty | undefined;
   [key: string]: Semester | boolean | string | Faculty | undefined;
 }
 
 export default class Overview extends React.Component<OverviewProps, OverviewState> {
-  userUpdateKey = `Overview_${new Date().toISOString()}`;
-
   constructor(props: OverviewProps) {
     super(props);
 
@@ -47,29 +44,10 @@ export default class Overview extends React.Component<OverviewProps, OverviewSta
       facultiesEditing: false,
       facultiesUpdating: false,
       facultiesError: '',
-      user: undefined,
     };
-
-    UserUtil.registerOnUserUpdates(this.userUpdateKey, this.setUser.bind(this));
-    this.getUser();
 
     this.updateSemester = this.updateSemester.bind(this);
     this.toggleForm = this.toggleForm.bind(this);
-  }
-
-  private async getUser() {
-    const user = await UserUtil.getUser();
-    this.setUser(user);
-  }
-
-  private setUser(user: Faculty | undefined) {
-    this.setState({
-      user,
-    })
-  }
-
-  componentWillUnmount() {
-    UserUtil.removeOnUserUpdates(this.userUpdateKey);
   }
 
   toggleForm(prop: 'presentationDates' | 'location' | 'faculties') {
@@ -124,10 +102,10 @@ export default class Overview extends React.Component<OverviewProps, OverviewSta
   }
 
   render() {
-    const isAdmin = this.state.user && this.state.user.isAdmin ? true : false;
+    const isAdmin = this.props.user && this.props.user.isAdmin ? true : false;
     let facultyId = '';
-    if (this.state.user) {
-      facultyId = this.state.user._id;
+    if (this.props.user) {
+      facultyId = this.props.user._id;
     }
 
     return (
