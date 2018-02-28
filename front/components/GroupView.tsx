@@ -51,9 +51,13 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
 
   draggerProps() {
     return {
-      name: 'group_data',
+      name: 'groups',
       action: '/api/groups',
       withCredentials: true,
+      data: {
+        semester: this.props.semester._id,
+        adminFaculty: this.props.user._id,
+      },
     }
   }
 

@@ -1,4 +1,6 @@
 import { Application, Request, Response } from 'express';
+const multer = require('multer');
+const upload = multer()
 
 const groupController = require('../controllers/group.controller');
 import APIUtil from '../utils/api.util';
@@ -11,6 +13,9 @@ module.exports = (server: Application) => {
 
   server.post(
     '/api/groups',
+    APIUtil.isAuthenticated,
+    APIUtil.isAuthorized,
+    upload.single('groups'),
     groupController.createGroup,
   )
 }

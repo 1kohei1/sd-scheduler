@@ -3,6 +3,7 @@ import { Model, model, Schema } from 'mongoose';
 const GroupSchema = new Schema({
   projectName: {
     type: String,
+    default: '',
     required: true,
   },
   semester: {
@@ -22,6 +23,7 @@ const GroupSchema = new Schema({
   }],
   sponsorName: {
     type: String,
+    default: '',
     required: true,
   },
   groupNumber: {
@@ -31,6 +33,13 @@ const GroupSchema = new Schema({
   adminFaculty: {
     type: Schema.Types.ObjectId,
     required: true,
+  },
+  authenticationToken: {
+    type: String,
+    default: '',
+  },
+  authenticationTokenExpireAt: {
+    type: Date,
   },
   created_at: Date,
   updated_at: Date,

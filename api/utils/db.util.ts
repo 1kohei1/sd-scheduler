@@ -96,7 +96,14 @@ export default class DBUtil {
    */
 
   static findGroups(query: object = {}) {
-    return Group.find(query);
+    return Group.find(query).sort({
+      'groupNumber': 'asc',
+    });
+  }
+
+  static createGroup(body: object) {
+    const newGroup = new Group(body);
+    return newGroup.save();
   }
 
   /**
