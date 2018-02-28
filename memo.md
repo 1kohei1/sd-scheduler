@@ -69,6 +69,7 @@ TODO:
 - [ ] Support faculties to be displayed in EE/CS schedule (v3)
 - [ ] Check sentences of no concecutive presentations in the calendar
 - [ ] Improve the group import process. Thinking admin faculty gives me the group spreadsheet and I modify them to the format I specify. (v3)
+- [ ] Admin faculties can send spreadsheet of groups from groups page
 
 NOTES:
 
