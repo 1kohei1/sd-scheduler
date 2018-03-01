@@ -18,9 +18,9 @@ interface VerifyState {
 }
 
 export default class Verify extends React.Component<VerifyProps, any> {
-  static async getInitialProps(props: InitialProps) {
+  static async getInitialProps(context: InitialProps) {
     try {
-      const faculties = await Api.getFaculties(`verifyToken=${props.query.token}`);
+      const faculties = await Api.getFaculties(`verifyToken=${context.query.token}`);
 
       if (!faculties || faculties.length === 0) {
         return {

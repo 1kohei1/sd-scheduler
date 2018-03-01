@@ -12,7 +12,7 @@ interface IndexState {
 }
 
 export default class Index extends React.Component<Props, IndexState> {
-  static async getInitialProps(props: InitialProps) {
+  static async getInitialProps(context: InitialProps) {
     return {};
   }
 

@@ -54,7 +54,7 @@ const columnLayout = {
 };
 
 export default class Schedule extends React.Component<ScheduleProps, ScheduleState> {
-  static async getInitialProps(props: InitialProps) {
+  static async getInitialProps(context: InitialProps) {
     const semesters: Semester[] = await Api.getSemesters();
     const semester = semesters[0];
 
