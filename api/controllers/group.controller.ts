@@ -115,10 +115,41 @@ module.exports.verifyAuthenticationToken = (req: Request, res: Response) => {
       authenticationToken: req.params.authenticationToken,
     }
   };
- 
-  // If success, return true
-  // If group is not found, return false
-  // If token expires, return string
+
+  const query = {
+    authenticationToken: req.params.authenticationToken,
+  }
+
+  DBUtil.findGroups(query)
+    .then(groups => {
+      if (groups.length === 0) {
+        info.debugInfo.message = 'Invalid group token';
+        APIUtil.errorResponse(info, '', {}, res);
+      } else {
+        if (groups.length > 1) {
+          console.log('Groups with duplicate token is found');
+        }
+        const group = groups[0];
+        if (new Date().valueOf() < group.get('authenticationTokenExpireAt').valueOf()) {
+          info.debugInfo.message = 'Token expired';
+          APIUtil.errorResponse(info, 'Token expired', {}, res);
+        } else {
+          return DBUtil.updateGroup(group.get('_id'), {
+            authenticationToken: '',
+            authenticationTokenExpireAt: null,
+          })
+        }
+      }
+    })
+    .then(updatedGroup => {
+      APIUtil.successResponse(info, true, res);
+
+      // Send socket.io event with authenticationToken
+    })
+    .catch(err => {
+      info.debugInfo.message = err.message;
+      APIUtil.errorResponse(info, err.message, {}, res);
+    })
 }
 
 module.exports.verifyAuthentication = (req: Request, res: Response) => {

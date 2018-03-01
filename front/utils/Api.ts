@@ -104,6 +104,10 @@ export default class Api {
     return await Api.makeRequest(RequestMethod.POST, `/api/groups/${_id}/verify`, body);
   }
 
+  static async verifyGroupAuthenticationToken(authenticationToken: string) {
+    return await Api.makeRequest(RequestMethod.POST, `/api/groups/verify/${authenticationToken}`);
+  }
+
   /**
    * PresentationDate
    */

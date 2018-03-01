@@ -15,18 +15,18 @@ export default class Groups extends React.Component<GroupsProps, any> {
   static async getInitialProps(context: InitialProps) {
     const { authenticationToken } = context.query;
 
-    console.log(authenticationToken);
-
-    if (authenticationToken) {
-
-    } else {
-      Api.redirect(context, '/');
+    try {
+      await Api.verifyGroupAuthenticationToken(authenticationToken);
+      return {
+        isVerified: true,
+        message: '',
+      }
+    } catch (err) {
+      return {
+        isVerified: false,
+        message: err.message,
+      }
     }
-
-    return {
-      isVerified: true,
-      message: '',
-    };
   }
 
   render() {
