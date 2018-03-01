@@ -26,6 +26,14 @@ export default class SelectGroup extends React.Component<SelectGroupProps, Selec
     this.onEmailChange = this.onEmailChange.bind(this);
   }
 
+  componentWillReceiveProps(nextProps: SelectGroupProps) {
+    if (this.props.selectedGroup !== nextProps.selectedGroup) {
+      this.setState({
+        email: '',
+      })
+    }
+  }
+
   onEmailChange(email: string) {
     this.setState({
       email,
@@ -62,11 +70,12 @@ export default class SelectGroup extends React.Component<SelectGroupProps, Selec
               disabled={!group}
               placeholder="Select email address"
               style={{ width: '100%' }}
+              value={this.state.email}
             >
               {group && group.members.map(member => (
                 <Select.Option
                   key={member._id}
-                  value={member._id}
+                  value={member.email}
                 >
                   {member.email}
                 </Select.Option>
