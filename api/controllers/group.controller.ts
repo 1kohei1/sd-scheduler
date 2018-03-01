@@ -108,6 +108,19 @@ module.exports.createGroup = (req: MyRequest, res: Response) => {
     })
 }
 
+module.exports.verifyAuthenticationToken = (req: Request, res: Response) => {
+  const info: any = {
+    key: APIUtil.key(req),
+    debugInfo: {
+      authenticationToken: req.params.authenticationToken,
+    }
+  };
+ 
+  // If success, return true
+  // If group is not found, return false
+  // If token expires, return string
+}
+
 module.exports.verifyAuthentication = (req: Request, res: Response) => {
   const info: any = {
     key: APIUtil.key(req),

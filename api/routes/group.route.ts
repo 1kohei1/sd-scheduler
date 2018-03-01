@@ -20,6 +20,11 @@ module.exports = (server: Application) => {
   )
 
   server.post(
+    '/api/groups/verify/:authenticationToken',
+    groupController.verifyAuthenticationToken,
+  )
+
+  server.post(
     '/api/groups/:_id/verify',
     groupController.verifyAuthentication,
   )

@@ -47,4 +47,20 @@ module.exports = (app: Server, server: Application) => {
       const actualPage = '/dashboard';
       app.render(req, res, actualPage, queryParams);
     });
+
+  server.get(
+    '/groups/',
+    (req: Request, res: Response) => {
+      res.redirect('/');
+    }
+  )
+
+  server.get(
+    '/groups/:authenticationToken',
+    (req: Request, res: Response) => {
+      app.render(req, res, '/groups', {
+        authenticationToken: req.params.authenticationToken,
+      })
+    }
+  )
 }
