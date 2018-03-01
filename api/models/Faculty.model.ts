@@ -1,6 +1,7 @@
 import { Model, model, Schema, Document } from 'mongoose';
 import * as crypto from 'crypto';
 const uniqueValidator = require('mongoose-unique-validator');
+const mongooseLifecycle = require('mongoose-lifecycle')
 
 import Mailer, { MailType } from '../utils/mail.util';
 
@@ -66,7 +67,7 @@ FacultySchema.pre('save', function (this: any, next) {
   next();
 });
 
-FacultySchema.plugin(require('mongoose-lifecycle'));
+FacultySchema.plugin(mongooseLifecycle);
 
 FacultySchema.plugin(uniqueValidator, {
   message: '{VALUE} is already registered',
