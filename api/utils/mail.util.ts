@@ -46,16 +46,18 @@ export default class Mailer {
       p = this.sendVerify(option);
     } else if (type === MailType.welcome) {
       p = this.sendWelcome(option);
+    } else if (type === MailType.verifystudentauthentication) {
+      p = this.sendVerifystudentauthentication(option);
     } else {
       return Promise.resolve();
     }
 
     return p
       .then((result: any) => {
-        console.log(`Email: ${key}. option: ${option}. Accepted: ${result.accepted.join(', ')} ${result.rejected.length > 0 ? `Rejected: ${result.rejected.join(', ')}` : ''}`);
+        console.log(`Email: ${key}. option: ${JSON.stringify(option)}. Accepted: ${result.accepted.join(', ')} ${result.rejected.length > 0 ? `Rejected: ${result.rejected.join(', ')}` : ''}`);
       })
       .catch((err: any) => {
-        console.log(`Error:Email: ${key}. option: ${option}`);
+        console.log(`Error:Email: ${key}. option: ${JSON.stringify(option)}`);
         console.log(err);
       })
   }
@@ -103,6 +105,18 @@ export default class Mailer {
       subject: `[SD Scheduler] Welcome to SD Scheduler!`,
       text: MailTemplate.welcomeText(option),
       html: MailTemplate.welcomeHtml(option),
+    }
+
+    return transporter.sendMail(mailOption);
+  }
+
+  private static sendVerifystudentauthentication(option: MailOption) {
+    const mailOption = {
+      from: MAIL_CONSTANTS.from,
+      to: option.to,
+      subject: `[SD Scheduler] Verify you belong to the group ${option.extra.groupNumber}`,
+      text: MailTemplate.verifystudentauthenticationText(option),
+      html: MailTemplate.verifystudentauthenticationHtml(option),
     }
 
     return transporter.sendMail(mailOption);
@@ -375,6 +389,37 @@ class MailTemplate {
     <br />
     Kohei<br />
     `);
+  }
+
+  static verifystudentauthenticationText(option: MailOption) {
+    return `
+    Hi,
+
+    We request to verify you are the member of the group ${option.extra.groupNumber}.<br />
+    Please click the link to verify: ${Util.siteUrl()}/groups/${option.extra.authenticationToken}
+
+    This link expires in 15 minutes. 
+
+    Sincerely,
+
+    SD Scheduler team
+    `
+  }
+
+  static verifystudentauthenticationHtml(option: MailOption) {
+    return MailTemplate.htmlTemplate(`
+      Hi<br />
+      <br />
+      We request to verify you are the member of the group ${option.extra.groupNumber}.<br />
+      Please click the link to verify: 
+      <a href="${Util.siteUrl()}/groups/${option.extra.authenticationToken}" target="_blank">${Util.siteUrl()}/groups/${option.extra.authenticationToken}</a><br />
+      <br />
+      This link expires in 15 minutes. <br />
+      <br />
+      Sincerely,<br />
+      <br />
+      SD Scheduler team<br />
+    `)
   }
 
   static htmlTemplate(content: string) {

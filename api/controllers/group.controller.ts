@@ -138,6 +138,7 @@ module.exports.verifyAuthentication = (req: Request, res: Response) => {
         to: email,
         extra: {
           authenticationToken,
+          groupNumber: updatedGroup.get('groupNumber'),
         }
       })
     })
@@ -145,8 +146,4 @@ module.exports.verifyAuthentication = (req: Request, res: Response) => {
       info.debugInfo.message = err.message;
       APIUtil.errorResponse(info, err.message, {}, res);
     })
-
-
-
-  APIUtil.successResponse(info, true, res);
 }

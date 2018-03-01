@@ -378,6 +378,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
           email,
         });
 
+        message.success('Email is queued. You will receive verification email in 5 minutes');
         // Open socket.io and listen on this token
       }
     } catch (err) {
