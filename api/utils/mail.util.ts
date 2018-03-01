@@ -7,6 +7,7 @@ export enum MailType {
   passwordreset,
   verify,
   welcome,
+  verifystudentauthentication,
 }
 
 interface MailOption {
@@ -46,7 +47,7 @@ export default class Mailer {
     } else if (type === MailType.welcome) {
       p = this.sendWelcome(option);
     } else {
-      return Promise.resolve({});
+      return Promise.resolve();
     }
 
     return p

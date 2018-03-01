@@ -18,4 +18,9 @@ module.exports = (server: Application) => {
     upload.single('groups'),
     groupController.createGroup,
   )
+
+  server.post(
+    '/api/groups/:_id/verify',
+    groupController.verifyAuthentication,
+  )
 }

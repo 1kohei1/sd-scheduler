@@ -370,8 +370,19 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     });
   }
 
-  onSendIdentityVerification(email: string) {
+  async onSendIdentityVerification(email: string) {
     // Use email and group id to send verification email
+    try {
+      if (this.state.selectedGroup) {
+        const verifyToken = await Api.verifyGroupAuthentication(this.state.selectedGroup._id, {
+          email,
+        });
+
+        // Open socket.io and listen on this token
+      }
+    } catch (err) {
+      this.onError(err);
+    }
   }
 
   render() {

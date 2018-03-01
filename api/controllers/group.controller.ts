@@ -1,8 +1,10 @@
 import { Request, Response } from 'express';
 import { read, utils } from 'xlsx';
+import * as crypto from 'crypto';
 
 import DBUtil from '../utils/db.util';
 import APIUtil from '../utils/api.util';
+import Mailer, { MailType } from '../utils/mail.util';
 
 // Cannot import the private namespace File. So copy what they use
 // Ref: https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/multer/index.d.ts
@@ -104,4 +106,47 @@ module.exports.createGroup = (req: MyRequest, res: Response) => {
       info.debugInfo.message = err.message;
       APIUtil.errorResponse(info, err.message, {}, res);
     })
+}
+
+module.exports.verifyAuthentication = (req: Request, res: Response) => {
+  const info: any = {
+    key: APIUtil.key(req),
+    debugInfo: {
+      _id: req.params._id,
+      body: req.body,
+    }
+  };
+
+  const { _id } = req.params;
+  const { email } = req.body;
+
+  const authenticationToken = crypto.randomBytes(48).toString('hex');
+  const authenticationTokenExpireAt = new Date();
+  authenticationTokenExpireAt.setMinutes(authenticationTokenExpireAt.getMinutes() + 15); // Set token expire in 15 minutes
+
+  const update = {
+    authenticationToken,
+    authenticationTokenExpireAt,
+  }
+
+  DBUtil.updateGroup(_id, update)
+    .then(updatedGroup => {
+      APIUtil.successResponse(info, authenticationToken, res);
+
+      // Send authentication email
+      Mailer.send(MailType.verifystudentauthentication, {
+        to: email,
+        extra: {
+          authenticationToken,
+        }
+      })
+    })
+    .catch(err => {
+      info.debugInfo.message = err.message;
+      APIUtil.errorResponse(info, err.message, {}, res);
+    })
+
+
+
+  APIUtil.successResponse(info, true, res);
 }

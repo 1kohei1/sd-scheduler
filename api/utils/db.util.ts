@@ -106,6 +106,10 @@ export default class DBUtil {
     return newGroup.save();
   }
 
+  static updateGroup(_id: string, update: object = {}) {
+    return DBUtil.updateById(Group, _id, update);
+  }
+
   /**
    * PresentationDate
    */
