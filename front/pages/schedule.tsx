@@ -374,7 +374,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     // Use email and group id to send verification email
     try {
       if (this.state.selectedGroup) {
-        const verifyToken = await Api.verifyGroupAuthentication(this.state.selectedGroup._id, {
+        const verifyToken = await Api.verifyStudentIdentity(this.state.selectedGroup._id, {
           email,
         });
 
