@@ -14,10 +14,12 @@ import { Application, Request, Response } from 'express';
 import { Server } from 'next';
 
 const dev = process.env.NODE_ENV !== 'production';
-const app: Server = next({ dir: './front', dev });
-const handle = app.getRequestHandler();
+const app: Application = express();
+const server = require('http').Server(app)
+const nextApp: Server = next({ dir: './front', dev });
+const handle = nextApp.getRequestHandler();
 
-app.prepare()
+nextApp.prepare()
   .then(() => {
     // Connect to DB
     mongoose.connect(process.env.MONGO_URI);
@@ -27,12 +29,11 @@ app.prepare()
       console.log('> connected to DB');
     })
 
-    const server: Application = express();
-    server.set('trust proxy', 1); // https://github.com/expressjs/session#cookiesecure
+    app.set('trust proxy', 1); // https://github.com/expressjs/session#cookiesecure
 
     // Set up to parse POST body
-    server.use(bodyParser.json());
-    server.use(bodyParser.urlencoded({
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({
       extended: true
     }));
 
@@ -54,20 +55,20 @@ app.prepare()
         mongooseConnection: mongoose.connection,
       });
     }
-    server.use(session(option));
+    app.use(session(option));
 
     // Set up passport
-    server.use(passport.initialize());
-    server.use(passport.session());
+    app.use(passport.initialize());
+    app.use(passport.session());
     require('./config/passport')(passport);
 
     // Set up API routes
-    require('./api/routes/index.route')(server);
+    require('./api/routes/index.route')(app);
 
     // Set up client side custom routes
-    require('./front/custom-routes')(app, server);
+    require('./front/custom-routes')(nextApp, app);
 
-    server.get('*', (req: Request, res: Response) => {
+    app.get('*', (req: Request, res: Response) => {
       return handle(req, res);
     });
 
