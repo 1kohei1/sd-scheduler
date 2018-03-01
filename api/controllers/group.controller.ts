@@ -5,6 +5,7 @@ import * as crypto from 'crypto';
 import DBUtil from '../utils/db.util';
 import APIUtil from '../utils/api.util';
 import Mailer, { MailType } from '../utils/mail.util';
+import SocketIOUtil from '../utils/socketio.util';
 
 // Cannot import the private namespace File. So copy what they use
 // Ref: https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/multer/index.d.ts
@@ -116,8 +117,9 @@ module.exports.verifyAuthenticationToken = (req: Request, res: Response) => {
     }
   };
 
+  const { authenticationToken } = req.params;
   const query = {
-    authenticationToken: req.params.authenticationToken,
+    authenticationToken,
   }
 
   DBUtil.findGroups(query)
@@ -131,20 +133,21 @@ module.exports.verifyAuthenticationToken = (req: Request, res: Response) => {
         }
         const group = groups[0];
         if (new Date().valueOf() < group.get('authenticationTokenExpireAt').valueOf()) {
-          info.debugInfo.message = 'Token expired';
-          APIUtil.errorResponse(info, 'Token expired', {}, res);
-        } else {
           return DBUtil.updateGroup(group.get('_id'), {
             authenticationToken: '',
             authenticationTokenExpireAt: null,
           })
+        } else {
+          info.debugInfo.message = 'Token expired';
+          APIUtil.errorResponse(info, 'Token expired', {}, res);
         }
       }
     })
     .then(updatedGroup => {
       APIUtil.successResponse(info, true, res);
 
-      // Send socket.io event with authenticationToken
+      // Notify schedule page that user is verified
+      SocketIOUtil.emit(authenticationToken, true);
     })
     .catch(err => {
       info.debugInfo.message = err.message;

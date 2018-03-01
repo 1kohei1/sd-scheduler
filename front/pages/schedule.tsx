@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Row, Col, Steps, Button, Alert, message } from 'antd';
 import { Map, List } from 'immutable';
 import { Moment } from 'moment';
+import * as io from 'socket.io-client';
 
 import AppLayout from '../components/AppLayout';
 import InitialProps from '../models/InitialProps';
@@ -379,7 +380,19 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
         });
 
         message.success('Email is queued. You will receive verification email in 5 minutes');
-        // Open socket.io and listen on this token
+
+        // Open socket.io and listen on token change
+        const socket = io();
+        socket.on(verifyToken, (isVerified: boolean) => {
+          if (isVerified) {
+            this.setState({
+              identityVerified: true,
+            });
+            this.changeCurrent(1);
+            socket.off(verifyToken);
+            socket.close();
+          }
+        })
       }
     } catch (err) {
       this.onError(err);

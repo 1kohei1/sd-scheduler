@@ -3,7 +3,6 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
 
-const express = require('express');
 const next = require('next');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -12,10 +11,13 @@ const MongoStore = require('connect-mongo')(session);
 const passport = require('passport');
 import { Application, Request, Response } from 'express';
 import { Server } from 'next';
+import * as http from 'http';
+import * as express from 'express';
+import SocketIOUtil from './api/utils/socketio.util';
 
 const dev = process.env.NODE_ENV !== 'production';
 const app: Application = express();
-const server = require('http').Server(app)
+const server = new http.Server(app);
 const nextApp: Server = next({ dir: './front', dev });
 const handle = nextApp.getRequestHandler();
 
@@ -71,6 +73,9 @@ nextApp.prepare()
     app.get('*', (req: Request, res: Response) => {
       return handle(req, res);
     });
+
+    // Set socketio
+    SocketIOUtil.setIO(server);
 
     server.listen(3000, (err: Error) => {
       if (err) throw err;
