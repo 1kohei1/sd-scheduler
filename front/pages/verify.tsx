@@ -87,7 +87,7 @@ export default class Verify extends React.Component<VerifyProps, any> {
             </Link>
           </div>
           <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <Link href="/account">
+            <Link href="/account">
               <a>Go to account</a>
             </Link>
           </div>

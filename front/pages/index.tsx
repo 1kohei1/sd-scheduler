@@ -29,9 +29,11 @@ export default class Index extends React.Component<Props, IndexState> {
           <div>Nice landing page</div>
           <div>
             <Link href="/schedule">
-              <Button type="primary" size="large" href="/schedule">
-                Go to scheduling
-            </Button>
+              <a>
+                <Button type="primary" size="large">
+                  Go to scheduling
+                </Button>
+              </a>
             </Link>
           </div>
         </div>

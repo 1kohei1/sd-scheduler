@@ -90,7 +90,7 @@ export default class AppLayout extends React.Component<AppLayoutProps, AppLayout
     } else {
       return (
         <Link href="/login">
-          <Button ghost>Login</Button>
+          <a><Button ghost>Login</Button></a>
         </Link>
       )
     }
