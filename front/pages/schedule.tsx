@@ -33,6 +33,11 @@ interface ScheduleState {
   adminFaculty: Faculty | undefined;
   presentationDate: PresentationDate | undefined;
   selectedGroup: Group | undefined;
+  verifyEmailAddresses: {
+    email: string;
+    sentiso: string;
+  }[];
+  email: string;
   groups: Group[];
   loading: boolean;
   current: number;
@@ -78,6 +83,8 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       presentationDate: undefined,
       presentations: Array<Presentation>(),
       selectedGroup: undefined,
+      verifyEmailAddresses: [],
+      email: '',
       groups: Array<Group>(),
       current: 0,
       loading: false,
@@ -97,6 +104,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
 
     // Step 3
     this.onGroupSelected = this.onGroupSelected.bind(this);
+    this.onEmailChange = this.onEmailChange.bind(this);
     this.onSendIdentityVerification = this.onSendIdentityVerification.bind(this);
   }
 
@@ -137,7 +145,10 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
         <SelectGroup
           groups={this.state.groups}
           selectedGroup={this.state.selectedGroup}
+          email={this.state.email}
+          verifyEmailAddresses={this.state.verifyEmailAddresses}
           onGroupSelected={this.onGroupSelected}
+          onEmailChange={this.onEmailChange}
           onSendIdentityVerification={this.onSendIdentityVerification}
         />
       )
@@ -151,6 +162,8 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
         message.error(msg);
         return;
       }
+    } else if (this.state.current + diff > 3 || this.state.current + diff < 0) {
+      return;
     }
 
     this.setState((prevState: ScheduleState, props: ScheduleProps) => {
@@ -367,19 +380,35 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     const group = this.state.groups.find(g => g._id === groupId);
 
     this.setState({
+      email: '',
       selectedGroup: group,
     });
   }
 
-  async onSendIdentityVerification(email: string) {
+  onEmailChange(email: string) {
+    this.setState({
+      email,
+    })
+  }
+
+  async onSendIdentityVerification() {
     // Use email and group id to send verification email
     try {
       if (this.state.selectedGroup) {
         const verifyToken = await Api.verifyStudentIdentity(this.state.selectedGroup._id, {
-          email,
+          email: this.state.email,
         });
 
-        message.success('Email is queued. You will receive verification email in 5 minutes');
+        this.setState((prevState: ScheduleState, props: ScheduleProps) => {
+          let newVerifyEmailAddresses = List(prevState.verifyEmailAddresses);
+          newVerifyEmailAddresses = newVerifyEmailAddresses.push({
+            email: this.state.email,
+            sentiso: new Date().toISOString(),
+          });
+          return {
+            verifyEmailAddresses: newVerifyEmailAddresses.toArray(),
+          }
+        })
 
         // Open socket.io and listen on token change
         const socket = io();

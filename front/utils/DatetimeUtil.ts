@@ -30,6 +30,10 @@ export default class DatetimeUtil {
     return moment.tz(isoString, timezone).format(format);
   }
 
+  static formatISOStringAtLocal(isoString: string, format: string) {
+    return moment(isoString).format(format);
+  }
+
   static getMomentFromISOString(isoString: string, timezone: string = DateConstants.timezone) {
     return moment.tz(isoString, timezone);
   }

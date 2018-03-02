@@ -1,56 +1,55 @@
 import * as React from 'react';
-import { Form, Select, Button } from 'antd';
+import { Form, Select, Button, Alert } from 'antd';
+import ObjectID from 'bson-objectid';
 
 import FormLayout from './FormLayout';
 import Group from '../models/Group';
+import { DateConstants } from '../models/Constants' ;
+import DatetimeUtil from '../utils/DatetimeUtil';
 
 export interface SelectGroupProps {
   groups: Group[];
   selectedGroup: Group | undefined;
-  onGroupSelected: (groupId: string) => void;
-  onSendIdentityVerification: (email: string) => void;
-}
-
-interface SelectGroupState {
   email: string;
+  verifyEmailAddresses: {
+    email: string;
+    sentiso: string;
+  }[];
+  onGroupSelected: (groupId: string) => void;
+  onEmailChange: (email: string) => void;
+  onSendIdentityVerification: () => void;
 }
 
-export default class SelectGroup extends React.Component<SelectGroupProps, SelectGroupState> {
-  constructor(props: SelectGroupProps) {
-    super(props);
-
-    this.state = {
-      email: '',
-    }
-
-    this.onEmailChange = this.onEmailChange.bind(this);
+export default class SelectGroup extends React.Component<SelectGroupProps, any> {
+  message(verifyInfo: { email: string, sentiso: string }) {
+    const { email, sentiso } = verifyInfo;
+    const sentAt = DatetimeUtil.formatISOStringAtLocal(sentiso, DateConstants.hourMinFormat);
+    return `${email} (${sentAt}): Verification email is queued. You will receive the email in 5 minutes.`;
   }
-
-  componentWillReceiveProps(nextProps: SelectGroupProps) {
-    if (this.props.selectedGroup !== nextProps.selectedGroup) {
-      this.setState({
-        email: '',
-      })
-    }
-  }
-
-  onEmailChange(email: string) {
-    this.setState({
-      email,
-    })
-  }
-
+  
   render() {
     const group = this.props.selectedGroup;
 
     return (
       <FormLayout>
         <Form>
+          {this.props.verifyEmailAddresses.map(verifyInfo => (
+            <Form.Item
+              key={ObjectID.generate()}
+            >
+              <Alert
+                key={ObjectID.generate()}
+                type="success"
+                message={this.message(verifyInfo)}
+              />
+            </Form.Item>
+          ))}
           <Form.Item>
             We have to verify you are member of the group.
             Please select your group.
             <Select
               onChange={this.props.onGroupSelected}
+              value={this.props.selectedGroup && this.props.selectedGroup._id}
               placeholder="Select your group"
             >
               {this.props.groups.map(group => (
@@ -66,11 +65,11 @@ export default class SelectGroup extends React.Component<SelectGroupProps, Selec
           <Form.Item>
             Email address which receives the verification email.
             <Select
-              onChange={this.onEmailChange}
+              onChange={this.props.onEmailChange}
               disabled={!group}
               placeholder="Select email address"
               style={{ width: '100%' }}
-              value={this.state.email}
+              value={this.props.email}
             >
               {group && group.members.map(member => (
                 <Select.Option
@@ -84,9 +83,9 @@ export default class SelectGroup extends React.Component<SelectGroupProps, Selec
           </Form.Item>
           <Form.Item>
             <Button
-              disabled={!this.state.email}
+              disabled={!this.props.email}
               type="primary"
-              onClick={e => this.props.onSendIdentityVerification(this.state.email)}
+              onClick={e => this.props.onSendIdentityVerification()}
             >
               Send verification code
             </Button>
