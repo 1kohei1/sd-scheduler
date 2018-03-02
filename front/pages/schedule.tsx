@@ -32,6 +32,7 @@ interface ScheduleProps {
 interface ScheduleState {
   schedulingPresentation: Presentation,
   loading: boolean;
+  updating: boolean;
   current: number;
   errs: string[];
 
@@ -78,6 +79,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     this.state = {
       schedulingPresentation: newPresentation(this.props.semester._id),
       loading: false,
+      updating: false,
       current: 0,
       errs: Array<string>(),
 
@@ -565,8 +567,69 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     })
   }
 
-  schedulePresentation(groupInfo: any) {
-    console.log(groupInfo);
+  schedulePresentation(groupInfo: object) {
+    this.setState({
+      updating: true,
+    });
+    Promise.all([
+      this.updateGroup(groupInfo),
+      this.schedulePresentationAPI(),
+    ])
+      .then(() => {
+        this.setState({
+          updating: false,
+        })
+      })
+  }
+
+  private async updateGroup(groupInfo: object) {
+    try {
+      if (this.state.selectedGroup) {
+        await Api.updateGroup(this.state.selectedGroup._id, groupInfo)
+      }
+    } catch (err) {
+      this.onError(err);
+    }
+  }
+
+  private async schedulePresentationAPI() {
+    try {
+      if (this.state.selectedGroup) {
+        const groupId = this.state.selectedGroup._id;
+
+        const index = this.state.presentations
+          .findIndex(presentation => presentation.group._id === groupId);
+
+        let isNew = true;
+        let body = this.state.schedulingPresentation as { [key: string]: any };
+
+        // If presentation is already scheduled for the selectedGroup, update partially
+        if (index >= 0) {
+          isNew = false;
+          const { start, end, faculties, midPresentationLink } = this.state.schedulingPresentation;
+          body = {
+            start,
+            end,
+            faculties,
+            midPresentationLink,
+          }
+        } else {
+          // state.schedulingPresentation.group is a placeholder. Replace it with actual user selected group _id
+          body.group = this.state.selectedGroup._id;
+        }
+
+        console.log('isNew', isNew);
+        console.log('body', body);
+
+        if (isNew) {
+          await Api.createPresentation(body);
+        } else {
+          await Api.updatePresentation(this.state.presentations[index]._id, body);
+        }
+      }
+    } catch (err) {
+      this.onError(err);
+    }
   }
 
   render() {
@@ -588,13 +651,19 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
             </div>
             <div className="steps-content">
               {this.state.errs.map((err, index) => (
-                <Alert type="error" message={err} key={index} />
+                <Alert
+                  key={index}
+                  type="error"
+                  message={err}
+                  style={{ marginBottom: '16px' }}
+                />
               ))}
               {this.content()}
             </div>
             <div className="steps-action">
               <Button
                 disabled={this.state.current === 0}
+                loading={this.state.updating}
                 onClick={e => this.changeCurrent(-1)}
               >
                 Previous
@@ -602,6 +671,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
               <div style={{ display: 'flex' }}>
                 <Button
                   type="primary"
+                  loading={this.state.updating}
                   onClick={e => this.changeCurrent(1)}
                 >
                   {this.state.current === 3 ? 'Schedule presentation' : 'Next'}

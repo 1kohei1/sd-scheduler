@@ -194,3 +194,15 @@ module.exports.verifyAuthentication = (req: Request, res: Response) => {
       APIUtil.errorResponse(info, err.message, {}, res);
     })
 }
+
+module.exports.updateGroup = (req: Request, res: Response) => {
+  const info: any = {
+    key: APIUtil.key(req),
+    debugInfo: {
+      _id: req.params._id,
+      body: req.body,
+    }
+  };
+ 
+  
+}

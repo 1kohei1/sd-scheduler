@@ -10,7 +10,7 @@ export interface FillGroupInfoProps {
   addSponsor: () => void;
   onFillGroupInfoRef: (fillGroupInfoRef: any) => void;
   deleteSponsor: (_id: string) => void;
-  schedulePresentation: (groupInfo: any) => void;
+  schedulePresentation: (groupInfo: object) => void;
 }
 
 class FillGroupInfo extends React.Component<FillGroupInfoProps, any> {

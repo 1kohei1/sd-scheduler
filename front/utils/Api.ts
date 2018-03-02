@@ -108,6 +108,10 @@ export default class Api {
     return await Api.makeRequest(RequestMethod.POST, `/api/groups/verify/${authenticationToken}`);
   }
 
+  static async updateGroup(_id: string, body: object) {
+    return await Api,this.makeRequest(RequestMethod.PUT, `/api/groups/${_id}`, body);
+  }
+
   /**
    * PresentationDate
    */
@@ -119,6 +123,22 @@ export default class Api {
   static async updatePresentationDate(_id: string, update: object = {}) {
     return await Api.makeRequest(RequestMethod.PUT, `/api/presentationdates/${_id}`, update);
   }
+
+  /**
+   * Presentation
+   */
+
+   static async getPresentations(query: string = '') {
+     return await Api.makeRequest(RequestMethod.GET, `/api/presentations?${query}`);
+   }
+
+   static async createPresentation(body: object = {}) {
+     return await Api.makeRequest(RequestMethod.POST, `/api/presentations`, body);
+   }
+
+   static async updatePresentation(_id: string, update: object) {
+     return await Api.makeRequest(RequestMethod.PUT, `/api/presentations/${_id}`, update);
+   }
 
   /**
    * Location

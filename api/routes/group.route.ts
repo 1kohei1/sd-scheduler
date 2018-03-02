@@ -28,4 +28,9 @@ module.exports = (server: Application) => {
     '/api/groups/:_id/verify',
     groupController.verifyAuthentication,
   )
+
+  server.put(
+    '/api/groups/:_id',
+    groupController.updateGroup,
+  )
 }
