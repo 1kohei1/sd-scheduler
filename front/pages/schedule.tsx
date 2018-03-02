@@ -28,20 +28,26 @@ interface ScheduleProps {
 
 interface ScheduleState {
   schedulingPresentation: Presentation,
+  loading: boolean;
+  current: number;
+  errs: string[];
+
+  // Step 1
+  adminFaculty: Faculty | undefined;
+
+  // Step 2
   availableSlots: AvailableSlot[],
   presentations: Presentation[],
-  adminFaculty: Faculty | undefined;
   presentationDate: PresentationDate | undefined;
+
+  // Step 3
+  groups: Group[];
   selectedGroup: Group | undefined;
   verifyEmailAddresses: {
     email: string;
     sentiso: string;
   }[];
   email: string;
-  groups: Group[];
-  loading: boolean;
-  current: number;
-  errs: string[];
   identityVerified: boolean;
 }
 
@@ -78,17 +84,23 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
 
     this.state = {
       schedulingPresentation: newPresentation(this.props.semester._id),
-      availableSlots: [],
-      adminFaculty: undefined,
-      presentationDate: undefined,
-      presentations: Array<Presentation>(),
-      selectedGroup: undefined,
-      verifyEmailAddresses: [],
-      email: '',
-      groups: Array<Group>(),
-      current: 0,
       loading: false,
+      current: 0,
       errs: Array<string>(),
+
+      // Step 1
+      adminFaculty: undefined,
+
+      // Step 2
+      availableSlots: [],
+      presentations: Array<Presentation>(),
+      presentationDate: undefined,
+
+      // Step 3
+      groups: Array<Group>(),
+      selectedGroup: undefined,
+      email: '',
+      verifyEmailAddresses: [],
       identityVerified: false,
     };
 
