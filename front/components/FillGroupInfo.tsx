@@ -278,6 +278,9 @@ class FillGroupInfo extends React.Component<FillGroupInfoProps, any> {
                     rules: [{
                       required: true,
                       message: 'Please enter the last name',
+                    }, {
+                      type: 'email',
+                      message: 'It is not valid email',
                     }],
                     initialValue: sponsor.email,
                   })(
