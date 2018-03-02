@@ -9,6 +9,7 @@ import Faculty from '../models/Faculty';
 export interface SchedulingDateProps {
   presentation: Presentation;
   faculties: Faculty[];
+  displayClear: boolean;
   clearPresentationSlot: () => void;
 }
 
@@ -68,7 +69,7 @@ export default class SchedulingDate extends React.Component<SchedulingDateProps,
           {this.props.presentation.faculties.map(fid => {
             const faculty = this.props.faculties.find(f => f._id === fid);
             if (faculty) {
-              return <p key={faculty._id}>Dr. {faculty.firstName} {faculty.lastName}</p>
+              return <p key={faculty._id}>Dr. {faculty.firstName} {faculty.lastName} {faculty.isAdmin && <span>(SD 2 Faculty)</span>}</p>
             } else {
               return null;
             }
@@ -105,9 +106,11 @@ export default class SchedulingDate extends React.Component<SchedulingDateProps,
           />
           <div>{this.facultiesText()}</div>
         </div>
-        <p>
-          <Button size="small" onClick={this.props.clearPresentationSlot} icon="delete">Clear</Button>
-        </p>
+        {this.props.displayClear && (
+          <p>
+            <Button size="small" onClick={this.props.clearPresentationSlot} icon="delete">Clear</Button>
+          </p>
+        )}
         <style jsx>{`
           .scheduling-date {
             padding: 16px;

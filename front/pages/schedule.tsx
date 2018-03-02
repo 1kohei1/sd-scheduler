@@ -3,6 +3,7 @@ import { Row, Col, Steps, Button, Alert, message } from 'antd';
 import { Map, List } from 'immutable';
 import { Moment } from 'moment';
 import * as io from 'socket.io-client';
+import ObjectID from 'bson-objectid';
 
 import AppLayout from '../components/AppLayout';
 import InitialProps from '../models/InitialProps';
@@ -20,6 +21,8 @@ import PresentationDate from '../models/PresentationDate';
 import SelectAdmin from '../components/SelectAdmin';
 import Group from '../models/Group';
 import SelectGroup from '../components/SelectGroup';
+import { DateConstants } from '../models/Constants';
+import FillGroupInfo from '../components/FillGroupInfo';
 
 interface ScheduleProps {
   facultiesInSemester: Faculty[];
@@ -32,15 +35,15 @@ interface ScheduleState {
   current: number;
   errs: string[];
 
-  // Step 1
+  // state.current = 0
   adminFaculty: Faculty | undefined;
 
-  // Step 2
+  // state.current = 1
   availableSlots: AvailableSlot[],
   presentations: Presentation[],
   presentationDate: PresentationDate | undefined;
 
-  // Step 3
+  // state.current = 2
   groups: Group[];
   selectedGroup: Group | undefined;
   verifyEmailAddresses: {
@@ -49,21 +52,9 @@ interface ScheduleState {
   }[];
   email: string;
   identityVerified: boolean;
-}
 
-const columnLayout = {
-  md: {
-    span: 24,
-  },
-  lg: {
-    span: 22,
-    offset: 1
-  },
-  xl: {
-    span: 20,
-    offset: 2,
-  }
-};
+  // state.current = 3
+}
 
 export default class Schedule extends React.Component<ScheduleProps, ScheduleState> {
   static async getInitialProps(context: InitialProps) {
@@ -88,36 +79,42 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       current: 0,
       errs: Array<string>(),
 
-      // Step 1
+      // state.current = 0
       adminFaculty: undefined,
 
-      // Step 2
+      // state.current = 1
       availableSlots: [],
       presentations: Array<Presentation>(),
       presentationDate: undefined,
 
-      // Step 3
+      // state.current = 2
       groups: Array<Group>(),
       selectedGroup: undefined,
       email: '',
       verifyEmailAddresses: [],
-      identityVerified: false,
+      identityVerified: true,
+
+      // state.current = 3
     };
 
     this.content = this.content.bind(this);
     this.changeCurrent = this.changeCurrent.bind(this);
 
-    // Step 1
+    // state.current = 0
     this.onAdminSelected = this.onAdminSelected.bind(this);
 
-    // Step 2
+    // state.current = 1
     this.presentationSlotPicked = this.presentationSlotPicked.bind(this);
     this.clearPresentationSlot = this.clearPresentationSlot.bind(this);
 
-    // Step 3
+    // state.current = 2
     this.onGroupSelected = this.onGroupSelected.bind(this);
     this.onEmailChange = this.onEmailChange.bind(this);
     this.onSendIdentityVerification = this.onSendIdentityVerification.bind(this);
+
+    // state.current = 3
+    this.addSponsor = this.addSponsor.bind(this);
+    this.deleteSponsor = this.deleteSponsor.bind(this);
   }
 
   content() {
@@ -148,6 +145,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
           <SchedulingDate
             presentation={this.state.schedulingPresentation}
             faculties={this.props.facultiesInSemester}
+            displayClear={true}
             clearPresentationSlot={this.clearPresentationSlot}
           />
         </div>
@@ -163,6 +161,48 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
           onEmailChange={this.onEmailChange}
           onSendIdentityVerification={this.onSendIdentityVerification}
         />
+      )
+    } else if (this.state.current === 3) {
+      let index = -1;
+      let date = '';
+      let time = '';
+      const { selectedGroup, presentations } = this.state;
+
+      if (selectedGroup) {
+        index = this.state.presentations
+          .findIndex(presentation => presentation.group._id === selectedGroup._id);
+      }
+      if (index >= 0) {
+        date = DatetimeUtil.formatISOString(presentations[index].start, DateConstants.dateFormat);
+        time = DatetimeUtil.formatISOString(presentations[index].start, DateConstants.hourMinFormat);
+      }
+
+      return (
+        <div>
+          {index >= 0 && (
+            <Alert
+              showIcon
+              style={{ marginBottom: '16px' }}
+              type="warning"
+              message="You are updating existing presentation"
+              description={`Your group already scheduled the presentation at ${time} on ${date}. This action will reschedule your presentation. `}
+            />
+          )}
+          <SchedulingDate
+            presentation={this.state.schedulingPresentation}
+            faculties={this.props.facultiesInSemester}
+            displayClear={false}
+            clearPresentationSlot={this.clearPresentationSlot}
+          />
+          {/* This if is redundant, but TS complains selectedGroup could be undefined */}
+          {selectedGroup && (
+            <FillGroupInfo
+              group={selectedGroup}
+              addSponsor={this.addSponsor}
+              deleteSponsor={this.deleteSponsor}
+            />
+          )}
+        </div>
       )
     }
   }
@@ -235,8 +275,24 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     })
   }
 
+  columnLayout() {
+    return {
+      md: {
+        span: 24,
+      },
+      lg: {
+        span: 22,
+        offset: 1
+      },
+      xl: {
+        span: 20,
+        offset: 2,
+      }
+    };
+  }
+
   /**
-   * Step 1
+   * state.current = 0
    */
 
   onAdminSelected(faculty: Faculty) {
@@ -246,7 +302,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
   }
 
   /**
-   * Step 2
+   * state.current = 1
    */
 
   private async onScheduleTime() {
@@ -369,7 +425,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
   }
 
   /**
-   * Step 3
+   * state.current = 2
    */
 
   async onGroups() {
@@ -440,12 +496,65 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     }
   }
 
+  /**
+   * state.current = 3
+   */
+
+  addSponsor() {
+    this.setState((prevState: ScheduleState, props: ScheduleProps) => {
+      if (prevState.selectedGroup) {
+        let newSponsors = List(prevState.selectedGroup.sponsors);
+        newSponsors = newSponsors.push({
+          _id: ObjectID.generate(),
+          firstName: '',
+          lastName: '',
+          email: '',
+        });
+
+        let newSelectedGroup = Map(prevState.selectedGroup);
+        newSelectedGroup = newSelectedGroup.set('sponsors', newSponsors.toArray());
+
+        const newState: any = {};
+        newState.selectedGroup = newSelectedGroup.toObject();
+
+        return newState;
+      } else {
+        return prevState;
+      }
+    })
+  }
+
+  deleteSponsor(_id: string) {
+    this.setState((prevState: ScheduleState, props: ScheduleProps) => {
+      if (prevState.selectedGroup) {
+        const index = prevState.selectedGroup.sponsors.findIndex(sponsor => sponsor._id === _id);
+
+        if (index >= 0) {
+          let newSponsors = List(prevState.selectedGroup.sponsors);
+          newSponsors = newSponsors.delete(index);
+
+          let newSelectedGroup = Map(prevState.selectedGroup);
+          newSelectedGroup = newSelectedGroup.set('sponsors', newSponsors.toArray());
+
+          const newState: any = {};
+          newState.selectedGroup = newSelectedGroup.toObject();
+
+          return newState;
+        } else {
+          return prevState;
+        }
+      } else {
+        return prevState;
+      }
+    })
+  }
+
   render() {
     return (
       <AppLayout>
         <Row>
           <Col
-            {...columnLayout}
+            {...this.columnLayout()}
           >
             <div className="steps">
               <Steps
