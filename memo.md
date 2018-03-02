@@ -42,8 +42,6 @@ Admin:
 TODO:
 
 - [x] Add validation to the overview date and Availability Form
-- [ ] Use higher order component for Date, Locations, and Faculties component (v3)
-- [ ] Explore what is the best word for registered/available faculties
 - [x] Update Date.tsx to handle date object
 - [ ] Check why initial component layout is broken (v3)
 - [x] Create a video to explain how to put available time
