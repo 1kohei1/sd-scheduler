@@ -8,7 +8,9 @@ export interface FillGroupInfoProps {
   form: WrappedFormUtils;
   group: Group;
   addSponsor: () => void;
+  onFillGroupInfoRef: (fillGroupInfoRef: any) => void;
   deleteSponsor: (_id: string) => void;
+  schedulePresentation: (groupInfo: any) => void;
 }
 
 class FillGroupInfo extends React.Component<FillGroupInfoProps, any> {
@@ -18,6 +20,14 @@ class FillGroupInfo extends React.Component<FillGroupInfoProps, any> {
     this.state = {}
 
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  componentDidMount() {
+    this.props.onFillGroupInfoRef(this);
+  }
+
+  componentWillUnmount() {
+    this.props.onFillGroupInfoRef(undefined);
   }
 
   formLayout() {
@@ -50,18 +60,25 @@ class FillGroupInfo extends React.Component<FillGroupInfoProps, any> {
   }
 
   handleSubmit(e: React.FormEvent<any>) {
-    e.preventDefault();
+    if (e) {
+      e.preventDefault();
+    }
 
     this.props.form.validateFields((err, values) => {
-      // if (err) {
-      //   return;
-      // }
+      if (err) {
+        return;
+      }
 
       const formSponsors = values.sponsors;
-      const sponsors = Object.entries(formSponsors)
+      let sponsors: object[] = [];
+      if (values.hasOwnProperty('sponsors')) {
+        sponsors = Object.entries(formSponsors)
         .map(([_id, sponsor]) => sponsor);
-      
+      }
+
       values.sponsors = sponsors;
+
+      this.props.schedulePresentation(values);
     })
   }
 
@@ -97,6 +114,7 @@ class FillGroupInfo extends React.Component<FillGroupInfoProps, any> {
     return (
       <div className="fillgroupinfo-container">
         <h2>Group {group.groupNumber}</h2>
+        <p>Please enter your group information.</p>
         <Form onSubmit={this.handleSubmit}>
           <Form.Item
             label="Project name"
@@ -304,14 +322,6 @@ class FillGroupInfo extends React.Component<FillGroupInfoProps, any> {
               style={{ width: '200px' }}
             >
               <Icon type="plus" /> Add new sponsor
-            </Button>
-          </Form.Item>
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-            >
-              Submit
             </Button>
           </Form.Item>
         </Form>

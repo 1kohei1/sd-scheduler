@@ -57,6 +57,8 @@ interface ScheduleState {
 }
 
 export default class Schedule extends React.Component<ScheduleProps, ScheduleState> {
+  fillGroupInfoRef: any = undefined;
+
   static async getInitialProps(context: InitialProps) {
     const semesters: Semester[] = await Api.getSemesters();
     const semester = semesters[0];
@@ -113,8 +115,10 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     this.onSendIdentityVerification = this.onSendIdentityVerification.bind(this);
 
     // state.current = 3
+    this.onFillGroupInfoRef = this.onFillGroupInfoRef.bind(this);
     this.addSponsor = this.addSponsor.bind(this);
     this.deleteSponsor = this.deleteSponsor.bind(this);
+    this.schedulePresentation = this.schedulePresentation.bind(this);
   }
 
   content() {
@@ -199,7 +203,9 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
             <FillGroupInfo
               group={selectedGroup}
               addSponsor={this.addSponsor}
+              onFillGroupInfoRef={this.onFillGroupInfoRef}
               deleteSponsor={this.deleteSponsor}
+              schedulePresentation={this.schedulePresentation}
             />
           )}
         </div>
@@ -208,14 +214,20 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
   }
 
   changeCurrent(diff: number) {
-    if (diff > 0) {
+    // Handle scheduling the presentation
+    if (this.state.current === 3 && diff > 0) {
+      if (this.fillGroupInfoRef) {
+        this.fillGroupInfoRef.handleSubmit();
+      }
+      return;
+    } else if (this.state.current + diff > 3 || this.state.current + diff < 0) {
+      return;
+    } else if (diff > 0) {
       const msg = this.validateMessage();
       if (msg) {
         message.error(msg);
         return;
       }
-    } else if (this.state.current + diff > 3 || this.state.current + diff < 0) {
-      return;
     }
 
     this.setState((prevState: ScheduleState, props: ScheduleProps) => {
@@ -500,6 +512,10 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
    * state.current = 3
    */
 
+  onFillGroupInfoRef(fillGroupInfoRef: any) {
+    this.fillGroupInfoRef = fillGroupInfoRef;
+  }
+
   addSponsor() {
     this.setState((prevState: ScheduleState, props: ScheduleProps) => {
       if (prevState.selectedGroup) {
@@ -549,6 +565,10 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     })
   }
 
+  schedulePresentation(groupInfo: any) {
+    console.log(groupInfo);
+  }
+
   render() {
     return (
       <AppLayout>
@@ -583,9 +603,8 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
                 <Button
                   type="primary"
                   onClick={e => this.changeCurrent(1)}
-                  disabled={this.state.current === 3}
                 >
-                  Next
+                  {this.state.current === 3 ? 'Schedule presentation' : 'Next'}
                 </Button>
               </div>
             </div>
