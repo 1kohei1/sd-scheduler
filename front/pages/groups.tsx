@@ -44,7 +44,7 @@ export default class Groups extends React.Component<GroupsProps, any> {
         <FormLayout>
           {this.props.isVerified ? (
             <div>
-              <h2>Your authentication is verified!</h2>
+              <h2>Your identity is verified!</h2>
               <p>Please go back to schedule page and fill the group info!</p>
             </div>
           ) : (
