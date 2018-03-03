@@ -32,6 +32,7 @@ module.exports = (server: Application) => {
   server.put(
     '/api/groups/:_id',
     APIUtil.verifyJWT,
+    APIUtil.isAuthorizedJWT,
     groupController.updateGroup,
   )
 }

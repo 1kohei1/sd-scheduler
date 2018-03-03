@@ -149,7 +149,9 @@ module.exports.verifyAuthenticationToken = (req: Request, res: Response) => {
     .then(updatedGroup => {
       // Generate JWT token and let user use PUT /api/groups/:_id, POST /api/presentations, and PUT /api/presentations/:_id
       const token = sign({
-        isAuthenticated: true,
+        // To avoid making change to other Group/Presentation by just specifying document id,
+        // specify the group id this cookie can make change
+        group_id: updatedGroup.get('_id'), 
       }, process.env.SECRET as string);
 
       APIUtil.successResponse(info, token, res);
@@ -215,7 +217,6 @@ module.exports.updateGroup = (req: Request, res: Response) => {
   DBUtil.updateGroup(req.params._id, req.body)
     .then(updatedGroup => {
       APIUtil.successResponse(info, updatedGroup, res);
-
     })
     .catch(err => {
       info.debugInfo.message = err.message;

@@ -12,12 +12,14 @@ module.exports = (server: Application) => {
   server.post(
     '/api/presentations',
     APIUtil.verifyJWT,
+    APIUtil.isAuthorizedJWT,
     presentationController.createPresentation,
   )
 
   server.put(
     '/api/presentations/:_id',
     APIUtil.verifyJWT,
+    APIUtil.isAuthorizedJWT,
     presentationController.updatePresentation,
   )
 }
