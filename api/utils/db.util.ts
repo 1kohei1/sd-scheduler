@@ -37,6 +37,15 @@ export default class DBUtil {
     if (query.hasOwnProperty('email') && typeof query.email === 'string') {
       query.email = query.email.toLowerCase();
     }
+
+    // By default, don't include the system admin and test user
+    if (!query.hasOwnProperty('isSystemAdmin')) {
+      query.isSystemAdmin = false;
+    }
+    if (!query.hasOwnProperty('isTestUser')) {
+      query.isTestUser = false;
+    }
+    
     return Faculty.find(query, password).sort({
       'firstName': 'asc',
       'lastName': 'asc',

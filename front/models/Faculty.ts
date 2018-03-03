@@ -5,6 +5,8 @@ export default interface Faculty {
   firstName: string;
   lastName: string;
   isAdmin: boolean;
+  isSystemAdmin: boolean;
+  isTestUser: boolean;
   expire_at: Date,
   verify_at: Date,
   signup_at: Date, // When the password is set

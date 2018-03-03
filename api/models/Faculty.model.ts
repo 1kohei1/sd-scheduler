@@ -35,6 +35,14 @@ const FacultySchema = new Schema({
     type: Boolean,
     default: false
   },
+  isSystemAdmin: {
+    type: Boolean,
+    default: false,
+  },
+  isTestUser: {
+    type: Boolean,
+    default: false,
+  },
   token: {
     type: String,
     default: crypto.randomBytes(48).toString('hex'),
