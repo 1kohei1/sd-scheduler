@@ -76,6 +76,7 @@ TODO:
 - [ ] Improve the group import process. Thinking admin faculty gives me the group spreadsheet and I modify them to the format I specify. (v3)
 - [ ] Admin faculties can send spreadsheet of groups from groups page
 - [ ] Upload presentation materials (v2)
+- [ ] Add validation to object id existence (Middleware for that: https://github.com/CampbellSoftwareSolutions/mongoose-id-validator) (v3)
 
 NOTES:
 
