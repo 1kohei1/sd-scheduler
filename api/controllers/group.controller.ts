@@ -211,6 +211,16 @@ module.exports.updateGroup = (req: Request, res: Response) => {
       body: req.body,
     }
   };
- 
+
+  DBUtil.updateGroup(req.params._id, req.body)
+    .then(updatedGroup => {
+      APIUtil.successResponse(info, updatedGroup, res);
+
+    })
+    .catch(err => {
+      info.debugInfo.message = err.message;
+      APIUtil.errorResponse(info, err.message, {}, res);
+    })
+
   APIUtil.successResponse(info, true, res);
 }
