@@ -172,7 +172,7 @@ class FillGroupInfo extends React.Component<FillGroupInfoProps, any> {
                   {this.props.form.getFieldDecorator(`members[${index}]._id`, {
                     initialValue: member._id,
                   })(
-                    <Input />
+                    <Input disabled />
                   )}
                 </Form.Item>
                 <Form.Item
