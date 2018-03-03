@@ -221,6 +221,4 @@ module.exports.updateGroup = (req: Request, res: Response) => {
       info.debugInfo.message = err.message;
       APIUtil.errorResponse(info, err.message, {}, res);
     })
-
-  APIUtil.successResponse(info, true, res);
 }

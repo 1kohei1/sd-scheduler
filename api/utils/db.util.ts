@@ -7,6 +7,7 @@ import AvailableSlot from '../models/AvailableSlot.model';
 import Group from '../models/Group.model';
 import PresentationDate from '../models/PresentationDate.model';
 import Location from '../models/Location.model';
+import Presentation from '../models/Presentation.model';
 
 export default class DBUtil {
   /**
@@ -45,7 +46,7 @@ export default class DBUtil {
     if (!query.hasOwnProperty('isTestUser')) {
       query.isTestUser = false;
     }
-    
+
     return Faculty.find(query, password).sort({
       'firstName': 'asc',
       'lastName': 'asc',
@@ -115,7 +116,7 @@ export default class DBUtil {
     return newGroup.save();
   }
 
-  static updateGroup(_id: string, update: object = {}) {
+  static updateGroup(_id: string | number | object, update: object = {}) {
     return DBUtil.updateById(Group, _id, update);
   }
 
@@ -167,6 +168,24 @@ export default class DBUtil {
 
   static updateLocationById(_id: string | number | object, update: object = {}) {
     return DBUtil.updateById(Location, _id, update, 'admin');
+  }
+
+  /**
+   * Presentations
+   */
+
+  static findPresentations(query: object = {}) {
+    return Presentation.find(query)
+      .populate('group');
+  }
+
+  static createPresentation(body: any = {}) {
+    const newPresentation = new Presentation(body);
+    return newPresentation.save();
+  }
+
+  static updatePresentation(_id: string | number | object, update: object = {}) {
+    return DBUtil.updateById(Presentation, _id, update, 'group');
   }
 
   /**
