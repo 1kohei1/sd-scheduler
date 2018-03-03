@@ -668,15 +668,13 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
               >
                 Previous
               </Button>
-              <div style={{ display: 'flex' }}>
-                <Button
-                  type="primary"
-                  loading={this.state.updating}
-                  onClick={e => this.changeCurrent(1)}
-                >
-                  {this.state.current === 3 ? 'Schedule presentation' : 'Next'}
-                </Button>
-              </div>
+              <Button
+                type="primary"
+                loading={this.state.updating}
+                onClick={e => this.changeCurrent(1)}
+              >
+                {this.state.current === 3 ? 'Schedule presentation' : 'Next'}
+              </Button>
             </div>
           </Col>
         </Row>
