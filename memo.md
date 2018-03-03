@@ -39,6 +39,13 @@ Admin:
 - [x] Register presentation location
 - [x] Check schedule in the calendar view
 
+System Admin:
+
+- [ ] Import groups for the semester and admin faculty
+- [ ] Delete all group by semester and faculties
+- [ ] Turn the faculty to admin (create PresentationDate and Location)
+- [ ] Turn off the faculty not to admin (Delete PresentationDate and Location)
+
 TODO:
 
 - [x] Add validation to the overview date and Availability Form
