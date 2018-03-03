@@ -5,10 +5,12 @@ import InitialProps from '../models/InitialProps';
 import Api from '../utils/Api';
 import AppLayout from '../components/AppLayout';
 import FormLayout from '../components/FormLayout';
+import CookieUtil from '../utils/CookieUtil';
 
 export interface GroupsProps {
   isVerified: boolean;
   message: string;
+  token: string;
 }
 
 export default class Groups extends React.Component<GroupsProps, any> {
@@ -16,16 +18,23 @@ export default class Groups extends React.Component<GroupsProps, any> {
     const { authenticationToken } = context.query;
 
     try {
-      await Api.verifyGroupAuthenticationToken(authenticationToken);
+      const token = await Api.verifyGroupAuthenticationToken(authenticationToken);
       return {
         isVerified: true,
         message: '',
+        token,
       }
     } catch (err) {
       return {
         isVerified: false,
         message: err.message,
       }
+    }
+  }
+
+  componentDidMount() {
+    if (this.props.isVerified) {
+      CookieUtil.setToken(this.props.token);
     }
   }
 

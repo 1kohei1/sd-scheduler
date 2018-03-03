@@ -2,6 +2,7 @@ const fetch = require('isomorphic-unfetch');
 import Router from 'next/router';
 
 import InitialProps from '../models/InitialProps';
+import CookieUtil from '../utils/CookieUtil';
 
 enum RequestMethod {
   GET,
@@ -216,6 +217,7 @@ export default class Api {
       credentials: 'same-origin',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${CookieUtil.getToken()}`,
       }
     };
 

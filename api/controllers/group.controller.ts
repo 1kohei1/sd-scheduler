@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { read, utils } from 'xlsx';
 import * as crypto from 'crypto';
+import { sign } from 'jsonwebtoken';
 
 import DBUtil from '../utils/db.util';
 import APIUtil from '../utils/api.util';
@@ -144,7 +145,12 @@ module.exports.verifyAuthenticationToken = (req: Request, res: Response) => {
       }
     })
     .then(updatedGroup => {
-      APIUtil.successResponse(info, true, res);
+      // Generate JWT token and let user use PUT /api/groups/:_id, POST /api/presentations, and PUT /api/presentations/:_id
+      const token = sign({
+        isAuthenticated: true,
+      }, process.env.SECRET as string);
+
+      APIUtil.successResponse(info, token, res);
 
       // Notify schedule page that user is verified
       SocketIOUtil.emit(authenticationToken, true);
@@ -204,5 +210,5 @@ module.exports.updateGroup = (req: Request, res: Response) => {
     }
   };
  
-  
+  APIUtil.successResponse(info, true, res);
 }
