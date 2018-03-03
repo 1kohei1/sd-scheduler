@@ -126,8 +126,9 @@ module.exports.verifyAuthenticationToken = (req: Request, res: Response) => {
   DBUtil.findGroups(query)
     .then(groups => {
       if (groups.length === 0) {
-        info.debugInfo.message = 'Invalid group token';
-        APIUtil.errorResponse(info, '', {}, res);
+        return Promise.reject({
+          message: 'Invalid token.'
+        })
       } else {
         if (groups.length > 1) {
           console.log('Groups with duplicate token is found');
@@ -139,8 +140,9 @@ module.exports.verifyAuthenticationToken = (req: Request, res: Response) => {
             authenticationTokenExpireAt: null,
           })
         } else {
-          info.debugInfo.message = 'Token expired';
-          APIUtil.errorResponse(info, 'Token expired', {}, res);
+          return Promise.reject({
+            message: 'Token expired.',
+          })
         }
       }
     })
