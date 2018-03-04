@@ -8,13 +8,15 @@ import Hourlines from './Hourlines';
 import AvailableSlots from './AvailableSlots';
 import PresentationSlots from './PresentationSlots';
 import TimeSlot from '../../models/TimeSlot';
+import Location from '../../models/Location'
 
 export interface DayProps {
   presentationDate: TimeSlot;
   ruler: number[];
   isLastColumn: boolean;
   presentations: Presentation[];
-  availableSlots: TimeSlot[]
+  availableSlots: TimeSlot[];
+  locations: Location[];
   onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean, updateDB?: boolean) => void;
 }
 
@@ -22,7 +24,7 @@ export default class Day extends React.Component<DayProps, any> {
   constructor(props: DayProps) {
     super(props);
   }
-  
+
   render() {
     return (
       <div className="ko-day_container">
@@ -35,14 +37,10 @@ export default class Day extends React.Component<DayProps, any> {
           ruler={this.props.ruler}
         />
         <AvailableSlots
-          ruler={this.props.ruler}
-          availableSlots={this.props.availableSlots}
-          presentationDate={this.props.presentationDate}
-          onAvailableSlotChange={this.props.onAvailableSlotChange}
+          {...this.props}
         />
-        <PresentationSlots 
-          ruler={this.props.ruler}
-          presentations={this.props.presentations}
+        <PresentationSlots
+          {...this.props}
         />
         <style jsx>{`
           .ko-day_container {

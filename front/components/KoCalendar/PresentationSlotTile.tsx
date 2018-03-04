@@ -6,10 +6,12 @@ import { KoCalendarConstants } from '../../models/Constants';
 import DatetimeUtil from '../../utils/DatetimeUtil';
 import Presentation from '../../models/Presentation';
 import TimeSlot from '../../models/TimeSlot';
+import Location from '../../models/Location';
 
 export interface PresentationSlotTileProps {
   ruler: number[];
   presentation: Presentation;
+  locations: Location[];
 }
 
 interface PresentationSlotTileState {
@@ -17,8 +19,14 @@ interface PresentationSlotTileState {
 }
 
 export default class PresentationSlotTile extends React.Component<PresentationSlotTileProps, any> {
+  locationByAdminId: any = {};
+
   constructor(props: PresentationSlotTileProps) {
     super(props);
+
+    this.props.locations.forEach(location => {
+      this.locationByAdminId[location.admin._id] = location.location;
+    })
 
     this.state = {
       visible: false
@@ -49,7 +57,7 @@ export default class PresentationSlotTile extends React.Component<PresentationSl
           className="ko-presentationslottile"
           onClick={(e) => this.toggleModal(true)}
         >
-          <span>Group {group.groupNumber} presentation</span>
+          <span>Group {group.groupNumber} presentation ({this.locationByAdminId[group.adminFaculty]})</span>
         </div>
 
         <Modal
@@ -64,6 +72,14 @@ export default class PresentationSlotTile extends React.Component<PresentationSl
           </Col>
             <Col span={20} xs={19}>
               {group.groupNumber}
+            </Col>
+          </Row>
+          <Row>
+            <Col span={4} xs={5}>
+              Location:
+          </Col>
+            <Col span={20} xs={19}>
+              {this.locationByAdminId[group.adminFaculty]}
             </Col>
           </Row>
           <Row>

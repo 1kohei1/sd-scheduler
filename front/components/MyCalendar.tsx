@@ -15,6 +15,7 @@ import Api from '../utils/Api';
 import AvailableSlot from '../models/AvailableSlot';
 import PresentationDate from '../models/PresentationDate';
 import Faculty from '../models/Faculty';
+import Location from '../models/Location';
 
 export interface MyCalendarProps {
   user: Faculty;
@@ -27,15 +28,11 @@ interface MyCalendarState {
   presentations: List<Presentation>;
   availableSlots: List<TimeSlot>;
   presentationDates: TimeSlot[];
+  locations: Location[];
 }
 
 export default class MyCalendar extends React.Component<MyCalendarProps, MyCalendarState> {
   availableSlotId: string | undefined = undefined;
-  dataFetchStatus = {
-    presentationDates: false,
-    availableSlots: false,
-    presentations: false,
-  }
 
   constructor(props: MyCalendarProps) {
     super(props);
@@ -46,6 +43,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
       presentations: List<Presentation>(),
       availableSlots: List<TimeSlot>(),
       presentationDates: [],
+      locations: [],
     };
 
     this.onAvailableSlotChange = this.onAvailableSlotChange.bind(this);
@@ -54,9 +52,25 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
   }
 
   componentDidMount() {
-    this.getPresentationDates();
-    this.getAvailableSlot();
-    this.getPresentations();
+    Promise.all([
+      this.getPresentationDates(),
+      this.getLocations(),
+      this.getAvailableSlot(),
+      this.getPresentations(),
+    ])
+    .then(() => {
+      this.setState({
+        loading: false,
+      })
+    })
+  }
+
+  onError(err: any) {
+    this.setState((prevState: MyCalendarState, props: MyCalendarProps) => {
+      return {
+        errors: prevState.errors.push(err.message),
+      }
+    });
   }
 
   private async getPresentationDates() {
@@ -67,13 +81,8 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
       this.setState({
         presentationDates: presentationSlots,
       });
-      this.onDataFetched('presentationDates');
     } catch (err) {
-      this.setState((prevState: MyCalendarState, props: MyCalendarProps) => {
-        return {
-          errors: prevState.errors.push(err.message),
-        }
-      });
+      this.onError(err);
     }
   }
 
@@ -83,61 +92,77 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
    */
   private getPresentationSlots(presentationDates: PresentationDate[]) {
     const presentationSlots = presentationDates
-    .map((pd: PresentationDate) => pd.dates)
-    // Flatten array of array
-    .reduce((accumulator: TimeSlotLikeObject[], dates: TimeSlotLikeObject[]) => {
-      dates.forEach(date => {
-        accumulator.push(date);
+      .map((pd: PresentationDate) => pd.dates)
+      // Flatten array of array
+      .reduce((accumulator: TimeSlotLikeObject[], dates: TimeSlotLikeObject[]) => {
+        dates.forEach(date => {
+          accumulator.push(date);
+        });
+        return accumulator;
+      }, [])
+      .map(DatetimeUtil.convertToTimeSlot)
+      .sort((a: TimeSlot, b: TimeSlot) => {
+        return a.start.valueOf() - b.start.valueOf();
       });
-      return accumulator;
-    }, [])
-    .map(DatetimeUtil.convertToTimeSlot)
-    .sort((a: TimeSlot, b: TimeSlot) => {
-      return a.start.valueOf() - b.start.valueOf();
+
+    // Store the formated dates of presentation dates. 
+    // This works as index locator and check of duplicates
+    const dateStrs: string[] = [];
+    // Stores the TimeSlot of presentation dates that doesn't contain the duplicate of the presentation dates
+    const noDupSlots: TimeSlot[] = [];
+
+    presentationSlots.forEach((slot: TimeSlot) => {
+      const dateStr = DatetimeUtil.formatDate(slot.start, DateConstants.dateFormat);
+      const index = dateStrs.indexOf(dateStr);
+
+      // Duplicate presentation date is found. Take smaller start and large end
+      if (index >= 0) {
+        const existingSlot: TimeSlot = noDupSlots[index];
+        noDupSlots[index].start = DatetimeUtil.smaller(existingSlot.start, slot.start);
+        noDupSlots[index].end = DatetimeUtil.larger(existingSlot.end, slot.end);
+      }
+      // This presentation date is not found yet. Add it to noDupSlots
+      else {
+        dateStrs.push(dateStr);
+        noDupSlots.push(slot);
+      }
     });
 
-  // Store the formated dates of presentation dates. 
-  // This works as index locator and check of duplicates
-  const dateStrs: string[] = [];
-  // Stores the TimeSlot of presentation dates that doesn't contain the duplicate of the presentation dates
-  const noDupSlots: TimeSlot[] = [];
+    return noDupSlots;
+  }
 
-  presentationSlots.forEach((slot: TimeSlot) => {
-    const dateStr = DatetimeUtil.formatDate(slot.start, DateConstants.dateFormat);
-    const index = dateStrs.indexOf(dateStr);
-
-    // Duplicate presentation date is found. Take smaller start and large end
-    if (index >= 0) {
-      const existingSlot: TimeSlot = noDupSlots[index];
-      noDupSlots[index].start = DatetimeUtil.smaller(existingSlot.start, slot.start);
-      noDupSlots[index].end = DatetimeUtil.larger(existingSlot.end, slot.end);
+  private async getLocations() {
+    try {
+      const query = `semester=${this.props.semester._id}`;
+      const locations = await Api.getLocations(query);
+      this.setState({
+        locations,
+      })
+    } catch (err) {
+      this.onError(err);
     }
-    // This presentation date is not found yet. Add it to noDupSlots
-    else {
-      dateStrs.push(dateStr);
-      noDupSlots.push(slot);
-    }
-  });
-
-  return noDupSlots;
-}
+  }
 
   private async getAvailableSlot() {
-    const semesterId = this.props.semester._id;
-    const facultyId = this.props.user._id;
+    try {
+      const semesterId = this.props.semester._id;
+      const facultyId = this.props.user._id;
 
-    const availableSlots = await Api.getAvailableSlots(`semester=${semesterId}&faculty=${facultyId}`) as AvailableSlot[];
+      const availableSlots = await Api.getAvailableSlots(`semester=${semesterId}&faculty=${facultyId}`) as AvailableSlot[];
 
-    if (availableSlots.length > 0) {
-      this.onAvailableSlotGet(availableSlots[0]);
-    } else {
-      const availableSlot = await Api.createAvailableSlot({
-        semester: semesterId,
-        faculty: facultyId,
-        availableSlots: [],
-      });
+      if (availableSlots.length > 0) {
+        this.onAvailableSlotGet(availableSlots[0]);
+      } else {
+        const availableSlot = await Api.createAvailableSlot({
+          semester: semesterId,
+          faculty: facultyId,
+          availableSlots: [],
+        });
 
-      this.onAvailableSlotGet(availableSlot);
+        this.onAvailableSlotGet(availableSlot);
+      }
+    } catch (err) {
+      this.onError(err);
     }
   }
 
@@ -152,21 +177,19 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
     this.setState({
       availableSlots,
     });
-    this.onDataFetched('availableSlots');
   }
 
   private async getPresentations() {
-    this.onDataFetched('presentations');
-  }
+    try {
+      const presentationQuery = `semester=${this.props.semester._id}&faculties[$in][]=${this.props.user._id}`;
+      let presentations = await Api.getPresentations(presentationQuery);
+      presentations = List(presentations);
 
-  private onDataFetched(key: 'presentationDates' | 'availableSlots' | 'presentations') {
-    this.dataFetchStatus[key] = true;
-    const isAllFetched = Object.values(this.dataFetchStatus).filter(isDone => isDone).length === Object.keys(this.dataFetchStatus).length;
-
-    if (isAllFetched) {
       this.setState({
-        loading: false,
-      })
+        presentations,
+      });
+    } catch (err) {
+      this.onError(err);
     }
   }
 
@@ -265,6 +288,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
               presentationDates={this.state.presentationDates}
               presentations={this.state.presentations.toArray()}
               availableSlots={this.state.availableSlots.toArray()}
+              locations={this.state.locations}
               onAvailableSlotChange={this.onAvailableSlotChange}
             />
           )}
