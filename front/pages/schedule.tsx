@@ -26,6 +26,7 @@ import FillGroupInfo from '../components/FillGroupInfo';
 
 interface ScheduleProps {
   facultiesInSemester: Faculty[];
+  allGroups: Group[];
   semester: Semester;
 }
 
@@ -38,6 +39,7 @@ interface ScheduleState {
 
   // state.current = 0
   adminFaculty: Faculty | undefined;
+  groups: Group[];
 
   // state.current = 1
   availableSlots: AvailableSlot[],
@@ -45,7 +47,6 @@ interface ScheduleState {
   presentationDate: PresentationDate | undefined;
 
   // state.current = 2
-  groups: Group[];
   selectedGroup: Group | undefined;
   verifyEmailAddresses: {
     email: string;
@@ -67,8 +68,11 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     const ids = semester.faculties.map(fid => `_id[$in]=${fid}`);
     const facultiesInSemester: Faculty[] = await Api.getFaculties(`${ids.join('&')}`);
 
+    const allGroups = await Api.getGroups(`semester=${semester._id}`);
+
     return {
       facultiesInSemester,
+      allGroups,
       semester,
     };
   }
@@ -85,6 +89,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
 
       // state.current = 0
       adminFaculty: undefined,
+      groups: Array<Group>(),
 
       // state.current = 1
       availableSlots: [],
@@ -92,7 +97,6 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       presentationDate: undefined,
 
       // state.current = 2
-      groups: Array<Group>(),
       selectedGroup: undefined,
       email: '',
       verifyEmailAddresses: [],
@@ -242,9 +246,6 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       if (diff > 0 && newCurrent === 1) {
         newState.loading = true;
         this.onScheduleTime();
-      } else if (diff > 0 && newCurrent === 2) {
-        newState.loading = true;
-        this.onGroups();
       }
 
       return newState;
@@ -310,8 +311,10 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
    */
 
   onAdminSelected(faculty: Faculty) {
+    let groups = this.props.allGroups.filter(group => group.adminFaculty === faculty._id);
     this.setState({
       adminFaculty: faculty,
+      groups,
     });
   }
 
@@ -364,8 +367,21 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
   }
 
   private async getPresentations() {
-    // Get presentations
-    const query = `semester=${this.props.semester._id}`;
+    const groupIds = this.state.groups.map(group => group._id);
+    const groupQuery = groupIds
+      .map(gid => `group[$in]=${gid}`)
+      .join('&');
+
+    const query = `semester=${this.props.semester._id}&${groupQuery}`;
+
+    try {
+      const presentations = await Api.getPresentations(query);
+      this.setState({
+        presentations,
+      })
+    } catch (err) {
+      this.onError(err);
+    }
   }
 
   presentationSlotPicked(presentationSlot: TimeSlot, faculty: Faculty) {
@@ -441,22 +457,6 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
   /**
    * state.current = 2
    */
-
-  async onGroups() {
-    if (this.state.adminFaculty) {
-      const query = `semester=${this.props.semester._id}&adminFaculty=${this.state.adminFaculty._id}`;
-
-      try {
-        const groups = await Api.getGroups(query);
-        this.setState({
-          groups,
-          loading: false,
-        });
-      } catch (err) {
-        this.onError(err);
-      }
-    }
-  }
 
   onGroupSelected(groupId: string) {
     const group = this.state.groups.find(g => g._id === groupId);

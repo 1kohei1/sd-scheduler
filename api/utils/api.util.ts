@@ -93,31 +93,8 @@ export default class APIUtil {
       }
     };
 
-    const urlArray = req.url.split('/');
-    const resource = req.url[2];
-
     const jwtGroupId = req.decoded.group_id;
-    let resourceGroupIdPromise = Promise.resolve(undefined);
-
-    if (resource === 'groups') {
-      resourceGroupIdPromise = Promise.resolve(req.params._id);
-    } else if (resource === 'presentations') {
-      if (req.body.group) {
-        resourceGroupIdPromise = Promise.resolve(req.body.group);
-      } else if (req.params._id) {
-        resourceGroupIdPromise = DBUtil.findPresentations({
-          _id: req.params._id,
-        })
-          .then(presentations => {
-            const presentation = presentations[0];
-            if (presentation) {
-              return Promise.resolve(presentation.get('group'));
-            } else {
-              return Promise.resolve(undefined);
-            }
-          })
-      }
-    }
+    const resourceGroupIdPromise = APIUtil.getResourceGroupId(req);
 
     resourceGroupIdPromise
       .then(resourceGroupId => {
@@ -128,6 +105,33 @@ export default class APIUtil {
           next();
         }
       })
+  }
+
+  static getResourceGroupId(req: RequestWithDecoded) {
+    const urlArray = req.url.split('/');
+    const resource = urlArray[2];
+
+    if (resource === 'groups') {
+      return Promise.resolve(req.params._id);
+    } else if (resource === 'presentations') {
+      if (req.body.group) {
+        return Promise.resolve(req.body.group);
+      } else if (req.params._id) {
+        return DBUtil.findPresentations({
+          _id: req.params._id,
+        })
+          .then(presentations => {
+            const presentation = presentations[0];
+            if (presentation) {
+              return Promise.resolve(presentation.get('group').get('_id').toString());
+            } else {
+              return Promise.resolve(undefined);
+            }
+          })
+      }
+    }
+
+    return Promise.resolve(undefined);
   }
 
   static key(req: Request) {
