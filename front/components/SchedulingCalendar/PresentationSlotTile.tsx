@@ -23,7 +23,7 @@ export default class PresentationSlotTile extends React.Component<PresentationSl
     }
 
     return (
-      <div className="presentationslottile">
+      <div className={`presentationslottile ${presentation.group.groupNumber ? 'default-group' : 'your-group'}`}>
         {text}
         <style jsx>{`
           .presentationslottile {
@@ -32,9 +32,14 @@ export default class PresentationSlotTile extends React.Component<PresentationSl
             width: ${SchedulingCalendarConstants.columnWidth};
             height: ${SchedulingCalendarConstants.tileHeight};
             opacity: 0.8;
-            background-color: ${SchedulingCalendarConstants.presentationTileBackgroundColor};
             font-size: 12px;
             padding: 0 8px;
+          }
+          .default-group {
+            background-color: ${SchedulingCalendarConstants.presentationTileDefaultGroup}
+          }
+          .your-group {
+            background-color: ${SchedulingCalendarConstants.presentationTileYouGroup}
           }
         `}</style>
       </div>

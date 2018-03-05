@@ -618,9 +618,6 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
           body.group = this.state.selectedGroup._id;
         }
 
-        console.log('isNew', isNew);
-        console.log('body', body);
-
         if (isNew) {
           await Api.createPresentation(body);
         } else {
