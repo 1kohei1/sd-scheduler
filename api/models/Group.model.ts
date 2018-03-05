@@ -30,6 +30,7 @@ const GroupSchema = new Schema({
   },
   adminFaculty: {
     type: Schema.Types.ObjectId,
+    ref: 'Faculty',
     required: true,
   },
   authenticationToken: {
