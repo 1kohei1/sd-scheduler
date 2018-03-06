@@ -8,9 +8,9 @@
 
 System: 
 
-- [ ] Send notification email when new group books faculties' time
+- [x] Send notification email when new group books faculties' time
 - [ ] Send notification email when faculties become unavailable for booked time
-- [ ] Send notification email when student gruop updates the presentation time
+- [x] Send notification email when student gruop updates the presentation time
 - [ ] Send notification email when senior design date is updated
 - [ ] Send reminder email a day before and an hour before the presentation time
 - [ ] Send signed PDF to senior design admin faculties when the presentation booking is made (v2)
@@ -77,6 +77,7 @@ TODO:
 - [ ] Add validation to object id existence (Middleware for that: https://github.com/CampbellSoftwareSolutions/mongoose-id-validator) (v3)
 - [x] Display scheduled presentations
 - [ ] Test thoroughly about presentation validation
+- [ ] Fix the bug of asPath not generated in the redirect
 
 NOTES:
 
