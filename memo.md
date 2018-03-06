@@ -11,7 +11,6 @@ System:
 - [ ] Send notification email when new group books faculties' time
 - [ ] Send notification email when faculties become unavailable for booked time
 - [ ] Send notification email when student gruop updates the presentation time
-- [ ] Send notification email when student group deletes the presentation time
 - [ ] Send notification email when senior design date is updated
 - [ ] Send reminder email a day before and an hour before the presentation time
 - [ ] Send signed PDF to senior design admin faculties when the presentation booking is made (v2)
@@ -26,10 +25,9 @@ Faculties:
 
 Students:
 
-- [ ] Add sponsor email, other member's email when creating a booking
-- [ ] Make the presentation booking
-- [ ] Update the presentation booking
-- [ ] Delete the presentation booking
+- [x] Add sponsor email, other member's email when creating a booking
+- [x] Make the presentation booking
+- [x] Update the presentation booking
 
 Admin:
 
@@ -41,7 +39,7 @@ Admin:
 
 System Admin:
 
-- [ ] Import groups for the semester and admin faculty
+- [x] Import groups for the semester and admin faculty
 - [ ] Delete all group by semester and faculties
 - [ ] Turn the faculty to admin (create PresentationDate and Location)
 - [ ] Turn off the faculty not to admin (Delete PresentationDate and Location)
@@ -78,7 +76,6 @@ TODO:
 - [ ] Upload presentation materials (v2)
 - [ ] Add validation to object id existence (Middleware for that: https://github.com/CampbellSoftwareSolutions/mongoose-id-validator) (v3)
 - [x] Display scheduled presentations
-- [ ] Send emails on POST presentations and PUT presentations
 - [ ] Test thoroughly about presentation validation
 
 NOTES:
