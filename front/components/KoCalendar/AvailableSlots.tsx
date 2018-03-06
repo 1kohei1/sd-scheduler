@@ -18,7 +18,7 @@ export interface AvailableSlotsProps {
 const blockHeight = KoCalendarConstants.rulerColumnHeightNum / 2;
 
 export default class AvailableSlots extends React.Component<AvailableSlotsProps, any> {
-  private wrapperRef: HTMLDivElement;
+  private wrapperRef: HTMLDivElement = document.createElement('div');
   private isResizing: boolean = false;
 
   constructor(props: AvailableSlotsProps) {
