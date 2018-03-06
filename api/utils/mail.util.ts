@@ -8,6 +8,7 @@ export enum MailType {
   verify,
   welcome,
   verifystudentauthentication,
+  presentation,
 }
 
 interface MailOption {
@@ -48,6 +49,8 @@ export default class Mailer {
       p = this.sendWelcome(option);
     } else if (type === MailType.verifystudentauthentication) {
       p = this.sendVerifystudentauthentication(option);
+    } else if (type === MailType.presentation) {
+      p = this.sendPresentation(option);
     } else {
       return Promise.resolve();
     }
@@ -117,6 +120,18 @@ export default class Mailer {
       subject: `[SD Scheduler] Verify you belong to the group ${option.extra.groupNumber}`,
       text: MailTemplate.verifystudentauthenticationText(option),
       html: MailTemplate.verifystudentauthenticationHtml(option),
+    }
+
+    return transporter.sendMail(mailOption);
+  }
+
+  private static sendPresentation(option: MailOption) {
+    const mailOption = {
+      from: MAIL_CONSTANTS.from,
+      to: option.to,
+      subject: `[SD Scheduler] ${option.extra.title}`,
+      text: MailTemplate.presentationText(option),
+      html: MailTemplate.presentationHtml(option),
     }
 
     return transporter.sendMail(mailOption);
@@ -408,7 +423,7 @@ class MailTemplate {
 
   static verifystudentauthenticationHtml(option: MailOption) {
     return MailTemplate.htmlTemplate(`
-      Hi<br />
+      Hi,<br />
       <br />
       We request to verify you are the member of the group ${option.extra.groupNumber}.<br />
       Please click the link to verify: 
@@ -420,6 +435,62 @@ class MailTemplate {
       <br />
       SD Scheduler team<br />
     `)
+  }
+
+  static presentationText(option: MailOption) {
+    let url = '';
+    if (option.extra.type === 'faculty') {
+      url = `${Util.siteUrl()}/dashboard/${Util.currentSemesterKey()}/calendar`;
+    } else if (option.extra.type === 'group') {
+      url = `${Util.siteUrl()}/calendar`;
+    }
+    
+    let calendarLink = '';
+    if (url) {
+      calendarLink = `
+      You can check your scheduled presentations at ${url}.
+      <br />
+      `
+    }
+    return `
+    Hi ${option.extra.name},
+
+    ${option.extra.title}
+
+    You can check presentation schedule
+    ${calendarLink}
+
+    Sincerely,
+
+    SD Scheduler team
+    `
+  }
+
+  static presentationHtml(option: MailOption) {
+    let url = '';
+    if (option.extra.type === 'faculty') {
+      url = `${Util.siteUrl()}/dashboard/${Util.currentSemesterKey()}/calendar`;
+    } else if (option.extra.type === 'group') {
+      url = `${Util.siteUrl()}/calendar`;
+    }
+    
+    let calendarLink = '';
+    if (url) {
+      calendarLink = `
+      You can check your scheduled presentations at <a href="${url}">${url}</a><br />
+      `
+    }
+
+    return MailTemplate.htmlTemplate(`
+    Hi ${option.extra.name},<br />
+    <br />
+    ${option.extra.title}<br />
+    ${calendarLink}
+    <br />
+    Sincerely,<br />
+    <br />
+    SD Scheduler team<br />
+    `);
   }
 
   static htmlTemplate(content: string) {

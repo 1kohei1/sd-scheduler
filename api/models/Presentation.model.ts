@@ -4,6 +4,10 @@ import { ObjectID } from 'bson';
 
 import DBUtil from '../utils/db.util';
 import Util from '../utils/util';
+import Mailer, { MailType } from '../utils/mail.util';
+
+import { DateConstants } from '../../front/models/Constants';
+import DatetimeUtil from '../../front/utils/DatetimeUtil'; // This is not clean, but I would like to reuse DatetimeUtil
 
 const PresentationSchema = new Schema({
   start: {
@@ -209,5 +213,84 @@ const presentationValidation = (doc: Document, next: any) => {
       next(err);
     });
 }
+
+PresentationSchema.post('save', (doc: Document, next: any) => {
+  // Don't block the main process.
+  next();
+
+  // group is populated from the internal cache
+  const group = doc.get('group');
+  const groupNumber = group.get('groupNumber');
+
+  const startISO = doc.get('start').toISOString();
+  const date = DatetimeUtil.formatISOString(startISO, DateConstants.dateFormat);
+  const time = DatetimeUtil.formatISOString(startISO, DateConstants.hourMinFormat);
+
+  // Get faculty to get emails
+  DBUtil.findFaculties({
+    _id: {
+      $in: doc.get('faculties'),
+    }
+  })
+    .then(faculties => {
+      const emails: {
+        email: string;
+        name: string;
+        title: string;
+        type: string;
+      }[] = [];
+
+      faculties.forEach((faculty: Document) => {
+        emails.push({
+          email: faculty.get('email'),
+          name: `Dr. ${faculty.get('firstName')} ${faculty.get('lastName')}`,
+          title: `Group ${groupNumber} scheduled presentation at ${time} on ${date}`,
+          type: 'faculty',
+        })
+      });
+
+      group.get('members').forEach((member: Document) => {
+        if (member.get('email') === 'tobecomebig@gmail.com') {
+          emails.push({
+            email: member.get('email'),
+            name: `${member.get('firstName')} ${member.get('lastName')}`,
+            title: `Your final presentation is scheduled at ${time} on ${date}`,
+            type: 'group',
+          })
+        }
+      });
+
+      group.get('sponsors').forEach((sponsor: Document) => {
+        emails.push({
+          email: sponsor.get('email'),
+          name: `${sponsor.get('firstName')} ${sponsor.get('lastName')}`,
+          title: `Senior design final presentation is scheduled at ${time} on ${date}`,
+          type: 'sponsor',
+        })
+      })
+
+      return Promise.resolve(emails);
+    })
+    .then(emails => {
+      emails.forEach((email) => {
+        Mailer.send(MailType.presentation, {
+          to: email.email,
+          extra: {
+            name: email.name,
+            title: email.title,
+            type: email.type,
+          }
+        })
+      })
+    })
+    .catch(err => {
+      console.log(`Error:PresentationSchema.post.save: ${JSON.stringify(err)}`);
+    })
+})
+
+// This post hook is not executed. Check why this is not executed.
+// PresentationSchema.post('save', (err: MongoError, doc: Document, next: any) => {
+//   console.log('post save');
+// })
 
 export default model('Presentation', PresentationSchema);
