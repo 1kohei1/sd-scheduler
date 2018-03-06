@@ -2,7 +2,7 @@ import * as React from 'react';
 import { List } from 'immutable';
 import ObjectID from 'bson-objectid';
 import * as moment from 'moment-timezone';
-import { Button, Icon, message, Alert, Popover } from 'antd';
+import { Button, Icon, message, Alert, Popover, Modal, Form, Input } from 'antd';
 
 import KoCalendar from './KoCalendar/KoCalendar';
 import Presentation from '../models/Presentation';
@@ -214,12 +214,85 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
       }
 
       if (updateDB) {
-        this.updateDBAvailableSlot(newAvailableSlots.toArray());
+        this.canUpdateDBAvailableSlot(newAvailableSlots.toArray())
+          .then(updateDB => {
+            if (updateDB) {
+              this.updateDBAvailableSlot(newAvailableSlots.toArray());
+            }
+          })
       }
       return {
         availableSlots: newAvailableSlots,
       }
     })
+  }
+
+  private confirmDialogContent() {
+    return (
+      <div>
+        The system will cancel the presentation and send the emails to sponsors and group members. Please leave message to them why you have to cancel this presentation.<br /><br />
+        <Form>
+          <Form.Item
+            help="Please enter the message"
+          >
+            <Input
+              id="cancelNote"
+            />
+          </Form.Item>
+        </Form>
+      </div>
+    )
+  }
+
+  private async canUpdateDBAvailableSlot(newAvailableSlots: TimeSlot[]) {
+    const presentations = this.state.presentations.toArray();
+
+    const presentationsToBeCanceled = presentations
+      // Get presentations that group has to reschedule
+      .filter(presentation => {
+        const presentationTimeSlot = DatetimeUtil.convertToTimeSlot(presentation as TimeSlotLikeObject);
+
+        // If no availableSlot which covers presentation time is found, that means they have to reschedule
+        return newAvailableSlots.filter(
+          (slot: TimeSlot) => DatetimeUtil.doesCover(slot, presentationTimeSlot)
+        )
+          .length === 0
+      })
+
+    if (presentationsToBeCanceled.length > 0) {
+      return new Promise((resolve, reject) => {
+        Modal.confirm({
+          title: 'Some group has to reschedule the presentation',
+          content: this.confirmDialogContent(),
+          okText: 'Cancel the presentation',
+          cancelText: 'Go back',
+          onOk: (closeFn: any) => {
+            const cancelNote = (document.getElementById('cancelNote') as HTMLInputElement).value;
+            if (cancelNote) {
+              // Cancel each presentation
+              presentationsToBeCanceled.forEach(this.cancelPresentation);
+              closeFn();
+              resolve(true);
+            } else {
+              message.error('Please leave the message to the group and sponsors');
+            }
+          },
+          onCancel: () => {
+            resolve(false);
+          }
+        })
+      })
+    } else {
+      return Promise.resolve(true);
+    }
+  }
+
+  private async cancelPresentation(presentation: Presentation) {
+    try {
+
+    } catch (err) {
+      this.onError(err);
+    }
   }
 
   private async updateDBAvailableSlot(newAvailableSlots: TimeSlot[]) {
@@ -238,6 +311,8 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
       });
     }
   }
+
+
 
   calendar() {
     if (this.state.loading) {
