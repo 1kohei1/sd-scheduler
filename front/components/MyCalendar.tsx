@@ -58,11 +58,11 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
       this.getAvailableSlot(),
       this.getPresentations(),
     ])
-    .then(() => {
-      this.setState({
-        loading: false,
+      .then(() => {
+        this.setState({
+          loading: false,
+        })
       })
-    })
   }
 
   onError(err: any) {
@@ -202,39 +202,24 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
       }
     });
 
-    if (isDelete) {
-      if (index >= 0) {
-        this.setState((prevState: MyCalendarState, props: MyCalendarProps) => {
-          const newAvailableSlots = prevState.availableSlots.delete(index);
-          if (updateDB) {
-            this.updateDBAvailableSlot(newAvailableSlots.toArray());
-          }
-          return {
-            availableSlots: newAvailableSlots,
-          }
-        })
+    this.setState((prevState: MyCalendarState, props: MyCalendarProps) => {
+      let newAvailableSlots = prevState.availableSlots;
+
+      if (isDelete && index >= 0) {
+        newAvailableSlots = newAvailableSlots.delete(index);
+      } else if (index >= 0) {
+        newAvailableSlots = newAvailableSlots.set(index, updatedSlot);
+      } else {
+        newAvailableSlots = newAvailableSlots.push(updatedSlot);
       }
-    } else if (index >= 0) {
-      this.setState((prevState: MyCalendarState, props: MyCalendarProps) => {
-        const newAvailableSlots = prevState.availableSlots.set(index, updatedSlot);
-        if (updateDB) {
-          this.updateDBAvailableSlot(newAvailableSlots.toArray());
-        }
-        return {
-          availableSlots: newAvailableSlots,
-        }
-      })
-    } else {
-      this.setState((prevState: MyCalendarState, props: MyCalendarProps) => {
-        const newAvailableSlots = prevState.availableSlots.push(updatedSlot);
-        if (updateDB) {
-          this.updateDBAvailableSlot(newAvailableSlots.toArray());
-        }
-        return {
-          availableSlots: newAvailableSlots,
-        }
-      });
-    }
+
+      if (updateDB) {
+        this.updateDBAvailableSlot(newAvailableSlots.toArray());
+      }
+      return {
+        availableSlots: newAvailableSlots,
+      }
+    })
   }
 
   private async updateDBAvailableSlot(newAvailableSlots: TimeSlot[]) {

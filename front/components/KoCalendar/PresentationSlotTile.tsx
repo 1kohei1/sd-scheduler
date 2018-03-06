@@ -76,6 +76,14 @@ export default class PresentationSlotTile extends React.Component<PresentationSl
           </Row>
           <Row>
             <Col span={4} xs={5}>
+              Sponsor:
+          </Col>
+            <Col span={20} xs={19}>
+              {group.sponsorName}
+            </Col>
+          </Row>
+          <Row>
+            <Col span={4} xs={5}>
               Location:
           </Col>
             <Col span={20} xs={19}>
@@ -87,19 +95,15 @@ export default class PresentationSlotTile extends React.Component<PresentationSl
               Member:
           </Col>
             <Col span={20} xs={19}>
-              {group.members.map((member, index) => (
-                <span key={ObjectID.generate()}>
-                  {member.firstName} {member.lastName}{index !== group.members.length - 1 ? ', ' : ''}
-                </span>
-              ))}
+              {group.members.map(member => `${member.firstName} ${member.lastName}`).join(', ')}
             </Col>
           </Row>
           <Row>
             <Col span={4} xs={5}>
-              Sponsor:
+              Sponsor member:
           </Col>
             <Col span={20} xs={19}>
-              {group.sponsorName}
+              {group.sponsors.map(member => `${member.firstName} ${member.lastName}`).join(', ')}
             </Col>
           </Row>
         </Modal>
