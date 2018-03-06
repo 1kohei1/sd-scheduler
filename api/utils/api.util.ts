@@ -72,7 +72,7 @@ export default class APIUtil {
             info.debugInfo.message = 'Your session expired. Please verify your identity by sending email at previous step';
             APIUtil.errorResponse(info, 'Your session expired. Please verify your identity by sending email at previous step', {}, res);
           } else {
-            info.debugInfo.message = err.message;
+            info.debugInfo.message = err.message + '. Please send verification code again';
             APIUtil.errorResponse(info, err.message, {}, res);
           }
         } else {
