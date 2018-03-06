@@ -24,7 +24,7 @@ interface AdminState {
 export default class Admin extends React.Component<AdminProps, AdminState> {
   static async getInitialProps(context: InitialProps) {
     const user = await UserUtil.checkAuthentication(context);
-    if (user && user.email !== 'tobecomebig@gmail.com') {
+    if (!user || !user.isSystemAdmin) {
       Api.redirect(context, '/dashboard');
     }
 

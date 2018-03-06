@@ -33,6 +33,14 @@ interface DashboardState {
 
 export default class Dashboard extends React.Component<DashboardProps, DashboardState> {
   static async getInitialProps(context: InitialProps) {
+    let asPath = '/dashboard';
+    if (context.query.semester) {
+      asPath += `/${context.query.semester}`;
+    }
+    if (context.query.menu) {
+      asPath += `/${context.query.menu}`;
+    }
+    context.asPath = asPath;
     const user = await UserUtil.checkAuthentication(context);
 
     const semesters = await Api.getSemesters();

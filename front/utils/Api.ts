@@ -169,10 +169,7 @@ export default class Api {
         pathname: path,
         query,
       }
-      if (asPath) {
-        option.asPath = asPath;
-      }
-      Router.push(option);
+      Router.push(option, asPath);
     }
   }
 
