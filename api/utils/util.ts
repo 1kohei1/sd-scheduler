@@ -50,4 +50,16 @@ export default class Util {
       return false;
     }
   }
+
+  /**
+   * Return true if d1 start, end contains d2 start, end
+   */
+  static doesCover(d1: Document, d2: Document) {
+    const start = d1.get('start').valueOf();
+    const end = d1.get('end').valueOf();
+    const otherStart = d2.get('start').valueOf();
+    const otherEnd = d2.get('end').valueOf();
+
+    return start <= otherStart && otherEnd <= end;
+  }
 }

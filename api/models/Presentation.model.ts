@@ -60,7 +60,23 @@ PresentationSchema.pre('save', function (this: any, next) {
   }
   this.updated_at = new Date();
 
-  presentationValidation(this, next);
+  // Some times group property is Group model from the internal cache.
+  // Regardless of that, get Group from DB
+  const groupId = this.get('group') instanceof Types.ObjectId ? this.get('group') : this.get('group').get('_id');
+  DBUtil.findGroups({
+    _id: groupId,
+  })
+    .then(groups => {
+      if (groups.length === 0) {
+        return Promise.reject(new Error('Specified group does not exist'))
+      } else {
+        const group = groups[0];
+        presentationValidation(this, group, next);
+      }
+    })
+    .catch(err => {
+      next(err);
+    })
 });
 
 /**
@@ -69,15 +85,16 @@ PresentationSchema.pre('save', function (this: any, next) {
  * 1. start and end is one hour apart and start comes before end
  * 2. Presentation start and end is in the range of presentationDate
  * 3. All faculty is available at specifed time
- * 4. No presentation exists which has the same group.adminFaculty and start and end overlaps 
+ * 4. Group has not scheduled the presentations
+ * 5. No presentation exists which has the same group.adminFaculty and start and end overlaps 
  *    The same SD 2 faculty cannot join two presentations at the same time
- * 5. At least 30 minutes apart from all presentations if group.adminFaculty is different && share the one faculty in faculties
+ * 6. At least 30 minutes apart from all presentations if group.adminFaculty is different && share the one faculty in faculties
  */
-const presentationValidation = (doc: Document, next: any) => {
+const presentationValidation = (doc: Document, group: Document, next: any) => {
 
   // group is populated according to internal cache. 
   // So if I stop populating group in DBUtil, this generates run time error.
-  let adminFaculty = doc.get('group').get('adminFaculty');
+  let adminFaculty = group.get('adminFaculty');
   let semester = doc.get('semester');
 
   // Check condition 1
@@ -123,12 +140,13 @@ const presentationValidation = (doc: Document, next: any) => {
     // Check condition 3
     .then((availableSlots: Document[]) => {
       if (availableSlots.length !== doc.get('faculties').length) {
-        return Promise.reject(new Error('One of specified faculties do not exist'));
+        return Promise.reject(new Error('One of specified faculties is not available at specified time'));
       } else {
         const isAllFacultiesAvailable = availableSlots
-          .map((availableSlot: Document) => {
+          .filter((availableSlot: Document) => {
+            // Simplify this operation
             return availableSlot.get('availableSlots')
-              .filter((availableSlot: Document) => Util.doesOverlap(availableSlot, doc))
+              .filter((availableSlot: Document) => Util.doesCover(availableSlot, doc))
               .length > 0;
           })
           .length === doc.get('faculties').length;
@@ -144,10 +162,25 @@ const presentationValidation = (doc: Document, next: any) => {
     })
     // Check condition 4
     .then((presentations: Document[]) => {
+      const sameGroupPresentation = presentations
+        .filter(presentation =>
+          presentation.get('_id').toString() !== doc.get('_id').toString() &&
+          presentation.get('group').get('_id').toString() === group.get('_id').toString()
+        )
+        .length > 0;
+
+      if (sameGroupPresentation) {
+        return Promise.reject(new Error(`Group ${group.get('groupNumber')} has already scheduled the presentation`));
+      } else {
+        return Promise.resolve(presentations);
+      }
+    })
+    // Check condition 5
+    .then((presentations: Document[]) => {
       const overlappingGroups = presentations
         .filter(presentation =>
           presentation.get('_id').toString() !== doc.get('_id').toString() &&
-          presentation.get('group').get('adminFaculty') === adminFaculty
+          presentation.get('group').get('adminFaculty').toString() === adminFaculty.toString()
         )
         .map((presentation: Document) => {
           // Map to -1 if presentation doesn't overlap with doc.
@@ -174,17 +207,17 @@ const presentationValidation = (doc: Document, next: any) => {
       const facultiesInHurry = presentations
         .filter(presentation =>
           presentation.get('_id').toString() !== doc.get('_id').toString() &&
-          presentation.get('group').get('adminFaculty') !== adminFaculty &&
+          presentation.get('group').get('adminFaculty').toString() !== adminFaculty.toString() &&
           // Filter presentations that contain the duplicate faculties
           presentation.get('faculties')
             .map((objectId: ObjectID) => objectId.toString())
             .filter((objectId: string) => facultiesIdArray.indexOf(objectId) >= 0)
             .length > 0
         )
-        .map((presentation: Document) => {
+        .filter((presentation: Document) => {
           const d1StartM = moment(doc.get('start'));
           const d1EndM = moment(doc.get('end'));
-          const d2StartM = moment(presentation.get('end'));
+          const d2StartM = moment(presentation.get('start'));
           const d2EndM = moment(presentation.get('end'));
 
           // d1 < d2
@@ -200,7 +233,6 @@ const presentationValidation = (doc: Document, next: any) => {
             return true;
           }
         })
-        .filter(facultiesInHurry => facultiesInHurry)
         .length > 0;
 
       if (facultiesInHurry) {
