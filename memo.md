@@ -76,8 +76,8 @@ TODO:
 - [ ] Upload presentation materials (v2)
 - [ ] Add validation to object id existence (Middleware for that: https://github.com/CampbellSoftwareSolutions/mongoose-id-validator) (v3)
 - [x] Display scheduled presentations
-- [ ] Test thoroughly about presentation validation
-- [ ] Fix the bug of asPath not generated in the redirect
+- [x] Test thoroughly about presentation validation
+- [x] Fix the bug of asPath not generated in the redirect
 - [ ] In maximum, make faculty to be booked up to 5 if not admin (v3) Hear to professors
 
 NOTES:
