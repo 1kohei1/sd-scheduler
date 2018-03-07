@@ -1,5 +1,5 @@
 import * as moment from 'moment-timezone';
-import { Model, model, Schema, Document } from 'mongoose';
+import { Model, model, Schema, Document, Types } from 'mongoose';
 import { ObjectID } from 'bson';
 
 import DBUtil from '../utils/db.util';
@@ -45,6 +45,10 @@ const PresentationSchema = new Schema({
   committeeFormLink: {
     type: String,
     default: '',
+  },
+  cancelInfo: {
+    canceledBy: String,
+    note: String,
   },
   created_at: Date,
   updated_at: Date,
@@ -292,5 +296,9 @@ PresentationSchema.post('save', (doc: Document, next: any) => {
 // PresentationSchema.post('save', (err: MongoError, doc: Document, next: any) => {
 //   console.log('post save');
 // })
+
+PresentationSchema.post('remove', (doc: Document, next: any) => {
+  next();
+})
 
 export default model('Presentation', PresentationSchema);

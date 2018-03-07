@@ -8,6 +8,7 @@ enum RequestMethod {
   GET,
   POST,
   PUT,
+  DELETE,
 }
 
 interface loginBody {
@@ -141,6 +142,10 @@ export default class Api {
      return await Api.makeRequest(RequestMethod.PUT, `/api/presentations/${_id}`, update);
    }
 
+   static async cancelPresentation(_id: string, body: object) {
+    return await Api.makeRequest(RequestMethod.DELETE, `/api/presentations/${_id}`, body);
+   }
+
   /**
    * Location
    */
@@ -207,6 +212,8 @@ export default class Api {
       requestMethod = 'POST';
     } else if (method === RequestMethod.PUT) {
       requestMethod = 'PUT';
+    } else if (method === RequestMethod.DELETE) {
+      requestMethod = 'DELETE';
     }
 
     let obj: any = {

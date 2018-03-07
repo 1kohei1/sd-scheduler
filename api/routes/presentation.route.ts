@@ -22,4 +22,10 @@ module.exports = (server: Application) => {
     APIUtil.isAuthorizedJWT,
     presentationController.updatePresentation,
   )
+
+  server.delete(
+    '/api/presentations/:_id',
+    APIUtil.isAuthenticated,
+    presentationController.deletePresentation,
+  )
 }

@@ -236,7 +236,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
             help="Please enter the message"
           >
             <Input
-              id="cancelNote"
+              id="note"
             />
           </Form.Item>
         </Form>
@@ -267,10 +267,10 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
           okText: 'Cancel the presentation',
           cancelText: 'Go back',
           onOk: (closeFn: any) => {
-            const cancelNote = (document.getElementById('cancelNote') as HTMLInputElement).value;
-            if (cancelNote) {
+            const note = (document.getElementById('note') as HTMLInputElement).value;
+            if (note) {
               // Cancel each presentation
-              presentationsToBeCanceled.forEach(this.cancelPresentation);
+              presentationsToBeCanceled.forEach(presentation => this.cancelPresentation(presentation, note));
               closeFn();
               resolve(true);
             } else {
@@ -287,9 +287,12 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
     }
   }
 
-  private async cancelPresentation(presentation: Presentation) {
+  private async cancelPresentation(presentation: Presentation, note: string) {
     try {
-
+      await Api.cancelPresentation(presentation._id, {
+        canceledBy: this.props.user._id,
+        note,
+      })
     } catch (err) {
       this.onError(err);
     }

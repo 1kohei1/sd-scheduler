@@ -188,6 +188,18 @@ export default class DBUtil {
     return DBUtil.updateById(Presentation, _id, update, 'group');
   }
 
+  static deletePresentation(_id: string | number | object, cancelInfo: { canceledBy: string, note: string }) {
+    return Presentation.findById(_id)
+      .then(presentation => {
+        if (presentation) {
+          presentation.set({ cancelInfo });
+          return presentation.remove();
+        } else {
+          return Promise.reject('Document is not found')
+        }
+      })
+  }
+
   /**
    * Private functions
    */

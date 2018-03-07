@@ -57,3 +57,24 @@ module.exports.updatePresentation = (req: Request, res: Response) => {
       APIUtil.errorResponse(info, err.message, {}, res);
     });
 }
+
+module.exports.deletePresentation = (req: Request, res: Response) => {
+  const info: any = {
+    key: APIUtil.key(req),
+    debugInfo: {
+      _id: req.params._id,
+      body: req.body,
+    }
+  };
+
+  DBUtil.deletePresentation(req.params._id, req.body)
+    .then(() => {
+      APIUtil.successResponse(info, true, res);
+      // Cannot use post('remove') since I cannot pass req.body.cancelNote to the middleware
+    })
+    .catch(err => {
+      info.debugInfo.message = err.message;
+      APIUtil.errorResponse(info, err.message, {}, res);
+    });
+  // APIUtil.successResponse(info, true, res);
+}
