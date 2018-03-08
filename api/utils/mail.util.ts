@@ -9,6 +9,7 @@ export enum MailType {
   welcome,
   verifystudentauthentication,
   presentation,
+  presentationcancel,
 }
 
 interface MailOption {
@@ -51,6 +52,8 @@ export default class Mailer {
       p = this.sendVerifystudentauthentication(option);
     } else if (type === MailType.presentation) {
       p = this.sendPresentation(option);
+    } else if (type === MailType.presentationcancel) {
+      p = this.sendPresentationcancel(option);
     } else {
       return Promise.resolve();
     }
@@ -132,6 +135,18 @@ export default class Mailer {
       subject: `[SD Scheduler] ${option.extra.title}`,
       text: MailTemplate.presentationText(option),
       html: MailTemplate.presentationHtml(option),
+    }
+
+    return transporter.sendMail(mailOption);
+  }
+
+  private static sendPresentationcancel(option: MailOption) {
+    const mailOption = {
+      from: MAIL_CONSTANTS.from,
+      to: option.to,
+      subject: `[SD Scheduler] ${option.extra.title}`,
+      text: MailTemplate.presentationcancelText(option),
+      html: MailTemplate.presentationcancelHtml(option),
     }
 
     return transporter.sendMail(mailOption);
@@ -444,7 +459,7 @@ class MailTemplate {
     } else if (option.extra.type === 'group') {
       url = `${Util.siteUrl()}/calendar`;
     }
-    
+
     let calendarLink = '';
     if (url) {
       calendarLink = `
@@ -473,7 +488,7 @@ class MailTemplate {
     } else if (option.extra.type === 'group') {
       url = `${Util.siteUrl()}/calendar`;
     }
-    
+
     let calendarLink = '';
     if (url) {
       calendarLink = `
@@ -486,6 +501,39 @@ class MailTemplate {
     <br />
     ${option.extra.title}<br />
     ${calendarLink}
+    <br />
+    Sincerely,<br />
+    <br />
+    SD Scheduler team<br />
+    `);
+  }
+
+  static presentationcancelText(option: MailOption) {
+    return `
+    Hi ${option.extra.name},
+
+    ${option.extra.title}.
+
+    Message from ${option.extra.canceledBy}: 
+    ${option.extra.note}
+
+    ${option.extra.type === 'group' ? `Please schedule presentation again at ${Util.siteUrl()}/schedule` : ''}
+
+    Sincerely,
+
+    SD Scheduler team
+    `;
+  }
+
+  static presentationcancelHtml(option: MailOption) {
+    return MailTemplate.htmlTemplate(`
+    Hi ${option.extra.name},<br />
+    <br />
+    ${option.extra.title}.<br />
+    <br />
+    Message from ${option.extra.canceledBy}:<br />
+    ${option.extra.note}<br />
+    ${option.extra.type === 'group' ? `<br />Please schedule presentation again at <a href="${Util.siteUrl()}/schedule">${Util.siteUrl()}/schedule</a><br />` : ''}
     <br />
     Sincerely,<br />
     <br />

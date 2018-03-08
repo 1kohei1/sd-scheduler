@@ -330,7 +330,94 @@ PresentationSchema.post('save', (doc: Document, next: any) => {
 // })
 
 PresentationSchema.post('remove', (doc: Document, next: any) => {
-  next();
+  const facultyQuery = {
+    _id: {
+      $in: doc.get('faculties'),
+    }
+  }
+  const groupQuery = {
+    _id: doc.get('group') instanceof Types.ObjectId ? doc.get('group') : doc.get('group').get('_id')
+  }
+
+  Promise.all([
+    DBUtil.findFaculties(facultyQuery).exec(),
+    DBUtil.findGroups(groupQuery).exec(),
+  ])
+    .then(([faculties, groups]: [Document[], Document[]]) => {
+      if (groups.length === 0) {
+        next(new Error('Specified group doesn\'t exist'))
+      }
+      const group = groups[0];
+      const emails: {
+        email: string;
+        name: string;
+        title: string;
+        type: string;
+        canceledBy: string;
+        note: string;
+      }[] = [];
+
+      const canceledByFaculty = faculties
+        .filter(faculty => faculty.get('_id').toString() === doc.get('cancelInfo').canceledBy)
+      [0];
+      const canceledBy = `Dr. ${canceledByFaculty.get('firstName')} ${canceledByFaculty.get('lastName')}`
+      const { note } = doc.get('cancelInfo');
+
+      faculties.forEach(faculty => {
+        emails.push({
+          email: faculty.get('email'),
+          name: `Dr. ${faculty.get('firstName')} ${faculty.get('lastName')}`,
+          title: `Group ${group.get('groupNumber')} presentation is canceld since ${canceledBy} becomes unavailable`,
+          type: 'faculty',
+          canceledBy,
+          note,
+        })
+      })
+
+      group.get('members')
+        .forEach((member: Document) => {
+          emails.push({
+            email: member.get('email'),
+            name: `${member.get('firstName')} ${member.get('lastName')}`,
+            title: `Your presentation is canceld since ${canceledBy} becomes unavailable`,
+            type: 'group',
+            canceledBy,
+            note,
+          })
+        })
+
+      group.get('sponsors')
+        .forEach((sponsor: Document) => {
+          emails.push({
+            email: sponsor.get('email'),
+            name: `${sponsor.get('firstName')} ${sponsor.get('lastName')}`,
+            title: `Your presentation is canceld since one of faculty member becomes unavailable`,
+            type: 'sponsor',
+            canceledBy,
+            note,
+          })
+        })
+
+      return Promise.resolve(emails);
+    })
+    .then(emails => {
+      emails.forEach((email) => {
+        Mailer.send(MailType.presentationcancel, {
+          to: email.email,
+          extra: {
+            name: email.name,
+            title: email.title,
+            type: email.type,
+            canceledBy: email.canceledBy,
+            note: email.note,
+          }
+        })
+      })
+      next();
+    })
+    .catch(err => {
+      next(err);
+    })
 })
 
 export default model('Presentation', PresentationSchema);

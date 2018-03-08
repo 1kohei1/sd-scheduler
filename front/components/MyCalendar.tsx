@@ -292,7 +292,10 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
       await Api.cancelPresentation(presentation._id, {
         canceledBy: this.props.user._id,
         note,
-      })
+      });
+      // Update presentations
+      this.getPresentations();
+      message.success('Successfully canceled the presentation');
     } catch (err) {
       this.onError(err);
     }
