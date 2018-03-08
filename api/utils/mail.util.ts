@@ -470,7 +470,7 @@ class MailTemplate {
     return `
     Hi ${option.extra.name},
 
-    ${option.extra.title}
+    ${option.extra.title}.
 
     You can check presentation schedule
     ${calendarLink}
@@ -499,7 +499,7 @@ class MailTemplate {
     return MailTemplate.htmlTemplate(`
     Hi ${option.extra.name},<br />
     <br />
-    ${option.extra.title}<br />
+    ${option.extra.title}.<br />
     ${calendarLink}
     <br />
     Sincerely,<br />

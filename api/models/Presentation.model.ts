@@ -74,9 +74,7 @@ PresentationSchema.pre('save', function (this: any, next) {
         presentationValidation(this, group, next);
       }
     })
-    .catch(err => {
-      next(err);
-    })
+    .catch(next)
 });
 
 /**
@@ -245,30 +243,39 @@ const presentationValidation = (doc: Document, group: Document, next: any) => {
       // All validation passes. Save it
       next();
     })
-    .catch((err: Error) => {
-      next(err);
-    });
+    .catch(next);
 }
 
 PresentationSchema.post('save', (doc: Document, next: any) => {
-  // Don't block the main process.
-  next();
+  const groupId = doc.get('group') instanceof Types.ObjectId ? doc.get('group') : doc.get('group').get('_id');
+  let group: Document;
 
-  // group is populated from the internal cache
-  const group = doc.get('group');
-  const groupNumber = group.get('groupNumber');
-
-  const startISO = doc.get('start').toISOString();
-  const date = DatetimeUtil.formatISOString(startISO, DateConstants.dateFormat);
-  const time = DatetimeUtil.formatISOString(startISO, DateConstants.hourMinFormat);
-
-  // Get faculty to get emails
-  DBUtil.findFaculties({
-    _id: {
-      $in: doc.get('faculties'),
-    }
+  DBUtil.findGroups({
+    _id: groupId
   })
-    .then(faculties => {
+    .then(groups => {
+      if (groups.length === 0) {
+        return Promise.reject(new Error('No group is specified for the presentation'))
+      }
+      group = groups[0];
+
+      return Promise.all([
+        DBUtil.findFaculties({
+          _id: {
+            $in: doc.get('faculties'),
+          }
+        }).exec(),
+        DBUtil.findLocations({
+          semester: doc.get('semester'),
+          admin: group.get('adminFaculty'),
+        })
+      ])
+    })
+    .then(([faculties, locations]: [Document[], Document[]]) => {
+      const startISO = doc.get('start').toISOString();
+      const date = DatetimeUtil.formatISOString(startISO, DateConstants.dateFormat);
+      const time = DatetimeUtil.formatISOString(startISO, DateConstants.hourMinFormat);
+
       const emails: {
         email: string;
         name: string;
@@ -276,11 +283,13 @@ PresentationSchema.post('save', (doc: Document, next: any) => {
         type: string;
       }[] = [];
 
+      const location = locations[0].get('location');
+
       faculties.forEach((faculty: Document) => {
         emails.push({
           email: faculty.get('email'),
           name: `Dr. ${faculty.get('firstName')} ${faculty.get('lastName')}`,
-          title: `Group ${groupNumber} scheduled presentation at ${time} on ${date}`,
+          title: `Group ${group.get('groupNumber')} scheduled presentation at ${time} on ${date} at ${location}`,
           type: 'faculty',
         })
       });
@@ -290,7 +299,7 @@ PresentationSchema.post('save', (doc: Document, next: any) => {
           emails.push({
             email: member.get('email'),
             name: `${member.get('firstName')} ${member.get('lastName')}`,
-            title: `Your final presentation is scheduled at ${time} on ${date}`,
+            title: `Your final presentation is scheduled at ${time} on ${date} at ${location}`,
             type: 'group',
           })
         }
@@ -300,7 +309,7 @@ PresentationSchema.post('save', (doc: Document, next: any) => {
         emails.push({
           email: sponsor.get('email'),
           name: `${sponsor.get('firstName')} ${sponsor.get('lastName')}`,
-          title: `Senior design final presentation is scheduled at ${time} on ${date}`,
+          title: `Senior design final presentation is scheduled at ${time} on ${date} at ${location}`,
           type: 'sponsor',
         })
       })
@@ -318,10 +327,9 @@ PresentationSchema.post('save', (doc: Document, next: any) => {
           }
         })
       })
+      next();
     })
-    .catch(err => {
-      console.log(`Error:PresentationSchema.post.save: ${JSON.stringify(err)}`);
-    })
+    .catch(next)
 })
 
 // This post hook is not executed. Check why this is not executed.
@@ -415,9 +423,7 @@ PresentationSchema.post('remove', (doc: Document, next: any) => {
       })
       next();
     })
-    .catch(err => {
-      next(err);
-    })
+    .catch(next)
 })
 
 export default model('Presentation', PresentationSchema);
