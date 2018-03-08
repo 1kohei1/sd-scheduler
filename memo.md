@@ -9,10 +9,11 @@
 System: 
 
 - [x] Send notification email when new group books faculties' time
-- [ ] Send notification email when faculties become unavailable for booked time
+- [x] Send notification email when faculties become unavailable for booked time
 - [x] Send notification email when student gruop updates the presentation time
 - [ ] Send notification email when senior design date is updated
 - [ ] Send reminder email a day before and an hour before the presentation time
+- [ ] Send groups to remind to schedule the presentation at 2 weeks before and continuously
 - [ ] Send signed PDF to senior design admin faculties when the presentation booking is made (v2)
 - [x] Email verification
 
