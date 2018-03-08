@@ -80,6 +80,7 @@ TODO:
 - [x] Test thoroughly about presentation validation
 - [x] Fix the bug of asPath not generated in the redirect
 - [ ] In maximum, make faculty to be booked up to 5 if not admin (v3) Hear to professors
+- [ ] Refactor db.util to return the promise (currently some function requires calling .exec, and some are not)
 
 NOTES:
 
@@ -118,6 +119,9 @@ The flow of importing groups is not optimized. Let's do simple minimum flow and 
 
 For step 4, it's trouble some for faculties, but making change to the group info should not happen often. So, current flow is OK based on this assumption.
 If this assumption is wrong, change the flow accordingly.
+
+Publishing features?
+SD 2 faculty has to enter the dates and location. They have to make sure before asking students to schedule their presentations.
 
 ### Concerns about multiple admin professors
 
