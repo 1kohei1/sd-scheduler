@@ -80,7 +80,7 @@ PresentationSchema.pre('save', function (this: any, next) {
 /**
  * Check if presentation time is valid.
  * Valid presentation time is specified below:
- * 1. start and end is one hour apart and start comes before end
+ * 1. start and end is one hour apart, start comes before end, and start minute is 00 or 30
  * 2. Presentation start and end is in the range of presentationDate
  * 3. All faculty is available at specifed time
  * 4. Group has not scheduled the presentations
@@ -100,7 +100,7 @@ const presentationValidation = (doc: Document, group: Document, next: any) => {
     const start = moment(doc.get('start'));
     const end = moment(doc.get('end'));
 
-    if (end.diff(start, 'hour') === 1) {
+    if (start.isValid() && end.isValid() && end.diff(start, 'hour') === 1 && parseInt(start.format('m')) % 30 === 0) {
       resolve();
     } else {
       reject(new Error('Presentation start time must be 1 hour and start must come before end'));
