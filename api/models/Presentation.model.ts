@@ -309,7 +309,7 @@ PresentationSchema.post('save', (doc: Document, next: any) => {
         emails.push({
           email: sponsor.get('email'),
           name: `${sponsor.get('firstName')} ${sponsor.get('lastName')}`,
-          title: `Senior design final presentation is scheduled at ${time} on ${date} at ${location}`,
+          title: `${group.get('projectName')} presentation is scheduled at ${time} on ${date} at ${location}`,
           type: 'sponsor',
         })
       })
@@ -399,7 +399,7 @@ PresentationSchema.post('remove', (doc: Document, next: any) => {
           emails.push({
             email: sponsor.get('email'),
             name: `${sponsor.get('firstName')} ${sponsor.get('lastName')}`,
-            title: `Your presentation is canceld since one of faculty member becomes unavailable`,
+            title: `${group.get('projectName')} presentation is canceld since one of faculty member becomes unavailable`,
             type: 'sponsor',
             canceledBy,
             note,
