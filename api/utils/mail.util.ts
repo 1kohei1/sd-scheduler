@@ -10,6 +10,7 @@ export enum MailType {
   verifystudentauthentication,
   presentation,
   presentationcancel,
+  presentationreminder,
 }
 
 interface MailOption {
@@ -54,7 +55,9 @@ export default class Mailer {
       p = this.sendPresentation(option);
     } else if (type === MailType.presentationcancel) {
       p = this.sendPresentationcancel(option);
-    } else {
+    } else if (type === MailType.presentationreminder) {
+      p = this.sendPresentationreminder(option);
+    } {
       return Promise.resolve();
     }
 
@@ -150,6 +153,19 @@ export default class Mailer {
     }
 
     return transporter.sendMail(mailOption);
+  }
+
+  private static sendPresentationreminder(option: MailOption) {
+    const mailOption = {
+      from: MAIL_CONSTANTS.from,
+      to: option.to,
+      subject: `[SD Scheduler] ${option.extra.title}`,
+      text: MailTemplate.presentationreminderText(option),
+      html: MailTemplate.presentationreminderHtml(option),
+    }
+
+    return transporter.sendMail(mailOption);
+    
   }
 }
 
@@ -539,6 +555,31 @@ class MailTemplate {
     <br />
     SD Scheduler team<br />
     `);
+  }
+
+  static presentationreminderText(option: MailOption) {
+    return `
+    Hi ${option.extra.name},
+
+    ${option.extra.title}.
+
+    Sincerely,
+
+    SD Scheduler team
+    `
+  }
+
+  static presentationreminderHtml(option: MailOption) {
+    return MailTemplate.htmlTemplate(`
+    Hi ${option.extra.name},<br />
+    <br />
+    ${option.extra.title}.<br />
+    <br />
+    Sincerely,<br />
+    <br />
+    SD Scheduler team<br />
+    `);
+    
   }
 
   static htmlTemplate(content: string) {

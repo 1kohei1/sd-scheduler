@@ -174,9 +174,9 @@ export default class DBUtil {
    * Presentations
    */
 
-  static findPresentations(query: object = {}) {
+  static findPresentations(query: object = {}, populate: string = 'group') {
     return Presentation.find(query)
-      .populate('group');
+      .populate(populate);
   }
 
   static createPresentation(body: any = {}) {
