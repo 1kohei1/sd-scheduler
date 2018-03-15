@@ -7,26 +7,31 @@ import DBUtil from '../utils/db.util';
 import APIUtil from '../utils/api.util';
 import Mailer, { MailType } from '../utils/mail.util';
 
-module.exports.presentationReminder1hour = (req: Request, res: Response) => {
+module.exports.presentationReminder = (req: Request, res: Response) => {
   const info: any = {
     key: APIUtil.key(req),
     debugInfo: {},
   };
 
-  const now = moment(new Date().toISOString());
-  now.add(1, 'hour'); // Get moment 1 hour ahead of now. Assuming this API is called nearby :00 or :30
+  const oneHourLater = moment(new Date().toISOString()).add(1, 'hour');
+  const oneDayLater = moment(new Date().toISOString()).add(1, 'day');
 
-  const start = now.clone();
-  start.add(-5, 'minutes');
-  const end = now.clone();
-  end.add(5, 'minutes');
+  const oneHourStart = oneHourLater.clone().add(-5, 'minutes');
+  const oneHourEnd = oneHourLater.clone().add(5, 'minutes');
+  const oneDayStart = oneDayLater.clone().add(-5, 'minutes');
+  const oneDayEnd = oneDayLater.clone().add(5, 'minutes');
 
   let presentations: Document[] = [];
 
   DBUtil.findPresentations({
     start: {
-      $gte: start,
-      $let: end,
+      $or: [{
+        $gte: oneHourStart,
+        $let: oneHourEnd,
+      }, {
+        $gte: oneDayStart,
+        $let: oneDayEnd,
+      }]
     }
   }, 'group faculties')
     .then(documents => {
@@ -54,10 +59,14 @@ module.exports.presentationReminder1hour = (req: Request, res: Response) => {
         });
         const locationName = location ? location.get('location') : 'undefined';
 
+        const now = moment(new Date().toISOString())
+        const presentationStart = moment(presentation.get('start'));
+        const startsIn = presentationStart.diff(now, 'hour') <= 6 ? '1 hour' : '1 day';
+
         presentation.get('faculties').forEach((faculty: Document) => {
           emails.push({
             email: faculty.get('email'),
-            title: `Group ${group.get('groupNumber')} presentation is in 1 hour at ${locationName}`,
+            title: `Group ${group.get('groupNumber')} presentation is in ${startsIn} at ${locationName}`,
             name: `Dr. ${faculty.get('firstName')} ${faculty.get('lastName')}`,
           })
         })
@@ -65,7 +74,7 @@ module.exports.presentationReminder1hour = (req: Request, res: Response) => {
         group.get('members').forEach((member: Document) => {
           emails.push({
             email: member.get('email'),
-            title: `Your presentation is in 1 hour at ${locationName}`,
+            title: `Your presentation is in ${startsIn} at ${locationName}`,
             name: `${member.get('firstName')} ${member.get('lastName')}`,
           })
         })
@@ -73,7 +82,7 @@ module.exports.presentationReminder1hour = (req: Request, res: Response) => {
         group.get('members').forEach((member: Document) => {
           emails.push({
             email: member.get('email'),
-            title: `${group.get('projectName')} presentation is in 1 hour at ${locationName}`,
+            title: `${group.get('projectName')} presentation is in ${startsIn} at ${locationName}`,
             name: `${member.get('firstName')} ${member.get('lastName')}`,
           })
         });
@@ -98,14 +107,6 @@ module.exports.presentationReminder1hour = (req: Request, res: Response) => {
       info.debugInfo.message = err.message;
       APIUtil.errorResponse(info, err.message, {}, res);
     })
-}
-
-module.exports.presentationReminder1day = (req: Request, res: Response) => {
-  const info: any = {
-    key: APIUtil.key(req),
-    debugInfo: {},
-  };
-
 }
 
 module.exports.remindToSchedule = (req: Request, res: Response) => {

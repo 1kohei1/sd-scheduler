@@ -82,6 +82,7 @@ TODO:
 - [ ] In maximum, make faculty to be booked up to 5 if not admin (v3) Hear to professors
 - [ ] Refactor db.util to return the promise (currently some function requires calling .exec, and some are not)
 - [ ] Test presentation 1 hour reminder API
+- [ ] Export presentation to the scheduling app faculty uses
 
 NOTES:
 
@@ -130,3 +131,7 @@ What if the same presentation dates, but different locations?
 With current implementation, 2 student group from different faculties can request presentations in a row. 
 
 Solution: When faculty is reserved for the presentation, modify in scheduling page to make that faculty unavailable for the other presentation groups.
+
+### Questions
+
+What scheduling app does faculty use? The app must have export feature to export the event.
