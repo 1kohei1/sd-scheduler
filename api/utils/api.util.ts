@@ -134,6 +134,21 @@ export default class APIUtil {
     return Promise.resolve(undefined);
   }
 
+  static isAuthenticatedCronRequest(req: Request, res: Response, next: any) {
+    const info: any = {
+      key: APIUtil.key(req),
+      debugInfo: {
+      }
+    };
+
+    if (req.params.cron_key === process.env.CRON_KEY) {
+      next();
+    } else {
+      info.debugInfo.message = 'Your cron key is incorrect';
+      APIUtil.errorResponse(info, 'Your cron key is incorrect', {}, res);
+    }
+  }
+
   static key(req: Request) {
     return `[${req.method}] ${req.url}`;
   }
