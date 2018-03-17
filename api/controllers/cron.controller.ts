@@ -24,15 +24,17 @@ module.exports.presentationReminder = (req: Request, res: Response) => {
   let presentations: Document[] = [];
 
   DBUtil.findPresentations({
-    start: {
-      $or: [{
-        $gte: oneHourStart,
-        $let: oneHourEnd,
-      }, {
-        $gte: oneDayStart,
-        $let: oneDayEnd,
-      }]
-    }
+    $or: [{
+      start: {
+        $gte: oneHourStart.toISOString(),
+        $lte: oneHourEnd.toISOString(),
+      }
+    }, {
+      start: {
+        $gte: oneDayStart.toISOString(),
+        $lte: oneDayEnd.toISOString(),
+      }
+    }],
   }, 'group faculties')
     .then(documents => {
       if (documents.length === 0) {

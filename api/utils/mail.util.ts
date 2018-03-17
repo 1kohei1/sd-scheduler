@@ -57,7 +57,7 @@ export default class Mailer {
       p = this.sendPresentationcancel(option);
     } else if (type === MailType.presentationreminder) {
       p = this.sendPresentationreminder(option);
-    } {
+    } else {
       return Promise.resolve();
     }
 
