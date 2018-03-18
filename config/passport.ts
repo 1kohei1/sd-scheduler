@@ -28,7 +28,9 @@ module.exports = (passport: Authenticator) => {
     passwordField: 'password',
   }, (email: string, password: string, done: (error: any, user?: any, options?: IVerifyOptions) => void) => {
     DBUtil.findFaculties({
-      email: email
+      email: email,
+      isSystemAdmin: true,
+      isTestUser: true,
     }, true)
     .then((faculties) => {
       if (faculties.length === 0) {

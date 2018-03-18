@@ -56,7 +56,11 @@ module.exports.sendPasswordResetEmail = (req: Request, res: Response) => {
     return APIUtil.errorResponse(info, 'Emails is not given to API', {}, res);
   }
 
-  DBUtil.findFaculties({ email })
+  DBUtil.findFaculties({
+    email,
+    isSystemAdmin: true,
+    isTestUser: true,
+  })
     .then(faculties => {
       if (!faculties || faculties.length === 0) {
         return Promise.reject({
