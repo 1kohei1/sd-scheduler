@@ -146,8 +146,17 @@ export default class DBUtil {
       })
   }
 
+  static createPresentationDate(body: object) {
+    const newPresentationDate = new PresentationDate(body);
+    return newPresentationDate.save();
+  }
+
   static updatePresentationDateById(_id: string | number | object, update: object = {}) {
     return DBUtil.updateById(PresentationDate, _id, update, 'admin');
+  }
+
+  static deletePresentationDates(query: object) {
+    return DBUtil.delete(PresentationDate, query);
   }
 
   /**
@@ -171,8 +180,17 @@ export default class DBUtil {
       });
   }
 
+  static createLocation(body: object) {
+    const newLocation = new Location(body);
+    return newLocation.save();
+  }
+
   static updateLocationById(_id: string | number | object, update: object = {}) {
     return DBUtil.updateById(Location, _id, update, 'admin');
+  }
+
+  static deleteLocations(query: object) {
+    return DBUtil.delete(Location, query);
   }
 
   /**
@@ -223,6 +241,22 @@ export default class DBUtil {
         } else {
           return Promise.reject('Document is not found');
         }
+      })
+  }
+
+  private static delete(model: Model<Document>, query: object) {
+    return model.find(query)
+      .then((docs: Document[]) => {
+        const promises: any = [];
+
+        docs.forEach(doc => {
+          promises.push(doc.remove())
+        });
+
+        return Promise.all(promises);
+      })
+      .then(() => {
+        return Promise.resolve();
       })
   }
 }

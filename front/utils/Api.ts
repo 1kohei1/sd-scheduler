@@ -82,6 +82,10 @@ export default class Api {
     return await Api.makeRequest(RequestMethod.PUT, `/api/faculties/${_id}`, update);
   }
 
+  static async updateFacultyAdminState(_id: string, update: object = {}) {
+    return await Api.makeRequest(RequestMethod.PUT, `/api/faculties/${_id}/admin`, update);
+  }
+
   static async updateFacultyByToken(_id: string, token: string, update: object = {}) {
     return await Api.makeRequest(RequestMethod.PUT, `/api/faculties/${_id}/${token}`, update);
   }

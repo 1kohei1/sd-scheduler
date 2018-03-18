@@ -149,6 +149,21 @@ export default class APIUtil {
     }
   }
 
+  static isSystemAdmin(req: Request, res: Response, next: any) {
+    const info: any = {
+      key: APIUtil.key(req),
+      debugInfo: {
+      }
+    };
+
+    if (req.user.isSystemAdmin) {
+      next();
+    } else {
+      info.debugInfo.message = 'You are not system administrator';
+      APIUtil.errorResponse(info, 'You are not system administrator', {}, res);
+    }
+  }
+
   static key(req: Request) {
     return `[${req.method}] ${req.url}`;
   }

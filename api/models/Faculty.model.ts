@@ -3,6 +3,7 @@ import * as crypto from 'crypto';
 const uniqueValidator = require('mongoose-unique-validator');
 const mongooseLifecycle = require('mongoose-lifecycle')
 
+import DBUtil from '../utils/db.util';
 import Mailer, { MailType } from '../utils/mail.util';
 
 const FacultySchema = new Schema({
@@ -72,8 +73,68 @@ FacultySchema.pre('save', function (this: any, next) {
   }
   this.updated_at = new Date();
 
-  next();
+  handleIsAdminChange(this, next);
 });
+
+/**
+ * If isAdmin changes from false to true, create PresentationDate and Location
+ * If isAdmin changes from true to false, delete PresentationDate and Location
+ */
+const handleIsAdminChange = (doc: Document, next: any) => {
+  if (doc.isModified('isAdmin')) {
+    DBUtil.findSemesters()
+      .then((semesters: Document[]) => {
+        if (semesters.length === 0) {
+          return Promise.resolve();
+        } else {
+          const semester = semesters[0];
+          const sid = semester.get('_id');
+          const fid = doc.get('_id');
+
+          let p: any;
+
+          // isAdmin becomes true
+          if (doc.get('isAdmin')) {
+            p = Promise.all([
+              DBUtil.createPresentationDate({
+                semester: sid,
+                admin: fid,
+                dates: [],
+              }),
+              DBUtil.createLocation({
+                semester: sid,
+                admin: fid,
+                location: '',
+              }),
+            ])
+          }
+          // isAdmin becomes false
+          else {
+            p = Promise.all([
+              DBUtil.deletePresentationDates({
+                semester: sid,
+                admin: fid,
+              }),
+              DBUtil.deleteLocations({
+                semester: sid,
+                admin: fid,
+              }),
+            ])
+          }
+          // Typescript complains about the type format. So resolve these promises.
+          return p.then(() => {
+            return Promise.resolve();
+          })
+        }
+      })
+      .then((result: any) => {
+        next();
+      })
+      .catch(next);
+  } else {
+    next();
+  }
+}
 
 FacultySchema.plugin(mongooseLifecycle);
 

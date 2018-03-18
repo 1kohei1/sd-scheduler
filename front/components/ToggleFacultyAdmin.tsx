@@ -25,7 +25,7 @@ export default class ToggleFacultyAdmin extends React.Component<ToggleFacultyAdm
       faculties: [],
       isAdmin: {},
       errs: [],
-      loading: true,
+      loading: false,
     }
 
     this.onChange = this.onChange.bind(this);
@@ -76,8 +76,42 @@ export default class ToggleFacultyAdmin extends React.Component<ToggleFacultyAdm
     });
   }
 
-  onSave() {
+  async onSave() {
+    this.setState({
+      loading: true,
+    });
 
+    for (const faculty of this.state.faculties) {
+      if (faculty.isAdmin !== this.state.isAdmin[faculty._id]) {
+        try {
+          const updatedFaculty = await Api.updateFacultyAdminState(faculty._id, {
+            isAdmin: this.state.isAdmin[faculty._id],
+          })
+          this.setState((prevState: ToggleFacultyAdminState, props: ToggleFacultyAdminProps) => {
+            let newFaculties = List(prevState.faculties);
+            const index = newFaculties.findIndex((f: Faculty) => f._id === faculty._id);
+
+            console.log(index);
+
+            if (index >= 0) {
+              newFaculties = newFaculties.set(index, updatedFaculty);
+              return {
+                faculties: newFaculties.toArray(),
+              }
+            } else {
+              return prevState;
+            }
+          })
+        } catch (err) {
+          this.addErr(err);
+        }
+      }
+    }
+
+    message.success('Successfully updated faculties');
+    this.setState({
+      loading: false,
+    })
   }
 
   render() {
@@ -99,6 +133,7 @@ export default class ToggleFacultyAdmin extends React.Component<ToggleFacultyAdm
         ))}
         <Button
           type="primary"
+          loading={this.state.loading}
           onClick={this.onSave}
         >
           Save
