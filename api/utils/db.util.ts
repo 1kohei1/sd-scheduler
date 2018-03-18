@@ -32,7 +32,7 @@ export default class DBUtil {
    * Faculty
    */
 
-  static findFaculties(query: any = {}, shouldIncludePassword: boolean = false) {
+  static findFaculties(query: any = {}, shouldIncludePassword: boolean = false, shouldIncludeNonRegularFaculty: boolean = false) {
     const password = shouldIncludePassword ? '+password' : '';
     // Ignore case sensitivity for the email property
     if (query.hasOwnProperty('email') && typeof query.email === 'string') {
@@ -45,6 +45,11 @@ export default class DBUtil {
     }
     if (!query.hasOwnProperty('isTestUser')) {
       query.isTestUser = false;
+    }
+
+    if (shouldIncludeNonRegularFaculty) {
+      delete query.isSystemAdmin;
+      delete query.isTestUser;
     }
 
     return Faculty.find(query, password).sort({
