@@ -47,7 +47,7 @@ export default class APIUtil {
       }
     };
 
-    if (req.user.isAdmin) {
+    if (req.user.isAdmin || req.user.isSystemAdmin) {
       next();
     } else {
       info.debugInfo.message = 'You are not authorized to make this action';

@@ -121,7 +121,7 @@ export default class Overview extends React.Component<OverviewProps, OverviewSta
           semester={this.state.semester}
           facultyId={facultyId}
         />
-        <Faculties
+        {/* <Faculties
           prop="faculties"
           isAdmin={isAdmin}
           semester={this.state.semester}
@@ -130,10 +130,8 @@ export default class Overview extends React.Component<OverviewProps, OverviewSta
           error={this.state.facultiesError}
           toggleForm={this.toggleForm}
           updateSemester={this.updateSemester}
-        />
-        {isAdmin && (
-          <InviteFaculty />
-        )}
+        /> */}
+        <InviteFaculty />
       </div>
     )
   }

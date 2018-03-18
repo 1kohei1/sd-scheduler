@@ -12,7 +12,6 @@ module.exports = (server: Application) => {
   server.post(
     '/api/faculties',
     APIUtil.isAuthenticated,
-    APIUtil.isAuthorized,
     facultyController.createFaculty,
   );
 

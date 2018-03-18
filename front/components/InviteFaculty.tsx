@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Icon, Card, Button, Alert, Input, Tag, message } from 'antd';
+import { Form, Icon, Card, Button, Alert, Input, message } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import Api from '../utils/Api';
@@ -58,8 +58,7 @@ class InviteFaculty extends React.Component<InviteFacultyProps, InviteFacultySta
 
     const title = (
       <div>
-        Invite faculty&nbsp;
-        <Tag>Admin only</Tag>
+        Invite faculty
       </div>
     )
 
