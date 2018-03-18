@@ -91,8 +91,6 @@ export default class ToggleFacultyAdmin extends React.Component<ToggleFacultyAdm
             let newFaculties = List(prevState.faculties);
             const index = newFaculties.findIndex((f: Faculty) => f._id === faculty._id);
 
-            console.log(index);
-
             if (index >= 0) {
               newFaculties = newFaculties.set(index, updatedFaculty);
               return {

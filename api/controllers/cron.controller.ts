@@ -105,7 +105,9 @@ module.exports.presentationReminder = (req: Request, res: Response) => {
         )
       });
 
-      APIUtil.successResponse(info, presentations.length, res);
+      if (presentations.length > 0) {
+        APIUtil.successResponse(info, presentations.length, res);
+      }
     })
     .catch(err => {
       info.debugInfo.message = err.message;
