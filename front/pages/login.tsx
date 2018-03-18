@@ -135,7 +135,7 @@ class Login extends React.Component<LoginProps, LoginState> {
                 size="large"
                 loading={this.state.loading}
               >
-                Submit
+                Login
               </Button>
             </FormItem>
             <div style={{ textAlign: 'center' }}>
