@@ -38,7 +38,7 @@ module.exports.presentationReminder = (req: Request, res: Response) => {
   }, 'group faculties')
     .then(documents => {
       if (documents.length === 0) {
-        APIUtil.successResponse(info, true, res);
+        APIUtil.successResponse(info, 0, res);
       } else {
         presentations = documents;
         const semester = presentations[0].get('semester');
@@ -103,7 +103,9 @@ module.exports.presentationReminder = (req: Request, res: Response) => {
             }
           }
         )
-      })
+      });
+
+      APIUtil.successResponse(info, presentations.length, res);
     })
     .catch(err => {
       info.debugInfo.message = err.message;
