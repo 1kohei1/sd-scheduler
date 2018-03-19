@@ -23,6 +23,7 @@ import Group from '../models/Group';
 import SelectGroup from '../components/SelectGroup';
 import { DateConstants } from '../models/Constants';
 import FillGroupInfo from '../components/FillGroupInfo';
+import SelectDatetime from '../components/SelectDatetime'
 
 interface ScheduleProps {
   facultiesInSemester: Faculty[];
@@ -45,6 +46,7 @@ interface ScheduleState {
   availableSlots: AvailableSlot[],
   presentations: Presentation[],
   presentationDate: PresentationDate | undefined;
+  presentationDatestr: string;
 
   // state.current = 2
   selectedGroup: Group | undefined;
@@ -95,6 +97,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       availableSlots: [],
       presentations: Array<Presentation>(),
       presentationDate: undefined,
+      presentationDatestr: '',
 
       // state.current = 2
       selectedGroup: undefined,
@@ -114,6 +117,10 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     // state.current = 1
     this.presentationSlotPicked = this.presentationSlotPicked.bind(this);
     this.clearPresentationSlot = this.clearPresentationSlot.bind(this);
+
+    this.presentationDatestrPicked = this.presentationDatestrPicked.bind(this);
+    this.presentationDatetimePicked = this.presentationDatetimePicked.bind(this);
+    this.presentationFacultyPicked = this.presentationFacultyPicked.bind(this);
 
     // state.current = 2
     this.onGroupSelected = this.onGroupSelected.bind(this);
@@ -140,25 +147,40 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
         />
       )
     } else if (this.state.current === 1) {
-      let presentations: any = List(this.state.presentations);
-      presentations = presentations.push(this.state.schedulingPresentation);
+      // let presentations: any = List(this.state.presentations);
+      // presentations = presentations.push(this.state.schedulingPresentation);
 
       return (
-        <div>
-          <SchedulingCalendar
-            presentationDate={this.state.presentationDate as PresentationDate}
-            faculties={this.props.facultiesInSemester}
-            availableSlots={this.state.availableSlots}
-            presentations={presentations.toArray()}
-            presentationSlotPicked={this.presentationSlotPicked}
-          />
-          <SchedulingDate
-            presentation={this.state.schedulingPresentation}
-            faculties={this.props.facultiesInSemester}
-            displayClear={true}
-            clearPresentationSlot={this.clearPresentationSlot}
-          />
-        </div>
+        <SelectDatetime
+          presentationDate={this.state.presentationDate as PresentationDate}
+          faculties={this.props.facultiesInSemester}
+          availableSlots={this.state.availableSlots}
+          presentations={this.state.presentations}
+          adminFaculty={this.state.adminFaculty as Faculty}
+          schedulingPresentation={this.state.schedulingPresentation}
+          presentationDatestr={this.state.presentationDatestr}
+          presentationDatestrPicked={this.presentationDatestrPicked}
+          presentationDatetimePicked={this.presentationDatetimePicked}
+          presentationFacultyPicked={this.presentationFacultyPicked}
+        />
+
+        // <div>
+        //   <SchedulingCalendar
+        //     presentationDate={this.state.presentationDate as PresentationDate}
+        //     faculties={this.props.facultiesInSemester}
+        //     availableSlots={this.state.availableSlots}
+        //     presentations={this.state.presentations}
+        //     schedulingPresentation={this.state.schedulingPresentation}
+        //     presentationSlotPicked={this.presentationSlotPicked}
+
+        //   />
+        //   <SchedulingDate
+        //     presentation={this.state.schedulingPresentation}
+        //     faculties={this.props.facultiesInSemester}
+        //     displayClear={true}
+        //     clearPresentationSlot={this.clearPresentationSlot}
+        //   />
+        // </div>
       )
     } else if (this.state.current === 2) {
       return (
@@ -258,6 +280,12 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
         return 'Pleas select the faculty of your senior design';
       }
     } else if (this.state.current === 1) {
+      if (!this.state.presentationDatestr) {
+        return 'Please select your presentation date';
+      }
+      if (!this.state.schedulingPresentation.start) {
+        return 'Please select youur presentation time';
+      }
       const numFaculties = this.state.schedulingPresentation.faculties.length;
       const isAdminSelected = this.state.schedulingPresentation.faculties.filter(fid => {
         const faculty = this.props.facultiesInSemester.find(faculty => faculty._id === fid);
@@ -447,6 +475,59 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       newMap = newMap.set('end', '');
       newMap = newMap.set('faculties', []);
 
+      const newState: any = {}
+      newState.schedulingPresentation = newMap.toObject();
+
+      return newState;
+    })
+  }
+
+  presentationDatestrPicked(dateStr: string) {
+    this.setState((prevState: ScheduleState, props: ScheduleProps) => {
+      const { schedulingPresentation } = prevState;
+
+      // Reset other presentation stuff
+      schedulingPresentation.start = '';
+      schedulingPresentation.end = '';
+      schedulingPresentation.faculties = [];
+      
+      const newMap = Map(schedulingPresentation);
+      const newState: any = {}
+      newState.schedulingPresentation = newMap.toObject();
+      newState.presentationDatestr = dateStr;
+
+      return newState;
+    });
+  }
+
+  presentationDatetimePicked(start: string, end: string) {
+    this.setState((prevState: ScheduleState, props: ScheduleProps) => {
+      const { schedulingPresentation } = prevState;
+      schedulingPresentation.start = start;
+      schedulingPresentation.end = end;
+
+      const newMap = Map(schedulingPresentation);
+      const newState: any = {}
+      newState.schedulingPresentation = newMap.toObject();
+
+      return newState;
+    })
+  }
+
+  presentationFacultyPicked(checked: boolean, fid: string) {
+    this.setState((prevState: ScheduleState, props: ScheduleProps) => {
+      const { schedulingPresentation } = prevState;
+
+      if (checked) {
+        schedulingPresentation.faculties.push(fid);
+      } else {
+        const index = schedulingPresentation.faculties.indexOf(fid);
+        if (index >= 0) {
+          schedulingPresentation.faculties.splice(index, 1);
+        }
+      }
+
+      const newMap = Map(schedulingPresentation);
       const newState: any = {}
       newState.schedulingPresentation = newMap.toObject();
 
