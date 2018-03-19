@@ -9,8 +9,6 @@ import Faculty from '../models/Faculty';
 export interface SchedulingDateProps {
   presentation: Presentation;
   faculties: Faculty[];
-  displayClear: boolean;
-  clearPresentationSlot: () => void;
 }
 
 export default class SchedulingDate extends React.Component<SchedulingDateProps, any> {
@@ -106,11 +104,6 @@ export default class SchedulingDate extends React.Component<SchedulingDateProps,
           />
           <div>{this.facultiesText()}</div>
         </div>
-        {this.props.displayClear && (
-          <p>
-            <Button size="small" onClick={this.props.clearPresentationSlot} icon="delete">Clear</Button>
-          </p>
-        )}
         <style jsx>{`
           .scheduling-date {
             padding: 16px;

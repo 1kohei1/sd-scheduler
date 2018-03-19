@@ -115,9 +115,6 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     this.onAdminSelected = this.onAdminSelected.bind(this);
 
     // state.current = 1
-    this.presentationSlotPicked = this.presentationSlotPicked.bind(this);
-    this.clearPresentationSlot = this.clearPresentationSlot.bind(this);
-
     this.presentationDatestrPicked = this.presentationDatestrPicked.bind(this);
     this.presentationDatetimePicked = this.presentationDatetimePicked.bind(this);
     this.presentationFacultyPicked = this.presentationFacultyPicked.bind(this);
@@ -147,9 +144,6 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
         />
       )
     } else if (this.state.current === 1) {
-      // let presentations: any = List(this.state.presentations);
-      // presentations = presentations.push(this.state.schedulingPresentation);
-
       return (
         <SelectDatetime
           presentationDate={this.state.presentationDate as PresentationDate}
@@ -163,24 +157,6 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
           presentationDatetimePicked={this.presentationDatetimePicked}
           presentationFacultyPicked={this.presentationFacultyPicked}
         />
-
-        // <div>
-        //   <SchedulingCalendar
-        //     presentationDate={this.state.presentationDate as PresentationDate}
-        //     faculties={this.props.facultiesInSemester}
-        //     availableSlots={this.state.availableSlots}
-        //     presentations={this.state.presentations}
-        //     schedulingPresentation={this.state.schedulingPresentation}
-        //     presentationSlotPicked={this.presentationSlotPicked}
-
-        //   />
-        //   <SchedulingDate
-        //     presentation={this.state.schedulingPresentation}
-        //     faculties={this.props.facultiesInSemester}
-        //     displayClear={true}
-        //     clearPresentationSlot={this.clearPresentationSlot}
-        //   />
-        // </div>
       )
     } else if (this.state.current === 2) {
       return (
@@ -223,8 +199,6 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
           <SchedulingDate
             presentation={this.state.schedulingPresentation}
             faculties={this.props.facultiesInSemester}
-            displayClear={false}
-            clearPresentationSlot={this.clearPresentationSlot}
           />
           {/* This if is redundant, but TS complains selectedGroup could be undefined */}
           {selectedGroup && (
@@ -410,76 +384,6 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     } catch (err) {
       this.onError(err);
     }
-  }
-
-  presentationSlotPicked(presentationSlot: TimeSlot, faculty: Faculty) {
-    const { _id } = faculty;
-
-    // Check if specified faculty has availableSlot instance
-    const availableSlot = this.state.availableSlots.find(slot => slot.faculty === _id);
-    if (!availableSlot) {
-      message.error(`Dr. ${faculty.firstName} ${faculty.lastName} is not available at specified time`);
-      return;
-    }
-
-    // Check if specified faculty is available on specified time
-    const facultyAvailableSlot = availableSlot.availableSlots;
-    const isFacultyAvailable = facultyAvailableSlot.map(DatetimeUtil.convertToTimeSlot)
-      .filter(slot => DatetimeUtil.doesCover(slot, presentationSlot))
-      .length > 0;
-
-    if (!isFacultyAvailable) {
-      message.error(`Dr. ${faculty.firstName} ${faculty.lastName} is not available at specified time`);
-      return;
-    }
-
-    // Check if there is other presentations that overlaps with requested time range
-    const isOtherGroupRequesting = this.state.presentations.map(DatetimeUtil.convertToTimeSlot)
-      .filter(slot => DatetimeUtil.doesOverlap(slot, presentationSlot))
-      .length > 0;
-    if (isOtherGroupRequesting) {
-      message.error(`Other group is requesting the similar time slot`);
-      return;
-    }
-
-    // All validation passed. Update schedulingPresentation
-    this.setState((prevState: ScheduleState, props: ScheduleProps) => {
-      const { schedulingPresentation } = prevState;
-
-      const startM = DatetimeUtil.getMomentFromISOString(schedulingPresentation.start);
-      // If presentation slot has changed, clear the faculties
-      if (startM.valueOf() !== presentationSlot.start.valueOf()) {
-        schedulingPresentation.faculties = [];
-      }
-
-      if (schedulingPresentation.faculties.indexOf(_id) === -1) {
-        schedulingPresentation.faculties.push(_id);
-      }
-
-      schedulingPresentation.start = presentationSlot.start.toISOString();
-      schedulingPresentation.end = presentationSlot.end.toISOString();
-
-      // Use Map to get new object in the memory
-      const newMap = Map(schedulingPresentation);
-      const newState: any = {}
-      newState.schedulingPresentation = newMap.toObject();
-
-      return newState;
-    })
-  }
-
-  clearPresentationSlot() {
-    this.setState((prevState: ScheduleState, props: ScheduleProps) => {
-      let newMap = Map(prevState.schedulingPresentation);
-      newMap = newMap.set('start', '');
-      newMap = newMap.set('end', '');
-      newMap = newMap.set('faculties', []);
-
-      const newState: any = {}
-      newState.schedulingPresentation = newMap.toObject();
-
-      return newState;
-    })
   }
 
   presentationDatestrPicked(dateStr: string) {
