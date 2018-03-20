@@ -57,7 +57,7 @@ module.exports.presentationReminder = (req: Request, res: Response) => {
       presentations.forEach((presentation: Document) => {
         const group = presentation.get('group');
         const location = locations.find(location => {
-          return location.get('admin').toString() === group.get('admin').toString();
+          return location.get('admin').toString() === group.get('adminFaculty').toString();
         });
         const locationName = location ? location.get('location') : 'undefined';
 
