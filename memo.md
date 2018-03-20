@@ -83,7 +83,7 @@ TODO:
 - [ ] Refactor db.util to return the promise (currently some function requires calling .exec, and some are not)
 - [ ] Test presentation 1 hour reminder API
 - [ ] Export presentation to the scheduling app faculty uses
-- [ ] Instead of just changing isAdmin status, update them to change isSystemAdmin and isTestUser flag
+- [x] Instead of just changing isAdmin status, update them to change isSystemAdmin and isTestUser flag
 - [ ] After successful presentation schedule, present dialog and navigate user to calendar page
 - [ ] Let students pick what date to schedule like picking SD 2 faculties
 
