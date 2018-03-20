@@ -74,6 +74,14 @@ export default class Api {
     return await Api.makeRequest(RequestMethod.GET, `/api/faculties?${query}`);
   }
 
+  static async getAllFaculties() {
+    const f1 = await Api.makeRequest(RequestMethod.GET, `/api/faculties?isTestUser=true&isSystemAdmin=true`);
+    const f2 = await Api.makeRequest(RequestMethod.GET, `/api/faculties?isTestUser=true&isSystemAdmin=false`);
+    const f3 = await Api.makeRequest(RequestMethod.GET, `/api/faculties?isTestUser=false&isSystemAdmin=true`);
+    const f4 = await Api.makeRequest(RequestMethod.GET, `/api/faculties?isTestUser=false&isSystemAdmin=false`);
+    return f1.concat(f2, f3, f4);
+  }
+
   static async createFaculty(body: object = {}) {
     return await Api.makeRequest(RequestMethod.POST, `/api/faculties`, body);
   }

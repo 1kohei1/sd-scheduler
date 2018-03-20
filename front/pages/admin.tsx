@@ -6,7 +6,7 @@ import FormLayout from '../components/FormLayout';
 import UserUtil from '../utils/UserUtil';
 import Api from '../utils/Api';
 import ImportGroups from '../components/ImportGroups';
-import ToggleFacultyAdmin from '../components/ToggleFacultyAdmin';
+import FacultyState from '../components/FacultyState';
 
 export interface AdminProps {
 }
@@ -30,7 +30,7 @@ export default class Admin extends React.Component<AdminProps, AdminState> {
         <FormLayout>
           <h1>System administrator menu</h1>
           <ImportGroups />
-          <ToggleFacultyAdmin />
+          <FacultyState />
         </FormLayout>
       </AppLayout>
     );
