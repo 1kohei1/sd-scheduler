@@ -70,7 +70,7 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
         return (
           <div>
             {record.members.map((member: Person) => (
-              <span>
+              <span key={member._id}>
                 {member.firstName && member.lastName ? (
                   <span>{member.firstName} {member.lastName} |&nbsp;</span>
                 ) : (
