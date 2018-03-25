@@ -76,7 +76,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
   private async getPresentationDates() {
     try {
       const presentationDates = await Api.getPresentationDates(`semester=${this.props.semester._id}`) as PresentationDate[];
-      const presentationSlots = this.getPresentationSlots(presentationDates);
+      const presentationSlots = DatetimeUtil.getPresentationSlots(presentationDates);
 
       this.setState({
         presentationDates: presentationSlots,
@@ -84,51 +84,6 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
     } catch (err) {
       this.onError(err);
     }
-  }
-
-  /**
-   * PresentationDate[] could contain the same date, but different time range.
-   * Return an array of TimeSlot that covers the all presentation date time
-   */
-  private getPresentationSlots(presentationDates: PresentationDate[]) {
-    const presentationSlots = presentationDates
-      .map((pd: PresentationDate) => pd.dates)
-      // Flatten array of array
-      .reduce((accumulator: TimeSlotLikeObject[], dates: TimeSlotLikeObject[]) => {
-        dates.forEach(date => {
-          accumulator.push(date);
-        });
-        return accumulator;
-      }, [])
-      .map(DatetimeUtil.convertToTimeSlot)
-      .sort((a: TimeSlot, b: TimeSlot) => {
-        return a.start.valueOf() - b.start.valueOf();
-      });
-
-    // Store the formated dates of presentation dates. 
-    // This works as index locator and check of duplicates
-    const dateStrs: string[] = [];
-    // Stores the TimeSlot of presentation dates that doesn't contain the duplicate of the presentation dates
-    const noDupSlots: TimeSlot[] = [];
-
-    presentationSlots.forEach((slot: TimeSlot) => {
-      const dateStr = DatetimeUtil.formatDate(slot.start, DateConstants.dateFormat);
-      const index = dateStrs.indexOf(dateStr);
-
-      // Duplicate presentation date is found. Take smaller start and large end
-      if (index >= 0) {
-        const existingSlot: TimeSlot = noDupSlots[index];
-        noDupSlots[index].start = DatetimeUtil.smaller(existingSlot.start, slot.start);
-        noDupSlots[index].end = DatetimeUtil.larger(existingSlot.end, slot.end);
-      }
-      // This presentation date is not found yet. Add it to noDupSlots
-      else {
-        dateStrs.push(dateStr);
-        noDupSlots.push(slot);
-      }
-    });
-
-    return noDupSlots;
   }
 
   private async getLocations() {
