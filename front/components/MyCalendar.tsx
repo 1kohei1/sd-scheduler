@@ -2,7 +2,7 @@ import * as React from 'react';
 import { List } from 'immutable';
 import ObjectID from 'bson-objectid';
 import * as moment from 'moment-timezone';
-import { Button, Icon, message, Alert, Popover, Modal, Form, Input } from 'antd';
+import { Button, Icon, message, Alert, Popover, Modal, Form, Input, Checkbox } from 'antd';
 
 import KoCalendar from './KoCalendar/KoCalendar';
 import Presentation from '../models/Presentation';
@@ -16,6 +16,7 @@ import AvailableSlot from '../models/AvailableSlot';
 import PresentationDate from '../models/PresentationDate';
 import Faculty from '../models/Faculty';
 import Location from '../models/Location';
+import CookieUtil from '../utils/CookieUtil';
 
 export interface MyCalendarProps {
   user: Faculty;
@@ -29,6 +30,7 @@ interface MyCalendarState {
   availableSlots: List<TimeSlot>;
   presentationDates: TimeSlot[];
   locations: Location[];
+  helpDialogVisible: boolean;
 }
 
 export default class MyCalendar extends React.Component<MyCalendarProps, MyCalendarState> {
@@ -44,11 +46,13 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
       availableSlots: List<TimeSlot>(),
       presentationDates: [],
       locations: [],
+      helpDialogVisible: false,
     };
 
     this.onAvailableSlotChange = this.onAvailableSlotChange.bind(this);
     this.calendar = this.calendar.bind(this);
     this.alert = this.alert.bind(this);
+    this.toggleModal = this.toggleModal.bind(this);
   }
 
   componentDidMount() {
@@ -61,7 +65,16 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
       .then(() => {
         this.setState({
           loading: false,
-        })
+        });
+
+        if (!CookieUtil.getHideDialog()) {
+          // Let user see there is a calendar, then present a dialog to solve user problem
+          setTimeout(() => {
+            this.setState({
+              helpDialogVisible: true,
+            })
+          }, 1500);
+        }
       })
   }
 
@@ -273,7 +286,56 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
     }
   }
 
-
+  modal() {
+    return (<Modal
+      title="How to put available time?"
+      visible={this.state.helpDialogVisible}
+      width="60%"
+      destroyOnClose={true}
+      footer={null}
+      bodyStyle={{ padding: 0 }}
+      onOk={(e) => this.toggleModal(false)}
+      onCancel={(e) => this.toggleModal(false)}
+    >
+      <div>
+        <div className="modal-container">
+          <iframe
+            src="https://www.youtube.com/embed/kCc5v-SuLX4?rel=0&amp;showinfo=0"
+            frameBorder="0"
+            allowFullScreen
+          />
+        </div>
+        <div style={{ padding: '16px' }}>
+          <Checkbox
+            defaultChecked={CookieUtil.getHideDialog()}
+            onChange={(e) => CookieUtil.setHideDialog(e.target.checked)}
+          >
+            Don't show the help dialog from the next time (You can check this video by clicking "How to put available time" button.)
+          </Checkbox>
+        </div>
+      </div>
+      {/* Link of how to put iframe relative to the parent size https://stackoverflow.com/a/35153397/4155129 */}
+      <style jsx>{`
+        /* This element defines the size the iframe will take.
+        In this example we want to have a ratio of 25:14 */
+        .modal-container {
+          position: relative;
+          width: 100%;
+          height: 0;
+          padding-bottom: 56%; /* The height of the item will now be 56% of the width. */
+        }
+        
+        /* Adjust the iframe so it's rendered in the outer-width and outer-height of it's parent */
+        .modal-container iframe {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          left: 0;
+          top: 0;
+        }
+      `}</style>
+    </Modal>)
+  }
 
   calendar() {
     if (this.state.loading) {
@@ -282,14 +344,13 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
 
     return (
       <div>
+        {this.modal()}
         <p className="ko-description">
-          You can put your available time and check assigned presentations.
           <Button
             icon="question-circle"
-            href={KoCalendarConstants.helpVideoLink}
-            target="blank"
+            onClick={(e) => this.toggleModal(true)}
           >
-            Check how to put available time
+            How to put available time
         </Button>
         </p>
         <p>
@@ -329,7 +390,8 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
     return (
       <Alert
         key={index}
-        message={message}
+        message="Error"
+        showIcon
         description={(
           <div>
             {message}. To check your available time in DB, please <a href="">reload</a>.
@@ -339,6 +401,12 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
         style={{ marginBottom: '16px' }}
       />
     )
+  }
+
+  toggleModal(v: boolean) {
+    this.setState({
+      helpDialogVisible: v,
+    })
   }
 
   render() {

@@ -6,6 +6,7 @@ import Faculty from '../models/Faculty';
 
 const USER_COOKIE_KEY = 'user';
 const TOKEN_COOKIE_KEY = 'token';
+const HIDE_DIALOG_KEY = 'hideDialog'
 
 export default class CookieUtil {
 
@@ -37,5 +38,16 @@ export default class CookieUtil {
 
   static getToken() {
     return Cookie.get(TOKEN_COOKIE_KEY);
+  }
+
+  static getHideDialog() {
+    return Cookie.get(HIDE_DIALOG_KEY) === 'true';
+  }
+
+  static setHideDialog(value: boolean) {
+    // Make this cookie expire in a year
+    Cookie.set(HIDE_DIALOG_KEY, value ? 'true' : 'false', {
+      expires: 365,
+    });
   }
 }

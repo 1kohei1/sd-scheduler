@@ -63,6 +63,7 @@ export default class PresentationSlotTile extends React.Component<PresentationSl
         <Modal
           title={group.projectName}
           visible={this.state.visible}
+          cancelText="Close"
           onOk={(e) => this.toggleModal(false)}
           onCancel={(e) => this.toggleModal(false)}
         >
@@ -100,7 +101,7 @@ export default class PresentationSlotTile extends React.Component<PresentationSl
           </Row>
           <Row>
             <Col span={4} xs={5}>
-              Sponsor member:
+              Sponsor:
           </Col>
             <Col span={20} xs={19}>
               {group.sponsors.map(member => `${member.firstName} ${member.lastName}`).join(', ')}
