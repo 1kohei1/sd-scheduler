@@ -292,7 +292,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
 
   modal() {
     return (<Modal
-      title="How to put available time?"
+      title="How to mark your available time?"
       visible={this.state.helpDialogVisible}
       width="60%"
       destroyOnClose={true}
@@ -314,7 +314,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
             defaultChecked={CookieUtil.getHideDialog()}
             onChange={(e) => CookieUtil.setHideDialog(e.target.checked)}
           >
-            Don't show the help dialog from the next time (You can check this video by clicking "How to put available time" button.)
+            Don't show the help dialog from the next time (You can check this video by clicking "How to mark available time" button.)
           </Checkbox>
         </div>
       </div>
@@ -349,15 +349,16 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
     return (
       <div>
         {this.modal()}
-        <p className="ko-description">
+        <p>
           <Button
             icon="question-circle"
             onClick={(e) => this.toggleModal(true)}
           >
-            How to put available time
+            How to mark available time
         </Button>
         </p>
-        <p>
+        <p>Please mark your available time.</p>
+        {/* <p>
           You will not be booked in a row if you need to move to a different location.
           <Popover
             title="What does this mean?"
@@ -366,7 +367,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
           >
             <Icon type="question-circle" style={{ marginLeft: '8px' }} />
           </Popover>
-        </p>
+        </p> */}
         {this.state.presentationDates.length === 0 ? (
           <div>Presentation dates are not defined. Once the date is set, the system sends email. Please check later!</div>
         ) : (
