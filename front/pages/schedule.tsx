@@ -103,7 +103,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       selectedGroup: undefined,
       email: '',
       verifyEmailAddresses: [],
-      identityVerified: true,
+      identityVerified: false,
 
       // state.current = 3
     };
