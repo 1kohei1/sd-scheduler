@@ -18,6 +18,7 @@ export interface DayProps {
   availableSlots: TimeSlot[];
   locations: Location[];
   onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean, updateDB?: boolean) => void;
+  cancelPresentation: (presentation: Presentation, note: string) => void;
 }
 
 export default class Day extends React.Component<DayProps, any> {

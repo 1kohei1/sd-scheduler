@@ -9,6 +9,7 @@ export interface PresentationSlotsProps {
   ruler: number[];
   presentations: Presentation[];
   locations: Location[];
+  cancelPresentation: (presentation: Presentation, note: string) => void;  
 }
 
 export default class PresentationSlots extends React.Component<PresentationSlotsProps, any> {
@@ -21,6 +22,7 @@ export default class PresentationSlots extends React.Component<PresentationSlots
             ruler={this.props.ruler}
             presentation={presentation}
             locations={this.props.locations}
+            cancelPresentation={this.props.cancelPresentation}
           />
         ))}
         <style jsx>{`

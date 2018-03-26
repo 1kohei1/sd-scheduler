@@ -13,6 +13,7 @@ interface KoCalendarProps {
   availableSlots: TimeSlot[]
   locations: Location[];
   onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean, updateDB?: boolean) => void;
+  cancelPresentation: (presentation: Presentation, note: string) => void;
 }
 interface KoCalendarState { }
 
@@ -57,6 +58,7 @@ export default class KoCalendar extends React.Component<KoCalendarProps, KoCalen
               availableSlots={availableSlots}
               locations={this.props.locations}
               onAvailableSlotChange={this.props.onAvailableSlotChange}
+              cancelPresentation={this.props.cancelPresentation}
             />
           )
         })}

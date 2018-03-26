@@ -1,6 +1,7 @@
 import * as React from 'react';
 import ObjectID from 'bson-objectid';
-import { Modal, Row, Col } from 'antd';
+import { Modal, Row, Col, Form, Input, Button } from 'antd';
+import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import { KoCalendarConstants } from '../../models/Constants';
 import DatetimeUtil from '../../utils/DatetimeUtil';
@@ -9,16 +10,18 @@ import TimeSlot from '../../models/TimeSlot';
 import Location from '../../models/Location';
 
 export interface PresentationSlotTileProps {
+  form: WrappedFormUtils;
   ruler: number[];
   presentation: Presentation;
   locations: Location[];
+  cancelPresentation: (presentation: Presentation, note: string) => void;
 }
 
 interface PresentationSlotTileState {
   visible: boolean;
 }
 
-export default class PresentationSlotTile extends React.Component<PresentationSlotTileProps, any> {
+class PresentationSlotTile extends React.Component<PresentationSlotTileProps, any> {
   locationByAdminId: any = {};
 
   constructor(props: PresentationSlotTileProps) {
@@ -33,6 +36,7 @@ export default class PresentationSlotTile extends React.Component<PresentationSl
     };
 
     this.toggleModal = this.toggleModal.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   toggleModal(v: boolean) {
@@ -41,6 +45,17 @@ export default class PresentationSlotTile extends React.Component<PresentationSl
     });
   }
 
+  handleSubmit(e: React.FormEvent<any>) {
+    e.preventDefault();
+
+    this.props.form.validateFields((err: any, values: any) => {
+      if (err) {
+        return;
+      }
+
+      this.props.cancelPresentation(this.props.presentation, values.reason)
+    })
+  }
 
   render() {
     const start = DatetimeUtil.convertToHourlyNumber(DatetimeUtil.getMomentFromISOString(this.props.presentation.start));
@@ -64,7 +79,16 @@ export default class PresentationSlotTile extends React.Component<PresentationSl
           title={group.projectName}
           visible={this.state.visible}
           cancelText="Close"
-          onOk={(e) => this.toggleModal(false)}
+          destroyOnClose={true}
+          footer={(
+            <div>
+              <Button
+                onClick={(e) => this.toggleModal(false)}
+              >
+                Close
+              </Button>
+            </div>
+          )}
           onCancel={(e) => this.toggleModal(false)}
         >
           <Row>
@@ -107,6 +131,31 @@ export default class PresentationSlotTile extends React.Component<PresentationSl
               {group.sponsors.map(member => `${member.firstName} ${member.lastName}`).join(', ')}
             </Col>
           </Row>
+          <div
+            style={{ marginTop: '16px' }}
+          >
+            <p>If you need to cancel this presentation by any reason, please provide the reason. The reason will be sent to students, other faculties, and sponsors.</p>
+            <Form
+              onSubmit={this.handleSubmit}
+            >
+              <Form.Item>
+                {this.props.form.getFieldDecorator('reason', {
+                  rules: [{
+                    required: true,
+                    message: 'Please provide the reason',
+                  }]
+                })(
+                  <Input />
+                )}
+              </Form.Item>
+              <Button
+                htmlType="submit"
+                type="danger"
+              >
+                Cancel the presentation
+            </Button>
+            </Form>
+          </div>
         </Modal>
         <style jsx>{`
           .ko-presentationslottile {
@@ -134,3 +183,5 @@ export default class PresentationSlotTile extends React.Component<PresentationSl
     );
   }
 }
+
+export default Form.create()(PresentationSlotTile)

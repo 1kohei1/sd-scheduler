@@ -53,6 +53,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
     this.calendar = this.calendar.bind(this);
     this.alert = this.alert.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
+    this.cancelPresentation = this.cancelPresentation.bind(this);
   }
 
   componentDidMount() {
@@ -186,6 +187,9 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
           .then(updateDB => {
             if (updateDB) {
               this.updateDBAvailableSlot(newAvailableSlots.toArray());
+            } else {
+              // If the faculty cancels deleting the presentation, fetch most updated available slots
+              this.getAvailableSlot();
             }
           })
       }
@@ -255,7 +259,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
     }
   }
 
-  private async cancelPresentation(presentation: Presentation, note: string) {
+  async cancelPresentation(presentation: Presentation, note: string) {
     try {
       await Api.cancelPresentation(presentation._id, {
         canceledBy: this.props.user._id,
@@ -372,6 +376,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
               availableSlots={this.state.availableSlots.toArray()}
               locations={this.state.locations}
               onAvailableSlotChange={this.onAvailableSlotChange}
+              cancelPresentation={this.cancelPresentation}
             />
           )}
       </div>
