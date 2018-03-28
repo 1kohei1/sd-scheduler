@@ -87,6 +87,16 @@ TODO:
 - [ ] After successful presentation schedule, present dialog and navigate user to calendar page
 - [ ] Let students pick what date to schedule like picking SD 2 faculties
 
+Feature requests from Dr. Heinrich
+
+- [ ] Email tab to send emails to faculties. (Make <LINK></LINK>to paste the link)
+- [ ] Faculties tab to register/delete faculties to the system
+- [ ] Group import file is gonna be [First name] [Last name] [Email] [Group number]
+- [ ] Let SD2 faculty manually schedule the presentation
+- [ ] Let student choose the faculty who is not registered to the system at scheduling presentation. 
+- [ ] Make presentation dates and location in one tab. The location can change by presentation dates chunk
+- [ ] Reminding feature for student groups to provide conference paper
+
 NOTES:
 
 * Date displayed in the browser is in US Eastern time. This is because this project is developed for UCF.
