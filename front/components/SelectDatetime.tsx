@@ -100,6 +100,7 @@ export default class SelectDatetime extends React.Component<SelectDatetimeProps,
 
     // Check if other group is requesting the faculty
     const isOtherGroupRequesting = this.props.presentations
+      .filter(presentation => presentation._id !== this.props.schedulingPresentation._id)
       .filter(presentation => presentation.faculties.indexOf(fid) >= 0)
       .map(DatetimeUtil.convertToTimeSlot)
       .filter(slot => DatetimeUtil.doesOverlap(slot, presentationSlot))

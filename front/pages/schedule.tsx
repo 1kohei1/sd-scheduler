@@ -43,12 +43,6 @@ interface ScheduleState {
   groups: Group[];
 
   // state.current = 1
-  availableSlots: AvailableSlot[],
-  presentations: Presentation[],
-  presentationDate: PresentationDate | undefined;
-  presentationDatestr: string;
-
-  // state.current = 2
   selectedGroup: Group | undefined;
   verifyEmailAddresses: {
     email: string;
@@ -56,6 +50,12 @@ interface ScheduleState {
   }[];
   email: string;
   identityVerified: boolean;
+
+  // state.current = 2
+  availableSlots: AvailableSlot[],
+  presentations: Presentation[],
+  presentationDate: PresentationDate | undefined;
+  presentationDatestr: string;
 
   // state.current = 3
 }
@@ -93,16 +93,16 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       groups: Array<Group>(),
 
       // state.current = 1
-      availableSlots: [],
-      presentations: Array<Presentation>(),
-      presentationDate: undefined,
-      presentationDatestr: '',
-
-      // state.current = 2
       selectedGroup: undefined,
       email: '',
       verifyEmailAddresses: [],
       identityVerified: false,
+
+      // state.current = 2
+      availableSlots: [],
+      presentations: Array<Presentation>(),
+      presentationDate: undefined,
+      presentationDatestr: '',
 
       // state.current = 3
     };
@@ -114,14 +114,14 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     this.onAdminSelected = this.onAdminSelected.bind(this);
 
     // state.current = 1
-    this.presentationDatestrPicked = this.presentationDatestrPicked.bind(this);
-    this.presentationDatetimePicked = this.presentationDatetimePicked.bind(this);
-    this.presentationFacultyPicked = this.presentationFacultyPicked.bind(this);
-
-    // state.current = 2
     this.onGroupSelected = this.onGroupSelected.bind(this);
     this.onEmailChange = this.onEmailChange.bind(this);
     this.onSendIdentityVerification = this.onSendIdentityVerification.bind(this);
+
+    // state.current = 2
+    this.presentationDatestrPicked = this.presentationDatestrPicked.bind(this);
+    this.presentationDatetimePicked = this.presentationDatetimePicked.bind(this);
+    this.presentationFacultyPicked = this.presentationFacultyPicked.bind(this);
 
     // state.current = 3
     this.onFillGroupInfoRef = this.onFillGroupInfoRef.bind(this);
@@ -144,21 +144,6 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       )
     } else if (this.state.current === 1) {
       return (
-        <SelectDatetime
-          presentationDate={this.state.presentationDate as PresentationDate}
-          faculties={this.props.facultiesInSemester}
-          availableSlots={this.state.availableSlots}
-          presentations={this.state.presentations}
-          adminFaculty={this.state.adminFaculty as Faculty}
-          schedulingPresentation={this.state.schedulingPresentation}
-          presentationDatestr={this.state.presentationDatestr}
-          presentationDatestrPicked={this.presentationDatestrPicked}
-          presentationDatetimePicked={this.presentationDatetimePicked}
-          presentationFacultyPicked={this.presentationFacultyPicked}
-        />
-      )
-    } else if (this.state.current === 2) {
-      return (
         <SelectGroup
           groups={this.state.groups}
           selectedGroup={this.state.selectedGroup}
@@ -169,48 +154,65 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
           onSendIdentityVerification={this.onSendIdentityVerification}
         />
       )
-    } else if (this.state.current === 3) {
-      let index = -1;
-      let date = '';
-      let time = '';
-      const { selectedGroup, presentations } = this.state;
-
-      if (selectedGroup) {
-        index = this.state.presentations
-          .findIndex(presentation => presentation.group._id === selectedGroup._id);
-      }
-      if (index >= 0) {
-        date = DatetimeUtil.formatISOString(presentations[index].start, DateConstants.dateFormat);
-        time = DatetimeUtil.formatISOString(presentations[index].start, DateConstants.hourMinFormat);
-      }
+    } else if (this.state.current === 2) {
+      const { schedulingPresentation } = this.state;
 
       return (
         <div>
-          {index >= 0 && (
-            <Alert
-              showIcon
-              style={{ marginBottom: '16px' }}
-              type="warning"
-              message="You are updating existing presentation"
-              description={`Your group already scheduled the presentation at ${time} on ${date}. This action will reschedule your presentation. `}
-            />
-          )}
+          {this.alert()}
+          <SelectDatetime
+            presentationDate={this.state.presentationDate as PresentationDate}
+            faculties={this.props.facultiesInSemester}
+            availableSlots={this.state.availableSlots}
+            presentations={this.state.presentations}
+            adminFaculty={this.state.adminFaculty as Faculty}
+            schedulingPresentation={this.state.schedulingPresentation}
+            presentationDatestr={this.state.presentationDatestr}
+            presentationDatestrPicked={this.presentationDatestrPicked}
+            presentationDatetimePicked={this.presentationDatetimePicked}
+            presentationFacultyPicked={this.presentationFacultyPicked}
+          />
+        </div>
+      )
+    } else if (this.state.current === 3) {
+      return (
+        <div>
+          {this.alert()}
           <SchedulingDate
             presentation={this.state.schedulingPresentation}
             faculties={this.props.facultiesInSemester}
           />
-          {/* This if is redundant, but TS complains selectedGroup could be undefined */}
-          {selectedGroup && (
-            <FillGroupInfo
-              group={selectedGroup}
-              addSponsor={this.addSponsor}
-              onFillGroupInfoRef={this.onFillGroupInfoRef}
-              deleteSponsor={this.deleteSponsor}
-              schedulePresentation={this.schedulePresentation}
-            />
-          )}
+          <FillGroupInfo
+            group={this.state.selectedGroup as Group}
+            addSponsor={this.addSponsor}
+            onFillGroupInfoRef={this.onFillGroupInfoRef}
+            deleteSponsor={this.deleteSponsor}
+            schedulePresentation={this.schedulePresentation}
+          />
         </div>
       )
+    }
+  }
+
+  alert() {
+    const dbPresentation = this.state.presentations
+      .find(presentation => presentation._id === this.state.schedulingPresentation._id);
+
+    if (dbPresentation) {
+      const date = DatetimeUtil.formatISOString(dbPresentation.start, DateConstants.dateFormat);
+      const time = DatetimeUtil.formatISOString(dbPresentation.start, DateConstants.hourMinFormat);
+
+      return (
+        <Alert
+          showIcon
+          style={{ marginBottom: '16px' }}
+          type="warning"
+          message="You are updating existing presentation"
+          description={`Your group already scheduled the presentation at ${time} on ${date}. This action will reschedule your presentation. `}
+        />
+      )
+    } else {
+      return null;
     }
   }
 
@@ -238,7 +240,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       newState.current = newCurrent;
 
       // Only entering step 2, fetch available slots and presentations
-      if (diff > 0 && newCurrent === 1) {
+      if (diff > 0 && newCurrent === 2) {
         newState.loading = true;
         this.onScheduleTime();
       }
@@ -253,6 +255,13 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
         return 'Pleas select the faculty of your senior design';
       }
     } else if (this.state.current === 1) {
+      if (!this.state.selectedGroup) {
+        return 'Please select the group';
+      }
+      if (!this.state.identityVerified) {
+        return 'Please verify you are one of the group member';
+      }
+    } else if (this.state.current === 2) {
       if (!this.state.presentationDatestr) {
         return 'Please select your presentation date';
       }
@@ -268,13 +277,6 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
 
       if (numFaculties < 4 || !isAdminSelected) {
         return 'Please select 4 faculties including your senior design 2 faculty';
-      }
-    } else if (this.state.current === 2) {
-      if (!this.state.selectedGroup) {
-        return 'Please select the group';
-      }
-      if (!this.state.identityVerified) {
-        return 'Please verify you are one of the group member';
       }
     }
     return undefined;
@@ -321,6 +323,63 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
 
   /**
    * state.current = 1
+   */
+
+  onGroupSelected(groupId: string) {
+    const group = this.state.groups.find(g => g._id === groupId);
+
+    this.setState({
+      email: '',
+      identityVerified: false,
+      selectedGroup: group,
+    });
+  }
+
+  onEmailChange(email: string) {
+    this.setState({
+      email,
+    })
+  }
+
+  async onSendIdentityVerification() {
+    // Use email and group id to send verification email
+    try {
+      if (this.state.selectedGroup) {
+        const verifyToken = await Api.verifyStudentIdentity(this.state.selectedGroup._id, {
+          email: this.state.email,
+        });
+
+        this.setState((prevState: ScheduleState, props: ScheduleProps) => {
+          let newVerifyEmailAddresses = List(prevState.verifyEmailAddresses);
+          newVerifyEmailAddresses = newVerifyEmailAddresses.push({
+            email: this.state.email,
+            sentiso: new Date().toISOString(),
+          });
+          return {
+            verifyEmailAddresses: newVerifyEmailAddresses.toArray(),
+          }
+        })
+
+        // Open socket.io and listen on token change
+        const socket = io();
+        socket.on(verifyToken, (isVerified: boolean) => {
+          if (isVerified) {
+            this.setState({
+              identityVerified: true,
+            });
+            this.changeCurrent(1);
+            socket.off(verifyToken);
+            socket.close();
+          }
+        })
+      }
+    } catch (err) {
+      this.onError(err);
+    }
+  }
+
+  /**
+   * state.current = 2
    */
 
   private async onScheduleTime() {
@@ -377,9 +436,18 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
 
     try {
       const presentations = await Api.getPresentations(query);
-      this.setState({
+      const presentation = presentations
+        .find((presentation: Presentation) => presentation.group._id === (this.state.selectedGroup as Group)._id);
+      
+      const newState: any = {
         presentations,
-      })
+      }
+      if (presentation) {
+        newState.schedulingPresentation = presentation;
+        newState.presentationDatestr = DatetimeUtil.formatISOString(presentation.start, DateConstants.dateFormat);
+      }
+
+      this.setState(newState);
     } catch (err) {
       this.onError(err);
     }
@@ -393,7 +461,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       schedulingPresentation.start = '';
       schedulingPresentation.end = '';
       schedulingPresentation.faculties = [];
-      
+
       const newMap = Map(schedulingPresentation);
       const newState: any = {}
       newState.schedulingPresentation = newMap.toObject();
@@ -436,62 +504,6 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
 
       return newState;
     })
-  }
-
-  /**
-   * state.current = 2
-   */
-
-  onGroupSelected(groupId: string) {
-    const group = this.state.groups.find(g => g._id === groupId);
-
-    this.setState({
-      email: '',
-      selectedGroup: group,
-    });
-  }
-
-  onEmailChange(email: string) {
-    this.setState({
-      email,
-    })
-  }
-
-  async onSendIdentityVerification() {
-    // Use email and group id to send verification email
-    try {
-      if (this.state.selectedGroup) {
-        const verifyToken = await Api.verifyStudentIdentity(this.state.selectedGroup._id, {
-          email: this.state.email,
-        });
-
-        this.setState((prevState: ScheduleState, props: ScheduleProps) => {
-          let newVerifyEmailAddresses = List(prevState.verifyEmailAddresses);
-          newVerifyEmailAddresses = newVerifyEmailAddresses.push({
-            email: this.state.email,
-            sentiso: new Date().toISOString(),
-          });
-          return {
-            verifyEmailAddresses: newVerifyEmailAddresses.toArray(),
-          }
-        })
-
-        // Open socket.io and listen on token change
-        const socket = io();
-        socket.on(verifyToken, (isVerified: boolean) => {
-          if (isVerified) {
-            this.setState({
-              identityVerified: true,
-            });
-            this.changeCurrent(1);
-            socket.off(verifyToken);
-            socket.close();
-          }
-        })
-      }
-    } catch (err) {
-      this.onError(err);
-    }
   }
 
   /**
@@ -578,35 +590,30 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
 
   private async schedulePresentationAPI() {
     try {
-      if (this.state.selectedGroup) {
-        const groupId = this.state.selectedGroup._id;
+      const isUpdatingPresentation = this.state.presentations
+        .findIndex(presentation => presentation._id === this.state.schedulingPresentation._id) >= 0;
 
-        const index = this.state.presentations
-          .findIndex(presentation => presentation.group._id === groupId);
+      let body: { [key: string]: any };
 
-        let isNew = true;
-        let body = this.state.schedulingPresentation as { [key: string]: any };
-
-        // If presentation is already scheduled for the selectedGroup, update partially
-        if (index >= 0) {
-          isNew = false;
-          const { start, end, faculties, midPresentationLink } = this.state.schedulingPresentation;
-          body = {
-            start,
-            end,
-            faculties,
-            midPresentationLink,
-          }
-        } else {
-          // state.schedulingPresentation.group is a placeholder. Replace it with actual user selected group _id
-          body.group = this.state.selectedGroup._id;
+      // If presentation is already scheduled for the selectedGroup, update partially
+      if (isUpdatingPresentation) {
+        const { start, end, faculties, midPresentationLink } = this.state.schedulingPresentation;
+        body = {
+          start,
+          end,
+          faculties,
+          midPresentationLink,
         }
+      } else {
+        // state.schedulingPresentation.group is a placeholder. Replace it with actual user selected group _id
+        body = this.state.schedulingPresentation as { [key: string]: any };
+        body.group = (this.state.selectedGroup as Group)._id;
+      }
 
-        if (isNew) {
-          await Api.createPresentation(body);
-        } else {
-          await Api.updatePresentation(this.state.presentations[index]._id, body);
-        }
+      if (isUpdatingPresentation) {
+        await Api.updatePresentation(this.state.schedulingPresentation._id, body);
+      } else {
+        await Api.createPresentation(body);
       }
     } catch (err) {
       this.onError(err);
@@ -625,8 +632,8 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
                 current={this.state.current}
               >
                 <Steps.Step title="Pick your SD 2 faculty" />
-                <Steps.Step title="Pick time and faculties" />
                 <Steps.Step title="Pick your group" />
+                <Steps.Step title="Pick time and faculties" />
                 <Steps.Step title="Fill group info" />
               </Steps>
             </div>
