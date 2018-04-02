@@ -40,7 +40,7 @@ export default class SelectDatetime extends React.Component<SelectDatetimeProps,
     const { presentationDatestr } = this.props;
 
     if (presentationDatestr) {
-      const start = DatetimeUtil.getMomentByFormat(`${presentationDatestr} ${val}`, `${DateConstants.dateFormat} ${DateConstants.hourMinFormat}`);
+      const start = DatetimeUtil.getMomentByFormat(`${presentationDatestr} ${val}`, `${DateConstants.dateFormat} ${DateConstants.hourFormat}`);
       const end = DatetimeUtil.addToMoment(start, 1, 'hour');
 
       this.props.presentationDatetimePicked(start.toISOString(), end.toISOString())
@@ -156,7 +156,7 @@ export default class SelectDatetime extends React.Component<SelectDatetimeProps,
             <Select
               style={{ width: '500px' }}
               onChange={this.onHourOptionChanged}
-              value={schedulingPresentation.start ? DatetimeUtil.formatISOString(schedulingPresentation.start, DateConstants.hourMinFormat) : undefined}
+              value={schedulingPresentation.start ? DatetimeUtil.formatISOString(schedulingPresentation.start, DateConstants.hourFormat) : undefined}
               placeholder="9:00 AM"
             >
               {
@@ -175,44 +175,41 @@ export default class SelectDatetime extends React.Component<SelectDatetimeProps,
         )}
         {schedulingPresentation.start && (
           <div className="section">
-            {availableFaculties.length === 0 && (
-              <div>
-                <p>No faculties are available at specified time.</p>
-                <p>Please check&nbsp;
-                  <a href="/calendar" target="_blank">
-                    faculty's schedule
-                  </a>
-                </p>
-              </div>
-            )}
-            {availableFaculties.length > 0 && (
-              <div>
-                <p>Please select faculties to invite your presentations.</p>
-                <p>
-                  <span className={this.is4FacultiesPicked() ? 'success' : ''}>
-                    <Icon type="check-circle-o" />
-                    &nbsp;Select 4 faculties<br />
+            <p>
+              <span className={this.is4FacultiesPicked() ? 'success' : ''}>
+                <Icon type="check-circle-o" />
+                &nbsp;Select 4 faculties<br />
+              </span>
+              <span className={this.isSD2FacultyPicked() ? 'success' : ''}>
+                <Icon type="check-circle-o" />
+                &nbsp;Select your SD faculty
                   </span>
-                  <span className={this.isSD2FacultyPicked() ? 'success' : ''}>
-                    <Icon type="check-circle-o" />
-                    &nbsp;Select your SD faculty
-                  </span>
-                </p>
-                {availableFaculties.map(faculty => (
-                  <Checkbox
-                    key={faculty._id}
-                    className="section"
-                    checked={schedulingPresentation.faculties.indexOf(faculty._id) >= 0}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.props.presentationFacultyPicked(e.target.checked, faculty._id)}
-                  >
-                    Dr. {faculty.firstName} {faculty.lastName}
-                    {faculty.isAdmin && (
-                      <span>(SD Faculty)</span>
-                    )}
-                  </Checkbox>
-                ))}
-              </div>
-            )}
+            </p>
+            <h3>CSEE faculties</h3>
+            <p>Please select faculties to invite your presentations.</p>
+            <div className="section">
+              {availableFaculties.map(faculty => (
+                <Checkbox
+                  key={faculty._id}
+                  className="section"
+                  checked={schedulingPresentation.faculties.indexOf(faculty._id) >= 0}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.props.presentationFacultyPicked(e.target.checked, faculty._id)}
+                >
+                  Dr. {faculty.firstName} {faculty.lastName}
+                  {faculty.isAdmin && (
+                    <span>(SD Faculty)</span>
+                  )}
+                </Checkbox>
+              ))}
+              {availableFaculties.length === 0 && (
+                <p>No facultis are available at specified time. Please change the time.</p>
+              )}
+            </div>
+            <h3>Other department faculties</h3>
+            <p>If you need to invite other department's faculty, please add them below.</p>
+            <div className="section">
+            
+            </div>
           </div>
         )}
         <style jsx>{`
