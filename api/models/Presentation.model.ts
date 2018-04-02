@@ -33,11 +33,15 @@ const PresentationSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: 'Faculty'
     }],
-    validate: {
-      validator: (v: string[]) => 4 <= v.length,
-      message: 'At least 4 faculties including SD 2 faculty must be selected.'
-    }
   },
+  externalFaculties: [{
+    firstName: String,
+    lastName: String,
+    email: {
+      type: String,
+      lowercase: true,
+    },
+  }],
   midPresentationLink: {
     type: String,
     default: '',
@@ -82,9 +86,10 @@ PresentationSchema.pre('save', function (this: any, next) {
  * Valid presentation time is specified below:
  * 1. start and end is one hour apart, start comes before end, and start minute is 00
  * 2. Presentation start and end is in the range of presentationDate
- * 3. All faculty is available at specifed time
- * 4. Group has not scheduled the presentations
- * 5. No presentation exists that has at least one of faculties in common and the time overlaps
+ * 3. Sum of faculties and externalFaculties is at least 4 and adminFaculty is in faculties
+ * 4. All faculty is available at specifed time
+ * 5. Group has not scheduled the presentations
+ * 6. No presentation exists that has at least one of faculties in common and the time overlaps
  */
 const presentationValidation = (doc: Document, group: Document, next: any) => {
 
@@ -132,6 +137,21 @@ const presentationValidation = (doc: Document, group: Document, next: any) => {
       }
     })
     // Check condition 3
+    .then((AvailableSlots: Document[]) => {
+      if (doc.get('faculties').length + doc.get('externalFaculties').length < 4) {
+        return Promise.reject(new Error('At least 4 faculties must be present at the presentation'));
+      } else {
+        const fids = doc.get('faculties').map((fid: Schema.Types.ObjectId) => fid.toString());
+        const adminFacultyId = adminFaculty.toString();
+
+        if (fids.indexOf(adminFacultyId) === -1) {
+          return Promise.reject(new Error('Your group SD2 faculty must be selected'));
+        } else {
+          return Promise.resolve(AvailableSlots);
+        }
+      }
+    })
+    // Check condition 4
     .then((availableSlots: Document[]) => {
       if (availableSlots.length !== doc.get('faculties').length) {
         return Promise.reject(new Error('One of specified faculties is not available at specified time'));
@@ -154,7 +174,7 @@ const presentationValidation = (doc: Document, group: Document, next: any) => {
         }
       }
     })
-    // Check condition 4
+    // Check condition 5
     .then((presentations: Document[]) => {
       const sameGroupPresentation = presentations
         .filter(presentation =>
@@ -169,7 +189,7 @@ const presentationValidation = (doc: Document, group: Document, next: any) => {
         return Promise.resolve(presentations);
       }
     })
-    // Check condition 5
+    // Check condition 6
     .then((presentations: Document[]) => {
       const overlappingPresentations = presentations
         .filter((presentation: Document) => {
@@ -246,6 +266,15 @@ PresentationSchema.post('save', (doc: Document, next: any) => {
           name: `Dr. ${faculty.get('firstName')} ${faculty.get('lastName')}`,
           title: `Group ${group.get('groupNumber')} scheduled presentation at ${time} on ${date} at ${location}`,
           type: 'faculty',
+        })
+      });
+
+      doc.get('externalFaculties').forEach((faculty: Document) => {
+        emails.push({
+          email: faculty.get('email'),
+          name: `Dr. ${faculty.get('firstName')} ${faculty.get('lastName')}`,
+          title: `Senior design group ${group.get('groupNumber')} invited you to presentation at ${time} on ${date} at ${location}`,
+          type: 'externalFaculty',
         })
       });
 
