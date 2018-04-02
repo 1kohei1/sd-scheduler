@@ -146,16 +146,4 @@ FacultySchema.plugin(uniqueValidator, {
   message: '{VALUE} is already registered',
 });
 
-const FacultyModel = model('Faculty', FacultySchema);
-
-FacultyModel.on('afterInsert', (faculty: Document) => {
-  Mailer.send(MailType.invitation, {
-    to: faculty.get('email'),
-    extra: {
-      fromWhom: `Dr. ${faculty.get('firstName')} ${faculty.get('lastName')}`,
-      token: faculty.get('token'),
-    }
-  })
-})
-
-export default FacultyModel;
+export default model('Faculty', FacultySchema);
