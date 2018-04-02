@@ -82,6 +82,7 @@ TODO:
 - [ ] After successful presentation schedule, present dialog and navigate user to calendar page
 - [x] Let students pick what date to schedule like picking SD 2 faculties
 - [ ] Send cancel email when group updates the presentation to different faculties
+- [ ] Present dialog after the identity is verified during scheduling presentation
 
 Feature requests from Dr. Heinrich
 
