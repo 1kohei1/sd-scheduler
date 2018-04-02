@@ -5,7 +5,6 @@ import AppLayout from '../components/AppLayout';
 import FormLayout from '../components/FormLayout';
 import UserUtil from '../utils/UserUtil';
 import Api from '../utils/Api';
-import ImportGroups from '../components/ImportGroups';
 import FacultyState from '../components/FacultyState';
 
 export interface AdminProps {
@@ -29,7 +28,6 @@ export default class Admin extends React.Component<AdminProps, AdminState> {
       <AppLayout>
         <FormLayout>
           <h1>System administrator menu</h1>
-          <ImportGroups />
           <FacultyState />
         </FormLayout>
       </AppLayout>

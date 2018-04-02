@@ -9,10 +9,6 @@ const SemesterSchema = new Schema({
     type: String,
     required: true,
   },
-  faculties: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Faculty',
-  }],
   created_at: Date,
   updated_at: Date,
 });

@@ -6,6 +6,7 @@ export default interface Faculty {
   lastName: string;
   isAdmin: boolean;
   isSystemAdmin: boolean;
+  isActive: boolean;
   isTestUser: boolean;
   expire_at: Date,
   verify_at: Date,

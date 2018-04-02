@@ -33,30 +33,8 @@ module.exports.createFaculty = (req: Request, res: Response) => {
     }
   };
 
-  let newFaculty: Document;
-
   DBUtil.createFaculty(req.body)
-    .then(newF => {
-      newFaculty = newF;
-      // Add new faculty to current semester
-      return DBUtil.findSemesters().exec();
-    })
-    .then((semesters: Document[]) => {
-      if (semesters.length === 0) {
-        return Promise.resolve(undefined);
-      } else {
-        const currentSemester = semesters[0];
-        const faculties = currentSemester.get('faculties');
-        faculties.push(newFaculty.get('_id'));
-        return DBUtil.updateSemesterById(
-          currentSemester.get('_id'),
-          {
-            faculties,
-          }
-        );
-      }
-    })
-    .then((updatedSemester: Document | undefined) => {
+    .then(newFaculty => {
       APIUtil.successResponse(info, newFaculty, res);
     })
     .catch(err => {

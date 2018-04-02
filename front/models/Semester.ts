@@ -5,7 +5,6 @@ export interface Semester {
   _id: string;
   key: string;
   displayName: string;
-  faculties: any[];
 }
 
 export const Menus = [{

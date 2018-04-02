@@ -64,19 +64,19 @@ export default class ImportGroups extends React.Component<ImportGroupsProps, Imp
       selectedSemesterId: sid,
     });
     const semester = this.state.semesters.find(semester => semester._id === sid);
-    if (semester) {
-      let facultyQuery = semester.faculties.map(fid => `_id[$in]=${fid}`).join('&');
-      facultyQuery += '&isAdmin=true';
+    // if (semester) {
+    //   let facultyQuery = semester.faculties.map(fid => `_id[$in]=${fid}`).join('&');
+    //   facultyQuery += '&isAdmin=true';
 
-      try {
-        const faculties = await Api.getFaculties(facultyQuery);
-        this.setState({
-          semesterAdminFaculties: faculties,
-        });
-      } catch (err) {
-        this.addErr(err);
-      }
-    }
+    //   try {
+    //     const faculties = await Api.getFaculties(facultyQuery);
+    //     this.setState({
+    //       semesterAdminFaculties: faculties,
+    //     });
+    //   } catch (err) {
+    //     this.addErr(err);
+    //   }
+    // }
   }
 
   onFacultyChange(fid: string) {

@@ -4,7 +4,6 @@ import { message } from 'antd';
 
 import PresentationDateView from './PresentationDateView';
 import LocationView from './LocationView';
-import Faculties from './Faculties';
 import { Semester } from '../models/Semester';
 import Api from '../utils/Api';
 import Faculty from '../models/Faculty';
@@ -121,16 +120,6 @@ export default class Overview extends React.Component<OverviewProps, OverviewSta
           semester={this.state.semester}
           facultyId={facultyId}
         />
-        {/* <Faculties
-          prop="faculties"
-          isAdmin={isAdmin}
-          semester={this.state.semester}
-          editing={this.state.facultiesEditing}
-          updating={this.state.facultiesUpdating}
-          error={this.state.facultiesError}
-          toggleForm={this.toggleForm}
-          updateSemester={this.updateSemester}
-        /> */}
         <InviteFaculty />
       </div>
     )

@@ -67,8 +67,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     const semesters: Semester[] = await Api.getSemesters();
     const semester = semesters[0];
 
-    const ids = semester.faculties.map(fid => `_id[$in]=${fid}`);
-    const facultiesInSemester: Faculty[] = await Api.getFaculties(`${ids.join('&')}`);
+    const facultiesInSemester: Faculty[] = await Api.getFaculties(`isActive=true`);
 
     const allGroups = await Api.getGroups(`semester=${semester._id}`);
 

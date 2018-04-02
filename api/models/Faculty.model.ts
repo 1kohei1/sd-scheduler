@@ -40,6 +40,10 @@ const FacultySchema = new Schema({
     type: Boolean,
     default: false,
   },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
   isTestUser: {
     type: Boolean,
     default: false,
