@@ -11,10 +11,8 @@ System:
 - [x] Send notification email when new group books faculties' time
 - [x] Send notification email when faculties become unavailable for booked time
 - [x] Send notification email when student gruop updates the presentation time
-- [ ] Send notification email when senior design date is updated
-- [ ] Send reminder email a day before and an hour before the presentation time
-- [ ] Send groups to remind to schedule the presentation at 2 weeks before and continuously
-- [ ] Send signed PDF to senior design admin faculties when the presentation booking is made (v2)
+- [x] Send notification email when senior design date is updated
+- [x] Send reminder email a day before and an hour before the presentation time
 - [x] Email verification
 
 Faculties:
@@ -22,7 +20,6 @@ Faculties:
 - [x] Submit the schedule
 - [x] Update the schedule
 - [x] Check the bookings in the calendar view
-- [ ] Upload signature (v2)
 
 Students:
 
@@ -42,8 +39,8 @@ System Admin:
 
 - [x] Import groups for the semester and admin faculty
 - [ ] Delete all group by semester and faculties
-- [ ] Turn the faculty to admin (create PresentationDate and Location)
-- [ ] Turn off the faculty not to admin (Delete PresentationDate and Location)
+- [x] Turn the faculty to admin (create PresentationDate and Location)
+- [x] Turn off the faculty not to admin (Delete PresentationDate and Location)
 
 TODO:
 
@@ -64,14 +61,13 @@ TODO:
 - [ ] Set up the mailing server and use queueing service to send emails (v4)
 - [x] Log email fail/success
 - [x] Use production ready session store (v3)
-- [ ] Maybe MLab sandbox should not be enough for the project. Think other way to store session free
+- [ ] Maybe MLab sandbox is not enough for the project. Think other way to store session free
 - [x] Find a way to read cookies from the server side since index constructor is executed on the server side
 - [x] Use tab for calendar dates
 - [ ] Research how to decrease the bundle size (probably no .map file)
 - [x] Check if selected presentation time range is already taken by someone
 - [x] Display selected presentation time in the calendar
 - [ ] Support faculties to be displayed in EE/CS schedule (v3)
-- [ ] Check sentences of no concecutive presentations in the calendar
 - [ ] Improve the group import process. Thinking admin faculty gives me the group spreadsheet and I modify them to the format I specify. (v3)
 - [ ] Admin faculties can send spreadsheet of groups from groups page
 - [ ] Upload presentation materials (v2)
@@ -79,13 +75,13 @@ TODO:
 - [x] Display scheduled presentations
 - [x] Test thoroughly about presentation validation
 - [x] Fix the bug of asPath not generated in the redirect
-- [ ] In maximum, make faculty to be booked up to 5 if not admin (v3) Hear to professors
-- [ ] Refactor db.util to return the promise (currently some function requires calling .exec, and some are not)
-- [ ] Test presentation 1 hour reminder API
+- [ ] Refactor db.util to return the promise (currently some function requires calling `.exec`, and some are not)
+- [x] Test presentation 1 hour reminder API
 - [ ] Export presentation to the scheduling app faculty uses
 - [x] Instead of just changing isAdmin status, update them to change isSystemAdmin and isTestUser flag
 - [ ] After successful presentation schedule, present dialog and navigate user to calendar page
-- [ ] Let students pick what date to schedule like picking SD 2 faculties
+- [x] Let students pick what date to schedule like picking SD 2 faculties
+- [ ] Send cancel email when group updates the presentation to different faculties
 
 Feature requests from Dr. Heinrich
 
