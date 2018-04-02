@@ -62,4 +62,17 @@ export default class Util {
 
     return start <= otherStart && otherEnd <= end;
   }
+
+  /**
+   * Only assuming this function to use string array. So that no need to think about comparator
+   */
+  static intersection(a: string[], b: string[]) {
+    const returnArr: string[] = [];
+    a.forEach(str => {
+      if (b.indexOf(str) >= 0 && returnArr.indexOf(str) === -1) {
+        returnArr.push(str);
+      }
+    })
+    return returnArr;
+  }
 }

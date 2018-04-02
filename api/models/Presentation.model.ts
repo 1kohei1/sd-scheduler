@@ -80,18 +80,14 @@ PresentationSchema.pre('save', function (this: any, next) {
 /**
  * Check if presentation time is valid.
  * Valid presentation time is specified below:
- * 1. start and end is one hour apart, start comes before end, and start minute is 00 or 30
+ * 1. start and end is one hour apart, start comes before end, and start minute is 00
  * 2. Presentation start and end is in the range of presentationDate
  * 3. All faculty is available at specifed time
  * 4. Group has not scheduled the presentations
- * 5. No presentation exists which has the same group.adminFaculty and start and end overlaps 
- *    The same SD 2 faculty cannot join two presentations at the same time
- * 6. At least 30 minutes apart from all presentations if group.adminFaculty is different && share the one faculty in faculties
+ * 5. No presentation exists that has at least one of faculties in common and the time overlaps
  */
 const presentationValidation = (doc: Document, group: Document, next: any) => {
 
-  // group is populated according to internal cache. 
-  // So if I stop populating group in DBUtil, this generates run time error.
   let adminFaculty = group.get('adminFaculty');
   let semester = doc.get('semester');
 
@@ -100,7 +96,7 @@ const presentationValidation = (doc: Document, group: Document, next: any) => {
     const start = moment(doc.get('start'));
     const end = moment(doc.get('end'));
 
-    if (start.isValid() && end.isValid() && end.diff(start, 'hour') === 1 && parseInt(start.format('m')) % 30 === 0) {
+    if (start.isValid() && end.isValid() && end.diff(start, 'hour') === 1 && parseInt(start.format('m')) % 60 === 0) {
       resolve();
     } else {
       reject(new Error('Presentation start time must be 1 hour and start must come before end'));
@@ -175,66 +171,25 @@ const presentationValidation = (doc: Document, group: Document, next: any) => {
     })
     // Check condition 5
     .then((presentations: Document[]) => {
-      const overlappingGroups = presentations
-        .filter(presentation =>
-          presentation.get('_id').toString() !== doc.get('_id').toString() &&
-          presentation.get('group').get('adminFaculty').toString() === adminFaculty.toString()
-        )
-        .map((presentation: Document) => {
-          // Map to -1 if presentation doesn't overlap with doc.
-          // Map to group number if presentation overlaps
-          if (Util.doesOverlap(doc, presentation)) {
-            return presentation.get('group').get('groupNumber');
-          } else {
-            return -1;
-          }
-        })
-        .filter((groupNumber: number) => groupNumber >= 0);
-
-      if (overlappingGroups.length > 0) {
-        return Promise.reject(new Error(`Presentation time conflicts with Group ${overlappingGroups.join(', ')}`))
-      } else {
-        return Promise.resolve(presentations);
-      }
-    })
-    // Check condition 5
-    .then((presentations: Document[]) => {
-      const facultiesIdArray = doc.get('faculties')
-        .map((objectId: ObjectID) => objectId.toString());
-
-      const facultiesInHurry = presentations
-        .filter(presentation =>
-          presentation.get('_id').toString() !== doc.get('_id').toString() &&
-          presentation.get('group').get('adminFaculty').toString() !== adminFaculty.toString() &&
-          // Filter presentations that contain the duplicate faculties
-          presentation.get('faculties')
-            .map((objectId: ObjectID) => objectId.toString())
-            .filter((objectId: string) => facultiesIdArray.indexOf(objectId) >= 0)
-            .length > 0
-        )
+      const overlappingPresentations = presentations
         .filter((presentation: Document) => {
-          const d1StartM = moment(doc.get('start'));
-          const d1EndM = moment(doc.get('end'));
-          const d2StartM = moment(presentation.get('start'));
-          const d2EndM = moment(presentation.get('end'));
+          const presentationFids = presentation
+            .get('faculties')
+            .map((fid: Schema.Types.ObjectId) => fid.toString());
+          const docFids = doc
+            .get('faculties')
+            .map((fid: Schema.Types.ObjectId) => fid.toString());
 
-          // d1 < d2
-          if (d1EndM.valueOf() < d2StartM.valueOf()) {
-            return d2StartM.diff(d1EndM, 'minutes', true) < 30;
-          }
-          // d2 < d1
-          else if (d2EndM.valueOf() < d1StartM.valueOf()) {
-            return d1StartM.diff(d2EndM, 'minutes', true) < 30;
-          }
-          // When two presentation ends and start at the same time, this condition is true
-          else {
-            return true;
-          }
+          return (
+            presentation.get('_id').toString() !== doc.get('_id').toString() &&
+            Util.intersection(presentationFids, docFids).length > 0
+          )
         })
-        .length > 0;
+        .filter((presentation: Document) => Util.doesOverlap(doc, presentation))
 
-      if (facultiesInHurry) {
-        return Promise.reject(new Error('Faculties need at least 30 minutes apart if they move to different SD 2 faculty groups'));
+      if (overlappingPresentations.length > 0) {
+        const groupNumber = overlappingPresentations[0].get('group').get('groupNumber');
+        return Promise.reject(new Error(`Some faculties are already booked for group ${groupNumber} for specified time`))
       } else {
         return Promise.resolve();
       }

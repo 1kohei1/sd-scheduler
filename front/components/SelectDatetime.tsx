@@ -28,7 +28,7 @@ export default class SelectDatetime extends React.Component<SelectDatetimeProps,
     super(props);
 
     this.onDateClicked = this.onDateClicked.bind(this);
-    this.onHourMinOptionChanged = this.onHourMinOptionChanged.bind(this);
+    this.onHourOptionChanged = this.onHourOptionChanged.bind(this);
   }
 
   onDateClicked(date: TimeSlotLikeObject) {
@@ -36,7 +36,7 @@ export default class SelectDatetime extends React.Component<SelectDatetimeProps,
     this.props.presentationDatestrPicked(dateStr);
   }
 
-  onHourMinOptionChanged(val: string) {
+  onHourOptionChanged(val: string) {
     const { presentationDatestr } = this.props;
 
     if (presentationDatestr) {
@@ -47,7 +47,7 @@ export default class SelectDatetime extends React.Component<SelectDatetimeProps,
     }
   }
 
-  private getHourMinOption() {
+  private getHourOption() {
     const { presentationDatestr } = this.props;
 
     if (presentationDatestr) {
@@ -57,9 +57,9 @@ export default class SelectDatetime extends React.Component<SelectDatetimeProps,
       if (presentationDate) {
         const presentationDateSlot = DatetimeUtil.convertToTimeSlot(presentationDate);
 
-        return DatetimeUtil.getTimeOptions(true)
-          .filter((hourMinOption: string) => {
-            const start = DatetimeUtil.getMomentByFormat(`${presentationDatestr} ${hourMinOption}`, `${DateConstants.dateFormat} ${DateConstants.hourMinFormat}`);
+        return DatetimeUtil.getTimeOptions()
+          .filter((hourOption: string) => {
+            const start = DatetimeUtil.getMomentByFormat(`${presentationDatestr} ${hourOption}`, `${DateConstants.dateFormat} ${DateConstants.hourFormat}`);
             const end = DatetimeUtil.addToMoment(start, 1, 'hour');
 
             const slot = {
@@ -98,32 +98,13 @@ export default class SelectDatetime extends React.Component<SelectDatetimeProps,
       return false;
     }
 
-    // Check if same admin presentation overlaps
-    const isSameAdminOtherGroupRequesting = this.props.presentations
+    // Check if other group is requesting the faculty
+    const isOtherGroupRequesting = this.props.presentations
       .filter(presentation => presentation.faculties.indexOf(fid) >= 0)
-      .filter(presentation => presentation.group.adminFaculty === this.props.adminFaculty._id)
       .map(DatetimeUtil.convertToTimeSlot)
       .filter(slot => DatetimeUtil.doesOverlap(slot, presentationSlot))
       .length > 0;
-    if (isSameAdminOtherGroupRequesting) {
-      return false;
-    }
-
-    // Check if different admin group is requesting
-    // In that case, the faculty must have 30 minutes break between this presentation
-    const isDifferentAdminGroupRequesting = this.props.presentations
-      .filter(presentation => presentation.faculties.indexOf(fid) >= 0)
-      .filter(presentation => presentation.group.adminFaculty === this.props.adminFaculty._id)
-      .map(DatetimeUtil.convertToTimeSlot)
-      // Add 30 minutes gap for different admin presentations
-      .map((slot: TimeSlot) => {
-        slot.start = DatetimeUtil.addToMoment(slot.start, -30, 'minutes');
-        slot.end = DatetimeUtil.addToMoment(slot.start, 30, 'minutes');
-        return slot;
-      })
-      .filter(slot => DatetimeUtil.doesOverlap(slot, presentationSlot))
-      .length > 0;
-    if (isDifferentAdminGroupRequesting) {
+    if (isOtherGroupRequesting) {
       return false;
     }
 
@@ -173,18 +154,18 @@ export default class SelectDatetime extends React.Component<SelectDatetimeProps,
             </p>
             <Select
               style={{ width: '500px' }}
-              onChange={this.onHourMinOptionChanged}
+              onChange={this.onHourOptionChanged}
               value={schedulingPresentation.start ? DatetimeUtil.formatISOString(schedulingPresentation.start, DateConstants.hourMinFormat) : undefined}
               placeholder="9:00 AM"
             >
               {
-                this.getHourMinOption()
-                  .map(hourMinOption => (
+                this.getHourOption()
+                  .map(hourOption => (
                     <Select.Option
-                      key={hourMinOption}
-                      value={hourMinOption}
+                      key={hourOption}
+                      value={hourOption}
                     >
-                      {hourMinOption}
+                      {hourOption}
                     </Select.Option>
                   ))
               }
