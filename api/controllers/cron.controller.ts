@@ -71,6 +71,14 @@ module.exports.presentationReminder = (req: Request, res: Response) => {
             title: `Group ${group.get('groupNumber')} presentation is in ${startsIn} at ${locationName}`,
             name: `Dr. ${faculty.get('firstName')} ${faculty.get('lastName')}`,
           })
+        });
+
+        presentation.get('externalFaculties').forEach((faculty: Document) => {
+          emails.push({
+            email: faculty.get('email'),
+            title: `Senior Design Group ${group.get('groupNumber')} presentation is in ${startsIn} at ${locationName}`,
+            name: `Dr. ${faculty.get('firstName')} ${faculty.get('lastName')}`,
+          })
         })
 
         group.get('members').forEach((member: Document) => {
@@ -79,13 +87,13 @@ module.exports.presentationReminder = (req: Request, res: Response) => {
             title: `Your presentation is in ${startsIn} at ${locationName}`,
             name: `${member.get('firstName')} ${member.get('lastName')}`,
           })
-        })
+        });
 
-        group.get('members').forEach((member: Document) => {
+        group.get('sponsors').forEach((sponsor: Document) => {
           emails.push({
-            email: member.get('email'),
+            email: sponsor.get('email'),
             title: `${group.get('projectName')} presentation is in ${startsIn} at ${locationName}`,
-            name: `${member.get('firstName')} ${member.get('lastName')}`,
+            name: `${sponsor.get('firstName')} ${sponsor.get('lastName')}`,
           })
         });
       });
