@@ -669,12 +669,13 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
 
       // If presentation is already scheduled for the selectedGroup, update partially
       if (isUpdatingPresentation) {
-        const { start, end, faculties, midPresentationLink } = this.state.schedulingPresentation;
+        const { start, end, faculties, midPresentationLink, externalFaculties } = this.state.schedulingPresentation;
         body = {
           start,
           end,
           faculties,
           midPresentationLink,
+          externalFaculties,
         }
       } else {
         // state.schedulingPresentation.group is a placeholder. Replace it with actual user selected group _id
