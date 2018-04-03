@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Select, Checkbox, Icon } from 'antd';
+import { Select, Checkbox, Icon, Form, Input, Button } from 'antd';
+import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import PresentationDate from '../models/PresentationDate';
 import Faculty from '../models/Faculty';
@@ -11,6 +12,9 @@ import CardInfo from './CardInfo';
 import { DateConstants } from '../models/Constants';
 
 export interface SelectDatetimeProps {
+  // antd form util
+  form: WrappedFormUtils,
+
   presentationDate: PresentationDate;
   faculties: Faculty[];
   availableSlots: AvailableSlot[];
@@ -21,9 +25,11 @@ export interface SelectDatetimeProps {
   presentationDatestrPicked: (dateStr: string) => void;
   presentationDatetimePicked: (start: string, end: string) => void;
   presentationFacultyPicked: (checked: boolean, fid: string) => void;
+  addExternalFaculty: () => void;
+  deleteExternalFaculty: (_id: string) => void;
 }
 
-export default class SelectDatetime extends React.Component<SelectDatetimeProps, any> {
+class SelectDatetime extends React.Component<SelectDatetimeProps, any> {
   constructor(props: SelectDatetimeProps) {
     super(props);
 
@@ -207,9 +213,86 @@ export default class SelectDatetime extends React.Component<SelectDatetimeProps,
             </div>
             <h3>Other department faculties</h3>
             <p>If you need to invite other department's faculty, please add them below.</p>
-            <div className="section">
-            
-            </div>
+            <Form>
+              {this.props.schedulingPresentation.externalFaculties.length === 0 && (
+                <Form.Item>
+                  No other department faculty is registered.
+                </Form.Item>
+              )}
+              {this.props.schedulingPresentation.externalFaculties.map(faculty => (
+                <div
+                  key={faculty._id}
+                  style={{ display: 'flex', flexDirection: 'row' }}
+                >
+                  <Form.Item
+                    style={{ marginRight: '8px' }}
+                  >
+                    {this.props.form.getFieldDecorator(`externalFaculties[${faculty._id}].firstName`, {
+                      rules: [{
+                        required: true,
+                        message: 'Please enter first name',
+                      }],
+                      initialValue: faculty.firstName,
+                    })(
+                      <Input
+                        placeholder="First name"
+                      />
+                    )}
+                  </Form.Item>
+                  <Form.Item
+                    style={{ marginRight: '8px' }}
+                  >
+                    {this.props.form.getFieldDecorator(`externalFaculties[${faculty._id}].lastName`, {
+                      rules: [{
+                        required: true,
+                        message: 'Please enter last name',
+                      }],
+                      initialValue: faculty.lastName,
+                    })(
+                      <Input
+                        placeholder="Last name"
+                      />
+                    )}
+                  </Form.Item>
+                  <Form.Item
+                    style={{ marginRight: '8px' }}
+                  >
+                    {this.props.form.getFieldDecorator(`externalFaculties[${faculty._id}].email`, {
+                      rules: [{
+                        required: true,
+                        message: 'Please enter email',
+                      }, {
+                        type: 'email',
+                        message: 'Please enter valid email',
+                      }],
+                      initialValue: faculty.email,
+                    })(
+                      <Input
+                        placeholder="Email"
+                      />
+                    )}
+                  </Form.Item>
+                  <Form.Item
+                    style={{ marginRight: '8px' }}
+                  >
+                    <Button
+                      icon="delete"
+                      shape="circle"
+                      onClick={e => this.props.deleteExternalFaculty(faculty._id)}
+                    />
+                  </Form.Item>
+                </div>
+              ))}
+              <Form.Item>
+                <Button
+                  type="dashed"
+                  style={{ width: '300px' }}
+                  onClick={this.props.addExternalFaculty}
+                >
+                  <Icon type="plus" /> Add new other department faculty
+                </Button>
+              </Form.Item>
+            </Form>
           </div>
         )}
         <style jsx>{`
@@ -230,3 +313,5 @@ export default class SelectDatetime extends React.Component<SelectDatetimeProps,
     );
   }
 }
+
+export default Form.create()(SelectDatetime);

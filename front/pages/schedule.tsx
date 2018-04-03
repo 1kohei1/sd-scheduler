@@ -122,6 +122,8 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     this.presentationDatestrPicked = this.presentationDatestrPicked.bind(this);
     this.presentationDatetimePicked = this.presentationDatetimePicked.bind(this);
     this.presentationFacultyPicked = this.presentationFacultyPicked.bind(this);
+    this.addExternalFaculty = this.addExternalFaculty.bind(this);
+    this.deleteExternalFaculty = this.deleteExternalFaculty.bind(this);
 
     // state.current = 3
     this.onFillGroupInfoRef = this.onFillGroupInfoRef.bind(this);
@@ -171,6 +173,8 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
             presentationDatestrPicked={this.presentationDatestrPicked}
             presentationDatetimePicked={this.presentationDatetimePicked}
             presentationFacultyPicked={this.presentationFacultyPicked}
+            addExternalFaculty={this.addExternalFaculty}
+            deleteExternalFaculty={this.deleteExternalFaculty}
           />
         </div>
       )
@@ -504,6 +508,38 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
 
       return newState;
     })
+  }
+
+  addExternalFaculty() {
+    this.setState((prevState: ScheduleState, props: ScheduleProps) => {
+      const { schedulingPresentation } = prevState;
+      schedulingPresentation.externalFaculties.push({
+        _id: ObjectID.generate(),
+        firstName: '',
+        lastName: '',
+        email: '',
+      });
+      const newSchedulingPresentation = Map(schedulingPresentation);
+
+      const newState: any = {};
+      newState.schedulingPresentation = newSchedulingPresentation.toObject();
+      return newState;
+    });
+  }
+
+  deleteExternalFaculty(_id: string) {
+    this.setState((prevState: ScheduleState, props: ScheduleProps) => {
+      const { schedulingPresentation } = prevState;
+      
+      const index = schedulingPresentation.externalFaculties
+        .findIndex(faculty => faculty._id === _id);
+      schedulingPresentation.externalFaculties.splice(index, 1);
+      const newSchedulingPresentation = Map(schedulingPresentation);
+
+      const newState: any = {};
+      newState.schedulingPresentation = newSchedulingPresentation.toObject();
+      return newState;
+    });
   }
 
   /**
