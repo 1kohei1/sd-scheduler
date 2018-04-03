@@ -90,7 +90,7 @@ Feature requests from Dr. Heinrich
 - [ ] Faculties tab to register/delete faculties to the system
 - [ ] Group import file is gonna be [First name] [Last name] [Email] [Group number]
 - [ ] Let SD2 faculty manually schedule the presentation
-- [ ] Let student choose the faculty who is not registered to the system at scheduling presentation. 
+- [x] Let student choose the faculty who is not registered to the system at scheduling presentation. 
 - [ ] Make presentation dates and location in one tab. The location can change by presentation dates chunk
 - [ ] Reminding feature for student groups to provide conference paper
 - [ ] Make verification in one view. I don't want to do this since to enable this, it has to keep the information of creating presentation in database to handle user verified different device. (Probably not implemented.)
