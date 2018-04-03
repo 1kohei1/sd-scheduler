@@ -1,6 +1,13 @@
 import Group from './Group';
 import ObjectID from 'bson-objectid';
 
+export interface ExternalFaculty {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
 export default interface Presentation {
   _id: string;
   start: string;
@@ -8,12 +15,7 @@ export default interface Presentation {
   semester: string; // This property will not be populated on the server side
   group: Group;
   faculties: string[]; // This property will not be populated on the server side
-  externalFaculties: {
-    _id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-  }[];
+  externalFaculties: ExternalFaculty[];
   midPresentationLink: string;
   committeeFormLink: string;
   created_at?: Date;

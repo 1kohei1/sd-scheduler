@@ -12,7 +12,7 @@ import Faculty from '../models/Faculty';
 import AvailableSlot from '../models/AvailableSlot';
 import SchedulingCalendar from '../components/SchedulingCalendar/SchedulingCalendar';
 import Api from '../utils/Api';
-import Presentation, { newPresentation } from '../models/Presentation';
+import Presentation, { newPresentation, ExternalFaculty } from '../models/Presentation';
 import Loading from '../components/Loading';
 import SchedulingDate from '../components/SchedulingDate';
 import DatetimeUtil from '../utils/DatetimeUtil';
@@ -62,6 +62,7 @@ interface ScheduleState {
 
 export default class Schedule extends React.Component<ScheduleProps, ScheduleState> {
   fillGroupInfoRef: any = undefined;
+  selectDatetimeRef: any = undefined;
 
   static async getInitialProps(context: InitialProps) {
     const semesters: Semester[] = await Api.getSemesters();
@@ -119,11 +120,13 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     this.onSendIdentityVerification = this.onSendIdentityVerification.bind(this);
 
     // state.current = 2
+    this.onSelectDatetimeRef = this.onSelectDatetimeRef.bind(this);
     this.presentationDatestrPicked = this.presentationDatestrPicked.bind(this);
     this.presentationDatetimePicked = this.presentationDatetimePicked.bind(this);
     this.presentationFacultyPicked = this.presentationFacultyPicked.bind(this);
     this.addExternalFaculty = this.addExternalFaculty.bind(this);
     this.deleteExternalFaculty = this.deleteExternalFaculty.bind(this);
+    this.setExternalFaculty = this.setExternalFaculty.bind(this);
 
     // state.current = 3
     this.onFillGroupInfoRef = this.onFillGroupInfoRef.bind(this);
@@ -170,11 +173,13 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
             adminFaculty={this.state.adminFaculty as Faculty}
             schedulingPresentation={this.state.schedulingPresentation}
             presentationDatestr={this.state.presentationDatestr}
+            onSelectDatetimeRef={this.onSelectDatetimeRef}
             presentationDatestrPicked={this.presentationDatestrPicked}
             presentationDatetimePicked={this.presentationDatetimePicked}
             presentationFacultyPicked={this.presentationFacultyPicked}
             addExternalFaculty={this.addExternalFaculty}
             deleteExternalFaculty={this.deleteExternalFaculty}
+            setExternalFaculty={this.setExternalFaculty}
           />
         </div>
       )
@@ -221,18 +226,28 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
   }
 
   changeCurrent(diff: number) {
+    // Do validation
+    if (diff > 0) {
+      const msg = this.validateMessage();
+      if (msg) {
+        message.error(msg);
+        return;
+      }
+    } else if (this.state.current + diff > 3 || this.state.current + diff < 0) {
+      return;
+    }
+
     // Handle scheduling the presentation
     if (this.state.current === 3 && diff > 0) {
       if (this.fillGroupInfoRef) {
         this.fillGroupInfoRef.handleSubmit();
       }
       return;
-    } else if (this.state.current + diff > 3 || this.state.current + diff < 0) {
-      return;
-    } else if (diff > 0) {
-      const msg = this.validateMessage();
-      if (msg) {
-        message.error(msg);
+    }
+    // Attach external faculties to schedulingPresentation
+    if (this.state.current === 2) {
+      if (this.selectDatetimeRef) {
+        this.selectDatetimeRef.handleSubmit(diff);
         return;
       }
     }
@@ -272,7 +287,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       if (!this.state.schedulingPresentation.start) {
         return 'Please select youur presentation time';
       }
-      const numFaculties = this.state.schedulingPresentation.faculties.length;
+      const numFaculties = this.state.schedulingPresentation.faculties.length + this.state.schedulingPresentation.externalFaculties.length;
       const isAdminSelected = this.state.schedulingPresentation.faculties.filter(fid => {
         const faculty = this.props.facultiesInSemester.find(faculty => faculty._id === fid);
         return faculty && faculty.isAdmin;
@@ -386,6 +401,10 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
    * state.current = 2
    */
 
+   onSelectDatetimeRef(selectDatetimeRef: any) {
+     this.selectDatetimeRef = selectDatetimeRef;
+   }
+
   private async onScheduleTime() {
     await Promise.all([
       this.getPresentationDate(),
@@ -442,11 +461,14 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       const presentations = await Api.getPresentations(query);
       const presentation = presentations
         .find((presentation: Presentation) => presentation.group._id === (this.state.selectedGroup as Group)._id);
-      
+
       const newState: any = {
         presentations,
       }
-      if (presentation) {
+      // Override state.schedulingPresentation when the group already scheduled the presentation and 
+      // state's schedulingPresentation is not overridden yet.
+      // Override only when it's not overriden yet to keep the change user made.
+      if (presentation && this.state.schedulingPresentation._id !== presentation._id) {
         newState.schedulingPresentation = presentation;
         newState.presentationDatestr = DatetimeUtil.formatISOString(presentation.start, DateConstants.dateFormat);
       }
@@ -530,7 +552,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
   deleteExternalFaculty(_id: string) {
     this.setState((prevState: ScheduleState, props: ScheduleProps) => {
       const { schedulingPresentation } = prevState;
-      
+
       const index = schedulingPresentation.externalFaculties
         .findIndex(faculty => faculty._id === _id);
       schedulingPresentation.externalFaculties.splice(index, 1);
@@ -540,6 +562,20 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       newState.schedulingPresentation = newSchedulingPresentation.toObject();
       return newState;
     });
+  }
+
+  setExternalFaculty(faculties: ExternalFaculty[], diff: number) {
+    this.setState((prevState: ScheduleState, props: ScheduleProps) => {
+      const { schedulingPresentation, current } = prevState;
+    
+      schedulingPresentation.externalFaculties = faculties;
+      const newSchedulingPresentation = Map(schedulingPresentation);
+
+      const newState: any = {};
+      newState.schedulingPresentation = newSchedulingPresentation.toObject();
+      newState.current = current + diff;
+      return newState;
+    })
   }
 
   /**

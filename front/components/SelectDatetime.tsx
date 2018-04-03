@@ -5,7 +5,7 @@ import { WrappedFormUtils } from 'antd/lib/form/Form';
 import PresentationDate from '../models/PresentationDate';
 import Faculty from '../models/Faculty';
 import AvailableSlot from '../models/AvailableSlot';
-import Presentation from '../models/Presentation';
+import Presentation, { ExternalFaculty } from '../models/Presentation';
 import TimeSlot from '../models/TimeSlot';
 import DatetimeUtil, { TimeSlotLikeObject } from '../utils/DatetimeUtil';
 import CardInfo from './CardInfo';
@@ -22,11 +22,13 @@ export interface SelectDatetimeProps {
   adminFaculty: Faculty;
   schedulingPresentation: Presentation;
   presentationDatestr: string;
+  onSelectDatetimeRef: (selectDatetimeRef: any) => void;
   presentationDatestrPicked: (dateStr: string) => void;
   presentationDatetimePicked: (start: string, end: string) => void;
   presentationFacultyPicked: (checked: boolean, fid: string) => void;
   addExternalFaculty: () => void;
   deleteExternalFaculty: (_id: string) => void;
+  setExternalFaculty: (faculties: ExternalFaculty[], diff: number) => void;
 }
 
 class SelectDatetime extends React.Component<SelectDatetimeProps, any> {
@@ -35,6 +37,15 @@ class SelectDatetime extends React.Component<SelectDatetimeProps, any> {
 
     this.onDateClicked = this.onDateClicked.bind(this);
     this.onHourOptionChanged = this.onHourOptionChanged.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  componentDidMount() {
+    this.props.onSelectDatetimeRef(this);
+  }
+
+  componentWillUnmount() {
+    this.props.onSelectDatetimeRef(undefined);
   }
 
   onDateClicked(date: TimeSlotLikeObject) {
@@ -116,6 +127,19 @@ class SelectDatetime extends React.Component<SelectDatetimeProps, any> {
     }
 
     return true;
+  }
+
+  handleSubmit(diff: number) {
+    this.props.form.validateFields((err, values) => {
+      if (err) {
+        return;
+      }
+
+      const externalFaculties: ExternalFaculty[] = Object.entries(values.externalFaculties)
+        .map(([_id, externalFaculty]) => externalFaculty as ExternalFaculty);
+
+      this.props.setExternalFaculty(externalFaculties, diff);
+    })
   }
 
   is4FacultiesPicked() {
@@ -224,6 +248,15 @@ class SelectDatetime extends React.Component<SelectDatetimeProps, any> {
                   key={faculty._id}
                   style={{ display: 'flex', flexDirection: 'row' }}
                 >
+                  <Form.Item
+                    style={{ width: '0' }}
+                  >
+                    {this.props.form.getFieldDecorator(`externalFaculties[${faculty._id}]._id`, {
+                      initialValue: faculty._id,
+                    })(
+                      <Input disabled />
+                    )}
+                  </Form.Item>
                   <Form.Item
                     style={{ marginRight: '8px' }}
                   >

@@ -22,69 +22,41 @@ export default class SchedulingDate extends React.Component<SchedulingDateProps,
   calendarText() {
     const { presentation } = this.props;
 
-    if (presentation.start) {
-      const startM = DatetimeUtil.getMomentFromISOString(presentation.start);
-      const start = DatetimeUtil.formatDate(startM, DateConstants.hourMinFormat);
+    const startM = DatetimeUtil.getMomentFromISOString(presentation.start);
+    const start = DatetimeUtil.formatDate(startM, DateConstants.hourMinFormat);
 
-      const endM = DatetimeUtil.getMomentFromISOString(presentation.end);
-      const end = DatetimeUtil.formatDate(endM, DateConstants.hourMinFormat);
+    const endM = DatetimeUtil.getMomentFromISOString(presentation.end);
+    const end = DatetimeUtil.formatDate(endM, DateConstants.hourMinFormat);
 
-      const date = DatetimeUtil.formatDate(startM, DateConstants.dateFormat);
+    const date = DatetimeUtil.formatDate(startM, DateConstants.dateFormat);
 
-      return (
-        <div>
-          <p>Your presentation is from <b>{start}</b> to <b>{end}</b> on <b>{date}</b></p>
-        </div>
-      )
-    } else {
-      return (
-        <div>
-          <p>You haven't picked the presentation date time. </p>
-          <p>Please click the time in the calendar.</p>
-        </div>
-      )
-    }
+    return (
+      <div>
+        <p>Your presentation is from <b>{start}</b> to <b>{end}</b> on <b>{date}</b></p>
+      </div>
+    )
   }
 
   facultiesText() {
     const { presentation } = this.props;
 
-    if (presentation.faculties.length === 0) {
-      return (
-        <div>
-          <p>No faculties are selected.</p>
-        </div>
-      )
-    } else {
-      const isAdminSelected = this.props.presentation.faculties.filter(fid => {
-        const faculty = this.props.faculties.find(faculty => faculty._id === fid);
-        return faculty && faculty.isAdmin;
-      })
-        .length > 0;
-
-      return (
-        <div>
-          {this.props.presentation.faculties.map(fid => {
-            const faculty = this.props.faculties.find(f => f._id === fid);
-            if (faculty) {
-              return <p key={faculty._id}>Dr. {faculty.firstName} {faculty.lastName} {faculty.isAdmin && <span>(SD 2 Faculty)</span>}</p>
-            } else {
-              return null;
-            }
-          })}
-          {this.props.presentation.faculties.length < 4 && (
-            <div style={{ marginBottom: '1em' }}>
-              <Alert message="Please select 4 faculties including your senior design 2 faculty." type="warning" showIcon />
-            </div>
-          )}
-          {!isAdminSelected && (
-            <div style={{ marginBottom: '1em' }}>
-              <Alert message="Please select the faculty of your senior design 2 class." type="warning" showIcon />
-            </div>
-          )}
-        </div>
-      )
-    }
+    return (
+      <div>
+        {presentation.faculties.map(fid => {
+          const faculty = this.props.faculties.find(f => f._id === fid);
+          if (faculty) {
+            return <p key={faculty._id}>Dr. {faculty.firstName} {faculty.lastName} {faculty.isAdmin && <span>(SD 2 Faculty)</span>}</p>
+          } else {
+            return null;
+          }
+        })}
+        {presentation.externalFaculties.map(faculty => (
+          <p key={faculty._id}>
+            Dr. {faculty.firstName} {faculty.lastName} (Other department faculty)
+          </p>
+        ))}
+      </div>
+    )
   }
 
   render() {
