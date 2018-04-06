@@ -2,26 +2,26 @@ import * as React from 'react';
 import ObjectID from 'bson-objectid';
 import { Moment } from 'moment';
 import { List } from 'immutable';
-import { Form, Icon, Select, DatePicker, Card, Button, Alert } from 'antd';
+import { Form, Icon, Select, DatePicker, Card, Button, Alert, Input } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
-import PresentationDate from '../models/PresentationDate';
+import PresentationDate, { PresentationDateDates } from '../models/PresentationDate';
 import TimeSlot from '../models/TimeSlot';
 import { DateConstants } from '../models/Constants';
-import DatetimeUtil, { TimeSlotLikeObject } from '../utils/DatetimeUtil';
+import DatetimeUtil from '../utils/DatetimeUtil';
 
 export interface PresentationDateEditingProps {
   form: WrappedFormUtils;
   err: string;
   updating: boolean;
   presentationDate: PresentationDate;
-  updatePresentationDate: (dates: TimeSlotLikeObject[]) => void;
+  updatePresentationDate: (dates: PresentationDateDates[]) => void;
   toggleForm: () => void;
-  getInitialValue: (date: TimeSlotLikeObject, property: string) => string | Moment | undefined;
+  getInitialValue: (date: PresentationDateDates, property: string) => string | Moment | undefined;
 }
 
 interface PresentationDateEditingState {
-  dates: TimeSlotLikeObject[];
+  dates: PresentationDateDates[];
 }
 
 class PresentationDateEditing extends React.Component<PresentationDateEditingProps, any> {
@@ -47,7 +47,7 @@ class PresentationDateEditing extends React.Component<PresentationDateEditingPro
 
       const dates = Object.entries(values)
         .filter(([_id, date]: [string, any]) => {
-          return date.date && date.startTime && date.endTime;
+          return date.date && date.startTime && date.endTime && date.location;
         })
         .map(([_id, date]: [string, any]) => {
           const dateStr = DatetimeUtil.formatDate(date.date, DateConstants.dateFormat);
@@ -56,6 +56,7 @@ class PresentationDateEditing extends React.Component<PresentationDateEditingPro
             _id,
             start: DatetimeUtil.getISOString(dateStr, date.startTime),
             end: DatetimeUtil.getISOString(dateStr, date.endTime),
+            location: date.location,
           }
         });
 
@@ -67,11 +68,12 @@ class PresentationDateEditing extends React.Component<PresentationDateEditingPro
     this.setState((prevState: PresentationDateEditingState, props: PresentationDateEditingProps) => {
       const { dates } = prevState;
 
-      let newDates = List<TimeSlotLikeObject>(dates);
+      let newDates = List<PresentationDateDates>(dates);
       newDates = newDates.push({
         _id: ObjectID.generate(),
         start: '',
         end: '',
+        location: '',
       });
 
       return {
@@ -86,7 +88,7 @@ class PresentationDateEditing extends React.Component<PresentationDateEditingPro
       const index = dates.findIndex(date => date._id === _id);
 
       if (index >= 0) {
-        let newDates = List<TimeSlotLikeObject>(dates);
+        let newDates = List<PresentationDateDates>(dates);
         newDates = newDates.delete(index);
 
         return {
@@ -109,7 +111,7 @@ class PresentationDateEditing extends React.Component<PresentationDateEditingPro
             <Alert message={this.props.err} type="error" />
           </Form.Item>
         )}
-        {this.state.dates.map((date: TimeSlotLikeObject) => (
+        {this.state.dates.map((date: PresentationDateDates) => (
           <div style={{ display: 'flex', flexDirection: 'row' }} key={date._id}>
             <Form.Item style={{ marginRight: 8 }}>
               {this.props.form.getFieldDecorator(`[${date._id}].date`, {
@@ -138,6 +140,15 @@ class PresentationDateEditing extends React.Component<PresentationDateEditingPro
                     <Select.Option value={val} key={val}>{val}</Select.Option>
                   ))}
                 </Select>
+              )}
+            </Form.Item>
+            <Form.Item style={{ marginRight: 8 }}>
+              {this.props.form.getFieldDecorator(`[${date._id}].location`, {
+                initialValue: this.props.getInitialValue(date, 'location')
+              })(
+                <Input
+                  placeholder="Location"
+                />
               )}
             </Form.Item>
             <Form.Item>

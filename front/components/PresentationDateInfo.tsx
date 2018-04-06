@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { Moment } from 'moment';
 
-import PresentationDate from '../models/PresentationDate';
-import { TimeSlotLikeObject } from '../utils/DatetimeUtil';
+import PresentationDate, { PresentationDateDates } from '../models/PresentationDate';
 import Loading from './Loading';
 
 export interface PresentationDateInfoProps {
   loading: boolean;
   presentationDates: PresentationDate[];
-  getInitialValue: (date: TimeSlotLikeObject, property: string) => string | Moment | undefined;
+  getInitialValue: (date: PresentationDateDates, property: string) => string | Moment | undefined;
 }
 
 export default class PresentationDateInfo extends React.Component<PresentationDateInfoProps, any> {
@@ -33,6 +32,7 @@ export default class PresentationDateInfo extends React.Component<PresentationDa
                     {this.props.getInitialValue(date, 'date')}&nbsp;
                     {this.props.getInitialValue(date, 'startTime')} -&nbsp;
                     {this.props.getInitialValue(date, 'endTime')}
+                    &nbsp;({this.props.getInitialValue(date, 'location')})
                   </li>
                 ))}
               </ul>

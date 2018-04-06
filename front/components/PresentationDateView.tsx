@@ -5,7 +5,7 @@ import { List } from 'immutable';
 import { Semester } from '../models/Semester';
 import { DateConstants } from '../models/Constants';
 import DatetimeUtil, { TimeSlotLikeObject } from '../utils/DatetimeUtil';
-import PresentationDate from '../models/PresentationDate';
+import PresentationDate, { PresentationDateDates } from '../models/PresentationDate';
 import Api from '../utils/Api';
 import PresentationDateInfo from './PresentationDateInfo';
 import PresentationDateEditing from './PresentationDateEditing';
@@ -80,7 +80,7 @@ export default class PresentationDateView extends React.Component<PresentationDa
     }
   }
 
-  getInitialValue(date: TimeSlotLikeObject, property: string) {
+  getInitialValue(date: PresentationDateDates, property: string) {
     if (property === 'date' && date.start) {
       return DatetimeUtil.formatISOString(date.start, DateConstants.dateFormat);
     } else if (property === 'dateMoment' && date.start) {
@@ -89,12 +89,14 @@ export default class PresentationDateView extends React.Component<PresentationDa
       return DatetimeUtil.formatISOString(date.start, DateConstants.hourFormat);
     } else if (property === 'endTime' && date.end) {
       return DatetimeUtil.formatISOString(date.end, DateConstants.hourFormat);
+    } else if (property === 'location' && date.location) {
+      return date.location;
     } else {
       return undefined;
     }
   }
 
-  async updatePresentationDate(dates: TimeSlotLikeObject[]) {
+  async updatePresentationDate(dates: PresentationDateDates[]) {
     const index = this.state.presentationDates
       .findIndex(presentationDate => presentationDate.admin._id === this.props.facultyId);
 
