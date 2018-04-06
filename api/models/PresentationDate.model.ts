@@ -14,6 +14,7 @@ const PresentationDateSchema = new Schema({
     type: [{
       start: Date,
       end: Date,
+      location: String,
     }],
     default: [],
   },

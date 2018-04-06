@@ -1,11 +1,17 @@
 import Faculty from './Faculty';
-import { TimeSlotLikeObject } from '../utils/DatetimeUtil';
+
+export interface PresentationDateDates {
+  _id: string;
+  start: string;
+  end: string;
+  location: string;
+}
 
 export default interface PresentationDate {
   _id: string;
   semester: string;
   admin: Faculty;
-  dates: TimeSlotLikeObject[],
+  dates: PresentationDateDates[],
   created_at?: Date,
   updated_at?: Date,
 }
