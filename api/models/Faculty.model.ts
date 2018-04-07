@@ -95,43 +95,27 @@ const handleIsAdminChange = (doc: Document, next: any) => {
           const sid = semester.get('_id');
           const fid = doc.get('_id');
 
-          let p: any;
-
           // isAdmin becomes true
           if (doc.get('isAdmin')) {
-            p = Promise.all([
-              DBUtil.createPresentationDate({
-                semester: sid,
-                admin: fid,
-                dates: [],
-              }),
-              DBUtil.createLocation({
-                semester: sid,
-                admin: fid,
-                location: '',
-              }),
-            ])
+            return DBUtil.createPresentationDate({
+              semester: sid,
+              admin: fid,
+              dates: [],
+            })
+            .then((createdPresentationDate: Document) => {
+              return Promise.resolve();
+            });
           }
           // isAdmin becomes false
           else {
-            p = Promise.all([
-              DBUtil.deletePresentationDates({
-                semester: sid,
-                admin: fid,
-              }),
-              DBUtil.deleteLocations({
-                semester: sid,
-                admin: fid,
-              }),
-            ])
+            return DBUtil.deletePresentationDates({
+              semester: sid,
+              admin: fid,
+            });
           }
-          // Typescript complains about the type format. So resolve these promises.
-          return p.then(() => {
-            return Promise.resolve();
-          })
         }
       })
-      .then((result: any) => {
+      .then(() => {
         next();
       })
       .catch(next);

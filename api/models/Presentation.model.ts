@@ -240,13 +240,13 @@ PresentationSchema.post('save', (doc: Document, next: any) => {
             $in: doc.get('faculties'),
           }
         }).exec(),
-        DBUtil.findLocations({
-          semester: doc.get('semester'),
-          admin: group.get('adminFaculty'),
+        DBUtil.findPresentationDates({
+          semester: group.get('semester'),
+          admin: group.get('admin'),
         })
       ])
     })
-    .then(([faculties, locations]: [Document[], Document[]]) => {
+    .then(([faculties, presentationDates]: [Document[], Document[]]) => {
       const startISO = doc.get('start').toISOString();
       const date = DatetimeUtil.formatISOString(startISO, DateConstants.dateFormat);
       const time = DatetimeUtil.formatISOString(startISO, DateConstants.hourMinFormat);
@@ -258,7 +258,13 @@ PresentationSchema.post('save', (doc: Document, next: any) => {
         type: string;
       }[] = [];
 
-      const location = locations[0].get('location');
+      const presentationDate = presentationDates[0].get('dats')
+      .find((date: Document) => Util.doesOverlap(date, doc));
+
+      let location = 'undefined';
+      if (presentationDate) {
+        location = presentationDate.get('location');
+      }
 
       faculties.forEach((faculty: Document) => {
         emails.push({

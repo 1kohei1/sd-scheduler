@@ -3,6 +3,7 @@ import * as moment from 'moment-timezone';
 import { unitOfTime } from 'moment-timezone';
 import { Document } from 'mongoose';
 
+import Util from '../utils/util';
 import DBUtil from '../utils/db.util';
 import APIUtil from '../utils/api.util';
 import Mailer, { MailType } from '../utils/mail.util';
@@ -42,12 +43,12 @@ module.exports.presentationReminder = (req: Request, res: Response) => {
       } else {
         presentations = documents;
         const semester = presentations[0].get('semester');
-        return DBUtil.findLocations({
+        return DBUtil.findPresentationDates({
           semester,
         })
       }
     })
-    .then((locations: Document[]) => {
+    .then((presentationDates: Document[]) => {
       const emails: {
         email: string;
         title: string;
@@ -56,10 +57,18 @@ module.exports.presentationReminder = (req: Request, res: Response) => {
 
       presentations.forEach((presentation: Document) => {
         const group = presentation.get('group');
-        const location = locations.find(location => {
-          return location.get('admin').toString() === group.get('adminFaculty').toString();
-        });
-        const locationName = location ? location.get('location') : 'undefined';
+        const presentationDate = presentationDates
+          .find((presentationDate => presentationDate.get('admin').toString() === group.get('admin').toString()))
+
+        let locationName = 'undefined';
+        if (presentationDate) {
+          const date = presentationDate.get('dates')
+            .find((date: Document) => Util.doesCover(date, presentation));
+
+          if (date) {
+            locationName = date.get('location');
+          }
+        }
 
         const now = moment(new Date().toISOString())
         const presentationStart = moment(presentation.get('start'));

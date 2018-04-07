@@ -6,7 +6,6 @@ import Faculty from '../models/Faculty.model';
 import AvailableSlot from '../models/AvailableSlot.model';
 import Group from '../models/Group.model';
 import PresentationDate from '../models/PresentationDate.model';
-import Location from '../models/Location.model';
 import Presentation from '../models/Presentation.model';
 
 export default class DBUtil {
@@ -157,40 +156,6 @@ export default class DBUtil {
 
   static deletePresentationDates(query: object) {
     return DBUtil.delete(PresentationDate, query);
-  }
-
-  /**
-   * Locations
-   */
-
-  static findLocations(query: object = {}) {
-    return Location.find(query)
-      .populate('admin')
-      // Didn't come up with a simple and readable way to sort by populated fieles. 
-      // So resolve values and sort manually
-      .then(locations => {
-        locations.sort((a: Document, b: Document) => {
-          if (a.get('admin').firstName !== b.get('admin').firstName) {
-            return a.get('admin').firstName.localeCompare(b.get('admin').firstName);
-          } else {
-            a.get('admin').lastName.localeCompare(b.get('admin').lastName);
-          }
-        });
-        return Promise.resolve(locations);
-      });
-  }
-
-  static createLocation(body: object) {
-    const newLocation = new Location(body);
-    return newLocation.save();
-  }
-
-  static updateLocationById(_id: string | number | object, update: object = {}) {
-    return DBUtil.updateById(Location, _id, update, 'admin');
-  }
-
-  static deleteLocations(query: object) {
-    return DBUtil.delete(Location, query);
   }
 
   /**
