@@ -159,18 +159,6 @@ export default class Api {
    }
 
   /**
-   * Location
-   */
-
-   static async getLocations(query: string = '') {
-     return await Api.makeRequest(RequestMethod.GET, `/api/locations?${query}`);
-   }
-
-   static async updateLocation(_id: string, update: object = {}) {
-     return await Api.makeRequest(RequestMethod.PUT, `/api/locations/${_id}`, update);
-   }
-
-  /**
    * Utility functions
    */
 

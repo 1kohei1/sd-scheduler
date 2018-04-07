@@ -7,13 +7,13 @@ import { KoCalendarConstants } from '../../models/Constants';
 import DatetimeUtil from '../../utils/DatetimeUtil';
 import Presentation from '../../models/Presentation';
 import TimeSlot from '../../models/TimeSlot';
-import Location from '../../models/Location';
+import PresentationDate from '../../models/PresentationDate';
 
 export interface PresentationSlotTileProps {
   form: WrappedFormUtils;
   ruler: number[];
   presentation: Presentation;
-  locations: Location[];
+  dbPresentationDates: PresentationDate[];
   cancelPresentation: (presentation: Presentation, note: string) => void;
 }
 
@@ -22,14 +22,8 @@ interface PresentationSlotTileState {
 }
 
 class PresentationSlotTile extends React.Component<PresentationSlotTileProps, any> {
-  locationByAdminId: any = {};
-
   constructor(props: PresentationSlotTileProps) {
     super(props);
-
-    this.props.locations.forEach(location => {
-      this.locationByAdminId[location.admin._id] = location.location;
-    })
 
     this.state = {
       visible: false
@@ -66,13 +60,31 @@ class PresentationSlotTile extends React.Component<PresentationSlotTileProps, an
 
     const { group } = this.props.presentation;
 
+    // Get location here
+    let location = 'undefined';
+    const presentationDate = this.props.dbPresentationDates
+      .find(presentationDate => presentationDate.admin._id === group.adminFaculty)
+
+    if (presentationDate) {
+      const date = presentationDate.dates
+        .find(date => {
+          const timeslot1 = DatetimeUtil.convertToTimeSlot(date);
+          const timeslot2 = DatetimeUtil.convertToTimeSlot(this.props.presentation);
+          return DatetimeUtil.doesCover(timeslot1, timeslot2);
+        });
+      
+      if (date) {
+        location = date.location;
+      }
+    }
+
     return (
       <div>
         <div
           className="ko-presentationslottile"
           onClick={(e) => this.toggleModal(true)}
         >
-          <span>Group {group.groupNumber} presentation ({this.locationByAdminId[group.adminFaculty]})</span>
+          <span>Group {group.groupNumber} presentation ({location})</span>
         </div>
 
         <Modal
@@ -112,7 +124,7 @@ class PresentationSlotTile extends React.Component<PresentationSlotTileProps, an
               Location:
           </Col>
             <Col span={20} xs={19}>
-              {this.locationByAdminId[group.adminFaculty]}
+              {location}
             </Col>
           </Row>
           <Row>

@@ -5,13 +5,13 @@ import Ruler from './Ruler';
 import Day from './Day';
 import DatetimeUtil from '../../utils/DatetimeUtil';
 import TimeSlot from '../../models/TimeSlot';
-import Location from '../../models/Location';
+import PresentationDate from '../../models/PresentationDate';
 
 interface KoCalendarProps {
   presentationDates: TimeSlot[];
   presentations: Presentation[];
-  availableSlots: TimeSlot[]
-  locations: Location[];
+  availableSlots: TimeSlot[];
+  dbPresentationDates: PresentationDate[];
   onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean, updateDB?: boolean) => void;
   cancelPresentation: (presentation: Presentation, note: string) => void;
 }
@@ -56,7 +56,7 @@ export default class KoCalendar extends React.Component<KoCalendarProps, KoCalen
               isLastColumn={index === this.props.presentationDates.length - 1}
               presentations={presentations}
               availableSlots={availableSlots}
-              locations={this.props.locations}
+              dbPresentationDates={this.props.dbPresentationDates}
               onAvailableSlotChange={this.props.onAvailableSlotChange}
               cancelPresentation={this.props.cancelPresentation}
             />

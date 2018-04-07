@@ -15,7 +15,6 @@ import Api from '../utils/Api';
 import AvailableSlot from '../models/AvailableSlot';
 import PresentationDate from '../models/PresentationDate';
 import Faculty from '../models/Faculty';
-import Location from '../models/Location';
 import CookieUtil from '../utils/CookieUtil';
 
 export interface MyCalendarProps {
@@ -29,7 +28,7 @@ interface MyCalendarState {
   presentations: List<Presentation>;
   availableSlots: List<TimeSlot>;
   presentationDates: TimeSlot[];
-  locations: Location[];
+  dbPresentationDates: PresentationDate[];
   helpDialogVisible: boolean;
 }
 
@@ -45,7 +44,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
       presentations: List<Presentation>(),
       availableSlots: List<TimeSlot>(),
       presentationDates: [],
-      locations: [],
+      dbPresentationDates: [],
       helpDialogVisible: false,
     };
 
@@ -59,7 +58,6 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
   componentDidMount() {
     Promise.all([
       this.getPresentationDates(),
-      this.getLocations(),
       this.getAvailableSlot(),
       this.getPresentations(),
     ])
@@ -93,20 +91,9 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
       const presentationSlots = DatetimeUtil.getPresentationSlots(presentationDates);
 
       this.setState({
+        dbPresentationDates: presentationDates,
         presentationDates: presentationSlots,
       });
-    } catch (err) {
-      this.onError(err);
-    }
-  }
-
-  private async getLocations() {
-    try {
-      const query = `semester=${this.props.semester._id}`;
-      const locations = await Api.getLocations(query);
-      this.setState({
-        locations,
-      })
     } catch (err) {
       this.onError(err);
     }
@@ -375,7 +362,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
               presentationDates={this.state.presentationDates}
               presentations={this.state.presentations.toArray()}
               availableSlots={this.state.availableSlots.toArray()}
-              locations={this.state.locations}
+              dbPresentationDates={this.state.dbPresentationDates}
               onAvailableSlotChange={this.onAvailableSlotChange}
               cancelPresentation={this.cancelPresentation}
             />

@@ -8,7 +8,7 @@ import Hourlines from './Hourlines';
 import AvailableSlots from './AvailableSlots';
 import PresentationSlots from './PresentationSlots';
 import TimeSlot from '../../models/TimeSlot';
-import Location from '../../models/Location'
+import PresentationDate from '../../models/PresentationDate';
 
 export interface DayProps {
   presentationDate: TimeSlot;
@@ -16,7 +16,7 @@ export interface DayProps {
   isLastColumn: boolean;
   presentations: Presentation[];
   availableSlots: TimeSlot[];
-  locations: Location[];
+  dbPresentationDates: PresentationDate[];  
   onAvailableSlotChange: (updatedAvailableSlot: TimeSlot, isDelete: boolean, updateDB?: boolean) => void;
   cancelPresentation: (presentation: Presentation, note: string) => void;
 }

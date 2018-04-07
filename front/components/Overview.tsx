@@ -3,11 +3,9 @@ import { Map } from 'immutable';
 import { message } from 'antd';
 
 import PresentationDateView from './PresentationDateView';
-import LocationView from './LocationView';
 import { Semester } from '../models/Semester';
 import Api from '../utils/Api';
 import Faculty from '../models/Faculty';
-import InviteFaculty from './InviteFaculty';
 
 export interface OverviewProps {
   user: Faculty;
@@ -115,12 +113,6 @@ export default class Overview extends React.Component<OverviewProps, OverviewSta
           semester={this.state.semester}
           facultyId={facultyId}
         />
-        <LocationView
-          isAdmin={isAdmin}
-          semester={this.state.semester}
-          facultyId={facultyId}
-        />
-        <InviteFaculty />
       </div>
     )
   }
