@@ -15,32 +15,6 @@ Router.onRouteChangeStart = (url) => NProgress.start();
 Router.onRouteChangeComplete = () => NProgress.done();
 Router.onRouteChangeError = () => NProgress.done();
 
-const onClick = (obj: any) => {
-  if (obj.key === '2') {
-    UserUtil.logout();
-  }
-}
-
-const menu = (
-  <Menu onClick={onClick}>
-    <Menu.Item key={0}>
-      <Link
-        href={`/dashboard`}
-      >
-        <a>Dashboard</a>
-      </Link>
-    </Menu.Item>
-    <Menu.Item key={1}>
-      <Link href="/account">
-        <a>Account</a>
-      </Link>
-    </Menu.Item>
-    <Menu.Item key={2}>
-      Logout
-    </Menu.Item>
-  </Menu>
-)
-
 export interface AppLayoutProps {
 }
 
@@ -61,6 +35,7 @@ export default class AppLayout extends React.Component<AppLayoutProps, AppLayout
     UserUtil.registerOnUserUpdates(this.userUpdateKey, this.setUser.bind(this));
 
     this.rightAction = this.rightAction.bind(this);
+    this.menu = this.menu.bind(this);
   }
 
   private setUser(user: Faculty | undefined) {
@@ -81,7 +56,7 @@ export default class AppLayout extends React.Component<AppLayoutProps, AppLayout
   rightAction() {
     if (this.state.user) {
       return (
-        <Dropdown overlay={menu}>
+        <Dropdown overlay={this.menu()}>
           <Button ghost>
             Dr. {this.state.user.firstName} {this.state.user.lastName} <Icon type="down" />
           </Button>
@@ -94,6 +69,41 @@ export default class AppLayout extends React.Component<AppLayoutProps, AppLayout
         </Link>
       )
     }
+  }
+
+  onClick = (obj: any) => {
+    if (obj.key === 'logout') {
+      UserUtil.logout();
+    }
+  }
+
+  menu() {
+    return (
+      <Menu onClick={this.onClick}>
+        <Menu.Item key="dashboard">
+          <Link
+            href={`/dashboard`}
+          >
+            <a>Dashboard</a>
+          </Link>
+        </Menu.Item>
+        <Menu.Item key="account">
+          <Link href="/account">
+            <a>Account</a>
+          </Link>
+        </Menu.Item>
+        {this.state.user && this.state.user.isSystemAdmin && (
+          <Menu.Item key="admin">
+            <Link href="/admin">
+              <a>Admin</a>
+            </Link>
+          </Menu.Item>
+        )}
+        <Menu.Item key="logout">
+          Logout
+        </Menu.Item>
+      </Menu>
+    )
   }
 
   render() {
