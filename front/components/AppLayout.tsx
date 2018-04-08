@@ -16,6 +16,7 @@ Router.onRouteChangeComplete = () => NProgress.done();
 Router.onRouteChangeError = () => NProgress.done();
 
 export interface AppLayoutProps {
+  selectedMenu?: string[];
 }
 
 interface AppLayoutState {
@@ -121,8 +122,34 @@ export default class AppLayout extends React.Component<AppLayoutProps, AppLayout
         <Layout>
           <Layout.Header style={{ padding: "0 16px" }}>
             <div className="ko-header">
-              <div>
-                <Link href="/"><a style={{ color: 'white' }}>SD Scheduler</a></Link>
+              <div className="left">
+                <Link href="/">
+                  <a style={{ color: 'white' }}>SD Scheduler</a>
+                </Link>
+                {this.state.user && this.state.user.isAdmin && (
+                  <Menu
+                    mode="horizontal"
+                    theme="dark"
+                    style={{ lineHeight: '64px', marginLeft: '32px' }}
+                    defaultSelectedKeys={this.props.selectedMenu}
+                  >
+                    <Menu.Item key="dashboard">
+                      <Link href="/dashboard">
+                        <a>Dashboard</a>
+                      </Link>
+                    </Menu.Item>
+                    <Menu.Item key="faculties">
+                      <Link href="/faculties">
+                        <a>Faculties</a>
+                      </Link>
+                    </Menu.Item>
+                    <Menu.Item key="emails">
+                      <Link href="/emails">
+                        <a>Emails</a>
+                      </Link>
+                    </Menu.Item>
+                  </Menu>
+                )}
               </div>
               <div>
                 {this.rightAction()}
@@ -136,6 +163,9 @@ export default class AppLayout extends React.Component<AppLayoutProps, AppLayout
           display: flex;
           justify-content: space-between;
           flex-direction: row;
+        }
+        .ko-header .left {
+          display: flex;
         }
       `}
         </style>

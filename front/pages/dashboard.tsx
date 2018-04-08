@@ -135,7 +135,9 @@ export default class Dashboard extends React.Component<DashboardProps, Dashboard
     const semester: Semester = this.props.semesters.find((semester) => semester.key === this.state.semester) as Semester;
 
     return (
-      <AppLayout>
+      <AppLayout
+        selectedMenu={['dashboard']}
+      >
         <Layout style={{ backgroundColor: 'white' }}>
           <Layout.Sider style={{ backgroundColor: 'white' }}>
             <DashboardSider
