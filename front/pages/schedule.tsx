@@ -502,6 +502,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       const { schedulingPresentation } = prevState;
       schedulingPresentation.start = start;
       schedulingPresentation.end = end;
+      schedulingPresentation.faculties = [];
 
       const newMap = Map(schedulingPresentation);
       const newState: any = {}

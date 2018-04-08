@@ -87,7 +87,7 @@ class FillGroupInfo extends React.Component<FillGroupInfoProps, any> {
       <span>
         Members&nbsp;
         <Tooltip
-          title="Group members are already registered. If you don't find your email, please report that from the right bottom chat baloon."
+          title="Group members are already registered. If you don't find your email, please contact your senior design faculty."
         >
           <Icon type="question-circle-o" />
         </Tooltip>

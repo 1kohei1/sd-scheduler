@@ -143,7 +143,8 @@ class SelectDatetime extends React.Component<SelectDatetimeProps, any> {
   }
 
   is4FacultiesPicked() {
-    return this.props.schedulingPresentation.faculties.length >= 4;
+    const { schedulingPresentation } = this.props;
+    return schedulingPresentation.faculties.length + schedulingPresentation.externalFaculties.length >= 4;
   }
 
   isSD2FacultyPicked() {
