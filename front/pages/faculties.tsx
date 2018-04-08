@@ -161,7 +161,6 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
               <span></span>
             )}
         </div>
-
       ),
     }, {
       title: 'Action',
