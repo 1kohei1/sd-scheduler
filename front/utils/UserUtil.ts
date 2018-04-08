@@ -13,18 +13,6 @@ interface onUserUpdates {
 export default class UserUtil {
   static onUserUpdates: onUserUpdates = {};
 
-  static async getUser() {
-    let user = CookieUtil.getUser(undefined) as Faculty;
-
-    if (user) {
-      return user;
-    } else {
-      user = await Api.getUser();
-      CookieUtil.setUser(user);
-      return user;
-    }
-  }
-
   static async logout() {
     const result = await Api.logout();
     CookieUtil.removeUser();

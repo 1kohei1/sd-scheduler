@@ -11,13 +11,13 @@ import Faculty from '../models/Faculty';
 export interface EmailsProps {
 }
 
-interface EmailState {
+interface EmailsState {
   loading: boolean;
   faculties: Faculty[];
   errs: List<string>;
 }
 
-export default class Emails extends React.Component<EmailsProps, any> {
+export default class Emails extends React.Component<EmailsProps, EmailsState> {
   static async getInitialProps(context: InitialProps) {
     await UserUtil.checkAuthentication(context);
     return {};

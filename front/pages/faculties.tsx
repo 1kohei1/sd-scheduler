@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { List } from 'immutable';
-import { Table, Switch, Card, Tooltip, Icon, Button } from 'antd';
+import { Table, Switch, Card, Tooltip, Icon, Button, Input } from 'antd';
 
 import AppLayout from '../components/AppLayout';
 import InitialProps from '../models/InitialProps';
@@ -14,10 +14,12 @@ interface EditableFaculty extends Faculty {
 }
 
 export interface FacultiesPageProps {
+  user: Faculty;
 }
 
 interface FacultiesPageState {
   loading: boolean;
+  saving: boolean;
   faculties: List<Faculty>;
   facultiesInForm: List<EditableFaculty>;
   errs: List<string>;
@@ -25,8 +27,11 @@ interface FacultiesPageState {
 
 export default class FacultiesPage extends React.Component<FacultiesPageProps, FacultiesPageState> {
   static async getInitialProps(context: InitialProps) {
-    await UserUtil.checkAuthentication(context);
-    return {};
+    const user = await UserUtil.checkAuthentication(context);
+
+    return {
+      user
+    };
   }
 
   constructor(props: FacultiesPageProps) {
@@ -34,6 +39,7 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
 
     this.state = {
       loading: true,
+      saving: false,
       faculties: List<Faculty>(),
       facultiesInForm: List<EditableFaculty>(),
       errs: List<string>(),
@@ -41,6 +47,7 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
 
     this.edit = this.edit.bind(this);
     this.cancel = this.cancel.bind(this);
+    this.change = this.change.bind(this);
   }
 
   componentDidMount() {
@@ -52,6 +59,7 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
       return {
         errs: prevState.errs.push(err),
         loading: false,
+        saving: false,
       };
     });
   }
@@ -59,9 +67,11 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
   private async getFaculties() {
     try {
       const faculties = await Api.getFaculties();
+      const copyOfFaculties = faculties.map((faculty: Faculty) => ({...faculty}));
+
       this.setState({
         faculties: List(faculties),
-        facultiesInForm: List(faculties),
+        facultiesInForm: List(copyOfFaculties),
         loading: false,
       });
     } catch (err) {
@@ -73,10 +83,14 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
     return [{
       title: 'First name',
       dataIndex: 'firstName',
-      render: (value: string, faculty: EditableFaculty) => (
+      render: (value: string, faculty: EditableFaculty, index: number) => (
         <div key={`${faculty._id}_firstName`}>
           {faculty.editing ? (
-            <div>Editing</div>
+            <Input
+              value={value}
+              style={{ margin: '-6px 0' }}
+              onChange={(e) => this.change(index, 'firstName', e.target.value)}
+            />
           ) : (
               <div>{value}</div>
             )}
@@ -85,10 +99,14 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
     }, {
       title: 'Last name',
       dataIndex: 'lastName',
-      render: (value: string, faculty: EditableFaculty) => (
+      render: (value: string, faculty: EditableFaculty, index: number) => (
         <div key={`${faculty._id}_lastName`}>
           {faculty.editing ? (
-            <div>Editing</div>
+            <Input
+              value={value}
+              style={{ margin: '-6px 0' }}
+              onChange={(e) => this.change(index, 'lastName', e.target.value)}
+            />
           ) : (
               <div>{value}</div>
             )}
@@ -97,10 +115,14 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
     }, {
       title: 'Email',
       dataIndex: 'email',
-      render: (value: string, faculty: EditableFaculty) => (
+      render: (value: string, faculty: EditableFaculty, index: number) => (
         <div key={`${faculty._id}_email`}>
           {faculty.editing ? (
-            <div>Editing</div>
+            <Input
+              value={value}
+              style={{ margin: '-6px 0' }}
+              onChange={(e) => this.change(index, 'email', e.target.value)}
+            />
           ) : (
               <div>{value}</div>
             )}
@@ -118,11 +140,25 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
         </div>
       ),
       dataIndex: 'isActive',
-      render: (value: boolean, faculty: Faculty) => (
+      render: (value: boolean, faculty: EditableFaculty, index: number) => (
         <Switch
-          defaultChecked={value}
-          disabled
+          checked={value}
+          disabled={!faculty.editing}
+          onChange={(checked: boolean) => this.change(index, 'isActive', '')}
         />
+      ),
+    }, {
+      title: 'Is password set',
+      dataIndex: 'isPasswordSet',
+      render: (value: boolean) => (
+        <div>
+          { value ? (
+            <Icon type="check-circle-o" />
+          ) : (
+            <span></span>
+          )}
+        </div>
+        
       ),
     }, {
       title: 'Action',
@@ -132,13 +168,15 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
             <div>
               <Button
                 size="small"
+                loading={this.state.saving}
                 style={{ marginRight: '8px' }}
-                onClick={e => this.edit(index)}
+                onClick={e => this.save(index)}
               >
                 Save
               </Button>
               <Button
                 size="small"
+                loading={this.state.saving}
                 onClick={e => this.cancel(index)}
               >
                 Cancel
@@ -147,6 +185,7 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
           ) : (
               <Button
                 size="small"
+                loading={this.state.saving}
                 onClick={e => this.edit(index)}
               >
                 Edit
@@ -171,8 +210,54 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
     const faculty: EditableFaculty = faculties.get(index) as EditableFaculty;
     faculty.editing = false;
     this.setState({
+      facultiesInForm: facultiesInForm.set(index, ({...faculty})),
+    })
+  }
+
+  change(index: number, prop: 'firstName' | 'lastName' | 'email' | 'isActive', value: string) {
+    const { facultiesInForm } = this.state;
+    const faculty: EditableFaculty = facultiesInForm.get(index);
+
+    if (prop === 'isActive') {
+      faculty[prop] = !faculty[prop];
+    } else {
+      faculty[prop] = value;
+    }
+
+    this.setState({
       facultiesInForm: facultiesInForm.set(index, faculty),
     })
+  }
+
+  async save(index: number) {
+    this.setState({
+      saving: true,
+    });
+
+    const { faculties, facultiesInForm } = this.state;
+    const faculty: EditableFaculty = facultiesInForm.get(index);
+
+    const change = {
+      firstName: faculty.firstName,
+      lastName: faculty.lastName,
+      email: faculty.email,
+      isActive: faculty.isActive,
+    }
+
+    try {
+      const updatedFaculty = await Api.updateFaculty(faculty._id, change);
+      this.setState({
+        faculties: faculties.set(index, updatedFaculty),
+        facultiesInForm: facultiesInForm.set(index, {...updatedFaculty}),
+        saving: false,
+      });
+
+      if (updatedFaculty._id === this.props.user._id) {
+        UserUtil.updateUser();
+      }
+    } catch (err) {
+      this.onErr(err);
+    }
   }
 
   render() {
@@ -186,7 +271,7 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
             <Table
               dataSource={this.state.facultiesInForm.toArray()}
               columns={this.tableColumns()}
-              rowKey={faculty => faculty._id}
+              rowKey="_id"
             />
           )}
         </div>
