@@ -65,8 +65,7 @@ export default class Emails extends React.Component<EmailsProps, any> {
       >
         <div className="container">
           <h1>Emails</h1>
-          {this.state.loading && <Loading />}
-          {!this.state.loading && (
+          {this.state.loading ? <Loading />: (
             <div>Display checkbox for faculties</div>
           )}
         </div>
