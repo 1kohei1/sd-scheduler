@@ -187,7 +187,7 @@ export default class Mailer {
   }
 }
 
-class MailTemplate {
+export class MailTemplate {
   /**
    * Invitation
    */
@@ -612,5 +612,34 @@ class MailTemplate {
         </div>
       </div>
     `
+  }
+
+  static terms() {
+    return {
+      'TOP': `${Util.siteUrl()}/`,
+      'PASSWORD': `${Util.siteUrl()}/password`,
+      'ACCOUNT': `${Util.siteUrl()}/account`,
+      'DASHBOARD': `${Util.siteUrl()}/dashboard`,
+      'DASHBOARD_CALENDAR': `${Util.siteUrl()}/dashboard/${Util.currentSemesterKey()}/calendar`,
+      'SEMESTER_CALENDAR': `${Util.siteUrl()}/calendar`,
+      'SCHEDULE': `${Util.siteUrl()}/schedule`,
+    }
+  }
+
+  static convertToEmailText(content: string) {
+    // Terms are replaced with the link
+  }
+
+  static convertToEmailHtml(content: string) {
+    // New line is replaced with <br />
+    // Terms are replaced with the correct <a> tag
+  }
+
+  private static convertNewlinesToBr(content: string) {
+    // Convert new line to <br />
+  }
+
+  private static convertTermsToLinks(content: string, isForText: boolean) {
+    // Convert terms to correct a tag
   }
 }

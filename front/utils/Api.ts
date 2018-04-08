@@ -158,6 +158,14 @@ export default class Api {
     return await Api.makeRequest(RequestMethod.DELETE, `/api/presentations/${_id}`, body);
    }
 
+   /**
+    * adminemails
+    */
+
+    static async getTerms() {
+      return await Api.makeRequest(RequestMethod.GET, `/api/adminemails/terms`);
+    }
+
   /**
    * Utility functions
    */

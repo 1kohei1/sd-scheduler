@@ -8,6 +8,7 @@ import Api from '../utils/Api';
 import Loading from '../components/Loading';
 import UserUtil from '../utils/UserUtil';
 import Faculty from '../models/Faculty';
+import AdminEmailHelpModal from '../components/AdminEmailHelpModal';
 
 export interface EmailsProps {
 }
@@ -17,6 +18,8 @@ interface EmailsState {
   faculties: Faculty[];
   errs: List<string>;
   selectedFacultyIds: string[];
+  helpDialog: boolean;
+  previewDialog: boolean;
 }
 
 export default class Emails extends React.Component<EmailsProps, EmailsState> {
@@ -33,6 +36,8 @@ export default class Emails extends React.Component<EmailsProps, EmailsState> {
       faculties: [],
       errs: List<string>(),
       selectedFacultyIds: [],
+      helpDialog: false,
+      previewDialog: false,
     }
 
     this.rowSelection = this.rowSelection.bind(this);
@@ -113,11 +118,22 @@ export default class Emails extends React.Component<EmailsProps, EmailsState> {
     }
   }
 
+  toggleDialog(e: React.MouseEvent<any>, prop: 'helpDialog' | 'previewDialog', value: boolean) {
+    e.preventDefault();
+    const newState: any = {};
+    newState[prop] = value;
+    this.setState(newState);
+  }
+
   render() {
     return (
       <AppLayout
         selectedMenu={['emails']}
       >
+        <AdminEmailHelpModal
+          visible={this.state.helpDialog}
+          onClose={e => this.toggleDialog(e, 'helpDialog', false)}
+        />
         <div className="container">
           <h1>Emails</h1>
           <Row gutter={8}>
@@ -165,9 +181,19 @@ export default class Emails extends React.Component<EmailsProps, EmailsState> {
                   >
                     Send
                 </Button>
-                  <a href="">How to insert link?</a>
+                  <a
+                    href=""
+                    onClick={e => this.toggleDialog(e, 'helpDialog', true)}
+                  >
+                    How to insert link?
+                  </a>
                 </div>
-                <a href="">Check preview</a>
+                <a
+                  href=""
+                  onClick={e => this.toggleDialog(e, 'previewDialog', true)}>
+                  >
+                    Check preview
+                </a>
               </div>
             </Col>
           </Row>
