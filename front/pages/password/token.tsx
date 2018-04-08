@@ -98,7 +98,7 @@ class Token extends React.Component<TokenProps, TokenState> {
           message: 'Successfully reset the password. Navigating to the login',
         });
         Api.redirect(undefined, '/login', {
-          message: 'Password is successfully set',
+          message: 'Please login with your new password',
         })
       } catch (err) {
         this.setState({
