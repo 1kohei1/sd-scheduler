@@ -93,13 +93,6 @@ export default class AppLayout extends React.Component<AppLayoutProps, AppLayout
             <a>Account</a>
           </Link>
         </Menu.Item>
-        {this.state.user && this.state.user.isSystemAdmin && (
-          <Menu.Item key="admin">
-            <Link href="/admin">
-              <a>Admin</a>
-            </Link>
-          </Menu.Item>
-        )}
         <Menu.Item key="logout">
           Logout
         </Menu.Item>
@@ -126,30 +119,38 @@ export default class AppLayout extends React.Component<AppLayoutProps, AppLayout
                 <Link href="/">
                   <a style={{ color: 'white' }}>SD Scheduler</a>
                 </Link>
-                {this.state.user && this.state.user.isAdmin && (
-                  <Menu
-                    mode="horizontal"
-                    theme="dark"
-                    style={{ lineHeight: '64px', marginLeft: '32px' }}
-                    defaultSelectedKeys={this.props.selectedMenu}
-                  >
-                    <Menu.Item key="dashboard">
-                      <Link href="/dashboard">
-                        <a>Dashboard</a>
-                      </Link>
-                    </Menu.Item>
-                    <Menu.Item key="faculties">
-                      <Link href="/faculties">
-                        <a>Faculties</a>
-                      </Link>
-                    </Menu.Item>
-                    <Menu.Item key="emails">
-                      <Link href="/emails">
-                        <a>Emails</a>
-                      </Link>
-                    </Menu.Item>
-                  </Menu>
-                )}
+                {this.state.user &&
+                  (this.state.user.isAdmin || this.state.user.isSystemAdmin) && (
+                    <Menu
+                      mode="horizontal"
+                      theme="dark"
+                      style={{ lineHeight: '64px', marginLeft: '32px' }}
+                      defaultSelectedKeys={this.props.selectedMenu}
+                    >
+                      <Menu.Item key="dashboard">
+                        <Link href="/dashboard">
+                          <a>Dashboard</a>
+                        </Link>
+                      </Menu.Item>
+                      <Menu.Item key="faculties">
+                        <Link href="/faculties">
+                          <a>Faculties</a>
+                        </Link>
+                      </Menu.Item>
+                      <Menu.Item key="emails">
+                        <Link href="/emails">
+                          <a>Emails</a>
+                        </Link>
+                      </Menu.Item>
+                      {this.state.user.isSystemAdmin && (
+                        <Menu.Item key="admin">
+                          <Link href="/admin">
+                            <a>Admin</a>
+                          </Link>
+                        </Menu.Item>
+                      )}
+                    </Menu>
+                  )}
               </div>
               <div>
                 {this.rightAction()}

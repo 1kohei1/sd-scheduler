@@ -25,7 +25,9 @@ export default class Admin extends React.Component<AdminProps, AdminState> {
 
   render() {
     return (
-      <AppLayout>
+      <AppLayout
+        selectedMenu={['admin']}
+      >
         <FormLayout>
           <h1>System administrator menu</h1>
           <FacultyState />
