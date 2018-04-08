@@ -83,6 +83,7 @@ TODO:
 - [x] Let students pick what date to schedule like picking SD 2 faculties
 - [ ] Send cancel email when group updates the presentation to different faculties
 - [ ] Present dialog after the identity is verified during scheduling presentation
+- [ ] Create error response model and make it clear how the error reponse looks like (Need to handle network problem as well)
 
 Feature requests from Dr. Heinrich
 
