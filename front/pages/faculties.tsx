@@ -49,6 +49,8 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
     this.edit = this.edit.bind(this);
     this.cancel = this.cancel.bind(this);
     this.change = this.change.bind(this);
+    this.getFaculties = this.getFaculties.bind(this);
+    this.onErr = this.onErr.bind(this);
   }
 
   componentDidMount() {
@@ -65,7 +67,7 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
     });
   }
 
-  private async getFaculties() {
+  async getFaculties() {
     try {
       const faculties = await Api.getFaculties();
       const copyOfFaculties = faculties.map((faculty: Faculty) => ({ ...faculty }));
@@ -150,11 +152,11 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
       ),
     }, {
       title: 'Is password set',
-      dataIndex: 'isPasswordSet',
+      dataIndex: 'password_at',
       render: (value: boolean) => (
         <div>
           {value ? (
-            <Icon type="check-circle-o" />
+            <Icon type="check" style={{ fontSize: '20px' }} />
           ) : (
               <span></span>
             )}

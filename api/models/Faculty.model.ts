@@ -1,7 +1,6 @@
 import { Model, model, Schema, Document } from 'mongoose';
 import * as crypto from 'crypto';
 const uniqueValidator = require('mongoose-unique-validator');
-const mongooseLifecycle = require('mongoose-lifecycle')
 
 import DBUtil from '../utils/db.util';
 import Mailer, { MailType } from '../utils/mail.util';
@@ -123,8 +122,6 @@ const handleIsAdminChange = (doc: Document, next: any) => {
     next();
   }
 }
-
-FacultySchema.plugin(mongooseLifecycle);
 
 FacultySchema.plugin(uniqueValidator, {
   message: '{VALUE} is already registered',
