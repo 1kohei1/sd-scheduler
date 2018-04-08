@@ -242,7 +242,7 @@ PresentationSchema.post('save', (doc: Document, next: any) => {
         }).exec(),
         DBUtil.findPresentationDates({
           semester: group.get('semester'),
-          admin: group.get('admin'),
+          admin: group.get('adminFaculty'),
         })
       ])
     })
@@ -258,8 +258,8 @@ PresentationSchema.post('save', (doc: Document, next: any) => {
         type: string;
       }[] = [];
 
-      const presentationDate = presentationDates[0].get('dats')
-      .find((date: Document) => Util.doesOverlap(date, doc));
+      const presentationDate = presentationDates[0].get('dates')
+        .find((date: Document) => Util.doesOverlap(date, doc));
 
       let location = 'undefined';
       if (presentationDate) {
@@ -369,8 +369,19 @@ PresentationSchema.post('remove', (doc: Document, next: any) => {
           type: 'faculty',
           canceledBy,
           note,
-        })
-      })
+        });
+      });
+
+      doc.get('externalFaculties').forEach((faculty: Document) => {
+        emails.push({
+          email: faculty.get('email'),
+          name: `Dr. ${faculty.get('firstName')} ${faculty.get('lastName')}`,
+          title: `Senior design group ${group.get('groupNumber')} presentation is canceld since ${canceledBy} becomes unavailable`,
+          type: 'externalFaculty',
+          canceledBy,
+          note,
+        });
+      });
 
       group.get('members')
         .forEach((member: Document) => {
@@ -381,8 +392,8 @@ PresentationSchema.post('remove', (doc: Document, next: any) => {
             type: 'group',
             canceledBy,
             note,
-          })
-        })
+          });
+        });
 
       group.get('sponsors')
         .forEach((sponsor: Document) => {
@@ -393,8 +404,8 @@ PresentationSchema.post('remove', (doc: Document, next: any) => {
             type: 'sponsor',
             canceledBy,
             note,
-          })
-        })
+          });
+        });
 
       return Promise.resolve(emails);
     })
