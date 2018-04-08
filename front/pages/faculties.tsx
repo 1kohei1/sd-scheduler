@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { List } from 'immutable';
-import { Table, Switch, Card, Tooltip, Icon, Button, Input } from 'antd';
+import { Table, Switch, Tooltip, Icon, Button, Input, message } from 'antd';
 
 import AppLayout from '../components/AppLayout';
 import InitialProps from '../models/InitialProps';
@@ -8,6 +8,7 @@ import Api from '../utils/Api';
 import Loading from '../components/Loading';
 import UserUtil from '../utils/UserUtil';
 import Faculty from '../models/Faculty';
+import AddFaculties from '../components/AddFaculties';
 
 interface EditableFaculty extends Faculty {
   editing: boolean;
@@ -67,7 +68,7 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
   private async getFaculties() {
     try {
       const faculties = await Api.getFaculties();
-      const copyOfFaculties = faculties.map((faculty: Faculty) => ({...faculty}));
+      const copyOfFaculties = faculties.map((faculty: Faculty) => ({ ...faculty }));
 
       this.setState({
         faculties: List(faculties),
@@ -75,7 +76,7 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
         loading: false,
       });
     } catch (err) {
-      this.onErr(err);
+      this.onErr(err.message);
     }
   }
 
@@ -152,13 +153,13 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
       dataIndex: 'isPasswordSet',
       render: (value: boolean) => (
         <div>
-          { value ? (
+          {value ? (
             <Icon type="check-circle-o" />
           ) : (
-            <span></span>
-          )}
+              <span></span>
+            )}
         </div>
-        
+
       ),
     }, {
       title: 'Action',
@@ -210,7 +211,7 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
     const faculty: EditableFaculty = faculties.get(index) as EditableFaculty;
     faculty.editing = false;
     this.setState({
-      facultiesInForm: facultiesInForm.set(index, ({...faculty})),
+      facultiesInForm: facultiesInForm.set(index, ({ ...faculty })),
     })
   }
 
@@ -246,9 +247,10 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
 
     try {
       const updatedFaculty = await Api.updateFaculty(faculty._id, change);
+      message.success('Successfully updated');
       this.setState({
         faculties: faculties.set(index, updatedFaculty),
-        facultiesInForm: facultiesInForm.set(index, {...updatedFaculty}),
+        facultiesInForm: facultiesInForm.set(index, { ...updatedFaculty }),
         saving: false,
       });
 
@@ -256,7 +258,7 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
         UserUtil.updateUser();
       }
     } catch (err) {
-      this.onErr(err);
+      this.onErr(err.message);
     }
   }
 
@@ -268,11 +270,16 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
         <div className="container">
           <h1>Faculties</h1>
           {this.state.loading ? <Loading /> : (
-            <Table
-              dataSource={this.state.facultiesInForm.toArray()}
-              columns={this.tableColumns()}
-              rowKey="_id"
-            />
+            <div>
+              <Table
+                dataSource={this.state.facultiesInForm.toArray()}
+                columns={this.tableColumns()}
+                rowKey="_id"
+              />
+              <AddFaculties
+                getFaculties={this.getFaculties}
+              />
+            </div>
           )}
         </div>
         <style jsx>

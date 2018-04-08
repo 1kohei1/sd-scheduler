@@ -54,7 +54,7 @@ export default class Emails extends React.Component<EmailsProps, EmailsState> {
         loading: false,
       });
     } catch (err) {
-      this.onErr(err);
+      this.onErr(err.message);
     }
   }
 

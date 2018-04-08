@@ -52,7 +52,6 @@ export default class DBUtil {
     }
 
     return Faculty.find(query, password).sort({
-      'isActive': 1,
       'firstName': 'asc',
       'lastName': 'asc',
     });
