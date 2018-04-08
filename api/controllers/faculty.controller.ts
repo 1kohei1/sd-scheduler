@@ -81,7 +81,7 @@ module.exports.sendPasswordResetEmail = (req: Request, res: Response) => {
     .then(updatedFaculty => {
       APIUtil.successResponse(info, updatedFaculty, res);
       Mailer.send(MailType.passwordreset, {
-        to: email,
+        to: [email],
         extra: {
           name: `Dr. ${updatedFaculty.get('firstName')} ${updatedFaculty.get('lastName')}`,
           token: updatedFaculty.get('token'),
@@ -130,7 +130,7 @@ module.exports.updateFaculty = (req: Request, res: Response) => {
       
       if (shouldSendVerifyEmail) {
         Mailer.send(MailType.verify, {
-          to: updatedFaculty.get('email'),
+          to: [updatedFaculty.get('email')],
           extra: {
             name: `Dr. ${updatedFaculty.get('firstName')} ${updatedFaculty.get('lastName')}`,
             token: updatedFaculty.get('verifyToken'),
@@ -160,7 +160,7 @@ module.exports.verify = (req: Request, res: Response) => {
     .then(updatedFaculty => {
       APIUtil.successResponse(info, updatedFaculty, res);
       Mailer.send(MailType.verify, {
-        to: updatedFaculty.get('email'),
+        to: [updatedFaculty.get('email')],
         extra: {
           name: `Dr. ${updatedFaculty.get('firstName')} ${updatedFaculty.get('lastName')}`,
           token: updatedFaculty.get('verifyToken'),
@@ -219,7 +219,7 @@ module.exports.updatePassword = (req: Request, res: Response) => {
 
       if (shouldSendWelcomeEmail) {
         Mailer.send(MailType.welcome, {
-          to: updatedFaculty.get('email'),
+          to: [updatedFaculty.get('email')],
           extra: {
             name: `Dr. ${updatedFaculty.get('firstName')} ${updatedFaculty.get('lastName')}`,
           }

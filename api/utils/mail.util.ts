@@ -14,7 +14,7 @@ export enum MailType {
 }
 
 interface MailOption {
-  to: string;
+  to: string[];
   extra?: any;
 }
 

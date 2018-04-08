@@ -192,7 +192,7 @@ module.exports.verifyAuthentication = (req: Request, res: Response) => {
 
       // Send authentication email
       Mailer.send(MailType.verifystudentauthentication, {
-        to: email,
+        to: [email],
         extra: {
           authenticationToken,
           groupNumber: updatedGroup.get('groupNumber'),

@@ -113,7 +113,7 @@ module.exports.presentationReminder = (req: Request, res: Response) => {
       emails.forEach(email => {
         Mailer.send(
           MailType.presentationreminder, {
-            to: email.email,
+            to: [email.email],
             extra: {
               title: email.title,
               name: email.name,

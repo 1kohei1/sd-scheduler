@@ -309,7 +309,7 @@ PresentationSchema.post('save', (doc: Document, next: any) => {
     .then(emails => {
       emails.forEach((email) => {
         Mailer.send(MailType.presentation, {
-          to: email.email,
+          to: [email.email],
           extra: {
             name: email.name,
             title: email.title,
@@ -401,7 +401,7 @@ PresentationSchema.post('remove', (doc: Document, next: any) => {
     .then(emails => {
       emails.forEach((email) => {
         Mailer.send(MailType.presentationcancel, {
-          to: email.email,
+          to: [email.email],
           extra: {
             name: email.name,
             title: email.title,
