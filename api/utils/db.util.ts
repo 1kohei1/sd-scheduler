@@ -7,6 +7,7 @@ import AvailableSlot from '../models/AvailableSlot.model';
 import Group from '../models/Group.model';
 import PresentationDate from '../models/PresentationDate.model';
 import Presentation from '../models/Presentation.model';
+import Email from '../models/Email.model';
 
 export default class DBUtil {
   /**
@@ -186,6 +187,20 @@ export default class DBUtil {
           return Promise.reject('Document is not found')
         }
       })
+  }
+
+  /**
+   * Email
+   */
+
+  static findEmails(query: object = {}) {
+    return Email.find(query)
+      .sort({ 'created_at': 'desc' });
+  }
+
+  static createEmail(body: object) {
+    const newEmail = new Email(body);
+    return newEmail.save();
   }
 
   /**

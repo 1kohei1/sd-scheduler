@@ -1,6 +1,7 @@
 import * as nodemailer from 'nodemailer';
 
 import Util from './util';
+import DBUtil from './db.util';
 
 export enum MailType {
   invitation,
@@ -16,6 +17,7 @@ export enum MailType {
 interface MailOption {
   to: string[];
   extra?: any;
+  sent_by?: string;
 }
 
 const MAIL_CONSTANTS = {
@@ -61,13 +63,30 @@ export default class Mailer {
       return Promise.resolve();
     }
 
+    const newEmail:any = {
+      key,
+      to: option.to,
+      extra: option.extra,
+      result: {
+        accepted: [],
+        rejected: [],
+      }
+    };
+    if (option.sent_by) {
+      newEmail.sent_by = option.sent_by;
+    }
+
     return p
       .then((result: any) => {
-        console.log(`Email: ${key}. option: ${JSON.stringify(option)}. Accepted: ${result.accepted.join(', ')} ${result.rejected.length > 0 ? `Rejected: ${result.rejected.join(', ')}` : ''}`);
+        newEmail.result = {
+          accepted: result.accepted,
+          rejected: result.rejected,
+        }
+        DBUtil.createEmail(newEmail);
       })
       .catch((err: any) => {
-        console.log(`Error:Email: ${key}. option: ${JSON.stringify(option)}`);
-        console.log(err);
+        newEmail.err = err;
+        DBUtil.createEmail(newEmail);
       })
   }
 
@@ -165,7 +184,6 @@ export default class Mailer {
     }
 
     return transporter.sendMail(mailOption);
-    
   }
 }
 
