@@ -615,15 +615,28 @@ export class MailTemplate {
   }
 
   static terms() {
-    return {
-      'TOP': `${Util.siteUrl()}/`,
-      'PASSWORD': `${Util.siteUrl()}/password`,
-      'ACCOUNT': `${Util.siteUrl()}/account`,
-      'DASHBOARD': `${Util.siteUrl()}/dashboard`,
-      'DASHBOARD_CALENDAR': `${Util.siteUrl()}/dashboard/${Util.currentSemesterKey()}/calendar`,
-      'SEMESTER_CALENDAR': `${Util.siteUrl()}/calendar`,
-      'SCHEDULE': `${Util.siteUrl()}/schedule`,
-    }
+    return [{
+      key: 'TOP',
+      link: `${Util.siteUrl()}/`,
+    }, {
+      key: 'PASSWORD',
+      link: `${Util.siteUrl()}/password`,
+    }, {
+      key: 'ACCOUNT',
+      link: `${Util.siteUrl()}/account`,
+    }, {
+      key: 'DASHBOARD',
+      link: `${Util.siteUrl()}/dashboard`,
+    }, {
+      key: 'DASHBOARD_CALENDAR',
+      link: `${Util.siteUrl()}/dashboard/${Util.currentSemesterKey()}/calendar`,
+    }, {
+      key: 'SEMESTER_CALENDAR',
+      link: `${Util.siteUrl()}/calendar`,
+    }, {
+      key: 'SCHEDULE',
+      link: `${Util.siteUrl()}/schedule`,
+    }];
   }
 
   static convertToEmailText(content: string) {
