@@ -686,7 +686,8 @@ export class MailTemplate {
       let regex = new RegExp(`&lt;${term.key}&gt;&lt;/${term.key}&gt;`, 'g');
       content = content.replace(regex, MailTemplate.replaceStr(term.link, term.link, isForText));
       // Handle text in the tag such as <PASSWORD>abc</PASSWORD>
-      regex = new RegExp(`&lt;${term.key}&gt;([^&lt;]+)&lt;/${term.key}&gt;`, 'g');
+       // Reference for the regex taking characters that's up to specified character: https://stackoverflow.com/a/7124976/4155129
+      regex = new RegExp(`&lt;${term.key}&gt;(.+?(?=&lt;))&lt;/${term.key}&gt;`, 'g');
       content = content.replace(regex, (match: string, text: string) => MailTemplate.replaceStr(term.link, text, isForText));
     });
 
