@@ -18,6 +18,10 @@ export interface EmailsProps {
 interface EmailsState {
   loading: boolean;
   faculties: Faculty[];
+  terms: {
+    key: string;
+    link: string;
+  }[];
   errs: List<string>;
   previewModal: boolean;
   previewSubject: string;
@@ -36,6 +40,7 @@ export default class Emails extends React.Component<EmailsProps, EmailsState> {
     this.state = {
       loading: true,
       faculties: [],
+      terms: [],
       errs: List<string>(),
       previewModal: false,
       previewSubject: '',
@@ -47,7 +52,15 @@ export default class Emails extends React.Component<EmailsProps, EmailsState> {
   }
 
   componentDidMount() {
-    this.getFaculties();
+    Promise.all([
+      this.getFaculties(),
+      this.getTerms(),
+    ])
+    .then(() => {
+      this.setState({
+        loading: false,
+      })
+    })
   }
 
   onErr(err: string) {
@@ -64,7 +77,17 @@ export default class Emails extends React.Component<EmailsProps, EmailsState> {
       const faculties = await Api.getFaculties();
       this.setState({
         faculties,
-        loading: false,
+      });
+    } catch (err) {
+      this.onErr(err.message);
+    }
+  }
+
+  private async getTerms() {
+    try {
+      const terms = await Api.getTerms();
+      this.setState({
+        terms,
       });
     } catch (err) {
       this.onErr(err.message);
@@ -100,7 +123,7 @@ export default class Emails extends React.Component<EmailsProps, EmailsState> {
         <div className="container">
           <h1>Emails</h1>
           {this.state.errs.map((err: string, index: number) => {
-            <Alert 
+            <Alert
               key={index}
               type="error"
               showIcon
@@ -113,6 +136,7 @@ export default class Emails extends React.Component<EmailsProps, EmailsState> {
               {this.state.loading ? <Loading /> :
                 <ComposeEmail
                   faculties={this.state.faculties}
+                  terms={this.state.terms}
                   onErr={this.onErr}
                   showPreview={this.showPreview}
                 />

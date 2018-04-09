@@ -1,11 +1,14 @@
 import * as React from 'react';
-import { Row, Col, Table, Button, Tooltip, Icon, Input, Tag } from 'antd';
+import { Row, Col, Table, Button, Tooltip, Icon, Input, Tag, Collapse } from 'antd';
 
 import Faculty from '../models/Faculty';
-import AdminEmailHelpModal from '../components/AdminEmailHelpModal';
 
 export interface ComposeEmailProps {
   faculties: Faculty[];
+  terms: {
+    key: string;
+    link: string;
+  }[];
   onErr: (err: string) => void;
   showPreview: (subject: string, content: string) => void;
 }
@@ -25,9 +28,9 @@ export default class ComposeEmail extends React.Component<ComposeEmailProps, Com
     }
 
     this.rowSelection = this.rowSelection.bind(this);
-    this.displayHelpModal = this.displayHelpModal.bind(this);
-    this.onClose = this.onClose.bind(this);
     this.preview = this.preview.bind(this);
+    this.getLink = this.getLink.bind(this);
+    this.exampleDataSource = this.exampleDataSource.bind(this);
   }
 
   tableColumns() {
@@ -80,20 +83,55 @@ export default class ComposeEmail extends React.Component<ComposeEmailProps, Com
     }
   }
 
-  displayHelpModal(e: React.MouseEvent<any>) {
-    e.preventDefault();
-
-    this.setState({
-      modalVisible: true,
-    })
+  termsColumns() {
+    return [{
+      title: 'Link constant',
+      dataIndex: 'key'
+    }, {
+      title: 'Replaced with this link',
+      dataIndex: 'link',
+      render: (value: string) => (
+        <a href={value} target="_blank">{value}</a>
+      )
+    }]
   }
 
-  onClose(e: React.MouseEvent<any>) {
-    e.preventDefault();
+  getLink(key: string) {
+    const index = this.props.terms.findIndex(term => term.key === key);
 
-    this.setState({
-      modalVisible: false,
-    })
+    if (index >= 0) {
+      return this.props.terms[index].link;
+    } else {
+      return 'undefined';
+    }
+  }
+
+  exampleDataSource() {
+    return [{
+      key: '1',
+      content: 'Please set the password at <PASSWORD></PASSWORD>',
+      renderedContent: (
+        <span>Please set the password at <a href={this.getLink('PASSWORD')} target="_blank">{this.getLink('PASSWORD')}</a></span>
+      )
+    }, {
+      key: '2',
+      content: 'Please fill the available time at <DASHBOARD_CALENDAR>this link</DASHBOARD_CALENDAR>',
+      renderedContent: (
+        <span>Please fill the available time at <a href={this.getLink('DASHBOARD_CALENDAR')}>this link</a></span>
+      )
+    }]
+  }
+
+  exampleTableColumns() {
+    return [{
+      title: 'Text in content',
+      dataIndex: 'content',
+      width: '50%',
+    }, {
+      title: 'Converted to',
+      dataIndex: 'renderedContent',
+      width: '50%',
+    }]
   }
 
   preview(e: React.MouseEvent<any>) {
@@ -106,10 +144,6 @@ export default class ComposeEmail extends React.Component<ComposeEmailProps, Com
   render() {
     return (
       <Row gutter={8}>
-        <AdminEmailHelpModal
-          visible={this.state.modalVisible}
-          onClose={this.onClose}
-        />
         <Col
           span={24}
           md={12}
@@ -145,26 +179,42 @@ export default class ComposeEmail extends React.Component<ComposeEmailProps, Com
             <Input.TextArea id="content" rows={10} placeholder="Content" />
           </div>
           <div className="section action">
-            <div>
-              <Button
-                type="primary"
-                style={{ marginRight: '8px' }}
-              >
-                Send
-              </Button>
-              <a
-                href=""
-                onClick={this.displayHelpModal}
-              >
-                How to insert link?
-              </a>
-            </div>
+            <Button
+              type="primary"
+              style={{ marginRight: '8px' }}
+            >
+              Send
+            </Button>
             <a
               href=""
               onClick={this.preview}
             >
               Check preview
             </a>
+          </div>
+          <div className="section">
+            <Collapse>
+              <Collapse.Panel key="one" header="How to insert links?">
+                <div>
+                  <p>The system will replace <code>&lt;LINK_CONSTANTS&gt;&lt;/LINK_CONSTANTS&gt;</code> to corresponding links specified below. Please check exampls. You can check how the email looks like by clicking "Check preview"</p>
+                  <Table
+                    dataSource={this.props.terms}
+                    columns={this.termsColumns()}
+                    rowClassName={() => "no-background-color-row"}
+                    pagination={false}
+                    rowKey="key"
+                  />
+                  <h3>Examples</h3>
+                  <Table
+                    dataSource={this.exampleDataSource()}
+                    columns={this.exampleTableColumns()}
+                    rowClassName={() => "no-background-color-row"}
+                    pagination={false}
+                    rowKey="key"
+                  />
+                </div>
+              </Collapse.Panel>
+            </Collapse>
           </div>
         </Col>
         <style jsx>{`
@@ -178,6 +228,11 @@ export default class ComposeEmail extends React.Component<ComposeEmailProps, Com
           }        
         `}
         </style>
+        <style>{`
+          .no-background-color-row:hover td {
+            background-color: transparent !important;
+          }
+        `}</style>
       </Row>
     );
   }
