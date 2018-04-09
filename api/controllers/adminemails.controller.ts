@@ -32,4 +32,13 @@ module.exports.preview = (req: Request, res: Response) => {
     }
   };
   
+  const { content } = req.body;
+  const emailHtml = MailTemplate.adminemailHtml({
+    to: ['dummy@dummy.com'],
+    extra: {
+      content,
+    }
+  });
+
+  APIUtil.successResponse(info, emailHtml, res);
 }

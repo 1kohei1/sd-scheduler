@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Modal, Alert } from 'antd';
+import { Modal, Alert, Divider } from 'antd';
 
 import Api from '../utils/Api';
 
@@ -11,7 +11,7 @@ export interface EmailPreviewModalProps {
 }
 
 interface EmailPreviewModalState {
-  content: React.ReactNode;
+  content: string;
   err: string;
 }
 
@@ -20,7 +20,7 @@ export default class EmailPreviewModal extends React.Component<EmailPreviewModal
     super(props);
 
     this.state = {
-      content: null,
+      content: '',
       err: '',
     }
   }
@@ -31,6 +31,9 @@ export default class EmailPreviewModal extends React.Component<EmailPreviewModal
         content: nextProps.content,
       }
       const emailHtml = await Api.getPreview(body);
+      this.setState({
+        content: emailHtml,
+      })
     } catch (err) {
       this.setState({
         err: err.message,
@@ -58,11 +61,11 @@ export default class EmailPreviewModal extends React.Component<EmailPreviewModal
               message="Error"
               description={this.state.err}
             />
-            : this.state.content}
+            : <div dangerouslySetInnerHTML={{ __html: this.state.content }}></div>}
         </div>
         <style jsx>{`
           .subject {
-            border-bottom: 1px solid #cfcfcf;
+            margin-bottom: 8px;
           }
         `}</style>
       </Modal>

@@ -1,4 +1,5 @@
 import * as nodemailer from 'nodemailer';
+import { escape } from 'lodash';
 
 import Util from './util';
 import DBUtil from './db.util';
@@ -12,6 +13,7 @@ export enum MailType {
   presentation,
   presentationcancel,
   presentationreminder,
+  adminemail,
 }
 
 interface MailOption {
@@ -59,6 +61,8 @@ export default class Mailer {
       p = this.sendPresentationcancel(option);
     } else if (type === MailType.presentationreminder) {
       p = this.sendPresentationreminder(option);
+    } else if (type === MailType.adminemail) {
+      p = this.sendAdminemail(option);
     } else {
       return Promise.resolve();
     }
@@ -181,6 +185,18 @@ export default class Mailer {
       subject: `[SD Scheduler] ${option.extra.title}`,
       text: MailTemplate.presentationreminderText(option),
       html: MailTemplate.presentationreminderHtml(option),
+    }
+
+    return transporter.sendMail(mailOption);
+  }
+
+  private static sendAdminemail(option: MailOption) {
+    const mailOption = {
+      from: MAIL_CONSTANTS.from,
+      to: option.to,
+      subject: `[SD Scheduler] ${option.extra.title}`,
+      text: MailTemplate.adminemailText(option),
+      html: MailTemplate.adminemailHtml(option),
     }
 
     return transporter.sendMail(mailOption);
@@ -597,7 +613,14 @@ export class MailTemplate {
     <br />
     SD Scheduler team<br />
     `);
-    
+  }
+
+  static adminemailText(option: MailOption) {
+    return MailTemplate.convertToEmailText(option.extra.content);
+  }
+
+  static adminemailHtml(option: MailOption) {
+    return MailTemplate.convertToEmailHtml(option.extra.content);
   }
 
   static htmlTemplate(content: string) {
@@ -641,18 +664,40 @@ export class MailTemplate {
 
   static convertToEmailText(content: string) {
     // Terms are replaced with the link
+    return MailTemplate.convertTermsToLinks(content, true);
   }
 
   static convertToEmailHtml(content: string) {
-    // New line is replaced with <br />
-    // Terms are replaced with the correct <a> tag
+    content = escape(content);
+    content = MailTemplate.convertNewlinesToBr(content);
+    content = MailTemplate.convertTermsToLinks(content, false);
+    return MailTemplate.htmlTemplate(content);
   }
 
   private static convertNewlinesToBr(content: string) {
-    // Convert new line to <br />
+    return content.replace(/\n/g, '<br />');
   }
 
   private static convertTermsToLinks(content: string, isForText: boolean) {
-    // Convert terms to correct a tag
+    const terms = MailTemplate.terms();
+    
+    terms.forEach(term => {
+      // Handle no text in the tag such as  <PASSWORD></PASSWORD>
+      let regex = new RegExp(`&lt;${term.key}&gt;&lt;/${term.key}&gt;`, 'g');
+      content = content.replace(regex, MailTemplate.replaceStr(term.link, term.link, isForText));
+      // Handle text in the tag such as <PASSWORD>abc</PASSWORD>
+      regex = new RegExp(`&lt;${term.key}&gt;([^&lt;]+)&lt;/${term.key}&gt;`, 'g');
+      content = content.replace(regex, (match: string, text: string) => MailTemplate.replaceStr(term.link, text, isForText));
+    });
+
+    return content;
+  }
+
+  private static replaceStr(link: string, text: string, isForText: boolean) {
+    if (isForText) {
+      return `${link}`;
+    } else {
+      return `<a href="${link}" target="_blank">${text}</a>`
+    }
   }
 }
