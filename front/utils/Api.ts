@@ -166,6 +166,10 @@ export default class Api {
       return await Api.makeRequest(RequestMethod.GET, `/api/adminemails/terms`);
     }
 
+    static async getPreview(body: object) {
+      return await Api.makeRequest(RequestMethod.POST, `/api/adminemails/preview`, body);
+    }
+
   /**
    * Utility functions
    */

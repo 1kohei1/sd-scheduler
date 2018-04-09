@@ -10,6 +10,7 @@ import Faculty from '../models/Faculty';
 import Loading from '../components/Loading';
 import ComposeEmail from '../components/ComposeEmail';
 import PastEmails from '../components/PastEmails';
+import EmailPreviewModalProps from '../components/EmailPreviewModal';
 
 export interface EmailsProps {
 }
@@ -90,6 +91,12 @@ export default class Emails extends React.Component<EmailsProps, EmailsState> {
       <AppLayout
         selectedMenu={['emails']}
       >
+        <EmailPreviewModalProps
+          visible={this.state.previewModal}
+          subject={this.state.previewSubject}
+          content={this.state.previewContent}
+          onClose={this.onClose}
+        />
         <div className="container">
           <h1>Emails</h1>
           {this.state.errs.map((err: string, index: number) => {

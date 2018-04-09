@@ -98,8 +98,8 @@ export default class ComposeEmail extends React.Component<ComposeEmailProps, Com
 
   preview(e: React.MouseEvent<any>) {
     e.preventDefault();
-    const subject = ''; // Get this by DOM
-    const content = ''; // Get this by DOM
+    const subject = (document.getElementById('subject') as HTMLInputElement).value;
+    const content = (document.getElementById('content') as HTMLTextAreaElement).value;
     this.props.showPreview(subject, content);
   }
 
@@ -139,10 +139,10 @@ export default class ComposeEmail extends React.Component<ComposeEmailProps, Com
             })}
           </div>
           <div className="section">
-            <Input placeholder="Subject" />
+            <Input id="subject" placeholder="Subject" />
           </div>
           <div className="section">
-            <Input.TextArea rows={10} placeholder="Content" />
+            <Input.TextArea id="content" rows={10} placeholder="Content" />
           </div>
           <div className="section action">
             <div>
