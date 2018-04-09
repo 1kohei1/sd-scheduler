@@ -170,6 +170,10 @@ export default class Api {
       return await Api.makeRequest(RequestMethod.POST, `/api/adminemails/preview`, body);
     }
 
+    static async sendAdminemail(body: object) {
+      return await Api.makeRequest(RequestMethod.POST, `/api/adminemails`, body);
+    }
+
   /**
    * Utility functions
    */

@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { Row, Col, Table, Button, Tooltip, Icon, Input, Tag, Collapse } from 'antd';
+import { Row, Col, Table, Button, Tooltip, Icon, Input, Tag, Collapse, message } from 'antd';
 
 import Faculty from '../models/Faculty';
+import Api from '../utils/Api';
 
 export interface ComposeEmailProps {
   faculties: Faculty[];
@@ -16,6 +17,7 @@ export interface ComposeEmailProps {
 interface ComposeEmailState {
   selectedFacultyIds: string[];
   modalVisible: boolean;
+  sending: boolean;
 }
 
 export default class ComposeEmail extends React.Component<ComposeEmailProps, ComposeEmailState> {
@@ -25,12 +27,14 @@ export default class ComposeEmail extends React.Component<ComposeEmailProps, Com
     this.state = {
       selectedFacultyIds: [],
       modalVisible: false,
+      sending: false,
     }
 
     this.rowSelection = this.rowSelection.bind(this);
     this.preview = this.preview.bind(this);
     this.getLink = this.getLink.bind(this);
     this.exampleDataSource = this.exampleDataSource.bind(this);
+    this.send = this.send.bind(this);
   }
 
   tableColumns() {
@@ -79,7 +83,10 @@ export default class ComposeEmail extends React.Component<ComposeEmailProps, Com
         this.setState({
           selectedFacultyIds: selectedRowKeys,
         })
-      }
+      },
+      getCheckboxProps: () => ({
+        disabled: this.state.sending,
+      }),
     }
   }
 
@@ -141,6 +148,52 @@ export default class ComposeEmail extends React.Component<ComposeEmailProps, Com
     this.props.showPreview(subject, content);
   }
 
+  async send(e: React.MouseEvent<any>) {
+    e.preventDefault();
+
+    if (this.state.selectedFacultyIds.length === 0) {
+      message.error('Please select faculties to send the email');
+      return;
+    }
+
+    const to = this.state.selectedFacultyIds
+      .map((_id: string) => {
+        const faculty = this.props.faculties.find(faculty => faculty._id === _id) as Faculty;
+        return faculty.email;
+      });
+
+    const subject = (document.getElementById('subject') as HTMLInputElement).value;
+    const content = (document.getElementById('content') as HTMLTextAreaElement).value;
+    if (!subject || !content) {
+      message.error('Please fill both subject and content');
+      return;
+    }
+
+    this.setState({
+      sending: true,
+    })
+    const body = {
+      to,
+      title: subject,
+      content,
+    }
+    
+    try {
+      await Api.sendAdminemail(body);
+      (document.getElementById('subject') as HTMLInputElement).value = '';
+      (document.getElementById('content') as HTMLTextAreaElement).value = '';
+      message.success('Successfully sent email');
+      this.setState({
+        sending: false,
+      });
+    } catch (err) {
+      this.props.onErr(err.message);
+      this.setState({
+        sending: false,
+      })
+    }
+  }
+
   render() {
     return (
       <Row gutter={8}>
@@ -173,15 +226,17 @@ export default class ComposeEmail extends React.Component<ComposeEmailProps, Com
             })}
           </div>
           <div className="section">
-            <Input id="subject" placeholder="Subject" />
+            <Input id="subject" placeholder="Subject" disabled={this.state.sending} />
           </div>
           <div className="section">
-            <Input.TextArea id="content" rows={10} placeholder="Content" />
+            <Input.TextArea id="content" rows={10} placeholder="Content" disabled={this.state.sending} />
           </div>
           <div className="section action">
             <Button
               type="primary"
               style={{ marginRight: '8px' }}
+              onClick={this.send}
+              disabled={this.state.sending}
             >
               Send
             </Button>

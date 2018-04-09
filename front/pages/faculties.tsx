@@ -29,6 +29,9 @@ interface FacultiesPageState {
 export default class FacultiesPage extends React.Component<FacultiesPageProps, FacultiesPageState> {
   static async getInitialProps(context: InitialProps) {
     const user = await UserUtil.checkAuthentication(context);
+    if (!user || !(user.isAdmin || user.isSystemAdmin)) {
+      Api.redirect(context, '/dashboard');
+    }
 
     return {
       user

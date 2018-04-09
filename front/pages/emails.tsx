@@ -30,7 +30,10 @@ interface EmailsState {
 
 export default class Emails extends React.Component<EmailsProps, EmailsState> {
   static async getInitialProps(context: InitialProps) {
-    await UserUtil.checkAuthentication(context);
+    const user = await UserUtil.checkAuthentication(context);
+    if (!user || !(user.isAdmin || user.isSystemAdmin)) {
+      Api.redirect(context, '/dashboard');
+    }
     return {};
   }
 
