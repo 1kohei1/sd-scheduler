@@ -96,6 +96,11 @@ Feature requests from Dr. Heinrich
 - [ ] Reminding feature for student groups to provide conference paper
 - [ ] Make verification in one view. I don't want to do this since to enable this, it has to keep the information of creating presentation in database to handle user verified different device. (Probably not implemented.)
 
+What I can do better:
+
+- Provide a consistent design when their input has problems or API returns error
+- Be consistent for some terms. I use "subject" for adminemail view and "title" for the backend. 
+
 NOTES:
 
 * Date displayed in the browser is in US Eastern time. This is because this project is developed for UCF.
