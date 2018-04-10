@@ -206,6 +206,7 @@ export default class ComposeEmail extends React.Component<ComposeEmailProps, Com
             dataSource={this.props.faculties}
             rowSelection={this.rowSelection()}
             columns={this.tableColumns()}
+            pagination={false}
             rowKey="_id"
           />
         </Col>

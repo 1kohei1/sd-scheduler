@@ -8,6 +8,13 @@ module.exports = (server: Application) => {
   // This route is to let SD2 faculty to send emails
   // So routes are out of REST rules
   
+  server.get(
+    '/api/adminemails',
+    APIUtil.isAuthenticated,
+    APIUtil.isAuthorized,
+    adminemailsController.findEmails,
+  )
+
   server.post(
     '/api/adminemails',
     APIUtil.isAuthenticated,

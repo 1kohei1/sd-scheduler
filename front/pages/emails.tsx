@@ -13,6 +13,7 @@ import PastEmails from '../components/PastEmails';
 import EmailPreviewModalProps from '../components/EmailPreviewModal';
 
 export interface EmailsProps {
+  user: Faculty;
 }
 
 interface EmailsState {
@@ -34,7 +35,9 @@ export default class Emails extends React.Component<EmailsProps, EmailsState> {
     if (!user || !(user.isAdmin || user.isSystemAdmin)) {
       Api.redirect(context, '/dashboard');
     }
-    return {};
+    return {
+      user,
+    };
   }
 
   constructor(props: EmailsProps) {
@@ -147,7 +150,10 @@ export default class Emails extends React.Component<EmailsProps, EmailsState> {
             </Tabs.TabPane>
             <Tabs.TabPane tab="Past emails" key="emails">
               <PastEmails
+                user={this.props.user}
                 faculties={this.state.faculties}
+                onErr={this.onErr}
+                showPreview={this.showPreview}
               />
             </Tabs.TabPane>
           </Tabs>

@@ -162,6 +162,10 @@ export default class Api {
     * adminemails
     */
 
+    static async getEmails(query: string = '') {
+      return await Api.makeRequest(RequestMethod.GET, `/api/adminemails?${query}`);
+    }
+
     static async getTerms() {
       return await Api.makeRequest(RequestMethod.GET, `/api/adminemails/terms`);
     }

@@ -4,6 +4,24 @@ import DBUtil from '../utils/db.util';
 import APIUtil from '../utils/api.util';
 import Mailer, { MailTemplate, MailType } from '../utils/mail.util';
 
+module.exports.findEmails = (req: Request, res: Response) => {
+  const info: any = {
+    key: APIUtil.key(req),
+    debugInfo: {
+      userid: req.user._id,
+      query: req.query,
+    }
+  };
+  
+  DBUtil.findEmails(req.query)
+  .then(emails => {
+    APIUtil.successResponse(info, emails, res);
+  })
+  .catch(err => {
+    APIUtil.errorResponse(info, err.message, {}, res);
+  })
+}
+
 module.exports.send = (req: Request, res: Response) => {
   const info: any = {
     key: APIUtil.key(req),
