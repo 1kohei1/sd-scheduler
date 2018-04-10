@@ -87,7 +87,7 @@ TODO:
 
 Feature requests from Dr. Heinrich
 
-- [ ] Email tab to send emails to faculties. (Make <LINK></LINK>to paste the link)
+- [x] Email tab to send emails to faculties. (Make <LINK></LINK>to paste the link)
 - [x] Faculties tab to register/delete faculties to the system
 - [ ] Group import file is gonna be [First name] [Last name] [Email] [Group number]
 - [ ] Let SD2 faculty manually schedule the presentation
