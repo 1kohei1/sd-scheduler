@@ -68,8 +68,6 @@ TODO:
 - [x] Check if selected presentation time range is already taken by someone
 - [x] Display selected presentation time in the calendar
 - [ ] Support faculties to be displayed in EE/CS schedule (v3)
-- [ ] Improve the group import process. Thinking admin faculty gives me the group spreadsheet and I modify them to the format I specify. (v3)
-- [ ] Admin faculties can send spreadsheet of groups from groups page
 - [ ] Upload presentation materials (v2)
 - [ ] Add validation to object id existence (Middleware for that: https://github.com/CampbellSoftwareSolutions/mongoose-id-validator) (v3)
 - [x] Display scheduled presentations
@@ -90,15 +88,28 @@ Feature requests from Dr. Heinrich
 - [x] Email tab to send emails to faculties. (Make <LINK></LINK>to paste the link)
 - [x] Faculties tab to register/delete faculties to the system
 - [ ] Group import file is gonna be [First name] [Last name] [Email] [Group number]
-- [ ] Let SD2 faculty manually schedule the presentation
+- [x] Let SD2 faculty manually schedule the presentation
 - [x] Let student choose the faculty who is not registered to the system at scheduling presentation. 
 - [x] Make presentation dates and location in one tab. The location can change by presentation dates chunk
 - [ ] Reminding feature for student groups to provide conference paper
-- [ ] Make verification in one view. I don't want to do this since to enable this, it has to keep the information of creating presentation in database to handle user verified different device. (Probably not implemented.)
+- [ ] Instead of let user click, send code and make user type the code
+- [ ] Redesign the schedule page
+
+Personal review:
+
+GOOD: 
+
+- Good structure of the API side
+- Utilize mongoose hook for validations/sending emails
+- Centralized place for API/DB interactions
+- Keeping track of features in memo.md
+- Thought thoroughly at the beginning about the DB structure
+- Good choice of frontend framework
 
 What I can do better:
 
-- Provide a consistent design when their input has problems or API returns error
+- Better folder structure for the frontend component and component names
+- Provide a consistent design when API returns error
 - Be consistent for some terms. I use "subject" for adminemail view and "title" for the backend. 
 
 NOTES:
