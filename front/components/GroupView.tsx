@@ -156,18 +156,22 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
           schedulingPresentation={this.state.schedulingPresentation as Presentation}
           onClose={this.onClose}
         />
-        {this.state.groups.length === 0 ? (
+        {this.state.loading ? <Loading /> : (
           <div>
-            Drag and drop form to import groups
-            </div>
-        ) : (
-            <Table
-              dataSource={this.state.groups}
-              columns={this.columns()}
-              loading={this.state.loading}
-              rowKey="_id"
-            />
-          )}
+            {this.state.groups.length === 0 ? (
+              <div>
+                Drag and drop form to import groups
+              </div>
+            ) : (
+              <Table
+                dataSource={this.state.groups}
+                columns={this.columns()}
+                loading={this.state.loading}
+                rowKey="_id"
+              />
+            )}
+          </div>
+        )}
       </div>
     );
   }

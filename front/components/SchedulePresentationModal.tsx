@@ -185,9 +185,9 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
     try {
       // If _id is defined, update existing one.
       if (presentation._id) {
-        await Api.updatePresentation(presentation._id, body);
+        await Api.updatePresentationByAdmin(presentation._id, body);
       } else {
-        await Api.createPresentation(body);
+        await Api.createPresentationByAdmin(body);
       }
       message.success('Successfully created/updated presentation');
       this.props.onClose(true);
@@ -239,6 +239,7 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
             {this.state.errs.toArray().map((err: string, index: number) => (
               <Alert
                 key={index}
+                style={{ marginBottom: '8px' }}
                 type="error"
                 message={err}
               />
@@ -275,6 +276,7 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
                 <Select
                   onChange={(e: string) => this.onChange('start', e)}
                   style={{ width: '100%' }}
+                  placeholder="Presentation start time"
                   value={this.state.schedulingPresentation.get('start')}
                 >
                   {

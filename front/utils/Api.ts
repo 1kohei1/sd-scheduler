@@ -150,8 +150,16 @@ export default class Api {
      return await Api.makeRequest(RequestMethod.POST, `/api/presentations`, body);
    }
 
+   static async createPresentationByAdmin(body: object = {}) {
+    return await Api.makeRequest(RequestMethod.POST, `/api/presentations/admin`, body);     
+   }
+
    static async updatePresentation(_id: string, update: object) {
      return await Api.makeRequest(RequestMethod.PUT, `/api/presentations/${_id}`, update);
+   }
+
+   static async updatePresentationByAdmin(_id: string, update: object) {
+    return await Api.makeRequest(RequestMethod.PUT, `/api/presentations/admin/${_id}`, update);
    }
 
    static async cancelPresentation(_id: string, body: object) {

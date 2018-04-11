@@ -16,6 +16,22 @@ module.exports = (server: Application) => {
     presentationController.createPresentation,
   )
 
+  // API route for SD admin to create presentation
+  server.post(
+    '/api/presentations/admin',
+    APIUtil.isAuthenticated,
+    APIUtil.isAuthorized,
+    presentationController.createPresentation,
+  )
+
+  // API route for SD admin to update presentation
+  server.put(
+    '/api/presentations/admin/:_id',
+    APIUtil.isAuthenticated,
+    APIUtil.isAuthorized,
+    presentationController.updatePresentation,
+  )
+
   server.put(
     '/api/presentations/:_id',
     APIUtil.verifyJWT,
