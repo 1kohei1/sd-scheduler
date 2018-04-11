@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { Modal, Alert, Row, Col, Select, Input, Checkbox, Button, Icon } from 'antd';
-import { List } from 'immutable';
+import { Modal, Alert, Row, Col, Select, Input, Checkbox, Button, Icon, message } from 'antd';
+import { List, Map } from 'immutable';
 
 import Api from '../utils/Api';
 import Presentation from '../models/Presentation';
 import PresentationDate, { PresentationDateDates } from '../models/PresentationDate';
 import Faculty from '../models/Faculty';
+import Person, { NewPerson } from '../models/Person';
 import DatetimeUtil from '../utils/DatetimeUtil';
 import { DateConstants } from '../models/Constants';
 
@@ -20,7 +21,7 @@ export interface SchedulePresentationModalProps {
 interface SchedulePresentationModalState {
   errs: List<string>;
   presentationDate: PresentationDate | undefined;
-  schedulingPresentation: Presentation;
+  schedulingPresentation: Map<keyof Presentation, any>;
   faculties: Faculty[];
 }
 
@@ -31,10 +32,15 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
     this.state = {
       errs: List<string>(),
       presentationDate: undefined,
-      schedulingPresentation: props.schedulingPresentation,
+      schedulingPresentation: Map<keyof Presentation, any>(props.schedulingPresentation),
       faculties: [],
     }
 
+    this.onChange = this.onChange.bind(this);
+    this.onFacultiesChange = this.onFacultiesChange.bind(this);
+    this.addNewPerson = this.addNewPerson.bind(this);
+    this.deletePerson = this.deletePerson.bind(this);
+    this.onPersonChange = this.onPersonChange.bind(this);
     this.onOk = this.onOk.bind(this);
   }
 
@@ -51,7 +57,7 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
 
   componentWillReceiveProps(nextProps: SchedulePresentationModalProps) {
     this.setState({
-      schedulingPresentation: nextProps.schedulingPresentation,
+      schedulingPresentation: Map<keyof Presentation, any>(nextProps.schedulingPresentation),
     })
   }
 
@@ -78,8 +84,86 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
     }
   }
 
+  onChange(prop: keyof Presentation, val: string) {
+    this.setState((prevState: SchedulePresentationModalState, props: SchedulePresentationModalProps) => {
+      let newSchedulingPresentation = this.state.schedulingPresentation;
+      newSchedulingPresentation = newSchedulingPresentation.set(prop, val);
+
+      if (prop === 'start') {
+        const startMoment = DatetimeUtil.getMomentFromISOString(val);
+        const endMoment = DatetimeUtil.addToMoment(startMoment, 1, 'h');
+        newSchedulingPresentation = newSchedulingPresentation.set('end', endMoment.toISOString());
+      }
+
+      return {
+        schedulingPresentation: newSchedulingPresentation
+      };
+    });
+  }
+
+  onFacultiesChange(fid: string, checked: boolean) {
+    this.setState((prevState: SchedulePresentationModalState, props: SchedulePresentationModalProps) => {
+      const { schedulingPresentation } = prevState;
+      const newFaculties = prevState.schedulingPresentation.get('faculties');
+
+      if (checked) {
+        newFaculties.push(fid);
+      } else {
+        const index = newFaculties.indexOf(fid);
+        if (index >= 0) {
+          newFaculties.splice(index, 1);
+        }
+      }
+
+      return {
+        schedulingPresentation: schedulingPresentation.set('faculties', newFaculties),
+      }
+    });
+  }
+
+  addNewPerson(prop: 'sponsors' | 'externalFaculties') {
+    this.setState((prevState: SchedulePresentationModalState, props: SchedulePresentationModalProps) => {
+      const newArr = prevState.schedulingPresentation.get(prop);
+      newArr.push(NewPerson());
+      
+      console.log(newArr);
+
+      return {
+        schedulingPresentation: prevState.schedulingPresentation.set(prop, newArr),
+      }
+    });
+  }
+
+  onPersonChange(prop: 'sponsors' | 'externalFaculties', _id: string, prop2: 'firstName' | 'lastName' | 'email', val: string) {
+    this.setState((prevState: SchedulePresentationModalState, props: SchedulePresentationModalProps) => {
+      const newArr = prevState.schedulingPresentation.get(prop);
+      const index = newArr.findIndex((p: Person) => p._id === _id);
+      newArr[index][prop2] = val;
+
+      console.log(newArr);
+
+      return {
+        schedulingPresentation: prevState.schedulingPresentation.set(prop, newArr),
+      }
+    });
+  }
+
+  deletePerson(prop: 'sponsors' | 'externalFaculties', _id: string) {
+    this.setState((prevState: SchedulePresentationModalState, props: SchedulePresentationModalProps) => {
+      const newArr = prevState.schedulingPresentation.get(prop);
+      const index = newArr.findIndex((p: Person) => p._id === _id);
+      newArr.splice(index, 1);
+
+      console.log(newArr);
+      
+      return {
+        schedulingPresentation: prevState.schedulingPresentation.set(prop, newArr),
+      }
+    });
+  }
+
   onOk() {
-    if (this.state.schedulingPresentation._id) {
+    if (this.state.schedulingPresentation.get('_id')) {
       // Update existing presentation
     } else {
       // Create new presentation
@@ -91,36 +175,45 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
     return (
       <Modal
         visible={this.props.visible}
-        title={`Schedule presentation for group ${this.state.schedulingPresentation && this.props.schedulingPresentation.group.groupNumber}`}
+        title={`Schedule presentation for group ${this.state.schedulingPresentation.size > 0 && this.state.schedulingPresentation.get('group').groupNumber}`}
         onOk={this.onOk}
         onCancel={e => this.props.onClose(false)}
       >
-        {this.state.schedulingPresentation && (
+        {this.state.schedulingPresentation.size > 0 && (
           <div>
             <Row style={{ marginBottom: '8px' }}>
-              <Col span={4} style={{ lineHeight: '30px' }}>
+              <Col span={6}>
                 Project name:
               </Col>
-              <Col span={20}>
-                {/* <Input value={this.state.schedulingPresentation.projectName} /> */}
+              <Col span={18}>
+                <Input
+                  onChange={e => this.onChange('projectName', e.target.value)}
+                  value={this.state.schedulingPresentation.get('projectName')}
+                  placeholder="Project name"
+                />
               </Col>
             </Row>
             <Row style={{ marginBottom: '8px' }}>
-              <Col span={4} style={{ lineHeight: '30px' }}>
+              <Col span={6}>
                 Sponsor name:
               </Col>
-              <Col span={20}>
-                {/* <Input value={this.state.schedulingPresentation.sponsorName} /> */}
+              <Col span={18}>
+                <Input
+                  onChange={e => this.onChange('sponsorName', e.target.value)}
+                  value={this.state.schedulingPresentation.get('sponsorName')}
+                  placeholder="Sponsor name"
+                />
               </Col>
             </Row>
             <Row style={{ marginBottom: '8px' }}>
-              <Col span={4} style={{ lineHeight: '30px' }}>
+              <Col span={6} style={{ lineHeight: '30px' }}>
                 Date time:
               </Col>
-              <Col span={20}>
+              <Col span={18}>
                 <Select
+                  onChange={(e: string) => this.onChange('start', e)}
                   style={{ width: '100%' }}
-                  value={this.state.schedulingPresentation.start}
+                  value={this.state.schedulingPresentation.get('start')}
                 >
                   {
                     DatetimeUtil.getIsoStringsFromPresentationDateDates((this.state.presentationDate as PresentationDate).dates)
@@ -137,46 +230,86 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
               </Col>
             </Row>
             <Row style={{ marginBottom: '8px' }}>
-              <Col span={4} style={{ lineHeight: '30px' }}>
+              <Col span={6} style={{ lineHeight: '30px' }}>
                 Faculties:
               </Col>
-              <Col span={20}>
+              <Col span={18}>
                 {this.state.faculties.map(faculty => (
-                  <Checkbox
-                    key={faculty._id}
-                    checked={this.state.schedulingPresentation.faculties.indexOf(faculty._id) >= 0}
-                  >
-                    Dr. {faculty.firstName} {faculty.lastName} {faculty.isAdmin && <span>(SD Faculty)</span>}
-                  </Checkbox>
+                  <div key={faculty._id}>
+                    <Checkbox
+                      onChange={e => this.onFacultiesChange(faculty._id, e.target.checked)}
+                      checked={this.state.schedulingPresentation.get('faculties').indexOf(faculty._id) >= 0}
+                    >
+                      Dr. {faculty.firstName} {faculty.lastName} {faculty.isAdmin && <span>(SD Faculty)</span>}
+                    </Checkbox>
+                  </div>
                 ))}
               </Col>
             </Row>
             <Row style={{ marginBottom: '8px' }}>
-              <Col span={4}>
+              <Col span={6}>
                 External faculties:
               </Col>
-              <Col span={20}>
-                {this.state.schedulingPresentation.externalFaculties.map(faculty => (
-                  <div style={{ display: 'flex' }} key={faculty._id}>
-                    <Input value={faculty.firstName} placeholder="First name" />
-                    <Input value={faculty.lastName} placeholder="Last name" />
-                    <Input value={faculty.email} placeholder="Email" />
-                    <Button icon="delete" shape="circle" />
+              <Col span={18}>
+                {this.state.schedulingPresentation.get('externalFaculties').map((faculty: Person) => (
+                  <div key={faculty._id} style={{ marginBottom: '8px' }}>
+                    <Input
+                      value={faculty.firstName}
+                      placeholder="First name"
+                      onChange={e => this.onPersonChange('externalFaculties', faculty._id, 'firstName', e.target.value)}
+                    />
+                    <Input
+                      value={faculty.lastName}
+                      placeholder="Last name"
+                      onChange={e => this.onPersonChange('externalFaculties', faculty._id, 'lastName', e.target.value)}
+                    />
+                    <Input
+                      value={faculty.email}
+                      placeholder="Email"
+                      onChange={e => this.onPersonChange('externalFaculties', faculty._id, 'email', e.target.value)}
+                    />
+                    <Button icon="delete" shape="circle" onClick={e => this.deletePerson('externalFaculties', faculty._id)} />
                   </div>
                 ))}
                 <Button
                   type="dashed"
+                  onClick={e => this.addNewPerson('externalFaculties')}
                 >
                   <Icon type="plus" /> Add new other department faculty
                 </Button>
               </Col>
             </Row>
             <Row style={{ marginBottom: '8px' }}>
-              <Col span={4}>
+              <Col span={6}>
                 Sponsors:
               </Col>
-              <Col span={20}>
-
+              <Col span={18}>
+                {this.state.schedulingPresentation.get('sponsors').map((sponsor: Person) => (
+                  <div key={sponsor._id} style={{ marginBottom: '8px' }}>
+                    <Input
+                      value={sponsor.firstName}
+                      placeholder="First name"
+                      onChange={e => this.onPersonChange('sponsors', sponsor._id, 'firstName', e.target.value)}
+                    />
+                    <Input
+                      value={sponsor.lastName}
+                      placeholder="Last name"
+                      onChange={e => this.onPersonChange('sponsors', sponsor._id, 'lastName', e.target.value)}
+                    />
+                    <Input
+                      value={sponsor.email}
+                      placeholder="Email"
+                      onChange={e => this.onPersonChange('sponsors', sponsor._id, 'email', e.target.value)}
+                    />
+                    <Button icon="delete" shape="circle" onClick={e => this.deletePerson('sponsors', sponsor._id)} />
+                  </div>
+                ))}
+                <Button
+                  type="dashed"
+                  onClick={e => this.addNewPerson('sponsors')}
+                >
+                  <Icon type="plus" /> Add new sponsor
+                </Button>
               </Col>
             </Row>
           </div>
