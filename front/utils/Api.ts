@@ -146,19 +146,23 @@ export default class Api {
      return await Api.makeRequest(RequestMethod.GET, `/api/presentations?${query}`);
    }
 
-   static async createPresentation(body: object = {}) {
+   static async createPresentation(body: {[key: string]: any} = {}) {
+     body.checkFacultyAvailability = true;
      return await Api.makeRequest(RequestMethod.POST, `/api/presentations`, body);
    }
 
-   static async createPresentationByAdmin(body: object = {}) {
+   static async createPresentationByAdmin(body: {[key: string]: any} = {}) {
+    body.checkFacultyAvailability = false;
     return await Api.makeRequest(RequestMethod.POST, `/api/presentations/admin`, body);     
    }
 
-   static async updatePresentation(_id: string, update: object) {
+   static async updatePresentation(_id: string, update: {[key: string]: any}) {
+    update.checkFacultyAvailability = true;
      return await Api.makeRequest(RequestMethod.PUT, `/api/presentations/${_id}`, update);
    }
 
-   static async updatePresentationByAdmin(_id: string, update: object) {
+   static async updatePresentationByAdmin(_id: string, update: {[key: string]: any}) {
+    update.checkFacultyAvailability = false;
     return await Api.makeRequest(RequestMethod.PUT, `/api/presentations/admin/${_id}`, update);
    }
 

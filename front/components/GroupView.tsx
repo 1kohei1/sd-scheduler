@@ -81,10 +81,18 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
       dataIndex: 'groupNumber',
     }, {
       title: 'Project name',
-      dataIndex: 'projectName'
+      dataIndex: 'projectName',
+      render: (val: string, group: Group) => {
+        const presentation = this.state.presentations.find(presentation => presentation.group._id === group._id);
+        return presentation ? presentation.projectName : '';
+      },
     }, {
       title: 'Sponsor',
       dataIndex: 'sponsorName',
+      render: (val: string, group: Group) => {
+        const presentation = this.state.presentations.find(presentation => presentation.group._id === group._id);
+        return presentation ? presentation.sponsorName : '';
+      }
     }, {
       title: 'Member',
       render: (text: any, record: Group, index: any) => {
@@ -156,22 +164,20 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
           schedulingPresentation={this.state.schedulingPresentation as Presentation}
           onClose={this.onClose}
         />
-        {this.state.loading ? <Loading /> : (
-          <div>
-            {this.state.groups.length === 0 ? (
-              <div>
-                Drag and drop form to import groups
+        <div>
+          {this.state.groups.length === 0 ? (
+            <div>
+              Drag and drop form to import groups
               </div>
-            ) : (
-              <Table
-                dataSource={this.state.groups}
-                columns={this.columns()}
-                loading={this.state.loading}
-                rowKey="_id"
-              />
-            )}
-          </div>
-        )}
+          ) : (
+            <Table
+              dataSource={this.state.groups}
+              columns={this.columns()}
+              loading={this.state.loading}
+              rowKey="_id"
+            />
+          )}
+        </div>
       </div>
     );
   }

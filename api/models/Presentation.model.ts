@@ -67,6 +67,11 @@ const PresentationSchema = new Schema({
     canceledBy: String,
     note: String,
   },
+  // When admin makes change, this must be false to pass validation. 
+  checkFacultyAvailability: {
+    type: Boolean,
+    default: true,
+  },
   created_at: Date,
   updated_at: Date,
 });
@@ -168,7 +173,15 @@ const presentationValidation = (doc: Document, group: Document, next: any) => {
     .then((availableSlots: Document[]) => {
       if (availableSlots.length !== doc.get('faculties').length) {
         return Promise.reject(new Error('One of specified faculties is not available at specified time'));
-      } else {
+      }
+      // This is the case when admin makes change
+      else if (!doc.get('checkFacultyAvailability')) {
+        return DBUtil.findPresentations({
+          semester,
+        }).exec();
+      }
+      // This is the case that student group makes change
+      else {
         const isAllFacultiesAvailable = availableSlots
           .filter((availableSlot: Document) => {
             // Simplify this operation
@@ -222,7 +235,7 @@ const presentationValidation = (doc: Document, group: Document, next: any) => {
 
       if (overlappingPresentations.length > 0) {
         const groupNumber = overlappingPresentations[0].get('group').get('groupNumber');
-        return Promise.reject(new Error(`Some faculties are already booked for group ${groupNumber} for specified time`))
+        return Promise.reject(new Error(`Some faculties are already booked for specified time`))
       } else {
         return Promise.resolve();
       }

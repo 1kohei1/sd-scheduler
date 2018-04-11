@@ -22,6 +22,7 @@ interface SchedulePresentationModalState {
   errs: List<string>;
   presentationDate: PresentationDate | undefined;
   schedulingPresentation: Map<keyof Presentation, any>;
+  saving: boolean;
   faculties: Faculty[];
 }
 
@@ -33,6 +34,7 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
       errs: List<string>(),
       presentationDate: undefined,
       schedulingPresentation: Map<keyof Presentation, any>(props.schedulingPresentation),
+      saving: false,
       faculties: [],
     }
 
@@ -57,6 +59,8 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
 
   componentWillReceiveProps(nextProps: SchedulePresentationModalProps) {
     this.setState({
+      errs: List<string>(),
+      saving: false,
       schedulingPresentation: Map<keyof Presentation, any>(nextProps.schedulingPresentation),
     })
   }
@@ -126,8 +130,6 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
       const newArr = prevState.schedulingPresentation.get(prop);
       newArr.push(NewPerson());
 
-      console.log(newArr);
-
       return {
         schedulingPresentation: prevState.schedulingPresentation.set(prop, newArr),
       }
@@ -139,8 +141,6 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
       const newArr = prevState.schedulingPresentation.get(prop);
       const index = newArr.findIndex((p: Person) => p._id === _id);
       newArr[index][prop2] = val;
-
-      console.log(newArr);
 
       return {
         schedulingPresentation: prevState.schedulingPresentation.set(prop, newArr),
@@ -154,8 +154,6 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
       const index = newArr.findIndex((p: Person) => p._id === _id);
       newArr.splice(index, 1);
 
-      console.log(newArr);
-
       return {
         schedulingPresentation: prevState.schedulingPresentation.set(prop, newArr),
       }
@@ -168,6 +166,10 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
       message.error(msg);
       return;
     }
+
+    this.setState({
+      saving: true,
+    })
 
     const presentation = this.state.schedulingPresentation.toObject();
     const body = {
@@ -232,6 +234,7 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
         visible={this.props.visible}
         title={`Schedule presentation for group ${this.state.schedulingPresentation.size > 0 && this.state.schedulingPresentation.get('group').groupNumber}`}
         onOk={this.onOk}
+        confirmLoading={this.state.saving}
         onCancel={e => this.props.onClose(false)}
       >
         {this.state.schedulingPresentation.size > 0 && (
