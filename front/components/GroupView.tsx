@@ -130,7 +130,8 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
       .find(presentation => presentation.group._id === group._id);
     if (!schedulingPresentation) {
       schedulingPresentation = newPresentation(this.props.semester._id);
-      // Modal checks if the presentation already exists in DB by checking _id. So set undefined for _id
+      // Modal component determins updating existing presentation or creating new by looking at presentation._id
+      // So set empty string to be evaluated false
       schedulingPresentation._id = '';
       // Set default value 
       schedulingPresentation.semester = this.props.semester._id;
@@ -149,6 +150,7 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
         <h1>Group</h1>
         <SchedulePresentationModal
           visible={this.state.schedulingModal}
+          user={this.props.user}
           semesterId={this.props.semester._id}
           schedulingPresentation={this.state.schedulingPresentation as Presentation}
           onClose={this.onClose}

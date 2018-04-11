@@ -4,7 +4,7 @@ import { Range } from 'immutable';
 
 import { DateConstants } from '../models/Constants';
 import TimeSlot from '../models/TimeSlot';
-import PresentationDate from '../models/PresentationDate';
+import PresentationDate, { PresentationDateDates } from '../models/PresentationDate';
 
 export interface TimeSlotLikeObject {
   _id: string;
@@ -133,6 +133,32 @@ export default class DatetimeUtil {
 
     // Based on the restriction that TimeSlot.start <= TimeSlot.end
     return t1Start <= t2Start && t2End <= t1End;
+  }
+
+  static getIsoStringsFromPresentationDateDates(dates: PresentationDateDates[]) {
+    const isoarr: string[] = [];
+
+    dates.forEach((date: PresentationDateDates) => {
+      const dateStr = DatetimeUtil.formatISOString(date.start, DateConstants.dateFormat);
+      const dateTimeslot = DatetimeUtil.convertToTimeSlot(date);
+
+      DatetimeUtil.getTimeOptions(false)
+        .map(hourOption => {
+          const startMoment = DatetimeUtil.getMomentByFormat(`${dateStr} ${hourOption}`, `${DateConstants.dateFormat} ${DateConstants.hourFormat}`);
+          const endMoment = DatetimeUtil.addToMoment(startMoment, 1, 'h');
+
+          return {
+            _id: 'dummy _id',
+            start: startMoment,
+            end: endMoment,
+          };
+        })
+        .filter((timeslot: TimeSlot) => DatetimeUtil.doesCover(dateTimeslot, timeslot))
+        .map((timeslot: TimeSlot) => timeslot.start.toISOString())
+        .forEach(isostring => isoarr.push(isostring));
+    });
+
+    return isoarr;
   }
 
   static getTimeOptions(includeMin: boolean = false) {
