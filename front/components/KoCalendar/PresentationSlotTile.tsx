@@ -58,6 +58,7 @@ class PresentationSlotTile extends React.Component<PresentationSlotTileProps, an
     const topOffset = `${(start - this.props.ruler[0]) * KoCalendarConstants.rulerColumnHeightNum}px`;
     const height = `${(end - start) * KoCalendarConstants.rulerColumnHeightNum}px`;
 
+    const { presentation } = this.props;
     const { group } = this.props.presentation;
 
     // Get location here
@@ -88,7 +89,7 @@ class PresentationSlotTile extends React.Component<PresentationSlotTileProps, an
         </div>
 
         <Modal
-          title={group.projectName}
+          title={presentation.projectName}
           visible={this.state.visible}
           cancelText="Close"
           destroyOnClose={true}
@@ -116,7 +117,7 @@ class PresentationSlotTile extends React.Component<PresentationSlotTileProps, an
               Sponsor:
           </Col>
             <Col span={20} xs={19}>
-              {group.sponsorName}
+              {presentation.sponsorName}
             </Col>
           </Row>
           <Row>
@@ -140,7 +141,7 @@ class PresentationSlotTile extends React.Component<PresentationSlotTileProps, an
               Sponsor:
           </Col>
             <Col span={20} xs={19}>
-              {group.sponsors.map(member => `${member.firstName} ${member.lastName}`).join(', ')}
+              {presentation.sponsors.map(member => `${member.firstName} ${member.lastName}`).join(', ')}
             </Col>
           </Row>
           <div

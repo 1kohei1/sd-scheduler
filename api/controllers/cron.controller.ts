@@ -98,10 +98,10 @@ module.exports.presentationReminder = (req: Request, res: Response) => {
           })
         });
 
-        group.get('sponsors').forEach((sponsor: Document) => {
+        presentation.get('sponsors').forEach((sponsor: Document) => {
           emails.push({
             email: sponsor.get('email'),
-            title: `${group.get('projectName')} presentation is in ${startsIn} at ${locationName}`,
+            title: `${presentation.get('projectName')} presentation is in ${startsIn} at ${locationName}`,
             name: `${sponsor.get('firstName')} ${sponsor.get('lastName')}`,
           })
         });
