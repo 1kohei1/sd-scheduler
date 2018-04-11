@@ -1,10 +1,6 @@
 import { Model, model, Schema } from 'mongoose';
 
 const GroupSchema = new Schema({
-  projectName: {
-    type: String,
-    default: '',
-  },
   semester: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -15,15 +11,6 @@ const GroupSchema = new Schema({
     lastName: String,
     email: String,
   }],
-  sponsors: [{
-    firstName: String,
-    lastName: String,
-    email: String,
-  }],
-  sponsorName: {
-    type: String,
-    default: '',
-  },
   groupNumber: {
     type: Number,
     required: true,

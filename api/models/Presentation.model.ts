@@ -23,6 +23,19 @@ const PresentationSchema = new Schema({
     ref: 'Semester',
     required: true,
   },
+  projectName: {
+    type: String,
+    default: '',
+  },
+  sponsorName: {
+    type: String,
+    default: '',
+  },
+  sponsors: [{
+    firstName: String,
+    lastName: String,
+    email: String,
+  }],
   group: {
     type: Schema.Types.ObjectId,
     ref: 'Group',
@@ -295,11 +308,11 @@ PresentationSchema.post('save', (doc: Document, next: any) => {
         }
       });
 
-      group.get('sponsors').forEach((sponsor: Document) => {
+      doc.get('sponsors').forEach((sponsor: Document) => {
         emails.push({
           email: sponsor.get('email'),
           name: `${sponsor.get('firstName')} ${sponsor.get('lastName')}`,
-          title: `${group.get('projectName')} presentation is scheduled at ${time} on ${date} at ${location}`,
+          title: `${doc.get('projectName')} presentation is scheduled at ${time} on ${date} at ${location}`,
           type: 'sponsor',
         })
       })
@@ -395,12 +408,12 @@ PresentationSchema.post('remove', (doc: Document, next: any) => {
           });
         });
 
-      group.get('sponsors')
+      doc.get('sponsors')
         .forEach((sponsor: Document) => {
           emails.push({
             email: sponsor.get('email'),
             name: `${sponsor.get('firstName')} ${sponsor.get('lastName')}`,
-            title: `${group.get('projectName')} presentation is canceld since one of faculty member becomes unavailable`,
+            title: `${doc.get('projectName')} presentation is canceld since one of faculty member becomes unavailable`,
             type: 'sponsor',
             canceledBy,
             note,

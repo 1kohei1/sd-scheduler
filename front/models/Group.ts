@@ -1,9 +1,4 @@
-export interface Person {
-  _id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-}
+import Person from './Person';
 
 export default interface Group {
   _id: string;
