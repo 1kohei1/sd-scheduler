@@ -125,7 +125,7 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
     this.setState((prevState: SchedulePresentationModalState, props: SchedulePresentationModalProps) => {
       const newArr = prevState.schedulingPresentation.get(prop);
       newArr.push(NewPerson());
-      
+
       console.log(newArr);
 
       return {
@@ -155,20 +155,75 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
       newArr.splice(index, 1);
 
       console.log(newArr);
-      
+
       return {
         schedulingPresentation: prevState.schedulingPresentation.set(prop, newArr),
       }
     });
   }
 
-  onOk() {
-    if (this.state.schedulingPresentation.get('_id')) {
-      // Update existing presentation
-    } else {
-      // Create new presentation
+  async onOk() {
+    const msg = this.validateMessage();
+    if (msg.length > 0) {
+      message.error(msg);
+      return;
     }
-    this.props.onClose(true);
+
+    const presentation = this.state.schedulingPresentation.toObject();
+    const body = {
+      start: presentation.start,
+      end: presentation.end,
+      semester: presentation.semester,
+      projectName: presentation.projectName,
+      sponsorName: presentation.sponsorName,
+      sponsors: presentation.sponsors,
+      group: presentation.group._id,
+      faculties: presentation.faculties,
+      externalFaculties: presentation.externalFaculties,
+    };
+
+    try {
+      // If _id is defined, update existing one.
+      if (presentation._id) {
+        await Api.updatePresentation(presentation._id, body);
+      } else {
+        await Api.createPresentation(body);
+      }
+      message.success('Successfully created/updated presentation');
+      this.props.onClose(true);
+    } catch (err) {
+      this.onErr(err.message);
+    }
+  }
+
+  private validateMessage() {
+    const presentation = this.state.schedulingPresentation.toObject();
+
+    // Check all necessary information is filled
+    if (!presentation.projectName || !presentation.sponsorName || !presentation.start || !presentation.end) {
+      return 'Please fill in the required field';
+    }
+
+    // Check faculties
+    if (presentation.faculties.length + presentation.externalFaculties.length < 4) {
+      return '4 faculties must be selected'
+    }
+
+    // Check admin faculty is selected
+    if (presentation.faculties.indexOf(this.props.user._id) === -1) {
+      return 'SD faculty (you) is not selected';
+    }
+
+    // Check external faculty and sponsors
+    const people = presentation.externalFaculties.concat(presentation.sponsors);
+    const invalidPeople = people
+      .filter((person: Person) => !person.firstName || !person.lastName || !person.email)
+      .length > 0;
+    if (invalidPeople) {
+      return 'Please fill all information for external faculties or sponsors';
+    }
+
+    return '';
   }
 
   render() {
@@ -181,6 +236,13 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
       >
         {this.state.schedulingPresentation.size > 0 && (
           <div>
+            {this.state.errs.toArray().map((err: string, index: number) => (
+              <Alert
+                key={index}
+                type="error"
+                message={err}
+              />
+            ))}
             <Row style={{ marginBottom: '8px' }}>
               <Col span={6}>
                 Project name:

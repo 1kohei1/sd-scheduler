@@ -25,11 +25,11 @@ const PresentationSchema = new Schema({
   },
   projectName: {
     type: String,
-    default: '',
+    required: true,
   },
   sponsorName: {
     type: String,
-    default: '',
+    required: true,
   },
   sponsors: [{
     firstName: String,

@@ -101,9 +101,9 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
 
         if (presentation) {
           return (
-            <div>
+            <a href="" onClick={e => this.schedulingModal(e, group)}>
               {DatetimeUtil.formatISOString(presentation.start, `${DateConstants.dateFormat} ${DateConstants.hourMinFormat}`)}
-            </div>
+            </a>
           );
         } else {
           return <a href="" onClick={e => this.schedulingModal(e, group)}>Schedule presentation</a>;
