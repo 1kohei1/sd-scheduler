@@ -7,9 +7,10 @@ import Faculty from '../models/Faculty';
 import Loading from '../components/Loading';
 import Group, { Person } from '../models/Group';
 import Api from '../utils/Api';
-import Presentation from '../models/Presentation';
+import Presentation, { newPresentation } from '../models/Presentation';
 import DatetimeUtil from '../utils/DatetimeUtil';
 import { DateConstants } from '../models/Constants';
+import SchedulePresentationModal from './SchedulePresentationModal';
 
 export interface GroupViewProps {
   user: Faculty;
@@ -20,6 +21,8 @@ interface GroupViewState {
   errs: List<string>;
   loading: boolean;
   groups: Group[];
+  schedulingModal: boolean;
+  schedulingPresentation: Presentation | undefined;
   presentations: Presentation[];
 }
 
@@ -31,11 +34,14 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
       errs: List<string>(),
       loading: true,
       groups: Array<Group>(),
+      schedulingModal: false,
+      schedulingPresentation: undefined,
       presentations: Array<Presentation>(),
     };
 
-    this.content = this.content.bind(this);
     this.columns = this.columns.bind(this);
+    this.onClose = this.onClose.bind(this);
+    this.schedulingModal = this.schedulingModal.bind(this);
   }
 
   onErr(err: string) {
@@ -99,36 +105,66 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
             </div>
           );
         } else {
-          return '';
+          return <a href="" onClick={e => this.schedulingModal(e, group)}>Schedule presentation</a>;
         }
       }
     }]
   }
 
-  content() {
-    return (
-      <div>
-        {this.state.groups.length === 0 ? (
-          <div>No groups are found in your class. Please send your group spreadsheet to tobecomebig@gmail.com</div>
-        ) : (
-            <div>Form to request changes</div>
-          )}
-        <Table
-          dataSource={this.state.groups}
-          columns={this.columns()}
-          rowKey="_id"
-        />
-      </div>
-    )
+  onClose(shouldUpdate: boolean) {
+    const newState: any = {
+      schedulingModal: false,
+    }
+
+    if (shouldUpdate) {
+      newState.loading = true;
+      this.getData();
+    }
+    this.setState(newState);
+  }
+
+  schedulingModal(e: React.MouseEvent<any>, group: Group) {
+    e.preventDefault();
+
+    let schedulingPresentation = this.state.presentations
+      .find(presentation => presentation.group._id === group._id);
+    if (!schedulingPresentation) {
+      schedulingPresentation = newPresentation(this.props.semester._id);
+      // Modal checks if the presentation already exists in DB by checking _id. So set undefined for _id
+      schedulingPresentation._id = '';
+      // Set default value 
+      schedulingPresentation.semester = this.props.semester._id;
+      schedulingPresentation.group = group;
+    }
+
+    this.setState({
+      schedulingModal: true,
+      schedulingPresentation,
+    })
   }
 
   render() {
     return (
       <div>
         <h1>Group</h1>
-        {this.state.loading ? (
-          <Loading />
-        ) : this.content()}
+        <SchedulePresentationModal
+          visible={this.state.schedulingModal}
+          semesterId={this.props.semester._id}
+          schedulingPresentation={this.state.schedulingPresentation as Presentation}
+          onClose={this.onClose}
+        />
+        {this.state.groups.length === 0 ? (
+          <div>
+            Drag and drop form to import groups
+            </div>
+        ) : (
+            <Table
+              dataSource={this.state.groups}
+              columns={this.columns()}
+              loading={this.state.loading}
+              rowKey="_id"
+            />
+          )}
       </div>
     );
   }
