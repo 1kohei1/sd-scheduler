@@ -219,6 +219,7 @@ class Account extends React.Component<AccountProps, AccountState> {
     return (
       <AppLayout>
         <FormLayout>
+          <h1>Account</h1>
           {this.state.err && (
             <Alert
               message={this.state.err}

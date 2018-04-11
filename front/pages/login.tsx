@@ -79,6 +79,7 @@ class Login extends React.Component<LoginProps, LoginState> {
     return (
       <AppLayout>
         <FormLayout>
+          <h1>Login</h1>
           <Form onSubmit={this.handleSubmit}>
             {this.state.err && (
               <FormItem>

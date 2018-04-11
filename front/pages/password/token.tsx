@@ -30,7 +30,8 @@ class Token extends React.Component<TokenProps, TokenState> {
     if (faculties.length === 0 || new Date(faculties[0]).valueOf() < new Date().valueOf()) {
       Api.redirect(context, '/password', {
         err: 'Token has expired. Please send another password reset email',
-      })
+      });
+      return {};
     }
     return {
       token,
@@ -115,6 +116,7 @@ class Token extends React.Component<TokenProps, TokenState> {
     return (
       <AppLayout>
         <FormLayout>
+          <h1>New password</h1>
           <Form onSubmit={this.handleSubmit}>
             {this.state.err && (
               <Form.Item>

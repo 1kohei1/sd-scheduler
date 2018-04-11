@@ -68,6 +68,7 @@ class PasswordIndex extends React.Component<PasswordIndexProps, PasswordIndexSta
     return (
       <AppLayout>
         <FormLayout>
+          <h1>Reset password</h1>
           <Form onSubmit={this.handleSubmit}>
             {this.state.err && (
               <Form.Item>
