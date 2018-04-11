@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Upload, Icon, Button, Table, message } from 'antd';
+import { List } from 'immutable';
 
 import { Semester } from '../models/Semester';
 import Faculty from '../models/Faculty';
@@ -16,6 +17,7 @@ export interface GroupViewProps {
 }
 
 interface GroupViewState {
+  errs: List<string>;
   loading: boolean;
   groups: Group[];
   presentations: Presentation[];
@@ -26,6 +28,7 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
     super(props);
 
     this.state = {
+      errs: List<string>(),
       loading: true,
       groups: Array<Group>(),
       presentations: Array<Presentation>(),
@@ -35,23 +38,34 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
     this.columns = this.columns.bind(this);
   }
 
-  componentDidMount() {
-    this.getGroups();
-    this.getPresentations();
-  }
-
-  private async getGroups() {
-    const query = `semester=${this.props.semester._id}&adminFaculty=${this.props.user._id}`;
-    const groups = await Api.getGroups(query) as Group[];
-
+  onErr(err: string) {
     this.setState({
-      groups,
-      loading: false,
+      errs: this.state.errs.push(err),
     })
   }
 
-  private async getPresentations() {
+  componentDidMount() {
+    this.getData();
+  }
 
+  async getData() {
+    try {
+      let query = `semester=${this.props.semester._id}&adminFaculty=${this.props.user._id}`;
+      const groups = await Api.getGroups(query) as Group[];
+
+      const groupQuery = groups.map(group => `group[$in]=${group._id}`);
+      query = `semester=${this.props.semester._id}&${groupQuery.join('&')}`;
+
+      const presentations = await Api.getPresentations(query) as Presentation[];
+
+      this.setState({
+        groups,
+        presentations,
+        loading: false,
+      })
+    } catch (err) {
+      this.onErr(err);
+    }
   }
 
   columns() {
@@ -69,28 +83,21 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
       render: (text: any, record: Group, index: any) => {
         return (
           <div>
-            {record.members.map((member: Person) => (
-              <span key={member._id}>
-                {member.firstName && member.lastName ? (
-                  <span>{member.firstName} {member.lastName} |&nbsp;</span>
-                ) : (
-                  <span>{member.email},&nbsp;</span>
-                )}
-                
-              </span>
-            ))}
+            {record.members.map((member: Person) => `${member.firstName} ${member.firstName}`).join(', ')}
           </div>
         )
       }
     }, {
       title: 'Scheduled',
-      render: (text: any, record: Group) => {
-        const presentation = this.state.presentations.find(presentation => presentation.group._id === record._id);
+      render: (text: any, group: Group) => {
+        const presentation = this.state.presentations.find(presentation => presentation.group._id === group._id);
 
         if (presentation) {
-          <div>
-            <Icon type="check" /> {DatetimeUtil.formatISOString(presentation.start, `${DateConstants.dateFormat} ${DateConstants.hourMinFormat}`)}
-          </div>
+          return (
+            <div>
+              {DatetimeUtil.formatISOString(presentation.start, `${DateConstants.dateFormat} ${DateConstants.hourMinFormat}`)}
+            </div>
+          );
         } else {
           return '';
         }
@@ -104,8 +111,8 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
         {this.state.groups.length === 0 ? (
           <div>No groups are found in your class. Please send your group spreadsheet to tobecomebig@gmail.com</div>
         ) : (
-          <div>Form to request changes</div>
-        )}
+            <div>Form to request changes</div>
+          )}
         <Table
           dataSource={this.state.groups}
           columns={this.columns()}
