@@ -63,4 +63,13 @@ module.exports = (app: Server, server: Application) => {
       })
     }
   )
+
+  server.get(
+    '/schedule/:groupId',
+    (req: Request, res: Response) => {
+      app.render(req, res, '/schedule/fillpresentation', {
+        groupId: req.params.groupId,
+      })
+    }
+  )
 }
