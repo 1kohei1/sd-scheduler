@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Row, Col, Form, Select, Input, Button, Icon } from 'antd';
+import { Row, Col, Form, Select, Input, Button, Icon, Alert } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { List, Map } from 'immutable';
 import ObjectID from 'bson-objectid';
@@ -9,6 +9,8 @@ import Group from '../../models/Group';
 import Presentation, { NewPresentation } from '../../models/Presentation';
 import PresentationDate from '../../models/PresentationDate';
 import Person, { NewPerson } from '../../models/Person';
+import Faculty from '../../models/Faculty';
+import AvailableSlot from '../../models/AvailableSlot';
 import Api from '../../utils/Api';
 import AppLayout from '../../components/AppLayout';
 import ScheduleLayout from '../../components/ScheduleLayout';
@@ -24,6 +26,11 @@ interface FillPresentationState {
   loading: boolean;
   saving: boolean;
   errs: List<string>;
+
+  allFaculties: Faculty[];
+  presentationDate: PresentationDate | undefined;
+  allPresentations: Presentation[];
+  allAvailableSlots: AvailableSlot[];
 
   schedulingPresentation: Map<keyof Presentation, any>;
 }
@@ -56,6 +63,11 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
       loading: true,
       saving: false,
       errs: List<string>(),
+
+      allFaculties: [],
+      presentationDate: undefined,
+      allPresentations: [],
+      allAvailableSlots: [],
 
       schedulingPresentation: Map<keyof Presentation, any>(NewPresentation(this.props.group.semester, this.props.group)),
     }
@@ -90,19 +102,58 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
   }
 
   private async getFaculties() {
-
+    try {
+      const allFaculties = await Api.getFaculties(`isActive=true`);
+      this.setState({
+        allFaculties,
+      })
+    } catch (err) {
+      this.onErr(err.message);
+    }
   }
 
   private async getPresentationDate() {
-
+    try {
+      const { group } = this.props;
+      const presentationDates = await Api.getPresentationDates(`semester=${group.semester}&admin=${group.adminFaculty}`);
+      if (presentationDates.length > 0) {
+        this.setState({
+          presentationDate: presentationDates[0],
+        })
+      }
+    } catch (err) {
+      this.onErr(err.message);
+    }
   }
 
   private async getPresentations() {
+    try {
+      const { group } = this.props;
+      const allPresentations = await Api.getPresentations(`semester=${group.semester}`);
 
+      const newState: any = {
+        allPresentations,
+      };
+      const schedulingPresentation = allPresentations.find((presentation: Presentation) => presentation.group._id === group._id);
+      if (schedulingPresentation) {
+        newState.schedulingPresentation = Map<keyof Presentation, any>(schedulingPresentation);
+      }
+
+      this.setState(newState);
+    } catch (err) {
+      this.onErr(err.message);
+    }
   }
 
   private async getAvailableSlots() {
-
+    try {
+      const allAvailableSlots = await Api.getAvailableSlots(`semester=${this.props.group.semester}`);
+      this.setState({
+        allAvailableSlots,
+      })
+    } catch (err) {
+      this.onErr(err.message);
+    }
   }
 
   handleSubmit(e: React.FormEvent<any>) {
@@ -167,6 +218,14 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
         >
           {this.state.loading ? <Loading /> : (
             <Form onSubmit={this.handleSubmit}>
+              {this.state.errs.map((err: string, index: number) => {
+                <Alert 
+                  showIcon
+                  type="error"
+                  message="Error"
+                  description={err}
+                />
+              })}
               <Form.Item
                 {...ScheduleFormLayoutConstants.layoutWithColumn}
                 label="Project name"
