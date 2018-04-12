@@ -8,7 +8,7 @@ import Loading from '../components/Loading';
 import Group from '../models/Group';
 import Person from '../models/Person';
 import Api from '../utils/Api';
-import Presentation, { newPresentation } from '../models/Presentation';
+import Presentation, { NewPresentation } from '../models/Presentation';
 import DatetimeUtil from '../utils/DatetimeUtil';
 import { DateConstants } from '../models/Constants';
 import SchedulePresentationModal from './SchedulePresentationModal';
@@ -138,13 +138,10 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
     let schedulingPresentation = this.state.presentations
       .find(presentation => presentation.group._id === group._id);
     if (!schedulingPresentation) {
-      schedulingPresentation = newPresentation(this.props.semester._id);
+      schedulingPresentation = NewPresentation(this.props.semester._id, group);
       // Modal component determins updating existing presentation or creating new by looking at presentation._id
       // So set empty string to be evaluated false
       schedulingPresentation._id = '';
-      // Set default value 
-      schedulingPresentation.semester = this.props.semester._id;
-      schedulingPresentation.group = group;
     }
 
     this.setState({

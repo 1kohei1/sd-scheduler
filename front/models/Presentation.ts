@@ -1,6 +1,7 @@
-import Group from './Group';
-import Person from './Person';
 import ObjectID from 'bson-objectid';
+
+import Group from './Group';
+import Person, { NewPerson } from './Person';
 
 export default interface Presentation {
   _id: string;
@@ -19,7 +20,7 @@ export default interface Presentation {
   updated_at?: Date;
 }
 
-export const newPresentation = (semester: string) => {
+export const NewPresentation = (semester: string, group: Group) => {
   return {
     _id: ObjectID.generate(),
     start: '',
@@ -27,17 +28,8 @@ export const newPresentation = (semester: string) => {
     semester,
     projectName: '',
     sponsorName: '',
-    sponsors: [],
-    group: {
-      _id: ObjectID.generate(),
-      projectName: '',
-      semester,
-      members: [],
-      sponsors: [],
-      sponsorName: '',
-      groupNumber: 0,
-      adminFaculty: '',
-    },
+    sponsors: [NewPerson()],
+    group: group,
     faculties: [],
     externalFaculties: [],
     midPresentationLink: '',

@@ -43,11 +43,11 @@ export const ScheduleFormLayoutConstants = {
   layoutWithColumn: {
     labelCol: {
       xs: { span: 24 },
-      sm: { span: 8 },
+      sm: { span: 7 },
     },
     wrapperCol: {
       xs: { span: 24 },
-      sm: { span: 16 },
+      sm: { span: 17 },
     },
   },
   layoutWithoutColumn: {
@@ -57,8 +57,8 @@ export const ScheduleFormLayoutConstants = {
         offset: 0,
       },
       sm: {
-        span: 16,
-        offset: 8,
+        span: 17,
+        offset: 7,
       },
     },
   }
