@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Row, Col, Form, Select, Input, Button, Icon, Alert } from 'antd';
+import { Row, Col, Form, Select, Input, Button, Icon, Alert, Checkbox } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { List, Map } from 'immutable';
 import ObjectID from 'bson-objectid';
@@ -11,11 +11,13 @@ import PresentationDate from '../../models/PresentationDate';
 import Person, { NewPerson } from '../../models/Person';
 import Faculty from '../../models/Faculty';
 import AvailableSlot from '../../models/AvailableSlot';
+import TimeSlot from '../../models/TimeSlot';
 import Api from '../../utils/Api';
+import DatetimeUtil from '../../utils/DatetimeUtil';
 import AppLayout from '../../components/AppLayout';
 import ScheduleLayout from '../../components/ScheduleLayout';
 import Loading from '../../components/Loading';
-import { ScheduleFormLayoutConstants } from '../../models/Constants';
+import { DateConstants, ScheduleFormLayoutConstants } from '../../models/Constants';
 
 export interface FillPresentationProps {
   form: WrappedFormUtils;
@@ -33,6 +35,10 @@ interface FillPresentationState {
   allAvailableSlots: AvailableSlot[];
 
   schedulingPresentation: Map<keyof Presentation, any>;
+  availableFaculties: Faculty[];
+  fourFacultiesStatus: 'err' | 'success' | '';
+  sdFacultyStatus: 'err' | 'success' | '';
+  formSubmitted: boolean;
 }
 
 class FillPresentation extends React.Component<FillPresentationProps, FillPresentationState> {
@@ -70,11 +76,16 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
       allAvailableSlots: [],
 
       schedulingPresentation: Map<keyof Presentation, any>(NewPresentation(this.props.group.semester, this.props.group)),
+      availableFaculties: [],
+      fourFacultiesStatus: '',
+      sdFacultyStatus: '',
+      formSubmitted: false,
     }
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.add = this.add.bind(this);
     this.remove = this.remove.bind(this);
+    this.onPresentationDateChange = this.onPresentationDateChange.bind(this);
   }
 
   onErr(err: string) {
@@ -92,6 +103,8 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
       this.getAvailableSlots(),
     ])
       .then(() => {
+        // Since onPresentationDateChange does not fire when the initial value is set, manually call the function
+        this.onPresentationDateChange(this.state.schedulingPresentation.get('start'));
         this.setState({
           loading: false,
         })
@@ -159,7 +172,11 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
   handleSubmit(e: React.FormEvent<any>) {
     e.preventDefault();
 
-    this.props.form.validateFields((err, values) => {
+    this.setState({
+      formSubmitted: true,
+    });
+
+    this.props.form.validateFieldsAndScroll((err: any, values: any) => {
       if (err) {
         return;
       }
@@ -176,11 +193,59 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
         values.sponsors = Object.values(values.sponsors);
       }
 
+      // Handle faculties
+      values.faculties = this.getPresentationFacultyIds();
+
       // Check if state.schedulingPresentation._id exists in state.allPresentations and pass _id if it exists to verification modal
       // Present dialog to verify user belongs to the group
       console.log(values);
     })
   }
+
+  // Returns faculty ids who will join the presentation
+  private getPresentationFacultyIds() {
+    const faculties = this.props.form.getFieldValue('faculties');
+    if (!faculties) {
+      return [];
+    }
+    return Object.entries(faculties)
+      .filter(([_id, obj]: [string, { checked: boolean }]) => obj.checked)
+      .map(([_id, obj]: [string, { checked: boolean }]) => _id);
+  }
+
+  /*
+  private fourFacultiesStatus(externalFaculties: Person[]) {
+    const facultyIds = this.getPresentationFacultyIds();
+    if (facultyIds.length + externalFaculties.length >= 4) {
+      return 'success';
+    } else if (this.state.formSubmitted) {
+      return 'err';
+    } else {
+      return '';
+    }
+  }
+
+  setSdFacultyStatus() {
+    this.setState({
+      sdFacultyStatus: this.sdFacultyStatus(),
+    })
+  }
+
+  private sdFacultyStatus() {
+    const facultyIds = this.getPresentationFacultyIds();
+    const isSDFacultySelected = facultyIds
+      .filter((fid: string) => this.props.group.adminFaculty === fid)
+      .length > 0;
+
+    if (isSDFacultySelected) {
+      return 'success';
+    } else if (this.state.formSubmitted) {
+      return 'err';
+    } else {
+      return '';
+    }
+  }
+  */
 
   remove(prop: 'sponsors' | 'externalFaculties', _id: string) {
     const { schedulingPresentation } = this.state;
@@ -198,28 +263,67 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
     })
   }
 
+  onPresentationDateChange(isostring: string) {
+    const startMoment = DatetimeUtil.getMomentFromISOString(isostring);
+    const endMoment = DatetimeUtil.addToMoment(startMoment, 1, 'h');
+    const presentationSlot = {
+      _id: 'dummy id',
+      start: startMoment,
+      end: endMoment,
+    };
+
+    this.setState({
+      availableFaculties: this.state.allFaculties.filter((faculty: Faculty) => {
+        const availableSlot = this.state.allAvailableSlots.find(
+          (availableSlot: AvailableSlot) => availableSlot.faculty === faculty._id
+        );
+        if (!availableSlot) {
+          return false;
+        }
+
+        const isFacultyAvailableAtPresentationTime = availableSlot
+          .availableSlots
+          .map(DatetimeUtil.convertToTimeSlot)
+          .filter((ts: TimeSlot) => DatetimeUtil.doesCover(ts, presentationSlot))
+          .length > 0;
+
+        if (!isFacultyAvailableAtPresentationTime) {
+          return false;
+        }
+
+        const isFacultyBookedForAnotherPresentation = this.state.allPresentations
+          .filter((presentation: Presentation) =>
+            presentation._id !== this.state.schedulingPresentation.get('_id') &&
+            presentation.faculties.indexOf(faculty._id) >= 0
+          )
+          .map(DatetimeUtil.convertToTimeSlot)
+          .filter((ts: TimeSlot) => DatetimeUtil.doesOverlap(ts, presentationSlot))
+          .length > 0;
+
+        if (isFacultyBookedForAnotherPresentation) {
+          return false;
+        }
+
+        return true;
+      }),
+    })
+  }
+
   render() {
     const { group } = this.props;
     const schedulingPresentation = this.state.schedulingPresentation.toObject();
-
-    const sponsorsLayout = schedulingPresentation.sponsors.length === 0 ?
-      ScheduleFormLayoutConstants.layoutWithColumn :
-      ScheduleFormLayoutConstants.layoutWithoutColumn;
-    const externalFacultiesLayout = schedulingPresentation.externalFaculties.length === 0 ?
-      ScheduleFormLayoutConstants.layoutWithColumn :
-      ScheduleFormLayoutConstants.layoutWithoutColumn;
 
     return (
       <AppLayout>
         <ScheduleLayout
           current={1}
           groupNumber={group.groupNumber}
-          description={`Please fill the presentation detail for group ${group.groupNumber}`}
+          description={`Please fill the presentation detail for group ${group.groupNumber}.`}
         >
           {this.state.loading ? <Loading /> : (
             <Form onSubmit={this.handleSubmit}>
               {this.state.errs.map((err: string, index: number) => {
-                <Alert 
+                <Alert
                   showIcon
                   type="error"
                   message="Error"
@@ -254,90 +358,105 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
                   <Input placeholder="Sponsor name" />
                 )}
               </Form.Item>
-              {schedulingPresentation.sponsors.map((sponsor: Person, index: number) => (
-                <Row key={sponsor._id}>
-                  <Col
-                    {...ScheduleFormLayoutConstants.layoutWithColumn.labelCol}
-                    style={{ textAlign: 'right' }}
-                  >
-                    {index === 0 && (
-                      <Form.Item
-                        label="Sponsor members"
-                      >
-                      </Form.Item>
-                    )}
-                  </Col>
-                  <Col
-                    {...ScheduleFormLayoutConstants.layoutWithColumn.wrapperCol}
-                    style={{ display: 'flex' }}
-                  >
-                    <Form.Item style={{ width: 0 }}>
-                      {this.props.form.getFieldDecorator(`sponsors[${sponsor._id}]._id`, {
-                        initialValue: sponsor._id,
-                      })(
-                        <Input disabled />
-                      )}
-                    </Form.Item>
-                    <Form.Item style={{ marginRight: '8px' }}>
-                      {this.props.form.getFieldDecorator(`sponsors[${sponsor._id}].firstName`, {
-                        rules: [{
-                          required: true,
-                          message: 'Please provide the first name'
-                        }],
-                        initialValue: sponsor.firstName,
-                      })(
-                        <Input placeholder="First name" />
-                      )}
-                    </Form.Item>
-                    <Form.Item style={{ marginRight: '8px' }}>
-                      {this.props.form.getFieldDecorator(`sponsors[${sponsor._id}].lastName`, {
-                        rules: [{
-                          required: true,
-                          message: 'Please provide the last name'
-                        }],
-                        initialValue: sponsor.lastName,
-                      })(
-                        <Input placeholder="Last name" />
-                      )}
-                    </Form.Item>
-                    <Form.Item style={{ marginRight: '8px' }}>
-                      {this.props.form.getFieldDecorator(`sponsors[${sponsor._id}].email`, {
-                        rules: [{
-                          required: true,
-                          message: 'Please provide the email'
-                        }, {
-                          type: 'email',
-                          message: 'It is not valid email',
-                        }],
-                        initialValue: sponsor.email,
-                      })(
-                        <Input placeholder="Email" />
-                      )}
-                    </Form.Item>
-                    <Form.Item>
-                      <Button
-                        icon="delete"
-                        shape="circle"
-                        onClick={e => this.remove('sponsors', sponsor._id)}
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              ))}
-              <Form.Item
-                {...sponsorsLayout}
-                label={schedulingPresentation.sponsors.length === 0 ? 'Sponsor members' : ''}
-              >
-                <Button
-                  type="dashed"
-                  onClick={e => this.add('sponsors')}
+              {schedulingPresentation.sponsors.length === 0 ? (
+                <Form.Item
+                  {...ScheduleFormLayoutConstants.layoutWithColumn}
+                  label="Sponsor members"
                 >
-                  <Icon type="plus" /> Add new sponsor member
-              </Button>
-              </Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={e => this.add('sponsors')}
+                  >
+                    <Icon type="plus" /> Add new sponsor member
+                  </Button>
+                </Form.Item>
+              ) : (
+                  <div>
+                    {schedulingPresentation.sponsors.map((sponsor: Person, index: number) => (
+                      <Row key={sponsor._id}>
+                        <Col
+                          {...ScheduleFormLayoutConstants.layoutWithColumn.labelCol}
+                          style={{ textAlign: 'right' }}
+                        >
+                          {index === 0 && (
+                            <Form.Item
+                              label="Sponsor members"
+                            >
+                            </Form.Item>
+                          )}
+                        </Col>
+                        <Col
+                          {...ScheduleFormLayoutConstants.layoutWithColumn.wrapperCol}
+                          style={{ display: 'flex' }}
+                        >
+                          <Form.Item style={{ width: 0 }}>
+                            {this.props.form.getFieldDecorator(`sponsors[${sponsor._id}]._id`, {
+                              initialValue: sponsor._id,
+                            })(
+                              <Input disabled />
+                            )}
+                          </Form.Item>
+                          <Form.Item style={{ marginRight: '8px' }}>
+                            {this.props.form.getFieldDecorator(`sponsors[${sponsor._id}].firstName`, {
+                              rules: [{
+                                required: true,
+                                message: 'Please provide the first name'
+                              }],
+                              initialValue: sponsor.firstName,
+                            })(
+                              <Input placeholder="First name" />
+                            )}
+                          </Form.Item>
+                          <Form.Item style={{ marginRight: '8px' }}>
+                            {this.props.form.getFieldDecorator(`sponsors[${sponsor._id}].lastName`, {
+                              rules: [{
+                                required: true,
+                                message: 'Please provide the last name'
+                              }],
+                              initialValue: sponsor.lastName,
+                            })(
+                              <Input placeholder="Last name" />
+                            )}
+                          </Form.Item>
+                          <Form.Item style={{ marginRight: '8px' }}>
+                            {this.props.form.getFieldDecorator(`sponsors[${sponsor._id}].email`, {
+                              rules: [{
+                                required: true,
+                                message: 'Please provide the email'
+                              }, {
+                                type: 'email',
+                                message: 'It is not valid email',
+                              }],
+                              initialValue: sponsor.email,
+                            })(
+                              <Input placeholder="Email" />
+                            )}
+                          </Form.Item>
+                          <Form.Item>
+                            <Button
+                              icon="delete"
+                              shape="circle"
+                              onClick={e => this.remove('sponsors', sponsor._id)}
+                            />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    ))}
+                    <Form.Item
+                      {...ScheduleFormLayoutConstants.layoutWithoutColumn}
+                    >
+                      <Button
+                        type="dashed"
+                        onClick={e => this.add('sponsors')}
+                      >
+                        <Icon type="plus" /> Add new sponsor member
+                      </Button>
+                    </Form.Item>
+                  </div>
+                )}
               <Form.Item
                 {...ScheduleFormLayoutConstants.layoutWithColumn}
-                label="Presentation date"
+                label="Presentation time"
               >
                 {this.props.form.getFieldDecorator('start', {
                   rules: [{
@@ -346,101 +465,163 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
                   }],
                   initialValue: schedulingPresentation.start,
                 })(
-                  <Select>
-                    <Select.Option
-                      value="abc"
-                    >
-                      abc
-                  </Select.Option>
+                  <Select onChange={this.onPresentationDateChange}>
+                    {
+                      DatetimeUtil.getIsoStringsFromPresentationDateDates((this.state.presentationDate as PresentationDate).dates)
+                        .map((isostring: string) => (
+                          <Select.Option
+                            key={isostring}
+                            value={isostring}
+                          >
+                            {DatetimeUtil.formatISOString(isostring, `${DateConstants.dateFormat} ${DateConstants.hourFormat}`)}
+                          </Select.Option>
+                        ))
+                    }
                   </Select>
                 )}
               </Form.Item>
+              {this.state.availableFaculties.length === 0 ? (
+                <Form.Item
+                  {...ScheduleFormLayoutConstants.layoutWithColumn}
+                  label="EECS faculties"
+                >
+                  No faculties are available at specified time. Please change your presentation time.
+                </Form.Item>
+              ) : (
+                  <div>
+                    {this.state.availableFaculties.map((faculty: Faculty, index: number, arr: Faculty[]) => {
+                      const layout = index === 0 ?
+                        ScheduleFormLayoutConstants.layoutWithColumn :
+                        ScheduleFormLayoutConstants.layoutWithoutColumn;
+
+                      return (
+                        <Form.Item
+                          key={faculty._id}
+                          {...layout}
+                          style={{ marginBottom: arr.length - 1 === index ? '' : '0' }}
+                          label={index === 0 ? 'EECS faculties' : ''}
+                        >
+                          {this.props.form.getFieldDecorator(`faculties[${faculty._id}].checked`, {
+                            initialValue: schedulingPresentation.faculties.indexOf(faculty._id) >= 0,
+                            valuePropName: 'checked'
+                          })(
+                            <Checkbox
+                            >
+                              Dr. {faculty.firstName} {faculty.lastName} {faculty.isAdmin && (<span>(SD Faculty)</span>)}
+                            </Checkbox>
+                          )}
+                        </Form.Item>
+                      )
+                    })}
+                  </div>
+                )}
+              {schedulingPresentation.externalFaculties.length === 0 ? (
+                <Form.Item
+                  {...ScheduleFormLayoutConstants.layoutWithColumn}
+                  label="Other department faculties"
+                >
+                  <Button
+                    type="dashed"
+                    onClick={e => this.add('externalFaculties')}
+                  >
+                    <Icon type="plus" /> Add other department faculty
+                  </Button>
+                </Form.Item>
+              ) : (
+                  <div>
+                    {schedulingPresentation.externalFaculties.map((faculty: Person, index: number) => (
+                      <Row key={faculty._id}>
+                        <Col
+                          {...ScheduleFormLayoutConstants.layoutWithColumn.labelCol}
+                          style={{ textAlign: 'right' }}
+                        >
+                          {index === 0 && (
+                            <Form.Item
+                              label="Other department faculties"
+                            >
+                            </Form.Item>
+                          )}
+                        </Col>
+                        <Col
+                          {...ScheduleFormLayoutConstants.layoutWithColumn.wrapperCol}
+                          style={{ display: 'flex' }}
+                        >
+                          <Form.Item style={{ width: 0 }}>
+                            {this.props.form.getFieldDecorator(`externalFaculties[${faculty._id}]._id`, {
+                              initialValue: faculty._id,
+                            })(
+                              <Input disabled />
+                            )}
+                          </Form.Item>
+                          <Form.Item style={{ marginRight: '8px' }}>
+                            {this.props.form.getFieldDecorator(`externalFaculties[${faculty._id}].firstName`, {
+                              rules: [{
+                                required: true,
+                                message: 'Please provide the first name'
+                              }],
+                              initialValue: faculty.firstName,
+                            })(
+                              <Input placeholder="First name" />
+                            )}
+                          </Form.Item>
+                          <Form.Item style={{ marginRight: '8px' }}>
+                            {this.props.form.getFieldDecorator(`externalFaculties[${faculty._id}].lastName`, {
+                              rules: [{
+                                required: true,
+                                message: 'Please provide the last name'
+                              }],
+                              initialValue: faculty.lastName,
+                            })(
+                              <Input placeholder="Last name" />
+                            )}
+                          </Form.Item>
+                          <Form.Item style={{ marginRight: '8px' }}>
+                            {this.props.form.getFieldDecorator(`externalFaculties[${faculty._id}].email`, {
+                              rules: [{
+                                required: true,
+                                message: 'Please provide the email'
+                              }, {
+                                type: 'email',
+                                message: 'It is not valid email',
+                              }],
+                              initialValue: faculty.email,
+                            })(
+                              <Input placeholder="Email" />
+                            )}
+                          </Form.Item>
+                          <Form.Item>
+                            <Button
+                              icon="delete"
+                              shape="circle"
+                              onClick={e => this.remove('externalFaculties', faculty._id)}
+                            />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    ))}
+                    <Form.Item
+                      {...ScheduleFormLayoutConstants.layoutWithoutColumn}
+                    >
+                      <Button
+                        type="dashed"
+                        onClick={e => this.add('externalFaculties')}
+                      >
+                        <Icon type="plus" /> Add other department faculty
+                      </Button>
+                    </Form.Item>
+                  </div>
+                )}
               <Form.Item
                 {...ScheduleFormLayoutConstants.layoutWithColumn}
-                label="EECS faculties"
+                label="Validation"
               >
-
-              </Form.Item>
-              {schedulingPresentation.externalFaculties.map((faculty: Person, index: number) => (
-                <Row key={faculty._id}>
-                  <Col
-                    {...ScheduleFormLayoutConstants.layoutWithColumn.labelCol}
-                    style={{ textAlign: 'right' }}
-                  >
-                    {index === 0 && (
-                      <Form.Item
-                        label="Other department faculties"
-                      >
-                      </Form.Item>
-                    )}
-                  </Col>
-                  <Col
-                    {...ScheduleFormLayoutConstants.layoutWithColumn.wrapperCol}
-                    style={{ display: 'flex' }}
-                  >
-                    <Form.Item style={{ width: 0 }}>
-                      {this.props.form.getFieldDecorator(`externalFaculties[${faculty._id}]._id`, {
-                        initialValue: faculty._id,
-                      })(
-                        <Input disabled />
-                      )}
-                    </Form.Item>
-                    <Form.Item style={{ marginRight: '8px' }}>
-                      {this.props.form.getFieldDecorator(`externalFaculties[${faculty._id}].firstName`, {
-                        rules: [{
-                          required: true,
-                          message: 'Please provide the first name'
-                        }],
-                        initialValue: faculty.firstName,
-                      })(
-                        <Input placeholder="First name" />
-                      )}
-                    </Form.Item>
-                    <Form.Item style={{ marginRight: '8px' }}>
-                      {this.props.form.getFieldDecorator(`externalFaculties[${faculty._id}].lastName`, {
-                        rules: [{
-                          required: true,
-                          message: 'Please provide the last name'
-                        }],
-                        initialValue: faculty.lastName,
-                      })(
-                        <Input placeholder="Last name" />
-                      )}
-                    </Form.Item>
-                    <Form.Item style={{ marginRight: '8px' }}>
-                      {this.props.form.getFieldDecorator(`externalFaculties[${faculty._id}].email`, {
-                        rules: [{
-                          required: true,
-                          message: 'Please provide the email'
-                        }, {
-                          type: 'email',
-                          message: 'It is not valid email',
-                        }],
-                        initialValue: faculty.email,
-                      })(
-                        <Input placeholder="Email" />
-                      )}
-                    </Form.Item>
-                    <Form.Item>
-                      <Button
-                        icon="delete"
-                        shape="circle"
-                        onClick={e => this.remove('externalFaculties', faculty._id)}
-                      />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              ))}
-              <Form.Item
-                {...externalFacultiesLayout}
-                label={schedulingPresentation.externalFaculties.length === 0 ? 'Other department faculties' : ''}
-              >
-                <Button
-                  type="dashed"
-                  onClick={e => this.add('externalFaculties')}
-                >
-                  <Icon type="plus" /> Add other department faculty
-              </Button>
+                <div>For faculties, you need to select</div>
+                <div className={this.state.fourFacultiesStatus}>
+                  <Icon type="check-circle-o" />&nbsp;At least 4 faculties
+                </div>
+                <div className={this.state.sdFacultyStatus}>
+                  <Icon type="check-circle-o" />&nbsp;Your senior design faculty
+                </div>
               </Form.Item>
               <Form.Item
                 {...ScheduleFormLayoutConstants.layoutWithoutColumn}
@@ -452,7 +633,15 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
             </Form>
           )}
         </ScheduleLayout>
-      </AppLayout>
+        <style jsx>{`
+          .success {
+            color: #52c41a;
+          }
+          .err {
+            color: #f5222d;
+          }
+        `}</style>
+      </AppLayout >
     );
   }
 }

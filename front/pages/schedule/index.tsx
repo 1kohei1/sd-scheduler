@@ -106,6 +106,9 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
   onChange(prop: 'selectedAdminId' | 'selectedGroupId', val: string) {
     const newState: any = {};
     newState[prop] = val;
+    if (prop === 'selectedAdminId') {
+      newState.selectedGroupId = '';
+    }
     this.setState(newState);
   }
 
