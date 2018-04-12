@@ -36,8 +36,6 @@ interface FillPresentationState {
 
   schedulingPresentation: Map<keyof Presentation, any>;
   availableFaculties: Faculty[];
-  fourFacultiesStatus: 'err' | 'success' | '';
-  sdFacultyStatus: 'err' | 'success' | '';
   formSubmitted: boolean;
 }
 
@@ -77,8 +75,6 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
 
       schedulingPresentation: Map<keyof Presentation, any>(NewPresentation(this.props.group.semester, this.props.group)),
       availableFaculties: [],
-      fourFacultiesStatus: '',
-      sdFacultyStatus: '',
       formSubmitted: false,
     }
 
@@ -86,6 +82,8 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
     this.add = this.add.bind(this);
     this.remove = this.remove.bind(this);
     this.onPresentationDateChange = this.onPresentationDateChange.bind(this);
+    this.getFourFacultiesStatus = this.getFourFacultiesStatus.bind(this);
+    this.getSdFacultyStatus = this.getSdFacultyStatus.bind(this);
   }
 
   onErr(err: string) {
@@ -180,6 +178,9 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
       if (err) {
         return;
       }
+      if (this.getFourFacultiesStatus() !== 'success' || this.getSdFacultyStatus() !== 'success') {
+        return;
+      }
 
       // Handle externalFaculties and sponsors
       if (!values.externalFaculties) {
@@ -193,8 +194,12 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
         values.sponsors = Object.values(values.sponsors);
       }
 
-      // Handle faculties
+      // Set faculties
       values.faculties = this.getPresentationFacultyIds();
+
+      // Set end
+      const startMoment = DatetimeUtil.getMomentFromISOString(values.start);
+      values.end = DatetimeUtil.addToMoment(startMoment, 1, 'h').toISOString();
 
       // Check if state.schedulingPresentation._id exists in state.allPresentations and pass _id if it exists to verification modal
       // Present dialog to verify user belongs to the group
@@ -204,18 +209,21 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
 
   // Returns faculty ids who will join the presentation
   private getPresentationFacultyIds() {
-    const faculties = this.props.form.getFieldValue('faculties');
-    if (!faculties) {
+    // cannot use this.props.form.getFieldValue('faculties'). 
+    // Using that registers faculty field with the value undefined. 
+    // And that messes up the format of faculties[_id].checked
+    if (this.state.availableFaculties.length === 0) {
       return [];
     }
+    const faculties = this.props.form.getFieldValue('faculties');
     return Object.entries(faculties)
       .filter(([_id, obj]: [string, { checked: boolean }]) => obj.checked)
       .map(([_id, obj]: [string, { checked: boolean }]) => _id);
   }
 
-  /*
-  private fourFacultiesStatus(externalFaculties: Person[]) {
+  getFourFacultiesStatus() {
     const facultyIds = this.getPresentationFacultyIds();
+    const externalFaculties = this.state.schedulingPresentation.get('externalFaculties');
     if (facultyIds.length + externalFaculties.length >= 4) {
       return 'success';
     } else if (this.state.formSubmitted) {
@@ -225,13 +233,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
     }
   }
 
-  setSdFacultyStatus() {
-    this.setState({
-      sdFacultyStatus: this.sdFacultyStatus(),
-    })
-  }
-
-  private sdFacultyStatus() {
+  getSdFacultyStatus() {
     const facultyIds = this.getPresentationFacultyIds();
     const isSDFacultySelected = facultyIds
       .filter((fid: string) => this.props.group.adminFaculty === fid)
@@ -245,7 +247,6 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
       return '';
     }
   }
-  */
 
   remove(prop: 'sponsors' | 'externalFaculties', _id: string) {
     const { schedulingPresentation } = this.state;
@@ -493,12 +494,13 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
                       const layout = index === 0 ?
                         ScheduleFormLayoutConstants.layoutWithColumn :
                         ScheduleFormLayoutConstants.layoutWithoutColumn;
+                      const isLast = arr.length - 1 === index;
 
                       return (
                         <Form.Item
                           key={faculty._id}
                           {...layout}
-                          style={{ marginBottom: arr.length - 1 === index ? '' : '0' }}
+                          style={{ marginBottom: isLast ? '' : '0' }}
                           label={index === 0 ? 'EECS faculties' : ''}
                         >
                           {this.props.form.getFieldDecorator(`faculties[${faculty._id}].checked`, {
@@ -613,13 +615,13 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
                 )}
               <Form.Item
                 {...ScheduleFormLayoutConstants.layoutWithColumn}
-                label="Validation"
+                label="Validation for faculties"
               >
-                <div>For faculties, you need to select</div>
-                <div className={this.state.fourFacultiesStatus}>
+                <div>You need to select</div>
+                <div className={this.getFourFacultiesStatus()}>
                   <Icon type="check-circle-o" />&nbsp;At least 4 faculties
                 </div>
-                <div className={this.state.sdFacultyStatus}>
+                <div className={this.getSdFacultyStatus()}>
                   <Icon type="check-circle-o" />&nbsp;Your senior design faculty
                 </div>
               </Form.Item>
