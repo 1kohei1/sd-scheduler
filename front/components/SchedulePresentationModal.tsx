@@ -342,7 +342,7 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
                   type="dashed"
                   onClick={e => this.addNewPerson('externalFaculties')}
                 >
-                  <Icon type="plus" /> Add new other department faculty
+                  <Icon type="plus" /> Add other department faculty
                 </Button>
               </Col>
             </Row>
