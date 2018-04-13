@@ -87,13 +87,13 @@ Feature requests from Dr. Heinrich
 
 - [x] Email tab to send emails to faculties. (Make <LINK></LINK>to paste the link)
 - [x] Faculties tab to register/delete faculties to the system
-- [ ] Group import file is gonna be [First name] [Last name] [Email] [Group number]
+- [x] Group import file is gonna be [First name] [Last name] [Email] [Group number]
 - [x] Let SD2 faculty manually schedule the presentation
 - [x] Let student choose the faculty who is not registered to the system at scheduling presentation. 
 - [x] Make presentation dates and location in one tab. The location can change by presentation dates chunk
 - [ ] Reminding feature for student groups to provide conference paper
-- [ ] Instead of let user click, send code and make user type the code
-- [ ] Redesign the schedule page
+- [x] Instead of let user click, send code and make user type the code
+- [x] Redesign the schedule page
 
 Personal review:
 
