@@ -61,7 +61,7 @@ export default class UserVerificationModal extends React.Component<UserVerificat
         saving: true,
       })
       await Api.sendCode(this.props.group._id, {
-        verifyCodeReceiverId: this.state.selectedMemberId,
+        verificationCodeReceiverId: this.state.selectedMemberId,
       });
       this.setState({
         verificationCodeSent: true,

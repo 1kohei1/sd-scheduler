@@ -26,11 +26,13 @@ const GroupSchema = new Schema({
     type: String,
     default: '',
   },
-  verifyCodeReceiverId: {
+  verificationCodeReceiverId: {
     type: String,
+    default: '',
   },
   verificationCodeExpireAt: {
     type: Date,
+    default: null,
   },
   created_at: Date,
   updated_at: Date,
@@ -53,7 +55,7 @@ const handleVerificationCodeChange = (doc: Document, next: any) => {
       doc.set('verificationCodeExpireAt', expireAt);
 
       const member = doc.get('members')
-        .find((member: Document) => member.get('_id').toString() === doc.get('verifyCodeReceiverId'));
+        .find((member: Document) => member.get('_id').toString() === doc.get('verificationCodeReceiverId'));
       if (!member) {
         next('Invalid verification code receiver is specified');
         return;
@@ -69,7 +71,7 @@ const handleVerificationCodeChange = (doc: Document, next: any) => {
       });
     } else {
       doc.set('verificationCodeExpireAt', null);
-      doc.set('verifyCodeReceiverId', '');
+      doc.set('verificationCodeReceiverId', '');
     }
     next();
   } else {

@@ -128,7 +128,7 @@ module.exports.sendCode = (req: Request, res: Response) => {
 
   DBUtil.updateGroup(req.params._id, {
     verificationCode: code,
-    verifyCodeReceiverId: req.body.verifyCodeReceiverId,
+    verificationCodeReceiverId: req.body.verificationCodeReceiverId,
   })
     .then(updatedGroup => {
       APIUtil.successResponse(info, updatedGroup, res);
