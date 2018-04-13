@@ -127,7 +127,6 @@ module.exports.presentationReminder = (req: Request, res: Response) => {
       }
     })
     .catch(err => {
-      info.debugInfo.message = err.message;
       APIUtil.errorResponse(info, err.message, {}, res);
     })
 }

@@ -16,7 +16,6 @@ module.exports.findAvailableSlots = (req: Request, res: Response) => {
     APIUtil.successResponse(info, availableslots, res);
   })
   .catch(err => {
-    info.debugInfo.message = err.message;
     APIUtil.errorResponse(info, err.message, {}, res);
   });
 }
@@ -44,7 +43,6 @@ module.exports.createAvailableSlot = (req: Request, res: Response) => {
     APIUtil.successResponse(info, newAvailableSlot, res);
   })
   .catch(err => {
-    info.debugInfo.message = err.message;
     APIUtil.errorResponse(info, err.message, {}, res);
   });
 }
@@ -64,7 +62,6 @@ module.exports.updateAvailableSlot = (req: Request, res: Response) => {
     APIUtil.successResponse(info, updateAvailableSlot, res);
   })
   .catch(err => {
-    info.debugInfo.message = err.message;
     APIUtil.errorResponse(info, err.message, {}, res);
   });
 }

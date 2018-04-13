@@ -16,7 +16,8 @@ export default class APIUtil {
   }
 
   // errors are form property validation message
-  static errorResponse(info: Object, message: string, errors: Object = {}, res: Response) {
+  static errorResponse(info: any, message: string, errors: Object = {}, res: Response) {
+    info.debugInfo.message = message;
     this.logError(info);
     res.json({
       success: false,
@@ -35,7 +36,6 @@ export default class APIUtil {
     if (req.isAuthenticated()) {
       next();
     } else {
-      info.debugInfo.message = 'You are not authenticated. Please login first';
       APIUtil.errorResponse(info, 'You are not authenticated. Please login first', {}, res);
     }
   }
@@ -50,7 +50,6 @@ export default class APIUtil {
     if (req.user.isAdmin || req.user.isSystemAdmin) {
       next();
     } else {
-      info.debugInfo.message = 'You are not authorized to make this action';
       APIUtil.errorResponse(info, 'You are not authorized to make this action', {}, res);
     }
   }
@@ -69,10 +68,8 @@ export default class APIUtil {
       verify(token, process.env.SECRET as string, (err, decoded) => {
         if (err) {
           if (err.name === 'TokenExpiredError') {
-            info.debugInfo.message = 'Your session expired. Please verify your identity by sending email at previous step';
             APIUtil.errorResponse(info, 'Your session expired. Please verify your identity by sending email at previous step', {}, res);
           } else {
-            info.debugInfo.message = err.message + '. Please send verification code again';
             APIUtil.errorResponse(info, err.message, {}, res);
           }
         } else {
@@ -81,7 +78,6 @@ export default class APIUtil {
         }
       });
     } else {
-      info.debugInfo.message = 'You are not authenticated. Please login first';
       APIUtil.errorResponse(info, 'You are not authenticated. Please login first', {}, res);
     }
   }
@@ -99,7 +95,6 @@ export default class APIUtil {
     resourceGroupIdPromise
       .then(resourceGroupId => {
         if (jwtGroupId !== resourceGroupId) {
-          info.debugInfo.message = 'You are not authorized.'
           APIUtil.errorResponse(info, 'You are not authorized.', {}, res);
         } else {
           next();
@@ -144,7 +139,6 @@ export default class APIUtil {
     if (req.params.cron_key === process.env.CRON_KEY) {
       next();
     } else {
-      info.debugInfo.message = 'Your cron key is incorrect';
       APIUtil.errorResponse(info, 'Your cron key is incorrect', {}, res);
     }
   }
@@ -159,7 +153,6 @@ export default class APIUtil {
     if (req.user.isSystemAdmin) {
       next();
     } else {
-      info.debugInfo.message = 'You are not system administrator';
       APIUtil.errorResponse(info, 'You are not system administrator', {}, res);
     }
   }

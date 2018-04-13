@@ -19,7 +19,6 @@ module.exports.findFaculty = (req: Request, res: Response) => {
       APIUtil.successResponse(info, faculties, res);
     })
     .catch(err => {
-      info.debugInfo.message = err.message;
       APIUtil.errorResponse(info, err.message, {}, res);
     });
 }
@@ -38,7 +37,6 @@ module.exports.createFaculty = (req: Request, res: Response) => {
       APIUtil.successResponse(info, newFaculty, res);
     })
     .catch(err => {
-      info.debugInfo.message = err.message;
       APIUtil.errorResponse(info, err.message, {}, res);
     });
 }
@@ -53,7 +51,6 @@ module.exports.sendPasswordResetEmail = (req: Request, res: Response) => {
 
   const email = req.body.email;
   if (!email) {
-    info.debugInfo.message = 'Email is not given to API';
     return APIUtil.errorResponse(info, 'Emails is not given to API', {}, res);
   }
 
@@ -89,7 +86,6 @@ module.exports.sendPasswordResetEmail = (req: Request, res: Response) => {
       });
     })
     .catch(err => {
-      info.debugInfo.message = err.message;
       APIUtil.errorResponse(info, err.message, {}, res);
     })
 }
@@ -139,7 +135,6 @@ module.exports.updateFaculty = (req: Request, res: Response) => {
       }
     })
     .catch(err => {
-      info.debugInfo.message = err.message;
       APIUtil.errorResponse(info, err.message, {}, res);
     });
 }
@@ -168,7 +163,6 @@ module.exports.verify = (req: Request, res: Response) => {
       })
     })
     .catch(err => {
-      info.debugInfo.message = err.message;
       APIUtil.errorResponse(info, err.message, {}, res);
     })
 }
@@ -187,7 +181,6 @@ module.exports.updatePassword = (req: Request, res: Response) => {
   if (req.body.password) {
     update.password = req.body.password;
   } else {
-    info.debugInfo.message = 'Password is not given to API';
     APIUtil.errorResponse(info, 'Password is not given to API', {}, res);
     return;
   }
@@ -227,7 +220,6 @@ module.exports.updatePassword = (req: Request, res: Response) => {
       }
     })
     .catch(err => {
-      info.debugInfo.message = err.message;
       APIUtil.errorResponse(info, err.message, {}, res);
     })
 }

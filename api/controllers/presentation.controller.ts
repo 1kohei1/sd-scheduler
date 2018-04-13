@@ -16,7 +16,6 @@ module.exports.findPresentations = (req: Request, res: Response) => {
       APIUtil.successResponse(info, presentations, res);
     })
     .catch(err => {
-      info.debugInfo.message = err.message;
       APIUtil.errorResponse(info, err.message, {}, res);
     });
 }
@@ -34,7 +33,6 @@ module.exports.createPresentation = (req: Request, res: Response) => {
       APIUtil.successResponse(info, createdPresentation, res);
     })
     .catch(err => {
-      info.debugInfo.message = err.message;
       APIUtil.errorResponse(info, err.message, {}, res);
     });
 }
@@ -53,7 +51,6 @@ module.exports.updatePresentation = (req: Request, res: Response) => {
       APIUtil.successResponse(info, updatedPresentation, res);
     })
     .catch(err => {
-      info.debugInfo.message = err.message;
       APIUtil.errorResponse(info, err.message, {}, res);
     });
 }
@@ -73,7 +70,6 @@ module.exports.deletePresentation = (req: Request, res: Response) => {
       // Cannot use post('remove') since I cannot pass req.body.cancelNote to the middleware
     })
     .catch(err => {
-      info.debugInfo.message = err.message;
       APIUtil.errorResponse(info, err.message, {}, res);
     });
   // APIUtil.successResponse(info, true, res);

@@ -25,7 +25,7 @@ module.exports.login = (req: Request, res: Response, next: any) => {
       info.debugInfo.err = err;
       APIUtil.errorResponse(info, 'Invalid email or password', {}, res);
     } else if (!user) {
-      info.debugInfo.message = 'No user found';
+      info.debugInfo.err = 'No user found';
       APIUtil.errorResponse(info, 'Invalid email or password', {}, res);
     } else {
       req.logIn(user, (err) => {

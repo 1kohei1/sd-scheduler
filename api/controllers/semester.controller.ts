@@ -14,7 +14,6 @@ module.exports.findSemesters = (req: Request, res: Response) => {
       APIUtil.successResponse(info, semesters, res);
     })
     .catch(err => {
-      info.debugInfo.message = err.message;
       APIUtil.errorResponse(info, err.message, {}, res);
     });
 }
@@ -34,7 +33,6 @@ module.exports.updateSemester = (req: Request, res: Response) => {
       APIUtil.successResponse(info, updatedSemester, res);
     })
     .catch(err => {
-      info.debugInfo.message = err.message;
       APIUtil.errorResponse(info, err.message, {}, res);
     })
 }

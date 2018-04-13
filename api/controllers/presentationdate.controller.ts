@@ -16,7 +16,6 @@ module.exports.findPresentationDates = (req: Request, res: Response) => {
       APIUtil.successResponse(info, presentationDates, res);
     })
     .catch(err => {
-      info.debugInfo.message = err.message;
       APIUtil.errorResponse(info, err.message, {}, res);
     });
 }
@@ -35,7 +34,6 @@ module.exports.updatePresentationDate = (req: Request, res: Response) => {
       APIUtil.successResponse(info, updatedPresentationDate, res);
     })
     .catch(err => {
-      info.debugInfo.message = err.message;
       APIUtil.errorResponse(info, err.message, {}, res);
     })
 }
