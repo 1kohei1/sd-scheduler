@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { verify } from 'jsonwebtoken';
+import { Document } from 'mongoose';
 
 import DBUtil from './db.util';
 
@@ -90,43 +91,38 @@ export default class APIUtil {
     };
 
     const jwtGroupId = req.decoded.group_id;
-    const resourceGroupIdPromise = APIUtil.getResourceGroupId(req);
 
-    resourceGroupIdPromise
-      .then(resourceGroupId => {
-        if (jwtGroupId !== resourceGroupId) {
-          APIUtil.errorResponse(info, 'You are not authorized.', {}, res);
-        } else {
-          next();
-        }
-      })
-  }
-
-  static getResourceGroupId(req: RequestWithDecoded) {
-    const urlArray = req.url.split('/');
-    const resource = urlArray[2];
-
-    if (resource === 'groups') {
-      return Promise.resolve(req.params._id);
-    } else if (resource === 'presentations') {
-      if (req.body.group) {
-        return Promise.resolve(req.body.group);
-      } else if (req.params._id) {
-        return DBUtil.findPresentations({
-          _id: req.params._id,
+    // Get group id of presentation
+    const presentationId = req.params._id;
+    let p;
+    // If user is updating presentation, get group id from the database
+    if (presentationId) {
+      p = DBUtil.findPresentations({ _id: presentationId }, '')
+        .then((presentations: Document[], ) => {
+          if (presentations.length === 0) {
+            return Promise.reject({
+              message: 'Specified presentation does not exist',
+            })
+          } else {
+            return Promise.resolve(presentations[0].get('group').toString());
+          }
         })
-          .then(presentations => {
-            const presentation = presentations[0];
-            if (presentation) {
-              return Promise.resolve(presentation.get('group').get('_id').toString());
-            } else {
-              return Promise.resolve(undefined);
-            }
-          })
-      }
+    }
+    // If user is creating a new presentation, get group id from the requested body
+    else {
+      p = Promise.resolve(req.body.group);
     }
 
-    return Promise.resolve(undefined);
+    p.then(dbGroupId => {
+      if (jwtGroupId !== dbGroupId) {
+        APIUtil.errorResponse(info, 'You are not authorized.', {}, res);
+      } else {
+        next();
+      }
+    })
+      .catch(err => {
+        APIUtil.errorResponse(info, err.message, {}, res);
+      })
   }
 
   static isAuthenticatedCronRequest(req: Request, res: Response, next: any) {

@@ -82,7 +82,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
       availableFaculties: [],
       formSubmitted: false,
 
-      verificationModal: true,
+      verificationModal: false,
       presentationId: undefined,
       change: {},
     }
@@ -214,6 +214,9 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
       // Set group
       values.group = this.props.group._id;
 
+      // Set semester
+      values.semester = this.props.group.semester;
+
       let presentationId;
       const presentation = this.state.allPresentations
         .find((presentation: Presentation) => presentation._id === this.state.schedulingPresentation.get('_id'))
@@ -228,9 +231,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
         verificationModal: true,
         presentationId,
         change: values,
-      })
-
-      console.log(values);
+      });
     })
   }
 

@@ -165,7 +165,7 @@ module.exports.verifyCode = (req: Request, res: Response) => {
             })
           } else {
             return Promise.reject({
-              message: 'Your token does not match the record',
+              message: 'Your code does not match',
             })
           }
         } else {

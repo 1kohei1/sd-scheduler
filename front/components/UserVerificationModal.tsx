@@ -18,6 +18,7 @@ export interface UserVerificationModalProps {
 interface UserVerificationModalState {
   errs: List<string>;
   saving: boolean;
+  scheduledPresentation: boolean;
 
   selectedMemberId: string;
   verificationCode: string;
@@ -31,6 +32,7 @@ export default class UserVerificationModal extends React.Component<UserVerificat
     this.state = {
       errs: List<string>(),
       saving: false,
+      scheduledPresentation: false,
 
       selectedMemberId: '',
       verificationCode: '',
@@ -89,11 +91,15 @@ export default class UserVerificationModal extends React.Component<UserVerificat
 
   async schedulePresentation() {
     try {
-      // Schedule presentation
-      console.log('schedule presentation');
+      if (this.props._id) {
+        await Api.updatePresentation(this.props._id, this.props.body);
+      } else {
+        await Api.createPresentation(this.props.body);
+      }
       this.setState({
         saving: false,
-      })
+        scheduledPresentation: true,
+      });
     } catch (err) {
       this.onErr(err.message)
     }
@@ -109,72 +115,91 @@ export default class UserVerificationModal extends React.Component<UserVerificat
         footer={null}
         onCancel={this.props.onClose}
       >
-        <div>Only group member can schedule the presentation.</div>
-        <div>Please select the member to receive the verification code and enter the emailed code.</div>
-        <div>The system stores the last code. So send verification code only one time.</div>
-        {this.state.verificationCodeSent && (
+        {this.state.scheduledPresentation ? (
           <Alert
-            style={{ marginTop: '8px' }}
+            showIcon
             type="success"
-            message="Successfully sent verification code"
+            message="Successfully scheduled the presentation"
+            description={(
+              <div>Check your presentation at semester calendar.</div>
+            )}
           />
-        )}
-        {this.state.errs.map((err: string) => (
-          <Alert
-            style={{ marginTop: '8px' }}
-            type="error"
-            message={err}
-          />
-        ))}
-        <Form>
-          <Form.Item
-            label="Who will receive the verification code?"
-          >
-            <Select
-              value={this.state.selectedMemberId}
-              onChange={(val: string) => this.onChange('selectedMemberId', val)}
-            >
-              {group.members.map((member: Person) => (
-                <Select.Option
-                  key={member._id}
-                  value={member._id}
-                >
-                  {member.firstName} {member.lastName} &lt;{member.email}&gt;
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item>
-            <Button
-              type={this.state.verificationCodeSent ? undefined : 'primary'}
-              onClick={this.sendVerificationCode}
-              loading={this.state.saving}
-            >
-              Send verification code
-            </Button>
-          </Form.Item>
-          {this.state.verificationCodeSent && (
+        ) : (
             <div>
-              <Form.Item
-                label="Verification code"
-              >
-                <Input
-                  value={this.state.verificationCode}
-                  onChange={e => this.onChange('verificationCode', e.target.value)}
-                />
-              </Form.Item>
-              <Form.Item>
-                <Button
-                  type="primary"
-                  loading={this.state.saving}
-                  onClick={this.verifyCode}
+              <div>Only group member can schedule the presentation.</div>
+              <div>Please select the member to receive the verification code and enter the emailed code.</div>
+              <div>The system stores the last code. So send verification code only one time.</div>
+              {
+                this.state.verificationCodeSent && (
+                  <Alert
+                    style={{ marginTop: '8px' }}
+                    type="success"
+                    message="Successfully sent verification code"
+                  />
+                )
+              }
+              {
+                this.state.errs.map((err: string, index: number) => (
+                  <Alert
+                    key={index}
+                    style={{ marginTop: '8px' }}
+                    type="error"
+                    message={err}
+                  />
+                ))
+              }
+              <Form>
+                <Form.Item
+                  label="Who will receive the verification code?"
                 >
-                  Verify &amp; schedule presentation
-                </Button>
-              </Form.Item>
-            </div>
-          )}
-        </Form>
+                  <Select
+                    value={this.state.selectedMemberId}
+                    onChange={(val: string) => this.onChange('selectedMemberId', val)}
+                  >
+                    {group.members.map((member: Person) => (
+                      <Select.Option
+                        key={member._id}
+                        value={member._id}
+                      >
+                        {member.firstName} {member.lastName} &lt;{member.email}&gt;
+                       </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+                <Form.Item>
+                  <Button
+                    type={this.state.verificationCodeSent ? undefined : 'primary'}
+                    onClick={this.sendVerificationCode}
+                    loading={this.state.saving}
+                  >
+                    Send verification code
+                  </Button>
+                </Form.Item>
+                {this.state.verificationCodeSent && (
+                  <div>
+                    <Form.Item
+                      label="Verification code"
+                    >
+                      <Input
+                        value={this.state.verificationCode}
+                        onChange={e => this.onChange('verificationCode', e.target.value)}
+                      />
+                    </Form.Item>
+                    <Form.Item>
+                      <Button
+                        type="primary"
+                        loading={this.state.saving}
+                        onClick={this.verifyCode}
+                      >
+                        Verify &amp; schedule presentation
+                      </Button>
+                    </Form.Item>
+                  </div>
+                )}
+              </Form>
+            </div >
+          )
+        }
       </Modal>
     );
   }
