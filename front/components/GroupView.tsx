@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Upload, Icon, Button, Table, message } from 'antd';
+import { Upload, Icon, Button, Table, Alert, message } from 'antd';
+import { UploadChangeParam } from 'antd/lib/upload/interface';
 import { List } from 'immutable';
 
 import { Semester } from '../models/Semester';
@@ -98,7 +99,7 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
       render: (text: any, record: Group, index: any) => {
         return (
           <div>
-            {record.members.map((member: Person) => `${member.firstName} ${member.firstName}`).join(', ')}
+            {record.members.map((member: Person) => `${member.firstName} ${member.lastName}`).join(', ')}
           </div>
         )
       }
@@ -150,10 +151,44 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
     })
   }
 
+  draggerProps() {
+    return {
+      name: 'groups',
+      action: '/api/groups',
+      withCredentials: true,
+      accept: '.xlsx',
+      data: {
+        semester: this.props.semester._id,
+        adminFaculty: this.props.user._id,
+      },
+      onChange: (info: UploadChangeParam) => {
+        const { status } = info.file;
+
+        if (status === 'done') {
+          this.setState({
+            loading: true
+          });
+          this.getData();
+        } else if (status === 'error') {
+          this.onErr('Failed to import groups');
+        }
+      }
+    }
+  }
+
   render() {
     return (
       <div>
         <h1>Group</h1>
+        {this.state.errs.map((err: string, index: number) => (
+          <Alert
+            type="error"
+            showIcon
+            style={{ marginBottom: '8px' }}
+            message="Error"
+            description={err}
+          />
+        ))}
         <SchedulePresentationModal
           visible={this.state.schedulingModal}
           user={this.props.user}
@@ -161,20 +196,28 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
           schedulingPresentation={this.state.schedulingPresentation as Presentation}
           onClose={this.onClose}
         />
-        <div>
-          {this.state.groups.length === 0 ? (
-            <div>
-              Drag and drop form to import groups
-              </div>
-          ) : (
-            <Table
-              dataSource={this.state.groups}
-              columns={this.columns()}
-              loading={this.state.loading}
-              rowKey="_id"
-            />
-          )}
-        </div>
+        {this.state.loading ? <Loading /> : (
+          <div>
+            {this.state.groups.length === 0 ? (
+              <Upload.Dragger {...this.draggerProps()}>
+                <p className="ant-upload-drag-icon">
+                  <Icon type="inbox" />
+                </p>
+                <p className="ant-upload-text">Click or drag student roster group of your class to import groups</p>
+                <p className="ant-upload-hint" style={{ fontSize: '16px' }}>
+                  The order of the column must be first name, last name, email, and group number.
+                </p>
+              </Upload.Dragger>
+            ) : (
+                <Table
+                  dataSource={this.state.groups}
+                  columns={this.columns()}
+                  loading={this.state.loading}
+                  rowKey="_id"
+                />
+              )}
+          </div>
+        )}
       </div>
     );
   }

@@ -41,6 +41,13 @@ interface MyRequest extends Request {
   } | Multer.File[];
 }
 
+interface Member {
+  firstName: string;
+  lastName: string;
+  email: string;
+  groupNumber: string;
+}
+
 module.exports.findGroups = (req: Request, res: Response) => {
   const info: any = {
     key: APIUtil.key(req),
@@ -69,36 +76,39 @@ module.exports.createGroup = (req: MyRequest, res: Response) => {
   const workbook = read(req.file.buffer, {
     type: 'buffer',
   });
-  const spreadSheetGroups = utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-
-  // I'm the only one who is gonna use this entry point. 
-  // So it's ok to assume the format of given file
-  // First column heading is "Group number" and the second column is "Emails" containing comma separated students' emails
+  // If header exists, remove the header option and replace the accessing property below
+  const spreadSheetGroups = utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {
+    header: ['firstName', 'lastName', 'email', 'groupNumber'],
+  });
 
   const { semester, adminFaculty } = req.body;
 
-  const promises = spreadSheetGroups.map((groupData: any) => {
-    const members = groupData.Emails
-      .split(',')
-      .map((email: string) => email.trim().toLowerCase())
-      .map((email: string) => {
-        return {
-          firstName: '',
-          lastName: '',
-          email,
-        }
-      });
+  const groups: {
+    [key: string]: Member[];
+  } = {};
 
-    const body = {
-      semester,
-      members,
-      adminFaculty,
-      sponsors: [],
-      groupNumber: groupData['Group number'],
+  spreadSheetGroups.forEach((member: Member) => {
+    const groupNumber = `${parseInt(member.groupNumber)}`;
+
+    if (!groups.hasOwnProperty(groupNumber)) {
+      groups[groupNumber] = [];
     }
 
-    return DBUtil.createGroup(body);
+    delete member.groupNumber;
+
+    groups[groupNumber].push(member);
   });
+
+  const promises = Object.entries(groups)
+    .map(([groupNumber, members]: [string, Member[]]) => {
+      return DBUtil.createGroup({
+        semester,
+        members,
+        adminFaculty,
+        sponsors: [],
+        groupNumber
+      });
+    });
 
   Promise.all(promises)
     .then(result => {
