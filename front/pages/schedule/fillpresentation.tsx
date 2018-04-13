@@ -18,6 +18,7 @@ import AppLayout from '../../components/AppLayout';
 import ScheduleLayout from '../../components/ScheduleLayout';
 import Loading from '../../components/Loading';
 import { DateConstants, ScheduleFormLayoutConstants } from '../../models/Constants';
+import UserVerificationModal from '../../components/UserVerificationModal';
 
 export interface FillPresentationProps {
   form: WrappedFormUtils;
@@ -37,6 +38,10 @@ interface FillPresentationState {
   schedulingPresentation: Map<keyof Presentation, any>;
   availableFaculties: Faculty[];
   formSubmitted: boolean;
+
+  verificationModal: boolean;
+  presentationId: string | undefined;
+  change: object;
 }
 
 class FillPresentation extends React.Component<FillPresentationProps, FillPresentationState> {
@@ -76,6 +81,10 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
       schedulingPresentation: Map<keyof Presentation, any>(NewPresentation(this.props.group.semester, this.props.group)),
       availableFaculties: [],
       formSubmitted: false,
+
+      verificationModal: true,
+      presentationId: undefined,
+      change: {},
     }
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -84,6 +93,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
     this.onPresentationDateChange = this.onPresentationDateChange.bind(this);
     this.getFourFacultiesStatus = this.getFourFacultiesStatus.bind(this);
     this.getSdFacultyStatus = this.getSdFacultyStatus.bind(this);
+    this.onClose = this.onClose.bind(this);
   }
 
   onErr(err: string) {
@@ -201,8 +211,25 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
       const startMoment = DatetimeUtil.getMomentFromISOString(values.start);
       values.end = DatetimeUtil.addToMoment(startMoment, 1, 'h').toISOString();
 
-      // Check if state.schedulingPresentation._id exists in state.allPresentations and pass _id if it exists to verification modal
-      // Present dialog to verify user belongs to the group
+      // Set group
+      values.group = this.props.group._id;
+
+      let presentationId;
+      const presentation = this.state.allPresentations
+        .find((presentation: Presentation) => presentation._id === this.state.schedulingPresentation.get('_id'))
+
+      if (presentation) {
+        presentationId = presentation._id;
+      } else {
+        presentationId = undefined;
+      }
+
+      this.setState({
+        verificationModal: true,
+        presentationId,
+        change: values,
+      })
+
       console.log(values);
     })
   }
@@ -310,6 +337,12 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
     })
   }
 
+  onClose() {
+    this.setState({
+      verificationModal: false,
+    })
+  }
+
   render() {
     const { group } = this.props;
     const schedulingPresentation = this.state.schedulingPresentation.toObject();
@@ -321,6 +354,13 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
           groupNumber={group.groupNumber}
           description={`Please fill the presentation detail for group ${group.groupNumber}.`}
         >
+          <UserVerificationModal
+            visible={this.state.verificationModal}
+            _id={this.state.presentationId}
+            body={this.state.change}
+            group={this.props.group}
+            onClose={this.onClose}
+          />
           {this.state.loading ? <Loading /> : (
             <Form onSubmit={this.handleSubmit}>
               {this.state.errs.map((err: string, index: number) => {

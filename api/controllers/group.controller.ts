@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { read, utils } from 'xlsx';
 import * as crypto from 'crypto';
 import { sign } from 'jsonwebtoken';
+import { Document } from 'mongoose';
 
 import DBUtil from '../utils/db.util';
 import APIUtil from '../utils/api.util';
@@ -113,9 +114,28 @@ module.exports.sendCode = (req: Request, res: Response) => {
     key: APIUtil.key(req),
     debugInfo: {
       _id: req.params._id,
+      body: req.body,
     }
   };
-  
+
+  // Generate 6 length digit characters. 
+  // Generate this way to have leading 0
+  const nums = [];
+  for (let i = 0; i < 6; i++) {
+    nums.push(`${Math.floor(Math.random() * 10)}`);
+  }
+  const code = nums.join('');
+
+  DBUtil.updateGroup(req.params._id, {
+    verificationCode: code,
+    verifyCodeReceiverId: req.body.verifyCodeReceiverId,
+  })
+    .then(updatedGroup => {
+      APIUtil.successResponse(info, updatedGroup, res);
+    })
+    .catch(err => {
+      APIUtil.errorResponse(info, err.message, err, res);
+    })
 
 }
 
@@ -128,45 +148,44 @@ module.exports.verifyCode = (req: Request, res: Response) => {
     }
   };
 
-  
-}
-
-module.exports.verifyAuthentication = (req: Request, res: Response) => {
-  const info: any = {
-    key: APIUtil.key(req),
-    debugInfo: {
-      _id: req.params._id,
-      body: req.body,
-    }
-  };
-
-  const { _id } = req.params;
-  const { email } = req.body;
-
-  const authenticationToken = crypto.randomBytes(48).toString('hex');
-  const authenticationTokenExpireAt = new Date();
-  authenticationTokenExpireAt.setMinutes(authenticationTokenExpireAt.getMinutes() + 15); // Set token expire in 15 minutes
-
-  const update = {
-    authenticationToken,
-    authenticationTokenExpireAt,
-  }
-
-  DBUtil.updateGroup(_id, update)
-    .then(updatedGroup => {
-      APIUtil.successResponse(info, authenticationToken, res);
-
-      // Send authentication email
-      Mailer.send(MailType.verifystudentauthentication, {
-        to: [email],
-        extra: {
-          authenticationToken,
-          groupNumber: updatedGroup.get('groupNumber'),
+  DBUtil.findGroups({
+    _id: req.params._id,
+  })
+    .then((groups: Document[]) => {
+      if (groups.length === 0) {
+        return Promise.reject({
+          message: 'Provided group does not exists',
+        });
+      } else {
+        const group = groups[0];
+        if (new Date().valueOf() < group.get('verificationCodeExpireAt').valueOf()) {
+          if (group.get('verificationCode') === req.body.code) {
+            return DBUtil.updateGroup(req.params._id, {
+              verificationCode: '',
+            })
+          } else {
+            return Promise.reject({
+              message: 'Your token does not match the record',
+            })
+          }
+        } else {
+          return Promise.reject({
+            message: 'Your token has expired. Please send another verification code',
+          })
         }
-      })
+      }
+    })
+    .then((updatedGroup: Document) => {
+      const token = sign({
+        // To avoid making change to other Group/Presentation by just specifying document id in API,
+        // specify the group id this cookie can make change
+        group_id: updatedGroup.get('_id'),
+      }, process.env.SECRET as string);
+
+      APIUtil.successResponse(info, token, res);
     })
     .catch(err => {
-      APIUtil.errorResponse(info, err.message, {}, res);
+      APIUtil.errorResponse(info, err.message, err, res);
     })
 }
 

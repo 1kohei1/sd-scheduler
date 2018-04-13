@@ -114,16 +114,12 @@ export default class Api {
     return await Api.makeRequest(RequestMethod.GET, `/api/groups?${query}`);
   }
 
-  static async sendCode(_id: string) {
-    return await Api.makeRequest(RequestMethod.POST, `/api/groups/${_id}/code`);
+  static async sendCode(_id: string, body: object = {}) {
+    return await Api.makeRequest(RequestMethod.POST, `/api/groups/${_id}/code`, body);
   }
 
   static async verifyCode(_id: string, body: object) {
     return await Api.makeRequest(RequestMethod.POST, `/api/groups/${_id}/verify`, body);
-  }
-
-  static async updateGroup(_id: string, body: object) {
-    return await Api,this.makeRequest(RequestMethod.PUT, `/api/groups/${_id}`, body);
   }
 
   /**

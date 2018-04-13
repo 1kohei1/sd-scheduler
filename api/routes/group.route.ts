@@ -28,12 +28,4 @@ module.exports = (server: Application) => {
     '/api/groups/:_id/verify',
     groupController.verifyCode,
   )
-
-  server.put(
-    '/api/groups/:_id',
-    APIUtil.verifyJWT,
-    APIUtil.isAuthorizedJWT,
-    groupController.updateGroup,
-  )
-
 }

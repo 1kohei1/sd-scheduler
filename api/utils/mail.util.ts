@@ -9,7 +9,7 @@ export enum MailType {
   passwordreset,
   verify,
   welcome,
-  verifystudentauthentication,
+  verifycode,
   presentation,
   presentationcancel,
   presentationreminder,
@@ -53,8 +53,8 @@ export default class Mailer {
       p = this.sendVerify(option);
     } else if (type === MailType.welcome) {
       p = this.sendWelcome(option);
-    } else if (type === MailType.verifystudentauthentication) {
-      p = this.sendVerifystudentauthentication(option);
+    } else if (type === MailType.verifycode) {
+      p = this.sendVerifycode(option);
     } else if (type === MailType.presentation) {
       p = this.sendPresentation(option);
     } else if (type === MailType.presentationcancel) {
@@ -67,7 +67,7 @@ export default class Mailer {
       return Promise.resolve();
     }
 
-    const newEmail:any = {
+    const newEmail: any = {
       key,
       to: option.to,
       extra: option.extra,
@@ -142,13 +142,13 @@ export default class Mailer {
     return transporter.sendMail(mailOption);
   }
 
-  private static sendVerifystudentauthentication(option: MailOption) {
+  private static sendVerifycode(option: MailOption) {
     const mailOption = {
       from: MAIL_CONSTANTS.from,
       to: option.to,
       subject: `[SD Scheduler] Verify you belong to the group ${option.extra.groupNumber}`,
-      text: MailTemplate.verifystudentauthenticationText(option),
-      html: MailTemplate.verifystudentauthenticationHtml(option),
+      text: MailTemplate.verifycodeText(option),
+      html: MailTemplate.verifycodeHtml(option),
     }
 
     return transporter.sendMail(mailOption);
@@ -471,14 +471,15 @@ export class MailTemplate {
     `);
   }
 
-  static verifystudentauthenticationText(option: MailOption) {
+  static verifycodeText(option: MailOption) {
     return `
-    Hi,
+    Hi ${option.extra.name},
 
-    We request to verify you are the member of the group ${option.extra.groupNumber}.<br />
-    Please click the link to verify: ${Util.siteUrl()}/groups/${option.extra.authenticationToken}
+    Your verification code is:
 
-    This link expires in 15 minutes. 
+    ${option.extra.code}
+
+    This code expires in 15 minutes.
 
     Sincerely,
 
@@ -486,15 +487,15 @@ export class MailTemplate {
     `
   }
 
-  static verifystudentauthenticationHtml(option: MailOption) {
+  static verifycodeHtml(option: MailOption) {
     return MailTemplate.htmlTemplate(`
-      Hi,<br />
+      Hi ${option.extra.name},<br />
       <br />
-      We request to verify you are the member of the group ${option.extra.groupNumber}.<br />
-      Please click the link to verify: 
-      <a href="${Util.siteUrl()}/groups/${option.extra.authenticationToken}" target="_blank">${Util.siteUrl()}/groups/${option.extra.authenticationToken}</a><br />
+      Your verification code is:<br />
       <br />
-      This link expires in 15 minutes. <br />
+      <div style="font-size: 20px">${option.extra.code}</div>
+      <br />
+      This code expires in 15 minutes.<br />
       <br />
       Sincerely,<br />
       <br />
@@ -680,13 +681,13 @@ export class MailTemplate {
 
   private static convertTermsToLinks(content: string, isForText: boolean) {
     const terms = MailTemplate.terms();
-    
+
     terms.forEach(term => {
       // Handle no text in the tag such as  <PASSWORD></PASSWORD>
       let regex = new RegExp(`&lt;${term.key}&gt;&lt;/${term.key}&gt;`, 'g');
       content = content.replace(regex, MailTemplate.replaceStr(term.link, term.link, isForText));
       // Handle text in the tag such as <PASSWORD>abc</PASSWORD>
-       // Reference for the regex taking characters that's up to specified character: https://stackoverflow.com/a/7124976/4155129
+      // Reference for the regex taking characters that's up to specified character: https://stackoverflow.com/a/7124976/4155129
       regex = new RegExp(`&lt;${term.key}&gt;(.+?(?=&lt;))&lt;/${term.key}&gt;`, 'g');
       content = content.replace(regex, (match: string, text: string) => MailTemplate.replaceStr(term.link, text, isForText));
     });
