@@ -80,8 +80,8 @@ FacultySchema.pre('save', function (this: any, next) {
 });
 
 /**
- * If isAdmin changes from false to true, create PresentationDate and Location
- * If isAdmin changes from true to false, delete PresentationDate and Location
+ * If isAdmin changes from false to true, create PresentationDate
+ * If isAdmin changes from true to false, delete PresentationDate
  */
 const handleIsAdminChange = (doc: Document, next: any) => {
   if (doc.isModified('isAdmin')) {

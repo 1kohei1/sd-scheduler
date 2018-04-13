@@ -20,11 +20,11 @@ const GroupSchema = new Schema({
     ref: 'Faculty',
     required: true,
   },
-  authenticationToken: {
+  verificationCode: {
     type: String,
     default: '',
   },
-  authenticationTokenExpireAt: {
+  verificationCodeExpireAt: {
     type: Date,
   },
   created_at: Date,
