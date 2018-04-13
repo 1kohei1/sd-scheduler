@@ -114,12 +114,12 @@ export default class Api {
     return await Api.makeRequest(RequestMethod.GET, `/api/groups?${query}`);
   }
 
-  static async verifyStudentIdentity(_id: string, body: object) {
-    return await Api.makeRequest(RequestMethod.POST, `/api/groups/${_id}/verify`, body);
+  static async sendCode(_id: string) {
+    return await Api.makeRequest(RequestMethod.POST, `/api/groups/${_id}/code`);
   }
 
-  static async verifyGroupAuthenticationToken(authenticationToken: string) {
-    return await Api.makeRequest(RequestMethod.POST, `/api/groups/verify/${authenticationToken}`);
+  static async verifyCode(_id: string, body: object) {
+    return await Api.makeRequest(RequestMethod.POST, `/api/groups/${_id}/verify`, body);
   }
 
   static async updateGroup(_id: string, body: object) {

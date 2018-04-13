@@ -20,13 +20,13 @@ module.exports = (server: Application) => {
   )
 
   server.post(
-    '/api/groups/verify/:authenticationToken',
-    groupController.verifyAuthenticationToken,
+    '/api/groups/:_id/code',
+    groupController.sendCode,
   )
 
   server.post(
     '/api/groups/:_id/verify',
-    groupController.verifyAuthentication,
+    groupController.verifyCode,
   )
 
   server.put(
@@ -35,4 +35,5 @@ module.exports = (server: Application) => {
     APIUtil.isAuthorizedJWT,
     groupController.updateGroup,
   )
+
 }

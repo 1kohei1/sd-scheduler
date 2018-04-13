@@ -49,22 +49,6 @@ module.exports = (app: Server, server: Application) => {
     });
 
   server.get(
-    '/groups/',
-    (req: Request, res: Response) => {
-      res.redirect('/');
-    }
-  )
-
-  server.get(
-    '/groups/:authenticationToken',
-    (req: Request, res: Response) => {
-      app.render(req, res, '/groups', {
-        authenticationToken: req.params.authenticationToken,
-      })
-    }
-  )
-
-  server.get(
     '/schedule/:groupId',
     (req: Request, res: Response) => {
       app.render(req, res, '/schedule/fillpresentation', {

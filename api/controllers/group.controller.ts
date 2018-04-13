@@ -110,59 +110,27 @@ module.exports.createGroup = (req: MyRequest, res: Response) => {
     })
 }
 
-module.exports.verifyAuthenticationToken = (req: Request, res: Response) => {
+module.exports.sendCode = (req: Request, res: Response) => {
   const info: any = {
     key: APIUtil.key(req),
     debugInfo: {
-      authenticationToken: req.params.authenticationToken,
+      _id: req.params._id,
+    }
+  };
+  
+
+}
+
+module.exports.verifyCode = (req: Request, res: Response) => {
+  const info: any = {
+    key: APIUtil.key(req),
+    debugInfo: {
+      _id: req.params._id,
+      body: req.body,
     }
   };
 
-  const { authenticationToken } = req.params;
-  const query = {
-    authenticationToken,
-  }
-
-  DBUtil.findGroups(query)
-    .then(groups => {
-      if (groups.length === 0) {
-        return Promise.reject({
-          message: 'Invalid token.'
-        })
-      } else {
-        if (groups.length > 1) {
-          console.log('Groups with duplicate token is found');
-        }
-        const group = groups[0];
-        if (new Date().valueOf() < group.get('authenticationTokenExpireAt').valueOf()) {
-          return DBUtil.updateGroup(group.get('_id'), {
-            authenticationToken: '',
-            authenticationTokenExpireAt: null,
-          })
-        } else {
-          return Promise.reject({
-            message: 'Token expired.',
-          })
-        }
-      }
-    })
-    .then(updatedGroup => {
-      // Generate JWT token and let user use PUT /api/groups/:_id, POST /api/presentations, and PUT /api/presentations/:_id
-      const token = sign({
-        // To avoid making change to other Group/Presentation by just specifying document id,
-        // specify the group id this cookie can make change
-        group_id: updatedGroup.get('_id'), 
-      }, process.env.SECRET as string);
-
-      APIUtil.successResponse(info, token, res);
-
-      // Notify schedule page that user is verified
-      SocketIOUtil.emit(authenticationToken, true);
-    })
-    .catch(err => {
-      info.debugInfo.message = err.message;
-      APIUtil.errorResponse(info, err.message, {}, res);
-    })
+  
 }
 
 module.exports.verifyAuthentication = (req: Request, res: Response) => {
