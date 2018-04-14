@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Row, Col, Form, Select, Input, Button, Icon, Alert, Checkbox } from 'antd';
+import { Row, Col, Form, Select, Input, Button, Icon, Alert, Checkbox, Tooltip } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { List, Map } from 'immutable';
 import ObjectID from 'bson-objectid';
@@ -344,6 +344,36 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
     })
   }
 
+  sponsorMembersTooltip() {
+    return (
+      <Tooltip
+        title="People who will join your presentation from the sponsor."
+      >
+        Sponsor members <Icon type="question-circle-o" />
+      </Tooltip>
+    )
+  }
+  
+  availableFacultiesTooltip() {
+    return (
+      <Tooltip
+        title="Please check faculties you would like to invite to the presentation. If you don't see the professor who confirmed to join your presentation, please talk with your senior design faculty."
+      >
+        EECS available faculties <Icon type="question-circle-o" />
+      </Tooltip>
+    )
+  }
+
+  otherDepartmentFacultiesTooltip() {
+    return (
+      <Tooltip
+        title="If you would like to invite faculties outside of EECS, please enter faculty information here."
+      >
+        Other department faculties <Icon type="question-circle-o" />
+      </Tooltip>
+    )
+  }
+
   render() {
     const { group } = this.props;
     const schedulingPresentation = this.state.schedulingPresentation.toObject();
@@ -399,7 +429,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
               {schedulingPresentation.sponsors.length === 0 ? (
                 <Form.Item
                   {...ScheduleFormLayoutConstants.layoutWithColumn}
-                  label="Sponsor members"
+                  label={this.sponsorMembersTooltip()}
                 >
                   <Button
                     type="dashed"
@@ -418,7 +448,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
                         >
                           {index === 0 && (
                             <Form.Item
-                              label="Sponsor members"
+                              label={this.sponsorMembersTooltip()}
                             >
                             </Form.Item>
                           )}
@@ -521,7 +551,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
               {this.state.availableFaculties.length === 0 ? (
                 <Form.Item
                   {...ScheduleFormLayoutConstants.layoutWithColumn}
-                  label="EECS available faculties"
+                  label={this.availableFacultiesTooltip()}
                 >
                   No faculties are available at specified time. Please change your presentation time.
                 </Form.Item>
@@ -538,7 +568,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
                           key={faculty._id}
                           {...layout}
                           style={{ marginBottom: isLast ? '' : '0' }}
-                          label={index === 0 ? 'EECS available faculties' : ''}
+                          label={index === 0 ? this.availableFacultiesTooltip() : ''}
                         >
                           {this.props.form.getFieldDecorator(`faculties[${faculty._id}].checked`, {
                             initialValue: schedulingPresentation.faculties.indexOf(faculty._id) >= 0,
@@ -557,7 +587,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
               {schedulingPresentation.externalFaculties.length === 0 ? (
                 <Form.Item
                   {...ScheduleFormLayoutConstants.layoutWithColumn}
-                  label="Other department faculties"
+                  label={this.otherDepartmentFacultiesTooltip()}
                 >
                   <Button
                     type="dashed"
@@ -576,7 +606,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
                         >
                           {index === 0 && (
                             <Form.Item
-                              label="Other department faculties"
+                              label={this.otherDepartmentFacultiesTooltip()}
                             >
                             </Form.Item>
                           )}
