@@ -6,14 +6,13 @@ import InitialProps from '../../models/InitialProps';
 import { Semester } from '../../models/Semester';
 import Faculty from '../../models/Faculty';
 import Group from '../../models/Group';
-import Person from '../../models/Person';
 import Api from '../../utils/Api';
-import CookieUtil from '../../utils/CookieUtil';
 import AppLayout from '../../components/AppLayout';
 import ScheduleLayout from '../../components/ScheduleLayout';
 import CardInfo from '../../components/CardInfo';
 import Loading from '../../components/Loading';
 import { ScheduleFormLayoutConstants } from '../../models/Constants';
+import UserVerificationModal from '../../components/UserVerificationModal';
 
 export interface ScheduleProps {
   semester: Semester;
@@ -23,16 +22,13 @@ export interface ScheduleProps {
 interface ScheduleState {
   loading: boolean;
   errs: List<string>;
-  waitingResponse: boolean;
+  verifyModal: boolean;
 
   allFaculties: Faculty[];
   allGroups: Group[];
 
   selectedAdminId: string;
   selectedGroupId: string;
-  selectedMemberId: string;
-  verificationCode: string;
-  verificationCodeSent: boolean;
 }
 
 export default class Schedule extends React.Component<ScheduleProps, ScheduleState> {
@@ -52,21 +48,19 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     this.state = {
       loading: true,
       errs: List<string>(),
-      waitingResponse: false,
+      verifyModal: false,
 
       allFaculties: [],
       allGroups: [],
 
       selectedAdminId: '',
       selectedGroupId: '',
-      selectedMemberId: '',
-      verificationCode: '',
-      verificationCodeSent: false,
     }
 
     this.onChange = this.onChange.bind(this);
-    this.sendVerificationCode = this.sendVerificationCode.bind(this);
-    this.verifyCode = this.verifyCode.bind(this);
+    this.onClick = this.onClick.bind(this);
+    this.onVerified = this.onVerified.bind(this);
+    this.onClose = this.onClose.bind(this);
   }
 
   onErr(err: string) {
@@ -113,62 +107,36 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
     }
   }
 
-  async sendVerificationCode() {
-    try {
-      this.setState({
-        waitingResponse: true,
-      })
-      await Api.sendCode(this.state.selectedGroupId, {
-        verificationCodeReceiverId: this.state.selectedMemberId,
-      });
-      this.setState({
-        verificationCodeSent: true,
-        waitingResponse: false,
-      })
-    } catch (err) {
-      this.onErr(err.message);
-    }
-  }
-
-  async verifyCode() {
-    try {
-      this.setState({
-        waitingResponse: true,
-      })
-      const token = await Api.verifyCode(this.state.selectedGroupId, {
-        code: this.state.verificationCode,
-      });
-      CookieUtil.setToken(token);
-      Api.redirect(
-        undefined,
-        '/schedule/fillpresentation',
-        {
-          groupId: this.state.selectedGroupId,
-        },
-        `/schedule/${this.state.selectedGroupId}`
-      );
-    } catch (err) {
-      this.onErr(err.message)
-    }
-  }
-
-  onChange(prop: 'selectedAdminId' | 'selectedGroupId' | 'selectedMemberId' | 'verificationCode', val: string) {
+  onChange(prop: 'selectedAdminId' | 'selectedGroupId', val: string) {
     const newState: any = {};
     newState[prop] = val;
     if (prop === 'selectedAdminId') {
       newState.selectedGroupId = '';
-      newState.selectedMemberId = '';
-      newState.verificationCode = '';
-      newState.verificationCodeSent = false;
-    } else if (prop === 'selectedGroupId') {
-      newState.selectedMemberId = '';
-      newState.verificationCode = '';
-      newState.verificationCodeSent = false;
-    } else if (prop === 'selectedMemberId') {
-      newState.verificationCode = '';
-      newState.verificationCodeSent = false;
     }
     this.setState(newState);
+  }
+
+  onVerified() {
+    Api.redirect(
+      undefined,
+      '/schedule/fillpresentation',
+      {
+        groupId: this.state.selectedGroupId,
+      },
+      `/schedule/${this.state.selectedGroupId}`
+    )
+  }
+
+  onClick() {
+    this.setState({
+      verifyModal: true,
+    })
+  }
+
+  onClose() {
+    this.setState({
+      verifyModal: false,
+    })
   }
 
   render() {
@@ -179,17 +147,18 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
         <ScheduleLayout
           current={0}
           groupNumber={0}
-          description="Please select your group and verify your belonging to the group."
+          description="Please select your senior design faculty and group."
         >
+          {group && (
+            <UserVerificationModal
+              visible={this.state.verifyModal}
+              group={(group as Group)}
+              onVerified={this.onVerified}
+              onClose={this.onClose}
+            />
+          )}
           {this.state.loading ? <Loading /> : (
             <Form>
-              {this.state.verificationCodeSent && (
-                <Alert
-                  type="success"
-                  style={{ marginBottom: '8px' }}
-                  message="Successfully sent verification code"
-                />
-              )}
               {this.props.err && (
                 <Alert
                   type="error"
@@ -248,56 +217,14 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
                 </Select>
               </Form.Item>
               <Form.Item
-                {...ScheduleFormLayoutConstants.layoutWithColumn}
-                label="Verification code receiver"
-              >
-                <Select
-                  value={this.state.selectedMemberId}
-                  onChange={(val: string) => this.onChange('selectedMemberId', val)}
-                  disabled={!this.state.selectedGroupId}
-                >
-                  {group && group.members.map((member: Person) => (
-                    <Select.Option
-                      key={member._id}
-                      value={member._id}
-                    >
-                      {member.firstName} {member.lastName} &lt;{member.email}&gt;
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
-              <Form.Item
-                {...ScheduleFormLayoutConstants.layoutWithoutColumn}
-              >
-                <Button
-                  type={this.state.verificationCodeSent ? undefined : 'primary'}
-                  onClick={this.sendVerificationCode}
-                  loading={this.state.waitingResponse}
-                  disabled={!this.state.selectedMemberId}
-                >
-                  Send verification code
-                </Button>
-              </Form.Item>
-              <Form.Item
-                label="Verification code"
-                {...ScheduleFormLayoutConstants.layoutWithColumn}
-              >
-                <Input
-                  value={this.state.verificationCode}
-                  onChange={e => this.onChange('verificationCode', e.target.value)}
-                  disabled={!this.state.verificationCodeSent}
-                />
-              </Form.Item>
-              <Form.Item
                 {...ScheduleFormLayoutConstants.layoutWithoutColumn}
               >
                 <Button
                   type="primary"
-                  loading={this.state.waitingResponse}
-                  onClick={this.verifyCode}
-                  disabled={!this.state.verificationCodeSent}
+                  disabled={!this.state.selectedGroupId}
+                  onClick={this.onClick}
                 >
-                  Verify &amp; schedule presentation
+                  Verify yourself &amp; schedule presentation
                 </Button>
               </Form.Item>
             </Form>
