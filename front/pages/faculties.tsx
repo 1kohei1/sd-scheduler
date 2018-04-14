@@ -278,6 +278,7 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
               <Table
                 dataSource={this.state.facultiesInForm.toArray()}
                 columns={this.tableColumns()}
+                pagination={false}
                 rowKey="_id"
               />
               <AddFaculties
