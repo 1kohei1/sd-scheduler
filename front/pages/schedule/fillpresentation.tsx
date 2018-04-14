@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { Row, Col, Form, Select, Input, Button, Icon, Alert, Checkbox, Tooltip } from 'antd';
+import { Row, Col, Form, Select, Input, Button, Icon, Alert, Checkbox, Tooltip, Modal } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { List, Map } from 'immutable';
+import Link from 'next/link'
 import ObjectID from 'bson-objectid';
 
 import InitialProps from '../../models/InitialProps';
@@ -18,7 +19,6 @@ import AppLayout from '../../components/AppLayout';
 import ScheduleLayout from '../../components/ScheduleLayout';
 import Loading from '../../components/Loading';
 import { DateConstants, ScheduleFormLayoutConstants } from '../../models/Constants';
-import UserVerificationModal from '../../components/UserVerificationModal';
 
 export interface FillPresentationProps {
   form: WrappedFormUtils;
@@ -38,10 +38,6 @@ interface FillPresentationState {
   schedulingPresentation: Map<keyof Presentation, any>;
   availableFaculties: Faculty[];
   formSubmitted: boolean;
-
-  verificationModal: boolean;
-  presentationId: string | undefined;
-  change: object;
 }
 
 class FillPresentation extends React.Component<FillPresentationProps, FillPresentationState> {
@@ -81,10 +77,6 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
       schedulingPresentation: Map<keyof Presentation, any>(NewPresentation(this.props.group.semester, this.props.group)),
       availableFaculties: [],
       formSubmitted: false,
-
-      verificationModal: false,
-      presentationId: undefined,
-      change: {},
     }
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -93,7 +85,6 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
     this.onPresentationDateChange = this.onPresentationDateChange.bind(this);
     this.getFourFacultiesStatus = this.getFourFacultiesStatus.bind(this);
     this.getSdFacultyStatus = this.getSdFacultyStatus.bind(this);
-    this.onClose = this.onClose.bind(this);
   }
 
   onErr(err: string) {
@@ -177,6 +168,43 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
     }
   }
 
+  async schedulePresentation(change: object) {
+    this.setState({
+      saving: true,
+    });
+
+    const presentation = this.state.allPresentations
+      .find((presentation: Presentation) => presentation._id === this.state.schedulingPresentation.get('_id'))
+
+    try {
+      if (presentation) {
+        await Api.updatePresentation(presentation._id, change);
+      } else {
+        await Api.createPresentation(change);
+      }
+      this.setState({
+        saving: false,
+      });
+      Modal.success({
+        title: 'Successfully scheduled the presentation!',
+        width: '520px',
+        content: (
+          <div>
+            Check your presentation in the <Link href="/"><a>semester presentation calendar</a></Link>!
+          </div>
+        ),
+        onOk: () => {
+          Api.redirect(
+            undefined,
+            '/'
+          );
+        }
+      })
+    } catch (err) {
+      this.onErr(err.message)
+    }
+  }
+
   handleSubmit(e: React.FormEvent<any>) {
     e.preventDefault();
 
@@ -217,21 +245,8 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
       // Set semester
       values.semester = this.props.group.semester;
 
-      let presentationId;
-      const presentation = this.state.allPresentations
-        .find((presentation: Presentation) => presentation._id === this.state.schedulingPresentation.get('_id'))
-
-      if (presentation) {
-        presentationId = presentation._id;
-      } else {
-        presentationId = undefined;
-      }
-
-      this.setState({
-        verificationModal: true,
-        presentationId,
-        change: values,
-      });
+      // Schedule presentation
+      this.schedulePresentation(values);
     })
   }
 
@@ -338,12 +353,6 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
     })
   }
 
-  onClose() {
-    this.setState({
-      verificationModal: false,
-    })
-  }
-
   sponsorMembersTooltip() {
     return (
       <Tooltip
@@ -353,7 +362,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
       </Tooltip>
     )
   }
-  
+
   availableFacultiesTooltip() {
     return (
       <Tooltip
@@ -385,13 +394,6 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
           groupNumber={group.groupNumber}
           description={`Please fill the presentation detail for group ${group.groupNumber}.`}
         >
-          <UserVerificationModal
-            visible={this.state.verificationModal}
-            _id={this.state.presentationId}
-            body={this.state.change}
-            group={this.props.group}
-            onClose={this.onClose}
-          />
           {this.state.loading ? <Loading /> : (
             <Form onSubmit={this.handleSubmit}>
               {this.state.errs.map((err: string, index: number) => (
@@ -697,8 +699,12 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
               <Form.Item
                 {...ScheduleFormLayoutConstants.layoutWithoutColumn}
               >
-                <Button type="primary" htmlType="submit">
-                  Verify yourself &amp; schedule presentation
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={this.state.saving}
+                >
+                  Schedule presentation
                 </Button>
               </Form.Item>
             </Form>
