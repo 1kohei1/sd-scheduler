@@ -391,10 +391,6 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
                 label="Sponsor name"
               >
                 {this.props.form.getFieldDecorator('sponsorName', {
-                  rules: [{
-                    required: true,
-                    message: 'Please provide the sponsor name',
-                  }],
                   initialValue: schedulingPresentation.sponsorName,
                 })(
                   <Input placeholder="Sponsor name" />
@@ -525,7 +521,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
               {this.state.availableFaculties.length === 0 ? (
                 <Form.Item
                   {...ScheduleFormLayoutConstants.layoutWithColumn}
-                  label="EECS faculties"
+                  label="EECS available faculties"
                 >
                   No faculties are available at specified time. Please change your presentation time.
                 </Form.Item>
@@ -542,7 +538,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
                           key={faculty._id}
                           {...layout}
                           style={{ marginBottom: isLast ? '' : '0' }}
-                          label={index === 0 ? 'EECS faculties' : ''}
+                          label={index === 0 ? 'EECS available faculties' : ''}
                         >
                           {this.props.form.getFieldDecorator(`faculties[${faculty._id}].checked`, {
                             initialValue: schedulingPresentation.faculties.indexOf(faculty._id) >= 0,

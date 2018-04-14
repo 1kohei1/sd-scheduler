@@ -311,14 +311,12 @@ PresentationSchema.post('save', (doc: Document, next: any) => {
       });
 
       group.get('members').forEach((member: Document) => {
-        if (member.get('email') === 'tobecomebig@gmail.com') {
-          emails.push({
-            email: member.get('email'),
-            name: `${member.get('firstName')} ${member.get('lastName')}`,
-            title: `Your final presentation is scheduled at ${time} on ${date} at ${location}`,
-            type: 'group',
-          })
-        }
+        emails.push({
+          email: member.get('email'),
+          name: `${member.get('firstName')} ${member.get('lastName')}`,
+          title: `Your final presentation is scheduled at ${time} on ${date} at ${location}`,
+          type: 'group',
+        })
       });
 
       doc.get('sponsors').forEach((sponsor: Document) => {
