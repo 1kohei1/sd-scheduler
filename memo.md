@@ -94,6 +94,9 @@ Feature requests from Dr. Heinrich
 - [ ] Reminding feature for student groups to provide conference paper
 - [x] Instead of let user click, send code and make user type the code
 - [x] Redesign the schedule page
+- [ ] Navigate user to /schedule if the token is expired
+- [ ] Instead of showing user email to public, let user enter the email and verify it's correct
+- [ ] Update schedule page for UI tweak
 
 Personal review:
 
