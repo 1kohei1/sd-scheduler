@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { List } from 'immutable';
 import Link from 'next/link'
-import { Form, Select, Button } from 'antd';
+import { Form, Select, Button, Alert } from 'antd';
 
 import InitialProps from '../../models/InitialProps';
 import { Semester } from '../../models/Semester';
@@ -16,6 +16,7 @@ import { ScheduleFormLayoutConstants } from '../../models/Constants';
 
 export interface ScheduleProps {
   semester: Semester;
+  err: string;
 }
 
 interface ScheduleState {
@@ -37,6 +38,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
 
     return {
       semester,
+      err: context.query.err,
     };
   }
 
@@ -119,15 +121,25 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
   }
 
   render() {
+    const errs = [this.props.err].concat(this.state.errs.toArray());
+
     return (
       <AppLayout>
         <ScheduleLayout
           current={0}
           groupNumber={0}
-          description="Please select your senior design faculty and group."
+          description="Please select your senior design group and verify you belong to the group."
         >
           {this.state.loading ? <Loading /> : (
             <Form>
+              {errs.map((err: string, index: number) => (
+                <Alert
+                  type="error"
+                  key={index}
+                  style={{ marginBottom: '8px' }}
+                  message={err}
+                />
+              ))}
               <Form.Item
                 {...ScheduleFormLayoutConstants.layoutWithColumn}
                 label="Your senior design faculty"

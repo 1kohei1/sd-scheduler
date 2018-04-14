@@ -394,14 +394,16 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
           />
           {this.state.loading ? <Loading /> : (
             <Form onSubmit={this.handleSubmit}>
-              {this.state.errs.map((err: string, index: number) => {
+              {this.state.errs.map((err: string, index: number) => (
                 <Alert
                   showIcon
                   type="error"
+                  key={index}
+                  style={{ marginBottom: '8px' }}
                   message="Error"
                   description={err}
                 />
-              })}
+              ))}
               <Form.Item
                 {...ScheduleFormLayoutConstants.layoutWithColumn}
                 label="Project name"
