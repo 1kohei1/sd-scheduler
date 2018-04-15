@@ -92,7 +92,7 @@ Feature requests from Dr. Heinrich
 - [x] Instead of let user click, send code and make user type the code
 - [x] Redesign the schedule page
 - [ ] Navigate user to /schedule if the token is expired
-- [ ] Instead of showing user email to the public, let user enter the email and verify it's correct, then send verification code
+- [x] Instead of showing user email to the public, let user enter the email and verify it's correct, then send verification code
 - [ ] Create nice landing page
 - [x] Update schedule page for UI tweak
 
