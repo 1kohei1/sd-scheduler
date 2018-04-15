@@ -90,6 +90,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
     this.setState({
       errs: this.state.errs.push(err),
       loading: false,
+      saving: false,
     })
   }
 
@@ -595,10 +596,10 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
                         {this.props.form.getFieldDecorator('start', {
                           rules: [{
                             required: true,
-                            message: 'Please provide the presentation date'
+                            message: 'Please provide the presentation time'
                           }],
                           initialValue: schedulingPresentation.start ?
-                            DatetimeUtil.formatISOString(schedulingPresentation.start, DateConstants.hourFormat) :
+                            schedulingPresentation.start :
                             undefined
                         })(
                           <Select
