@@ -33,7 +33,13 @@ export default class CookieUtil {
   }
 
   static setToken(token: string) {
-    Cookie.set(TOKEN_COOKIE_KEY, token);
+    const expireAt = new Date();
+    // Make JWT cookie expire in 1 hour
+    expireAt.setHours(expireAt.getHours() + 1);
+    // expireAt.setMinutes(expireAt.getMinutes() + 1);
+    Cookie.set(TOKEN_COOKIE_KEY, token, {
+      expires: expireAt,
+    });
   }
 
   static getToken() {

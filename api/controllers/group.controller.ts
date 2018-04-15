@@ -218,7 +218,9 @@ module.exports.verifyCode = (req: Request, res: Response) => {
         // To avoid making change to other Group/Presentation by just specifying document id in API,
         // specify the group id this cookie can make change
         group_id: updatedGroup.get('_id'),
-      }, process.env.SECRET as string);
+      }, process.env.SECRET as string, {
+        expiresIn: '1h',
+      });
 
       APIUtil.successResponse(info, token, res);
     })

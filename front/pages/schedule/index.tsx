@@ -16,6 +16,7 @@ import UserVerificationModal from '../../components/UserVerificationModal';
 
 export interface ScheduleProps {
   semester: Semester;
+  _id: string;
   err: string;
 }
 
@@ -38,6 +39,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
 
     return {
       semester,
+      _id: context.query._id,
       err: context.query.err,
     };
   }
@@ -99,9 +101,17 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
   private async getGroups() {
     try {
       const groups = await Api.getGroups(`semester=${this.props.semester._id}`) as Group[];
-      this.setState({
+      const newState: any = {
         allGroups: groups,
-      });
+      };
+
+      if (this.props._id) {
+        const group = groups.find((group: Group) => group._id === this.props._id) as Group;
+        newState.selectedAdminId = group.adminFaculty;
+        newState.selectedGroupId = this.props._id;
+      }
+
+      this.setState(newState);
     } catch (err) {
       this.onErr(err.message);
     }

@@ -69,7 +69,7 @@ export default class APIUtil {
       verify(token, process.env.SECRET as string, (err, decoded) => {
         if (err) {
           if (err.name === 'TokenExpiredError') {
-            APIUtil.errorResponse(info, 'Your session expired. Please verify your identity by sending email at previous step', {}, res);
+            APIUtil.errorResponse(info, 'Your session expired. Please verify your identity by sending verification email at previous step', {}, res);
           } else {
             APIUtil.errorResponse(info, err.message, {}, res);
           }

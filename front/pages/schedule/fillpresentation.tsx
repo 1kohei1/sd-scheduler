@@ -14,6 +14,7 @@ import Faculty from '../../models/Faculty';
 import AvailableSlot from '../../models/AvailableSlot';
 import TimeSlot from '../../models/TimeSlot';
 import Api from '../../utils/Api';
+import CookieUtil from '../../utils/CookieUtil';
 import DatetimeUtil from '../../utils/DatetimeUtil';
 import AppLayout from '../../components/AppLayout';
 import ScheduleLayout from '../../components/ScheduleLayout';
@@ -95,22 +96,32 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
   }
 
   componentDidMount() {
-    Promise.all([
-      this.getFaculties(),
-      this.getPresentationDate(),
-      this.getPresentations(),
-      this.getAvailableSlots(),
-    ])
-      .then(() => {
-        // Since onPresentationDatetimeChange does not fire when the initial value is set, manually call the function
-        this.onPresentationDatetimeChange(this.state.schedulingPresentation.get('start'));
-        this.setState({
-          loading: false,
+    // If jwt token is defined, load all data
+    if (CookieUtil.getToken()) {
+      Promise.all([
+        this.getFaculties(),
+        this.getPresentationDate(),
+        this.getPresentations(),
+        this.getAvailableSlots(),
+      ])
+        .then(() => {
+          // Since onPresentationDatetimeChange does not fire when the initial value is set, manually call the function
+          this.onPresentationDatetimeChange(this.state.schedulingPresentation.get('start'));
+          this.setState({
+            loading: false,
+          })
         })
-      })
-      .catch(err => {
-        this.onErr(err.message);
-      })
+        .catch(err => {
+          this.onErr(err.message);
+        })
+    }
+    // If it's not defined, forward to /schedule page
+    else {
+      Api.redirect(undefined, '/schedule', {
+        err: 'Your token expired. Please verify you belong to the group.',
+        _id: this.props.group._id,
+      }, '/schedule');
+    }
   }
 
   private async getFaculties() {
