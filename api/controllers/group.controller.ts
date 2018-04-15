@@ -57,7 +57,13 @@ module.exports.findGroups = (req: Request, res: Response) => {
   };
 
   DBUtil.findGroups(req.query)
-    .then(groups => {
+    .then((groups: Document[]) => {
+      // To protect student identity, don't expose members information if it's not faculty
+      if (req.isUnauthenticated()) {
+        groups.forEach((group: Document) => {
+          group.set('members', []);;
+        });
+      }
       APIUtil.successResponse(info, groups, res);
     })
     .catch(err => {

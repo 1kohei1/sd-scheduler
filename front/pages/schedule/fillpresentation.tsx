@@ -189,39 +189,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
         width: '520px',
         content: (
           <div>
-            <p>These people received the email about your presentation:</p>
-            <p>Faculties:</p>
-            <ul>
-              {change.faculties.map((fid: string) => {
-                const faculty = this.state.allFaculties.find((f: Faculty) => f._id === fid) as Faculty;
-                return (
-                  <li key={fid}>
-                    Dr. {faculty.firstName} {faculty.lastName}
-                  </li>
-                );
-              })}
-              {change.externalFaculties.map((externalFaculty: Person) => (
-                <li key={externalFaculty._id}>
-                  Dr. {externalFaculty.firstName} {externalFaculty.lastName}
-                </li>
-              ))}
-            </ul>
-            <p>Group members:</p>
-            <ul>
-              {this.props.group.members.map((member: Person) => (
-                <li key={member._id}>
-                  {member.firstName} {member.lastName}
-                </li>
-              ))}
-            </ul>
-            <p>Sponsors:</p>
-            <ul>
-              {change.sponsors.map((sponsor: Person) => (
-                <li key={sponsor._id}>
-                  {sponsor.firstName} {sponsor.lastName}
-                </li>
-              ))}
-            </ul>
+            All the people to be present at the presentation (group members, faculties, sponsors) will soon receive emails about your presentation datetime and location!
           </div>
         ),
         okText: 'Navigate to the semester calendar',

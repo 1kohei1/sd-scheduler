@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { Document } from 'mongoose';
 
 import DBUtil from '../utils/db.util';
 import APIUtil from '../utils/api.util';
@@ -12,7 +13,13 @@ module.exports.findPresentations = (req: Request, res: Response) => {
   };
 
   DBUtil.findPresentations(req.query)
-    .then(presentations => {
+    .then((presentations: Document[]) => {
+      // To protect student identity, don't expose members information if it's not faculty
+      if (req.isUnauthenticated()) {
+        presentations.forEach((presentation: Document) => {
+          presentation.get('group').set('members', []);
+        })
+      }
       APIUtil.successResponse(info, presentations, res);
     })
     .catch(err => {
