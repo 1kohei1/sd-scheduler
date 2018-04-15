@@ -22,6 +22,7 @@ interface SchedulePresentationModalState {
   errs: List<string>;
   presentationDate: PresentationDate | undefined;
   schedulingPresentation: Map<keyof Presentation, any>;
+  dateStr: string;
   saving: boolean;
   faculties: Faculty[];
 }
@@ -34,11 +35,13 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
       errs: List<string>(),
       presentationDate: undefined,
       schedulingPresentation: Map<keyof Presentation, any>(props.schedulingPresentation),
+      dateStr: '',
       saving: false,
       faculties: [],
     }
 
     this.onChange = this.onChange.bind(this);
+    this.onDateStrChange = this.onDateStrChange.bind(this);
     this.onFacultiesChange = this.onFacultiesChange.bind(this);
     this.addNewPerson = this.addNewPerson.bind(this);
     this.deletePerson = this.deletePerson.bind(this);
@@ -49,6 +52,7 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
   onErr(err: string) {
     this.setState({
       errs: this.state.errs.push(err),
+      saving: false,
     })
   }
 
@@ -62,6 +66,8 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
       errs: List<string>(),
       saving: false,
       schedulingPresentation: Map<keyof Presentation, any>(nextProps.schedulingPresentation),
+      dateStr: nextProps.schedulingPresentation && nextProps.schedulingPresentation.start &&
+        DatetimeUtil.formatISOString(nextProps.schedulingPresentation.start, DateConstants.dateFormat),
     })
   }
 
@@ -88,9 +94,16 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
     }
   }
 
+  onDateStrChange(dateStr: string) {
+    this.setState({
+      dateStr,
+      schedulingPresentation: this.state.schedulingPresentation.set('start', ''),
+    });
+  }
+
   onChange(prop: keyof Presentation, val: string) {
     this.setState((prevState: SchedulePresentationModalState, props: SchedulePresentationModalProps) => {
-      let newSchedulingPresentation = this.state.schedulingPresentation;
+      let newSchedulingPresentation = prevState.schedulingPresentation;
       newSchedulingPresentation = newSchedulingPresentation.set(prop, val);
 
       if (prop === 'start') {
@@ -169,9 +182,15 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
 
     this.setState({
       saving: true,
-    })
+    });
 
     const presentation = this.state.schedulingPresentation.toObject();
+    // The senior design admin should be in presentation.faculties.
+    // But when it's not present, add it
+    if (presentation.faculties.indexOf(this.props.user._id) === -1) {
+      presentation.faculties.push(this.props.user._id);
+    }
+
     const body = {
       start: presentation.start,
       end: presentation.end,
@@ -202,14 +221,26 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
     const presentation = this.state.schedulingPresentation.toObject();
 
     // Check all necessary information is filled
-    if (!presentation.projectName || !presentation.sponsorName || !presentation.start || !presentation.end) {
-      return 'Please fill in the required field';
+    if (!presentation.projectName) {
+      return 'Please fill in the project name';
+    }
+    if (!presentation.start || !presentation.end) {
+      return 'Please fill in the presentation date time';
     }
 
-    // Check faculties
-    if (presentation.faculties.length + presentation.externalFaculties.length < 4) {
-      return '4 faculties must be selected'
+    const committees = presentation.faculties
+      .map((fid: string) => this.state.faculties.find((faculty: Faculty) => faculty._id === fid))
+      .filter((faculty: Faculty | undefined) => !!faculty)
+      .filter((faculty: Faculty) => !faculty.isAdmin);
+
+    // Check number of committees
+    if (committees.length + presentation.externalFaculties.length < 3) {
+      return 'At least 3 committee members must be selected';
     }
+    if (committees.length < 2) {
+      return 'At least 2 EECS committee members must be selected';
+    }
+
 
     // Check admin faculty is selected
     if (presentation.faculties.indexOf(this.props.user._id) === -1) {
@@ -276,41 +307,90 @@ export default class SchedulePresentationModal extends React.Component<ScheduleP
                 Date time:
               </Col>
               <Col span={18}>
-                <Select
-                  onChange={(e: string) => this.onChange('start', e)}
-                  style={{ width: '100%' }}
-                  placeholder="Presentation start time"
-                  value={this.state.schedulingPresentation.get('start')}
-                >
-                  {
-                    DatetimeUtil.getIsoStringsFromPresentationDateDates((this.state.presentationDate as PresentationDate).dates)
-                      .map((isostring: string) => (
-                        <Select.Option
-                          key={isostring}
-                          value={isostring}
-                        >
-                          {DatetimeUtil.formatISOString(isostring, `${DateConstants.dateFormat} ${DateConstants.hourFormat}`)}
-                        </Select.Option>
-                      ))
-                  }
-                </Select>
+                <Row gutter={8}>
+                  <Col span={12}>
+                    <Select
+                      value={this.state.dateStr}
+                      onChange={this.onDateStrChange}
+                      style={{ width: '100%' }}
+                    >
+                      {
+                        DatetimeUtil.getPresentationDateOptions((this.state.presentationDate as PresentationDate).dates)
+                          .map((dateStr: string) => (
+                            <Select.Option
+                              key={dateStr}
+                              value={dateStr}
+                            >
+                              {dateStr}
+                            </Select.Option>
+                          ))
+                      }
+                    </Select>
+                  </Col>
+                  <Col span={12}>
+                    <Select
+                      value={this.state.schedulingPresentation.get('start')}
+                      onChange={(e: string) => this.onChange('start', e)}
+                      style={{ width: '100%' }}
+                    >
+                      {
+                        DatetimeUtil.getPresentationTimeOptions(
+                          (this.state.presentationDate as PresentationDate).dates,
+                          this.state.dateStr
+                        )
+                          .map((isostring: string) => (
+                            <Select.Option
+                              key={isostring}
+                              value={isostring}
+                            >
+                              {DatetimeUtil.formatISOString(isostring, DateConstants.hourFormat)}
+                            </Select.Option>
+                          ))
+                      }
+                    </Select>
+                  </Col>
+                </Row>
               </Col>
             </Row>
             <Row style={{ marginBottom: '8px' }}>
               <Col span={6} style={{ lineHeight: '30px' }}>
-                Faculties:
+                SD Faculty:
               </Col>
               <Col span={18}>
-                {this.state.faculties.map(faculty => (
-                  <div key={faculty._id}>
-                    <Checkbox
-                      onChange={e => this.onFacultiesChange(faculty._id, e.target.checked)}
-                      checked={this.state.schedulingPresentation.get('faculties').indexOf(faculty._id) >= 0}
-                    >
-                      Dr. {faculty.firstName} {faculty.lastName} {faculty.isAdmin && <span>(SD Faculty)</span>}
-                    </Checkbox>
-                  </div>
-                ))}
+                <Checkbox
+                  checked
+                  disabled={true}
+                >
+                  {
+                    this.state.faculties.filter((faculty: Faculty) => faculty._id === this.props.user._id)
+                      .map((faculty: Faculty) => (
+                        <span key={faculty._id}>
+                          Dr. {faculty.firstName} {faculty.lastName}
+                        </span>
+                      ))
+                  }
+
+                </Checkbox>
+              </Col>
+            </Row>
+            <Row style={{ marginBottom: '8px' }}>
+              <Col span={6} style={{ lineHeight: '30px' }}>
+                Committees:
+              </Col>
+              <Col span={18}>
+                {
+                  this.state.faculties
+                    .filter((faculty: Faculty) => !faculty.isAdmin)
+                    .map(faculty => (
+                      <div key={faculty._id}>
+                        <Checkbox
+                          onChange={e => this.onFacultiesChange(faculty._id, e.target.checked)}
+                          checked={this.state.schedulingPresentation.get('faculties').indexOf(faculty._id) >= 0}
+                        >
+                          Dr. {faculty.firstName} {faculty.lastName} {faculty.isAdmin && <span>(SD Faculty)</span>}
+                        </Checkbox>
+                      </div>
+                    ))}
               </Col>
             </Row>
             <Row style={{ marginBottom: '8px' }}>

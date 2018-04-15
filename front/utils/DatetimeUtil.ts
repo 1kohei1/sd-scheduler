@@ -135,31 +135,53 @@ export default class DatetimeUtil {
     return t1Start <= t2Start && t2End <= t1End;
   }
 
-  static getIsoStringsFromPresentationDateDates(dates: PresentationDateDates[]) {
-    const isoarr: string[] = [];
+  // With receiving the array of PresentationDateDates array, return the string format of dates
+  static getPresentationDateOptions(dates: PresentationDateDates[]) {
+    const datesArr: string[] = [];
 
-    dates.forEach((date: PresentationDateDates) => {
-      const dateStr = DatetimeUtil.formatISOString(date.start, DateConstants.dateFormat);
-      const dateTimeslot = DatetimeUtil.convertToTimeSlot(date);
+    dates.map((d: PresentationDateDates) => DatetimeUtil.formatISOString(d.start, DateConstants.dateFormat))
+      .forEach((dateStr: string) => {
+        if (datesArr.indexOf(dateStr) === -1) {
+          datesArr.push(dateStr);
+        }
+      });
 
-      DatetimeUtil.getTimeOptions(false)
-        .map(hourOption => {
-          const startMoment = DatetimeUtil.getMomentByFormat(`${dateStr} ${hourOption}`, `${DateConstants.dateFormat} ${DateConstants.hourFormat}`);
-          const endMoment = DatetimeUtil.addToMoment(startMoment, 1, 'h');
-
-          return {
-            _id: 'dummy _id',
-            start: startMoment,
-            end: endMoment,
-          };
-        })
-        .filter((timeslot: TimeSlot) => DatetimeUtil.doesCover(dateTimeslot, timeslot))
-        .map((timeslot: TimeSlot) => timeslot.start.toISOString())
-        .forEach(isostring => isoarr.push(isostring));
-    });
-
-    return isoarr;
+    return datesArr;
   }
+
+  // Returns iso string array whose time is on the same date on given date and ranged in given dates
+  static getPresentationTimeOptions(dates: PresentationDateDates[], dateStr: string) {
+    // Get TimeSlot array whose date is on the same date on the given string
+    const datesOnTheSameDate = dates
+      .filter((date: PresentationDateDates) =>
+        DatetimeUtil.formatISOString(date.start, DateConstants.dateFormat) === dateStr
+      )
+      .map(DatetimeUtil.convertToTimeSlot);
+
+    const options = DatetimeUtil.getTimeOptions(false)
+      .map(hourOption => {
+        const startMoment = DatetimeUtil.getMomentByFormat(`${dateStr} ${hourOption}`, `${DateConstants.dateFormat} ${DateConstants.hourFormat}`);
+        const endMoment = DatetimeUtil.addToMoment(startMoment, 1, 'h');
+
+        return {
+          _id: 'dummy _id',
+          start: startMoment,
+          end: endMoment,
+        };
+      })
+      .filter((ts1: TimeSlot) => {
+        // Find if given time slot exists in PresentationDateDates array
+        const isCovered = datesOnTheSameDate
+          .filter((ts2: TimeSlot) => DatetimeUtil.doesCover(ts2, ts1))
+          .length > 0;
+
+        return isCovered;
+      })
+      .map((ts: TimeSlot) => ts.start.toISOString());
+
+    return options;
+  }
+
 
   static getTimeOptions(includeMin: boolean = false) {
     const ampm = ['AM', 'PM'];

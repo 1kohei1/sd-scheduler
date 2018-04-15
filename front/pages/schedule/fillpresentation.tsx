@@ -82,7 +82,8 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
     this.handleSubmit = this.handleSubmit.bind(this);
     this.add = this.add.bind(this);
     this.remove = this.remove.bind(this);
-    this.onPresentationDateChange = this.onPresentationDateChange.bind(this);
+    this.onDateChange = this.onDateChange.bind(this);
+    this.onPresentationDatetimeChange = this.onPresentationDatetimeChange.bind(this);
   }
 
   onErr(err: string) {
@@ -100,8 +101,8 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
       this.getAvailableSlots(),
     ])
       .then(() => {
-        // Since onPresentationDateChange does not fire when the initial value is set, manually call the function
-        this.onPresentationDateChange(this.state.schedulingPresentation.get('start'));
+        // Since onPresentationDatetimeChange does not fire when the initial value is set, manually call the function
+        this.onPresentationDatetimeChange(this.state.schedulingPresentation.get('start'));
         this.setState({
           loading: false,
         })
@@ -338,7 +339,22 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
     })
   }
 
-  onPresentationDateChange(isostring: string) {
+  onDateChange() {
+    // When different date is selected for the presentation, empty the start
+    this.props.form.setFieldsValue({
+      start: undefined
+    });
+    // Reset availableFaculties
+    this.onPresentationDatetimeChange('');
+  }
+
+  onPresentationDatetimeChange(isostring: string) {
+    if (isostring === '') {
+      this.setState({
+        availableFaculties: [],
+      });
+      return;
+    }
     const startMoment = DatetimeUtil.getMomentFromISOString(isostring);
     const endMoment = DatetimeUtil.addToMoment(startMoment, 1, 'h');
     const presentationSlot = {
@@ -561,32 +577,86 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
                     </Form.Item>
                   </div>
                 )}
-              <Form.Item
-                {...ScheduleFormLayoutConstants.layoutWithColumn}
-                label="Presentation time"
-              >
-                {this.props.form.getFieldDecorator('start', {
-                  rules: [{
-                    required: true,
-                    message: 'Please provide the presentation time',
-                  }],
-                  initialValue: schedulingPresentation.start,
-                })(
-                  <Select onChange={this.onPresentationDateChange}>
-                    {
-                      DatetimeUtil.getIsoStringsFromPresentationDateDates((this.state.presentationDate as PresentationDate).dates)
-                        .map((isostring: string) => (
-                          <Select.Option
-                            key={isostring}
-                            value={isostring}
+              <Row>
+                <Col
+                  {...ScheduleFormLayoutConstants.layoutWithColumn.labelCol}
+                  style={{ textAlign: 'right' }}
+                >
+                  <Form.Item
+                    label="Presentation time"
+                    required={true}
+                  >
+                  </Form.Item>
+                </Col>
+                <Col
+                  {...ScheduleFormLayoutConstants.layoutWithColumn.wrapperCol}
+                >
+                  <Row gutter={8}>
+                    <Col xs={24} sm={12}>
+                      <Form.Item>
+                        {this.props.form.getFieldDecorator('startDate', {
+                          rules: [{
+                            required: true,
+                            message: 'Please provide the presentation date'
+                          }],
+                          initialValue: schedulingPresentation.start ?
+                            DatetimeUtil.formatISOString(schedulingPresentation.start, DateConstants.dateFormat) :
+                            undefined
+                        })(
+                          <Select
+                            placeholder="Presentation date"
+                            onChange={this.onDateChange}
                           >
-                            {DatetimeUtil.formatISOString(isostring, `${DateConstants.dateFormat} ${DateConstants.hourFormat}`)}
-                          </Select.Option>
-                        ))
-                    }
-                  </Select>
-                )}
-              </Form.Item>
+                            {
+                              DatetimeUtil.getPresentationDateOptions((this.state.presentationDate as PresentationDate).dates)
+                                .map((dateStr: string) => (
+                                  <Select.Option
+                                    key={dateStr}
+                                    value={dateStr}
+                                  >
+                                    {dateStr}
+                                  </Select.Option>
+                                ))
+                            }
+                          </Select>
+                        )}
+                      </Form.Item>
+                    </Col>
+                    <Col xs={24} sm={12}>
+                      <Form.Item>
+                        {this.props.form.getFieldDecorator('start', {
+                          rules: [{
+                            required: true,
+                            message: 'Please provide the presentation date'
+                          }],
+                          initialValue: schedulingPresentation.start ?
+                            DatetimeUtil.formatISOString(schedulingPresentation.start, DateConstants.hourFormat) :
+                            undefined
+                        })(
+                          <Select
+                            disabled={!this.props.form.getFieldValue('startDate')}
+                            onChange={this.onPresentationDatetimeChange}
+                            placeholder="Presentation time"
+                          >
+                            {DatetimeUtil.getPresentationTimeOptions(
+                              (this.state.presentationDate as PresentationDate).dates,
+                              this.props.form.getFieldValue('startDate')
+                            )
+                              .map((isostring: string) => (
+                                <Select.Option
+                                  key={isostring}
+                                  value={isostring}
+                                >
+                                  {DatetimeUtil.formatISOString(isostring, DateConstants.hourFormat)}
+                                </Select.Option>
+                              ))}
+                          </Select>
+                        )}
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
               <Form.Item
                 {...ScheduleFormLayoutConstants.layoutWithColumn}
                 label="Senior design faculty"
@@ -598,7 +668,9 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
                   {
                     this.state.allFaculties.filter((faculty: Faculty) => faculty._id === this.props.group.adminFaculty)
                       .map((faculty: Faculty) => (
-                        <span>Dr. {faculty.firstName} {faculty.lastName}</span>
+                        <span key={faculty._id}>
+                          Dr. {faculty.firstName} {faculty.lastName}
+                        </span>
                       ))
                   }
                 </Checkbox>

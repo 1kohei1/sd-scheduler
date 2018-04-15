@@ -29,7 +29,6 @@ const PresentationSchema = new Schema({
   },
   sponsorName: {
     type: String,
-    required: true,
   },
   sponsors: [{
     firstName: String,
