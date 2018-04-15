@@ -83,8 +83,6 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
     this.add = this.add.bind(this);
     this.remove = this.remove.bind(this);
     this.onPresentationDateChange = this.onPresentationDateChange.bind(this);
-    this.getFourFacultiesStatus = this.getFourFacultiesStatus.bind(this);
-    this.getSdFacultyStatus = this.getSdFacultyStatus.bind(this);
   }
 
   onErr(err: string) {
@@ -168,7 +166,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
     }
   }
 
-  async schedulePresentation(change: object) {
+  async schedulePresentation(change: any) {
     this.setState({
       saving: true,
     });
@@ -185,15 +183,49 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
       this.setState({
         saving: false,
       });
-      Modal.success({
+      const ref = Modal.success({
         title: 'Successfully scheduled the presentation!',
         width: '520px',
         content: (
           <div>
-            Check your presentation in the <Link href="/"><a>semester presentation calendar</a></Link>!
+            <p>These people received the email about your presentation:</p>
+            <p>Faculties:</p>
+            <ul>
+              {change.faculties.map((fid: string) => {
+                const faculty = this.state.allFaculties.find((f: Faculty) => f._id === fid) as Faculty;
+                return (
+                  <li key={fid}>
+                    Dr. {faculty.firstName} {faculty.lastName}
+                  </li>
+                );
+              })}
+              {change.externalFaculties.map((externalFaculty: Person) => (
+                <li key={externalFaculty._id}>
+                  Dr. {externalFaculty.firstName} {externalFaculty.lastName}
+                </li>
+              ))}
+            </ul>
+            <p>Group members:</p>
+            <ul>
+              {this.props.group.members.map((member: Person) => (
+                <li key={member._id}>
+                  {member.firstName} {member.lastName}
+                </li>
+              ))}
+            </ul>
+            <p>Sponsors:</p>
+            <ul>
+              {change.sponsors.map((sponsor: Person) => (
+                <li key={sponsor._id}>
+                  {sponsor.firstName} {sponsor.lastName}
+                </li>
+              ))}
+            </ul>
           </div>
         ),
+        okText: 'Navigate to the semester calendar',
         onOk: () => {
+          ref.destroy();
           Api.redirect(
             undefined,
             '/'
@@ -216,7 +248,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
       if (err) {
         return;
       }
-      if (this.getFourFacultiesStatus() !== 'success' || this.getSdFacultyStatus() !== 'success') {
+      if (this.threeCommitteeMemberValidation() !== 'success' || this.twoEECSCommitteeMemberValidation() !== 'success') {
         return;
       }
 
@@ -233,7 +265,10 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
       }
 
       // Set faculties
-      values.faculties = this.getPresentationFacultyIds();
+      values.faculties = this.getCommitteeMemberIds();
+      // Committee member doesn't include the senior design faculty. 
+      // So add to it
+      values.faculties.push(this.props.group.adminFaculty);
 
       // Set end
       const startMoment = DatetimeUtil.getMomentFromISOString(values.start);
@@ -250,8 +285,8 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
     })
   }
 
-  // Returns faculty ids who will join the presentation
-  private getPresentationFacultyIds() {
+  // Returns committee ids who will join the presentation
+  private getCommitteeMemberIds() {
     // cannot use this.props.form.getFieldValue('faculties'). 
     // Using that registers faculty field with the value undefined. 
     // And that messes up the format of faculties[_id].checked
@@ -264,10 +299,10 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
       .map(([_id, obj]: [string, { checked: boolean }]) => _id);
   }
 
-  getFourFacultiesStatus() {
-    const facultyIds = this.getPresentationFacultyIds();
+  threeCommitteeMemberValidation() {
+    const committeeIds = this.getCommitteeMemberIds();
     const externalFaculties = this.state.schedulingPresentation.get('externalFaculties');
-    if (facultyIds.length + externalFaculties.length >= 4) {
+    if (committeeIds.length + externalFaculties.length >= 3) {
       return 'success';
     } else if (this.state.formSubmitted) {
       return 'err';
@@ -276,13 +311,9 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
     }
   }
 
-  getSdFacultyStatus() {
-    const facultyIds = this.getPresentationFacultyIds();
-    const isSDFacultySelected = facultyIds
-      .filter((fid: string) => this.props.group.adminFaculty === fid)
-      .length > 0;
-
-    if (isSDFacultySelected) {
+  twoEECSCommitteeMemberValidation() {
+    const committeeIds = this.getCommitteeMemberIds();
+    if (committeeIds.length >= 2) {
       return 'success';
     } else if (this.state.formSubmitted) {
       return 'err';
@@ -318,6 +349,10 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
 
     this.setState({
       availableFaculties: this.state.allFaculties.filter((faculty: Faculty) => {
+        // Don't show admin member in available committee
+        if (faculty.isAdmin) {
+          return false;
+        }
         const availableSlot = this.state.allAvailableSlots.find(
           (availableSlot: AvailableSlot) => availableSlot.faculty === faculty._id
         );
@@ -356,7 +391,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
   sponsorMembersTooltip() {
     return (
       <Tooltip
-        title="People who will join your presentation from the sponsor."
+        title="Sponsors who will join your presentation."
       >
         Sponsor members <Icon type="question-circle-o" />
       </Tooltip>
@@ -368,7 +403,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
       <Tooltip
         title="Please check faculties you would like to invite to the presentation. If you don't see the professor who confirmed to join your presentation, please talk with your senior design faculty."
       >
-        EECS available faculties <Icon type="question-circle-o" />
+        EECS available committee <Icon type="question-circle-o" />
       </Tooltip>
     )
   }
@@ -439,7 +474,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
                     type="dashed"
                     onClick={e => this.add('sponsors')}
                   >
-                    <Icon type="plus" /> Add new sponsor member
+                    <Icon type="plus" /> Add sponsor member
                   </Button>
                 </Form.Item>
               ) : (
@@ -521,7 +556,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
                         type="dashed"
                         onClick={e => this.add('sponsors')}
                       >
-                        <Icon type="plus" /> Add new sponsor member
+                        <Icon type="plus" /> Add sponsor member
                       </Button>
                     </Form.Item>
                   </div>
@@ -552,12 +587,28 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
                   </Select>
                 )}
               </Form.Item>
+              <Form.Item
+                {...ScheduleFormLayoutConstants.layoutWithColumn}
+                label="Senior design faculty"
+              >
+                <Checkbox
+                  checked={true}
+                  disabled={true}
+                >
+                  {
+                    this.state.allFaculties.filter((faculty: Faculty) => faculty._id === this.props.group.adminFaculty)
+                      .map((faculty: Faculty) => (
+                        <span>Dr. {faculty.firstName} {faculty.lastName}</span>
+                      ))
+                  }
+                </Checkbox>
+              </Form.Item>
               {this.state.availableFaculties.length === 0 ? (
                 <Form.Item
                   {...ScheduleFormLayoutConstants.layoutWithColumn}
                   label={this.availableFacultiesTooltip()}
                 >
-                  No faculties are available at specified time. Please change your presentation time.
+                  No committee members are available at specified time. Please change your presentation time.
                 </Form.Item>
               ) : (
                   <div>
@@ -580,7 +631,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
                           })(
                             <Checkbox
                             >
-                              Dr. {faculty.firstName} {faculty.lastName} {faculty.isAdmin && (<span>(SD Faculty)</span>)}
+                              Dr. {faculty.firstName} {faculty.lastName}
                             </Checkbox>
                           )}
                         </Form.Item>
@@ -686,14 +737,14 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
                 )}
               <Form.Item
                 {...ScheduleFormLayoutConstants.layoutWithColumn}
-                label="Validation for faculties"
+                label="Validation for committees"
               >
                 <div>You need to select</div>
-                <div className={this.getFourFacultiesStatus()}>
-                  <Icon type="check-circle-o" />&nbsp;At least 4 faculties
+                <div className={this.threeCommitteeMemberValidation()}>
+                  <Icon type="check-circle-o" />&nbsp;At least 3 committee members
                 </div>
-                <div className={this.getSdFacultyStatus()}>
-                  <Icon type="check-circle-o" />&nbsp;Your senior design faculty
+                <div className={this.twoEECSCommitteeMemberValidation()}>
+                  <Icon type="check-circle-o" />&nbsp;At least 2 EECS committee members
                 </div>
               </Form.Item>
               <Form.Item

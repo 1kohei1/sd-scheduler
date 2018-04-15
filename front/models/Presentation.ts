@@ -30,7 +30,9 @@ export const NewPresentation = (semester: string, group: Group) => {
     sponsorName: '',
     sponsors: [NewPerson()],
     group: group,
-    faculties: [],
+    faculties: [
+      group.adminFaculty,
+    ],
     externalFaculties: [],
     midPresentationLink: '',
     committeeFormLink: '',

@@ -37,8 +37,6 @@ Admin:
 
 System Admin:
 
-- [x] Import groups for the semester and admin faculty
-- [ ] Delete all group by semester and faculties
 - [x] Turn the faculty to admin (create PresentationDate and Location)
 - [x] Turn off the faculty not to admin (Delete PresentationDate and Location)
 
@@ -49,7 +47,7 @@ TODO:
 - [ ] Check why initial component layout is broken (v3)
 - [x] Create a video to explain how to put available time
 - [x] Make redirect to where user used to be after success login (Wait release of Next 5: https://zeit.co/blog/next-canary) (v3)
-- [ ] Do not flash right action button when moving across the page. This happens because header component is remounted every time page changes (v3)
+- [ ] Do not flash right action button when moving across the page. This happens because header component is remounted every time page changes (v3) (Use Next custom app component: https://github.com/zeit/next.js#custom-app)
 - [x] Update auth guard to better way (v3)
 - [x] Display loading while data in overview is updating
 - [x] Sort presentation dates when updated
@@ -80,7 +78,6 @@ TODO:
 - [ ] After successful presentation schedule, present dialog and navigate user to calendar page
 - [x] Let students pick what date to schedule like picking SD 2 faculties
 - [ ] Send cancel email when group updates the presentation to different faculties
-- [ ] Present dialog after the identity is verified during scheduling presentation
 - [ ] Create error response model and make it clear how the error reponse looks like (Need to handle network problem as well)
 
 Feature requests from Dr. Heinrich
@@ -95,8 +92,14 @@ Feature requests from Dr. Heinrich
 - [x] Instead of let user click, send code and make user type the code
 - [x] Redesign the schedule page
 - [ ] Navigate user to /schedule if the token is expired
-- [ ] Instead of showing user email to public, let user enter the email and verify it's correct
-- [ ] Update schedule page for UI tweak
+- [ ] Instead of showing user email to the public, let user enter the email and verify it's correct, then send verification code
+- [x] Update schedule page for UI tweak
+
+Check with Dr. Heinrich
+
+- [ ] I heard outside faculty member should be only one person. Should I limit the outside faculty member to be only one person? Or leave it open for the case that group wants to invite other faculty to the presentation.
+- [ ] I currently pay $15.00/month. Can the school support me?
+- [ ] What if faculty itself is a sponsor and committee member? Pick them from both EECS available committee and add them to sponsor
 
 Personal review:
 
