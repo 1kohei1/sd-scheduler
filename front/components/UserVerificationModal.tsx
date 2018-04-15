@@ -18,7 +18,7 @@ interface UserVerificationModalState {
   errs: List<string>;
   saving: boolean;
 
-  selectedMemberId: string;
+  email: string;
   verificationCode: string;
   verificationCodeSent: boolean;
 }
@@ -31,7 +31,7 @@ export default class UserVerificationModal extends React.Component<UserVerificat
       errs: List<string>(),
       saving: false,
 
-      selectedMemberId: '',
+      email: '',
       verificationCode: '',
       verificationCodeSent: false,
     }
@@ -47,7 +47,7 @@ export default class UserVerificationModal extends React.Component<UserVerificat
     })
   }
 
-  onChange(prop: 'selectedMemberId' | 'verificationCode', val: string) {
+  onChange(prop: 'email' | 'verificationCode', val: string) {
     const newState: any = {
       [prop]: val,
     }
@@ -60,7 +60,7 @@ export default class UserVerificationModal extends React.Component<UserVerificat
         saving: true,
       })
       await Api.sendCode(this.props.group._id, {
-        verificationCodeReceiverId: this.state.selectedMemberId,
+        email: this.state.email,
       });
       this.setState({
         verificationCodeSent: true,
@@ -97,7 +97,7 @@ export default class UserVerificationModal extends React.Component<UserVerificat
         onCancel={this.props.onClose}
       >
         <div>Only group member can schedule the presentation.</div>
-        <div>Please select the member to receive the verification code and enter the emailed code.</div>
+        <div>Please enter your <b>KNIGHTS</b> email (associated with Webcourse) to receive the verification code.</div>
         <div>The system stores the last code. So send verification code only one time.</div>
         {
           this.state.verificationCodeSent && (
@@ -120,21 +120,13 @@ export default class UserVerificationModal extends React.Component<UserVerificat
         }
         <Form>
           <Form.Item
-            label="Who will receive the verification code?"
+            label="What's your KNIGHTS email?"
           >
-            <Select
-              value={this.state.selectedMemberId}
-              onChange={(val: string) => this.onChange('selectedMemberId', val)}
-            >
-              {group.members.map((member: Person) => (
-                <Select.Option
-                  key={member._id}
-                  value={member._id}
-                >
-                  {member.firstName} {member.lastName} &lt;{member.email}&gt;
-                </Select.Option>
-              ))}
-            </Select>
+            <Input
+              value={this.state.email}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => this.onChange('email', e.target.value)}
+              placeholder="KNIGHTS email associated with Webcourse"
+            />
           </Form.Item>
           <Form.Item>
             <Button

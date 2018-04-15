@@ -134,25 +134,47 @@ module.exports.sendCode = (req: Request, res: Response) => {
     }
   };
 
-  // Generate 6 length digit characters. 
-  // Generate this way to have leading 0
-  const nums = [];
-  for (let i = 0; i < 6; i++) {
-    nums.push(`${Math.floor(Math.random() * 10)}`);
-  }
-  const code = nums.join('');
-
-  DBUtil.updateGroup(req.params._id, {
-    verificationCode: code,
-    verificationCodeReceiverId: req.body.verificationCodeReceiverId,
+  DBUtil.findGroups({
+    _id: req.params._id
   })
-    .then(updatedGroup => {
+    .then((groups: Document[]) => {
+      if (groups.length === 0) {
+        return Promise.reject({
+          message: 'Specified group does not exist',
+        });
+      }
+
+      const members = groups[0].get('members');
+      const index = members
+        .map((member: Document) => member.toJSON())
+        .findIndex((member: any) => member.email === req.body.email);
+
+      if (index === -1) {
+        return Promise.reject({
+          message: 'Specified email is not part of the group',
+        })
+      } else {
+        // Generate 6 length digit characters. 
+        // Generate this way to have leading 0
+        const nums = [];
+        for (let i = 0; i < 6; i++) {
+          nums.push(`${Math.floor(Math.random() * 10)}`);
+        }
+        const code = nums.join('');
+
+        return DBUtil.updateGroup(req.params._id, {
+          verificationCode: code,
+          verificationCodeReceiverId: members[index].get('_id'),
+        });
+      }
+
+    })
+    .then((updatedGroup: Document) => {
       APIUtil.successResponse(info, updatedGroup, res);
     })
     .catch(err => {
-      APIUtil.errorResponse(info, err.message, err, res);
+      APIUtil.errorResponse(info, err.message, {}, res);
     })
-
 }
 
 module.exports.verifyCode = (req: Request, res: Response) => {
