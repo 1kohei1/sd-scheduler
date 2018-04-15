@@ -280,6 +280,7 @@ export default class FacultiesPage extends React.Component<FacultiesPageProps, F
                 columns={this.tableColumns()}
                 pagination={false}
                 rowKey="_id"
+                style={{ marginBottom: '32px' }}
               />
               <AddFaculties
                 getFaculties={this.getFaculties}
