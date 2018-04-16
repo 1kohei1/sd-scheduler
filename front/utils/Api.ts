@@ -122,6 +122,10 @@ export default class Api {
     return await Api.makeRequest(RequestMethod.POST, `/api/groups/${_id}/verify`, body);
   }
 
+  static async isStudentAuthenticated(_id: string, cookie: string = '') {
+    return await Api.makeRequest(RequestMethod.GET, `/api/groups/${_id}/isAuthenticated`, {}, cookie);
+  }
+
   /**
    * PresentationDate
    */

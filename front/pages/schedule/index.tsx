@@ -106,9 +106,11 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       };
 
       if (this.props._id) {
-        const group = groups.find((group: Group) => group._id === this.props._id) as Group;
-        newState.selectedAdminId = group.adminFaculty;
-        newState.selectedGroupId = this.props._id;
+        const group = groups.find((group: Group) => group._id === this.props._id);
+        if (group) {
+          newState.selectedAdminId = group.adminFaculty;
+          newState.selectedGroupId = this.props._id;
+        }
       }
 
       this.setState(newState);
@@ -131,7 +133,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
       undefined,
       '/schedule/fillpresentation',
       {
-        groupId: this.state.selectedGroupId,
+        _id: this.state.selectedGroupId,
       },
       `/schedule/${this.state.selectedGroupId}`
     )

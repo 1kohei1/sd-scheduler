@@ -52,6 +52,25 @@ export default class UserUtil {
     }
   }
 
+  // Protect /schedule/:_id from other people who have not verified they belong to the group
+  static async isStudentAuthenticated(context: InitialProps, groupId: string) {
+    let cookie = '';
+    if (context.req) {
+      cookie = context.req.headers.cookie as string;
+    }
+
+    try {
+      await Api.isStudentAuthenticated(groupId, cookie);
+      return true;
+    } catch (err) {
+      Api.redirect(context, '/schedule', {
+        _id: groupId,
+        err: err.message,
+      }, '/schedule');
+      return false;
+    }
+  }
+
   static async updateUser() {
     const user = await Api.getUser();
 

@@ -125,6 +125,18 @@ module.exports.createGroup = (req: MyRequest, res: Response) => {
     })
 }
 
+module.exports.isAuthenticated = (req: Request, res: Response) => {
+  const info: any = {
+    key: APIUtil.key(req),
+    debugInfo: {
+      _id: req.params._id,
+      body: req.body,
+    }
+  };
+
+  APIUtil.successResponse(info, {}, res);
+}
+
 module.exports.sendCode = (req: Request, res: Response) => {
   const info: any = {
     key: APIUtil.key(req),

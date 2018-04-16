@@ -63,13 +63,13 @@ export default class APIUtil {
     };
 
     const authorizationHeader = req.headers['authorization'] as string;
+    const token = authorizationHeader ? authorizationHeader.split(' ')[1] : undefined;
 
-    if (authorizationHeader) {
-      const token = authorizationHeader.split(' ')[1];
+    if (token && token !== 'undefined') {
       verify(token, process.env.SECRET as string, (err, decoded) => {
         if (err) {
           if (err.name === 'TokenExpiredError') {
-            APIUtil.errorResponse(info, 'Your session expired. Please verify your identity by sending verification email at previous step', {}, res);
+            APIUtil.errorResponse(info, 'Your token expired. Please verify your belonging to the group.', {}, res);
           } else {
             APIUtil.errorResponse(info, err.message, {}, res);
           }
@@ -79,7 +79,7 @@ export default class APIUtil {
         }
       });
     } else {
-      APIUtil.errorResponse(info, 'You are not authenticated. Please login first', {}, res);
+      APIUtil.errorResponse(info, 'You are not authenticated. Please verify your belonging to the group first', {}, res);
     }
   }
 
@@ -90,14 +90,17 @@ export default class APIUtil {
       }
     };
 
-    const jwtGroupId = req.decoded.group_id;
+    const _id = req.params._id;
+    const isPresentation = req.path.indexOf('presentations') >= 0;
 
-    // Get group id of presentation
-    const presentationId = req.params._id;
     let p;
-    // If user is updating presentation, get group id from the database
-    if (presentationId) {
-      p = DBUtil.findPresentations({ _id: presentationId }, '')
+
+    if (isPresentation) {
+      // If the requested API is presentation and contains _id,
+      // It's updating existing presentation.
+      // So get group from the database
+      if (_id) {
+        p = DBUtil.findPresentations({ _id }, '')
         .then((presentations: Document[], ) => {
           if (presentations.length === 0) {
             return Promise.reject({
@@ -107,15 +110,23 @@ export default class APIUtil {
             return Promise.resolve(presentations[0].get('group').toString());
           }
         })
+      }
+      // If it is presentations API, but no specified id,
+      // It's creating a new presentation. So body.group is the group of the presentation
+      else {
+        p = Promise.resolve(req.body.group);  
+      }
     }
-    // If user is creating a new presentation, get group id from the requested body
+    // If it's not presentations API, it's group API. So just use params _id
     else {
-      p = Promise.resolve(req.body.group);
+      p = Promise.resolve(_id);
     }
+
+    const jwtGroupId = req.decoded.group_id;
 
     p.then(dbGroupId => {
       if (jwtGroupId !== dbGroupId) {
-        APIUtil.errorResponse(info, 'You are not authorized.', {}, res);
+        APIUtil.errorResponse(info, 'You are not authorized to do action to the specified group.', {}, res);
       } else {
         next();
       }

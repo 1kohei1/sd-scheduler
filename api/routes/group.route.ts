@@ -19,6 +19,13 @@ module.exports = (server: Application) => {
     groupController.createGroup,
   )
 
+  server.get(
+    '/api/groups/:_id/isAuthenticated',
+    APIUtil.verifyJWT,
+    APIUtil.isAuthorizedJWT,
+    groupController.isAuthenticated,
+  )
+
   server.post(
     '/api/groups/:_id/code',
     groupController.sendCode,

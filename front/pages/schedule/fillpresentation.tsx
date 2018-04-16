@@ -14,7 +14,7 @@ import Faculty from '../../models/Faculty';
 import AvailableSlot from '../../models/AvailableSlot';
 import TimeSlot from '../../models/TimeSlot';
 import Api from '../../utils/Api';
-import CookieUtil from '../../utils/CookieUtil';
+import UserUtil from '../../utils/UserUtil';
 import DatetimeUtil from '../../utils/DatetimeUtil';
 import AppLayout from '../../components/AppLayout';
 import ScheduleLayout from '../../components/ScheduleLayout';
@@ -43,13 +43,17 @@ interface FillPresentationState {
 
 class FillPresentation extends React.Component<FillPresentationProps, FillPresentationState> {
   static async getInitialProps(context: InitialProps) {
-    const { groupId } = context.query;
+    const { _id } = context.query;
 
     try {
-      const groups = await Api.getGroups(`_id=${groupId}`) as Group[];
+      // Check user is authenticated or not
+      await UserUtil.isStudentAuthenticated(context, _id);
+      const groups = await Api.getGroups(`_id=${_id}`) as Group[];
 
       if (groups.length === 0) {
-        Api.redirect(context, '/schedule');
+        Api.redirect(context, '/schedule', {
+          err: 'Please select the valid group'
+        }, '/schedule');
         return {};
       } else {
         return {
@@ -57,7 +61,9 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
         }
       }
     } catch (err) {
-      Api.redirect(context, '/schedule');
+      Api.redirect(context, '/schedule', {
+        err: err.message
+      }, '/schedule');
       return {};
     }
   }
@@ -96,32 +102,22 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
   }
 
   componentDidMount() {
-    // If jwt token is defined, load all data
-    if (CookieUtil.getToken()) {
-      Promise.all([
-        this.getFaculties(),
-        this.getPresentationDate(),
-        this.getPresentations(),
-        this.getAvailableSlots(),
-      ])
-        .then(() => {
-          // Since onPresentationDatetimeChange does not fire when the initial value is set, manually call the function
-          this.onPresentationDatetimeChange(this.state.schedulingPresentation.get('start'));
-          this.setState({
-            loading: false,
-          })
+    Promise.all([
+      this.getFaculties(),
+      this.getPresentationDate(),
+      this.getPresentations(),
+      this.getAvailableSlots(),
+    ])
+      .then(() => {
+        // Since onPresentationDatetimeChange does not fire when the initial value is set, manually call the function
+        this.onPresentationDatetimeChange(this.state.schedulingPresentation.get('start'));
+        this.setState({
+          loading: false,
         })
-        .catch(err => {
-          this.onErr(err.message);
-        })
-    }
-    // If it's not defined, forward to /schedule page
-    else {
-      Api.redirect(undefined, '/schedule', {
-        err: 'Your token expired. Please verify you belong to the group.',
-        _id: this.props.group._id,
-      }, '/schedule');
-    }
+      })
+      .catch(err => {
+        this.onErr(err.message);
+      })
   }
 
   private async getFaculties() {

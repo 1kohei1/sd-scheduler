@@ -52,7 +52,7 @@ module.exports = (app: Server, server: Application) => {
     '/schedule/:groupId',
     (req: Request, res: Response) => {
       app.render(req, res, '/schedule/fillpresentation', {
-        groupId: req.params.groupId,
+        _id: req.params.groupId,
       })
     }
   )
