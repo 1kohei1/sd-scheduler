@@ -1,8 +1,8 @@
 import * as React from 'react';
 import Link from 'next/link';
-import { Button } from 'antd';
 
-import InitialProps from '../models/InitialProps';
+import Top from '../components/LP/top';
+
 import AppLayout from '../components/AppLayout';
 
 interface Props {
@@ -12,7 +12,7 @@ interface IndexState {
 }
 
 export default class Index extends React.Component<Props, IndexState> {
-  static async getInitialProps(context: InitialProps) {
+  static async getInitialProps() {
     return {};
   }
 
@@ -25,18 +25,7 @@ export default class Index extends React.Component<Props, IndexState> {
   render() {
     return (
       <AppLayout>
-        <div style={{ textAlign: 'center' }}>
-          <div>Nice landing page</div>
-          <div>
-            <Link href="/schedule">
-              <a>
-                <Button type="primary" size="large">
-                  Go to scheduling
-                </Button>
-              </a>
-            </Link>
-          </div>
-        </div>
+        <Top />
       </AppLayout>
     )
   }
