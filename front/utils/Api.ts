@@ -210,17 +210,13 @@ export default class Api {
     }
   }
 
-  static getBackendUrl() {
-    return process.env.BACKEND_URL;
-  }
-
   /**
    * Private functions
    */
 
   private static async makeRequest(method: RequestMethod, path: string, body: Object = {}, cookie: string = '') {
     let res = await fetch(
-      `${Api.getBackendUrl()}${path}`,
+      `${process.env.BACKEND_URL}${path}`,
       Api.fetchOption(method, body, cookie),
     )
     res = await res.json();
