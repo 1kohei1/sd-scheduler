@@ -10,7 +10,8 @@ export default class FormLayout extends React.Component<FormLayoutProps, any> {
         {this.props.children}
         <style jsx>{`
           .ko-form-wrapper {
-            max-width: 500px;
+            max-width: 532px;
+            padding: 0 16px;
             margin: auto;
             margin-top: 100px;
           }

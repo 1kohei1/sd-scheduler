@@ -26,7 +26,7 @@ export default class ScheduleLayout extends React.Component<ScheduleLayoutProps,
         {this.props.children}
         <style jsx>{`
           .container {
-            padding: 0 32px;
+            padding: 0 16px;
             max-width: 800px;
             margin: auto;
             margin-top: 100px;
