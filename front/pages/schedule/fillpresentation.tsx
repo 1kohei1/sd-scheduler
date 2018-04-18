@@ -210,6 +210,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
         }
       })
     } catch (err) {
+      window.scrollTo(0, 0);
       this.onErr(err.message)
     }
   }
