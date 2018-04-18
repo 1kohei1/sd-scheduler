@@ -47,14 +47,20 @@ export default class App extends React.Component<AppProps, any> {
           </div>
         </Col>
         <Col
+          md={{
+            span: 18,
+            offset: 3,
+          }}
           lg={{
-            span: 7,
+            span: 10,
+            offset: 0,
           }}
           xl={{
-            span: 6,
+            span: 8,
+            offset: 0,
           }}
         >
-          <img src="/static/mock-cellphone.jpeg" alt="Mock image" style={{ width: '100%' }} />
+          <img src="/static/eye-catch-2.jpeg" alt="Mock image" style={{ width: '100%' }} />
         </Col>
         <style jsx>{`
           .top .title {
@@ -88,6 +94,11 @@ export default class App extends React.Component<AppProps, any> {
             .top .dummy-block {
               display: block;
               width: 0;
+            }
+          }
+          @media (max-width: 415px) {
+            .top .title {
+              font-size: 60px;
             }
           }
           @media (max-width: 410px) {
