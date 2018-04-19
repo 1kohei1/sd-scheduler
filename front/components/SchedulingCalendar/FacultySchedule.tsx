@@ -25,13 +25,18 @@ export default class FacultySchedule extends React.Component<FacultyScheduleProp
     return (
       <div className="ko-faculty-schedule">
         <HourLines
-          {...this.props}
+          hoursArray={this.props.hoursArray}
+          isLastFaculty={this.props.isLastFaculty}
         />
         <AvailableSlots
-          {...this.props}
+          hoursArray={this.props.hoursArray}
+          availableSlots={this.props.availableSlots}
+          presentationDate={this.props.presentationDate}
         />
         <PresentationSlot
-          {...this.props}
+          hoursArray={this.props.hoursArray}
+          presentations={this.props.presentations}
+          colorsByAdmin={this.props.colorsByAdmin}
         />
 
         <style jsx>{`

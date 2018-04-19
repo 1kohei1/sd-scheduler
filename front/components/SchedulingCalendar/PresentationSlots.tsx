@@ -17,8 +17,9 @@ export default class PresentationSlots extends React.Component<PresentationSlots
         {this.props.presentations.map(presentation => (
           <PresentationSlotTile
             key={presentation._id}
-            {...this.props}
+            hoursArray={this.props.hoursArray}
             presentation={presentation}
+            colorsByAdmin={this.props.colorsByAdmin}
           />
         ))}
         <style jsx>{`

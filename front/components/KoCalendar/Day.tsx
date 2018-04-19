@@ -38,10 +38,16 @@ export default class Day extends React.Component<DayProps, any> {
           ruler={this.props.ruler}
         />
         <AvailableSlots
-          {...this.props}
+          ruler={this.props.ruler}
+          availableSlots={this.props.availableSlots}
+          presentationDate={this.props.presentationDate}
+          onAvailableSlotChange={this.props.onAvailableSlotChange}
         />
         <PresentationSlots
-          {...this.props}
+          ruler={this.props.ruler}
+          presentations={this.props.presentations}
+          dbPresentationDates={this.props.dbPresentationDates}
+          cancelPresentation={this.props.cancelPresentation}
         />
         <style jsx>{`
           .ko-day_container {
