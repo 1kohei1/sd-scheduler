@@ -11,7 +11,7 @@ export default class App extends React.Component<AppProps, any> {
       <div className="top">
         <h1 className="title">SD Scheduler</h1>
         <div className="description">
-          Developed to make scheduling senior design presentation&nbsp;easier.
+          Developed to make scheduling UCF senior design presentation&nbsp;easier.
         </div>
         <div className="action">
           <Link href="/calendar">
