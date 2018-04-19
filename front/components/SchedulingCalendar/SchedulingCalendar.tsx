@@ -16,6 +16,7 @@ export interface SchedulingCalendarProps {
   faculties: Faculty[];
   availableSlots: AvailableSlot[];
   presentations: Presentation[];
+  facultyColumnRatio: number;
 }
 
 export default class SchedulingCalendar extends React.Component<SchedulingCalendarProps, any> {
@@ -32,6 +33,7 @@ export default class SchedulingCalendar extends React.Component<SchedulingCalend
               faculties={this.props.faculties}
               availableSlots={this.props.availableSlots}
               presentations={this.props.presentations}
+              facultyColumnRatio={this.props.facultyColumnRatio}
             />
           )
         })}

@@ -15,6 +15,7 @@ export interface TimeTableProps {
   faculties: Faculty[];
   availableSlots: AvailableSlot[];
   presentations: Presentation[];
+  facultyColumnRatio: number;
 }
 
 export default class TimeTable extends React.Component<TimeTableProps, any> {
@@ -24,14 +25,6 @@ export default class TimeTable extends React.Component<TimeTableProps, any> {
     const endTime = DatetimeUtil.convertToHourlyNumber(presentationDate.end);
 
     const hoursArray = DatetimeUtil.createHoursArray(startTime, endTime);
-
-    const { 
-      containerWidthNum,
-      containerLeftPaddingNum,
-      containerRightPaddingNum,
-      facultyColumnWidthNum
-    } = SchedulingCalendarConstants;
-    const timeTableWidth = `${containerWidthNum - containerLeftPaddingNum - containerRightPaddingNum - facultyColumnWidthNum}px`;
 
     return (
       <div className="time-table">
@@ -67,7 +60,7 @@ export default class TimeTable extends React.Component<TimeTableProps, any> {
         })}
         <style jsx>{`
           .time-table {
-            min-width: ${timeTableWidth};
+            min-width: cal(100% - ${SchedulingCalendarConstants.facultyColumnWidthNum * this.props.facultyColumnRatio}px);
             overflow: scroll;
           }
         `}</style>

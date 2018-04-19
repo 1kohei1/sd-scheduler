@@ -1,15 +1,12 @@
 import * as React from 'react';
-import { Button, Popover, Icon, Checkbox } from 'antd';
-import { ClickParam } from 'antd/lib/menu';
 
-import TimeSlot from '../../models/TimeSlot';
-import DatetimeUtil from '../../utils/DatetimeUtil';
 import Faculty from '../../models/Faculty';
-import { SchedulingCalendarConstants, DateConstants } from '../../models/Constants';
+import { SchedulingCalendarConstants } from '../../models/Constants';
 
 export interface FacultyColumnProps {
   presentationDateStr: string;
   faculties: Faculty[];
+  facultyColumnRatio: number;
 }
 
 export default class FacultyColumn extends React.Component<FacultyColumnProps, any> {
@@ -26,7 +23,7 @@ export default class FacultyColumn extends React.Component<FacultyColumnProps, a
         ))}
         <style jsx>{`
           .faculty-column {
-            min-width: ${SchedulingCalendarConstants.facultyColumnWidth};
+            min-width: ${SchedulingCalendarConstants.facultyColumnWidthNum * this.props.facultyColumnRatio}px;
           }
           .row {
             height: ${SchedulingCalendarConstants.rowHeight};

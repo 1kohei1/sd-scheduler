@@ -15,6 +15,7 @@ export interface CalendarBodyProps {
   faculties: Faculty[];
   availableSlots: AvailableSlot[];
   presentations: Presentation[];
+  facultyColumnRatio: number;
 }
 
 export default class CalendarBody extends React.Component<CalendarBodyProps, any> {
@@ -27,12 +28,14 @@ export default class CalendarBody extends React.Component<CalendarBodyProps, any
           <FacultyColumn
             presentationDateStr={presentationDateStr}
             faculties={this.props.faculties}
-          />
+            facultyColumnRatio={this.props.facultyColumnRatio}
+            />
           <TimeTable
             presentationDate={this.props.presentationDate}
             faculties={this.props.faculties}
             availableSlots={this.props.availableSlots}
             presentations={this.props.presentations}
+            facultyColumnRatio={this.props.facultyColumnRatio}
           />
         </div>
         <style jsx>{`

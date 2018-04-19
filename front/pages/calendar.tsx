@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { List } from 'immutable';
 import Link from 'next/link';
-import { Timeline, Alert, Checkbox, Button } from 'antd';
+import { Timeline, Alert, Checkbox, Button, Slider, Form } from 'antd';
 
 import AppLayout from '../components/AppLayout';
 import { Semester } from '../models/Semester';
@@ -9,7 +9,7 @@ import Faculty from '../models/Faculty';
 import AvailableSlot from '../models/AvailableSlot';
 import PresentationDate from '../models/PresentationDate';
 import Presentation from '../models/Presentation';
-import { DateConstants, SchedulingCalendarConstants } from '../models/Constants';
+import { DateConstants, SchedulingCalendarConstants, ScheduleFormLayoutConstants } from '../models/Constants';
 import TimeSlot from '../models/TimeSlot';
 import DatetimeUtil from '../utils/DatetimeUtil';
 import Api from '../utils/Api';
@@ -28,6 +28,8 @@ interface CalendarState {
   availableSlots: AvailableSlot[];
   presentationDates: PresentationDate[];
   presentations: Presentation[];
+
+  facultyColumnRatio: number;
 }
 
 export default class Calendar extends React.Component<CalendarProps, CalendarState> {
@@ -53,9 +55,11 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
       availableSlots: [],
       presentationDates: [],
       presentations: [],
+
+      facultyColumnRatio: 1,
     }
 
-
+    this.onSlideChange = this.onSlideChange.bind(this);
   }
 
   onErr(err: string) {
@@ -126,6 +130,12 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
     }
   }
 
+  onSlideChange(val: number) {
+    this.setState({
+      facultyColumnRatio: val,
+    });
+  }
+
   render() {
     console.log(this.state.presentationDates[0]);
 
@@ -134,14 +144,39 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
         <div className="container">
           <h1>Semester calendar</h1>
           <div className="description">
-            Ready to schedule presentation?&nbsp;&nbsp;
-            <Link href="/schedule">
-              <a>
-                <Button type="primary">
-                  Schedule presentation
-                </Button>
-              </a>
-            </Link>
+            <Form>
+              <Form.Item
+                label="Ready to schedule presentation?"
+                {...ScheduleFormLayoutConstants.layoutWithColumn}
+              >
+                <Link href="/schedule">
+                  <a>
+                    <Button type="primary">
+                      Schedule presentation
+                    </Button>
+                  </a>
+                </Link>
+              </Form.Item>
+              <Form.Item
+                label="Faculty column ratio"
+                {...ScheduleFormLayoutConstants.layoutWithColumn}
+              >
+                <Slider
+                  defaultValue={1}
+                  min={0}
+                  step={0.1}
+                  max={2}
+                  value={this.state.facultyColumnRatio}
+                  onChange={this.onSlideChange}
+                />
+              </Form.Item>
+              <Form.Item
+                label="Faculties to display"
+                {...ScheduleFormLayoutConstants.layoutWithColumn}
+              >
+                Checkbox to choose who will be displayed
+              </Form.Item>
+            </Form>
           </div>
           {this.state.loading ? <Loading /> : (
             <SchedulingCalendar
@@ -149,17 +184,24 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
               faculties={this.state.faculties}
               availableSlots={this.state.availableSlots}
               presentations={this.state.presentations}
+              facultyColumnRatio={this.state.facultyColumnRatio}
             />
           )}
           <div className="description">
-            Ready to schedule presentation?&nbsp;&nbsp;
-            <Link href="/schedule">
-              <a>
-                <Button type="primary">
-                  Schedule presentation
-                </Button>
-              </a>
-            </Link>
+            <Form>
+              <Form.Item
+                label="Ready to schedule presentation?"
+                {...ScheduleFormLayoutConstants.layoutWithColumn}
+              >
+                <Link href="/schedule">
+                  <a>
+                    <Button type="primary">
+                      Schedule presentation
+                    </Button>
+                  </a>
+                </Link>
+              </Form.Item>
+            </Form>
           </div>
         </div>
         <style jsx>{`
