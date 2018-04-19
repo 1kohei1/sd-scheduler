@@ -10,7 +10,6 @@ export interface AailableSlotsProps {
   hoursArray: number[];
   availableSlots: TimeSlot[];
   presentationDate: TimeSlot;
-  onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 export default class AailableSlots extends React.Component<AailableSlotsProps, any> {
@@ -18,7 +17,6 @@ export default class AailableSlots extends React.Component<AailableSlotsProps, a
     return (
       <div
         className="availableslots-wrapper"
-        onClick={this.props.onClick}
       >
         {this.props.availableSlots.map(slot => (
           <AvailableSlotTile
