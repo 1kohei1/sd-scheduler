@@ -169,7 +169,7 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
     return (
       <AppLayout>
         <div className="container">
-          <h1>Semester calendar</h1>
+          <h1>Semester availability calendar</h1>
           <p>Faculty column width changes the width of faculties column.</p>
           <p>You can scroll horizontally over the time table.</p>
           <CalendaroForm

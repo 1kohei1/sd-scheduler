@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Link from 'next/link';
 import { Upload, Icon, Button, Table, Alert, message } from 'antd';
 import { UploadChangeParam } from 'antd/lib/upload/interface';
 import { List } from 'immutable';
@@ -180,6 +181,11 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
     return (
       <div>
         <h1>Group</h1>
+        <p>
+          <Link href="/calendar">
+            <a>Check semester availablity calendar</a>
+          </Link>
+        </p>
         {this.state.errs.map((err: string, index: number) => (
           <Alert
             type="error"
@@ -213,6 +219,7 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
                   dataSource={this.state.groups}
                   columns={this.columns()}
                   loading={this.state.loading}
+                  pagination={false}
                   rowKey="_id"
                 />
               )}

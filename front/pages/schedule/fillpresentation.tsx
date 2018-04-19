@@ -205,7 +205,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
           ref.destroy();
           Api.redirect(
             undefined,
-            '/'
+            '/calendar'
           );
         }
       })
