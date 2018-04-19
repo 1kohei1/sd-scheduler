@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { List } from 'immutable';
 import Link from 'next/link';
-import { Row, Col, Alert, Checkbox, Button, Slider, Form } from 'antd';
+import { Alert, Button, Slider } from 'antd';
+const randomColor = require('randomcolor');
 
 import AppLayout from '../components/AppLayout';
 import { Semester } from '../models/Semester';
@@ -32,6 +33,7 @@ interface CalendarState {
 
   facultyColumnRatio: number;
   checkedFaculties: string[];
+  colorsByAdmin: { [key: string]: string };
 }
 
 export default class Calendar extends React.Component<CalendarProps, CalendarState> {
@@ -58,6 +60,7 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
 
       facultyColumnRatio: 1,
       checkedFaculties: [],
+      colorsByAdmin: {},
     }
 
     this.onSlideChange = this.onSlideChange.bind(this);
@@ -91,9 +94,19 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
   private async getFaculties() {
     try {
       const faculties = await Api.getFaculties('isActive=true');
+      const colorsByAdmin: any = {};
+      faculties
+        .filter((f: Faculty) => f.isAdmin)
+        .forEach((f: Faculty) => {
+          colorsByAdmin[f._id] = randomColor({
+            luminosity: 'light'
+          });
+        });
+
       this.setState({
         faculties,
         checkedFaculties: faculties.map((f: Faculty) => f._id),
+        colorsByAdmin,
       });
     } catch (err) {
       this.onErr(err.message);
@@ -157,6 +170,8 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
       <AppLayout>
         <div className="container">
           <h1>Semester calendar</h1>
+          <p>Faculty column width changes the width of faculties column.</p>
+          <p>You can scroll horizontally over the time table.</p>
           <CalendaroForm
             facultyColumnRatio={this.state.facultyColumnRatio}
             onSlideChange={this.onSlideChange}
@@ -177,9 +192,10 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
               availableSlots={this.state.availableSlots}
               presentations={this.state.presentations}
               facultyColumnRatio={this.state.facultyColumnRatio}
+              colorsByAdmin={this.state.colorsByAdmin}
             />
           )}
-          <div className="description">
+          <div className="bottom">
             Ready to schedule presentation?&nbsp;&nbsp;&nbsp;
             <Link href="/schedule">
               <a>
@@ -198,12 +214,9 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
             margin: auto;
             margin-top: 100px;
           }
-          .container h1 {
-            margin: 0;
-          }
-          .description {
-            padding: 32px 0;
+          .bottom {
             line-height: 32px;
+            padding-bottom: 32px;
           }
         `}</style>
       </AppLayout>

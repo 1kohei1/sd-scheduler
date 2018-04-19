@@ -44,9 +44,6 @@ export const SchedulingCalendarConstants = {
 
   tileBackgroundColor: '#0070E0',
   tileHeight: '18px',
-
-  presentationTileDefaultGroup: '#FF6C40',
-  presentationTileYouGroup: '#FFEB3B',
 }
 
 export const ScheduleFormLayoutConstants = {

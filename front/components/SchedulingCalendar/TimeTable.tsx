@@ -16,6 +16,7 @@ export interface TimeTableProps {
   availableSlots: AvailableSlot[];
   presentations: Presentation[];
   facultyColumnRatio: number;
+  colorsByAdmin: { [key: string]: string };
 }
 
 export default class TimeTable extends React.Component<TimeTableProps, any> {
@@ -56,7 +57,8 @@ export default class TimeTable extends React.Component<TimeTableProps, any> {
             presentations={presentations}
             presentationDate={this.props.presentationDate}
             isLastFaculty={i === this.props.faculties.length - 1}
-          />
+            colorsByAdmin={this.props.colorsByAdmin}
+            />
         })}
         <style jsx>{`
           .time-table {

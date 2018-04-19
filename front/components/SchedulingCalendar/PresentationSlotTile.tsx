@@ -7,6 +7,7 @@ import DatetimeUtil from '../../utils/DatetimeUtil';
 export interface PresentationSlotTileProps {
   hoursArray: number[];
   presentation: Presentation;
+  colorsByAdmin: { [key: string]: string };
 }
 
 export default class PresentationSlotTile extends React.Component<PresentationSlotTileProps, any> {
@@ -16,15 +17,11 @@ export default class PresentationSlotTile extends React.Component<PresentationSl
     const timeSlot = DatetimeUtil.convertToTimeSlot(presentation);
     const startHourNumber = DatetimeUtil.convertToHourlyNumber(timeSlot.start);
     const left = `${(startHourNumber - this.props.hoursArray[0]) * SchedulingCalendarConstants.columnWidthNum}px`
-
-    let text = `Group ${presentation.group.groupNumber}`;
-    if (!presentation.group.groupNumber) {
-      text = 'Your group';
-    }
+    const color = this.props.colorsByAdmin[presentation.group.adminFaculty];
 
     return (
-      <div className={`presentationslottile ${presentation.group.groupNumber ? 'default-group' : 'your-group'}`}>
-        {text}
+      <div className={`presentationslottile`}>
+        Group {presentation.group.groupNumber}
         <style jsx>{`
           .presentationslottile {
             position: absolute;
@@ -34,12 +31,7 @@ export default class PresentationSlotTile extends React.Component<PresentationSl
             opacity: 0.8;
             font-size: 12px;
             padding: 0 8px;
-          }
-          .default-group {
-            background-color: ${SchedulingCalendarConstants.presentationTileDefaultGroup}
-          }
-          .your-group {
-            background-color: ${SchedulingCalendarConstants.presentationTileYouGroup}
+            background-color: ${color};
           }
         `}</style>
       </div>

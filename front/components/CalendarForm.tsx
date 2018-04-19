@@ -17,7 +17,7 @@ export default class CalendaroForm extends React.Component<CalendaroFormProps, a
     return (
       <Form>
         <Form.Item
-          label="Faculty column ratio"
+          label="Faculty column width"
           {...ScheduleFormLayoutConstants.layoutWithColumn}
         >
           <Slider
@@ -30,7 +30,7 @@ export default class CalendaroForm extends React.Component<CalendaroFormProps, a
           />
         </Form.Item>
         <Form.Item
-          label="Senior design faculty"
+          label="Presentation dates of"
           {...ScheduleFormLayoutConstants.layoutWithColumn}
         >
           <Row>
@@ -54,7 +54,7 @@ export default class CalendaroForm extends React.Component<CalendaroFormProps, a
           </Row>
         </Form.Item>
         <Form.Item
-          label="Faculties to display"
+          label="Faculties"
           {...ScheduleFormLayoutConstants.layoutWithColumn}
         >
           <Row>

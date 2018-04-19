@@ -7,6 +7,7 @@ import PresentationSlotTile from './PresentationSlotTile';
 export interface PresentationSlotsProps {
   hoursArray: number[];
   presentations: Presentation[];
+  colorsByAdmin: { [key: string]: string };
 }
 
 export default class PresentationSlots extends React.Component<PresentationSlotsProps, any> {

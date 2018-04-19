@@ -17,6 +17,7 @@ export interface FacultyScheduleProps {
   presentations: Presentation[];
   presentationDate: TimeSlot;
   isLastFaculty: boolean;
+  colorsByAdmin: { [key: string]: string };
 }
 
 export default class FacultySchedule extends React.Component<FacultyScheduleProps, any> {
