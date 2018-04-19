@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { List } from 'immutable';
+import Link from 'next/link';
 import { Form, Select, Button, Alert, Input } from 'antd';
 
 import InitialProps from '../../models/InitialProps';
@@ -159,7 +160,13 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
         <ScheduleLayout
           current={0}
           groupNumber={0}
-          description="Please select your senior design faculty and group."
+          description={(
+            <div>
+              Please select your group. <Link href="/calendar">
+                <a>Check committee's availablity</a>
+              </Link>
+            </div>
+          )}
         >
           {group && (
             <UserVerificationModal

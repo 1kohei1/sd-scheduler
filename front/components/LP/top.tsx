@@ -11,7 +11,7 @@ export default class App extends React.Component<AppProps, any> {
       <div className="top">
         <h1 className="title">SD Scheduler</h1>
         <div className="description">
-          Developed to make scheduling UCF senior design presentation&nbsp;easier.
+          Schedule final presentation without&nbsp;stress.
         </div>
         <div className="action">
           <Link href="/calendar">
@@ -20,7 +20,7 @@ export default class App extends React.Component<AppProps, any> {
               size="large"
               style={{ marginBottom: '16px' }}
             >
-              Check committee member availability
+              Check committee's availability
             </Button>
           </Link>
           <span className="dummy-block"></span>
@@ -28,26 +28,25 @@ export default class App extends React.Component<AppProps, any> {
             <a>
               <Button
                 size="large"
+                ghost
                 style={{ marginBottom: '16px' }}
-              >
-                Schedule presentation
+                >
+                Schedule final presentation
               </Button>
             </a>
           </Link>
         </div>
         <style jsx>{`
           .top {
-            background: #141E30;  /* fallback for old browsers */
-            background: -webkit-linear-gradient(to right, #243B55, #141E30);  /* Chrome 10-25, Safari 5.1-6 */
-            background: linear-gradient(to right, #243B55, #141E30); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            background-color: #292C33;
             padding: 100px 0 85px 0;
             text-align: center;
           }
           .top .title {
             font-size: 68px;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
             line-height: 76px;
-            font-weight: 600;
+            font-weight: 400;
             color: #fff;
           }
           .top .description {

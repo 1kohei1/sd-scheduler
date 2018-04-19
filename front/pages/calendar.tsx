@@ -169,42 +169,44 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
     return (
       <AppLayout>
         <div className="container">
-          <h1>Semester availability calendar</h1>
-          <p>Faculty column width changes the width of faculties column.</p>
-          <p>You can scroll horizontally over the time table.</p>
-          <CalendaroForm
-            facultyColumnRatio={this.state.facultyColumnRatio}
-            onSlideChange={this.onSlideChange}
-            faculties={this.state.faculties}
-            checkedFaculties={this.state.checkedFaculties}
-            onFacultyChange={this.onFacultyChange}
-          />
+          <h1>Semester calendar</h1>
           {this.state.loading ? <Loading /> : (
-            <SchedulingCalendar
-              presentationDates={
-                this.state.presentationDates
-                  .filter((pd: PresentationDate) => this.state.checkedFaculties.indexOf(pd.admin._id) >= 0)
-              }
-              faculties={
-                this.state.faculties
-                  .filter((f: Faculty) => f.isAdmin || this.state.checkedFaculties.indexOf(f._id) >= 0)
-              }
-              availableSlots={this.state.availableSlots}
-              presentations={this.state.presentations}
-              facultyColumnRatio={this.state.facultyColumnRatio}
-              colorsByAdmin={this.state.colorsByAdmin}
-            />
+            <div>
+              <CalendaroForm
+                facultyColumnRatio={this.state.facultyColumnRatio}
+                onSlideChange={this.onSlideChange}
+                faculties={this.state.faculties}
+                checkedFaculties={this.state.checkedFaculties}
+                onFacultyChange={this.onFacultyChange}
+              />
+              <p>You can scroll horizontally over the time table.</p>
+              <SchedulingCalendar
+                presentationDates={
+                  this.state.presentationDates
+                    .filter((pd: PresentationDate) => this.state.checkedFaculties.indexOf(pd.admin._id) >= 0)
+                }
+                faculties={
+                  this.state.faculties
+                    .filter((f: Faculty) => f.isAdmin || this.state.checkedFaculties.indexOf(f._id) >= 0)
+                }
+                availableSlots={this.state.availableSlots}
+                presentations={this.state.presentations}
+                facultyColumnRatio={this.state.facultyColumnRatio}
+                colorsByAdmin={this.state.colorsByAdmin}
+              />
+            </div>
           )}
-          <div className="bottom">
-            Ready to schedule presentation?&nbsp;&nbsp;&nbsp;
-            <Link href="/schedule">
-              <a>
-                <Button type="primary">
-                  Schedule presentation
-                </Button>
-              </a>
-            </Link>
-          </div>
+          <Link href="schedule">
+            <a>
+              <Button
+                type="primary"
+                size="large"
+                style={{ width: '100%', marginBottom: '32px' }}
+              >
+                Schedule presentation
+              </Button>
+            </a>
+          </Link>
         </div>
         <style jsx>{`
           .container {
@@ -214,10 +216,7 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
             margin: auto;
             margin-top: 100px;
           }
-          .bottom {
-            line-height: 32px;
-            padding-bottom: 32px;
-          }
+
         `}</style>
       </AppLayout>
     );

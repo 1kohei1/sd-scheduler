@@ -4,7 +4,7 @@ import { Steps } from 'antd';
 export interface ScheduleLayoutProps {
   current: number;
   groupNumber: number;
-  description: string;
+  description: string | React.ReactNode;
 }
 
 export default class ScheduleLayout extends React.Component<ScheduleLayoutProps, any> {

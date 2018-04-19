@@ -24,7 +24,7 @@ export default class Instruction extends React.Component<InstructionProps, any> 
               <div className="title">Fill necessary information for your presentation.</div>
             </Col>
             <Col span={8}>
-              <img src="/static/android-fill-presentation.jpeg" style={{ maxWidth: '500px', margin: 'auto' }} />
+              {/* <img src="/static/android-fill-presentation.jpeg" style={{ maxWidth: '500px', margin: 'auto' }} /> */}
             </Col>
           </Row>
           <Row>
@@ -53,6 +53,16 @@ export default class Instruction extends React.Component<InstructionProps, any> 
           @media (max-width: 727px) {
             .instruction .heading {
               padding: 16px 0;
+            }
+          }
+          @media (max-width: 380px) {
+            .instruction .heading {
+              font-size: 28px;
+            }
+          }
+          @media (max-width: 330px) {
+            .instruction .heading {
+              font-size: 24px;
             }
           }
         `}</style>
