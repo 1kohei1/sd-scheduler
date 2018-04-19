@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { List } from 'immutable';
 import Link from 'next/link';
-import { Timeline, Alert, Checkbox, Button, Slider, Form } from 'antd';
+import { Row, Col, Alert, Checkbox, Button, Slider, Form } from 'antd';
 
 import AppLayout from '../components/AppLayout';
 import { Semester } from '../models/Semester';
@@ -15,6 +15,7 @@ import DatetimeUtil from '../utils/DatetimeUtil';
 import Api from '../utils/Api';
 import Loading from '../components/Loading';
 import SchedulingCalendar from '../components/SchedulingCalendar/SchedulingCalendar';
+import CalendaroForm from '../components/CalendarForm';
 
 export interface CalendarProps {
   semester: Semester;
@@ -30,14 +31,13 @@ interface CalendarState {
   presentations: Presentation[];
 
   facultyColumnRatio: number;
+  checkedFaculties: string[];
 }
 
 export default class Calendar extends React.Component<CalendarProps, CalendarState> {
   static async getInitialProps() {
     const semesters = await Api.getSemesters();
     const semester = semesters[0];
-
-    console.log(semester);
 
     return {
       semester,
@@ -57,9 +57,11 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
       presentations: [],
 
       facultyColumnRatio: 1,
+      checkedFaculties: [],
     }
 
     this.onSlideChange = this.onSlideChange.bind(this);
+    this.onFacultyChange = this.onFacultyChange.bind(this);
   }
 
   onErr(err: string) {
@@ -91,6 +93,7 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
       const faculties = await Api.getFaculties('isActive=true');
       this.setState({
         faculties,
+        checkedFaculties: faculties.map((f: Faculty) => f._id),
       });
     } catch (err) {
       this.onErr(err.message);
@@ -136,72 +139,55 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
     });
   }
 
-  render() {
-    console.log(this.state.presentationDates[0]);
+  onFacultyChange(fid: string, checked: boolean) {
+    const copyCheckedFaculties = [...this.state.checkedFaculties];
+    if (checked) {
+      copyCheckedFaculties.push(fid);
+    } else {
+      const index = copyCheckedFaculties.indexOf(fid);
+      copyCheckedFaculties.splice(index, 1);
+    }
+    this.setState({
+      checkedFaculties: copyCheckedFaculties,
+    })
+  }
 
+  render() {
     return (
       <AppLayout>
         <div className="container">
           <h1>Semester calendar</h1>
-          <div className="description">
-            <Form>
-              <Form.Item
-                label="Ready to schedule presentation?"
-                {...ScheduleFormLayoutConstants.layoutWithColumn}
-              >
-                <Link href="/schedule">
-                  <a>
-                    <Button type="primary">
-                      Schedule presentation
-                    </Button>
-                  </a>
-                </Link>
-              </Form.Item>
-              <Form.Item
-                label="Faculty column ratio"
-                {...ScheduleFormLayoutConstants.layoutWithColumn}
-              >
-                <Slider
-                  defaultValue={1}
-                  min={0}
-                  step={0.1}
-                  max={2}
-                  value={this.state.facultyColumnRatio}
-                  onChange={this.onSlideChange}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Faculties to display"
-                {...ScheduleFormLayoutConstants.layoutWithColumn}
-              >
-                Checkbox to choose who will be displayed
-              </Form.Item>
-            </Form>
-          </div>
+          <CalendaroForm
+            facultyColumnRatio={this.state.facultyColumnRatio}
+            onSlideChange={this.onSlideChange}
+            faculties={this.state.faculties}
+            checkedFaculties={this.state.checkedFaculties}
+            onFacultyChange={this.onFacultyChange}
+          />
           {this.state.loading ? <Loading /> : (
             <SchedulingCalendar
-              presentationDate={this.state.presentationDates[0]}
-              faculties={this.state.faculties}
+              presentationDates={
+                this.state.presentationDates
+                  .filter((pd: PresentationDate) => this.state.checkedFaculties.indexOf(pd.admin._id) >= 0)
+              }
+              faculties={
+                this.state.faculties
+                  .filter((f: Faculty) => f.isAdmin || this.state.checkedFaculties.indexOf(f._id) >= 0)
+              }
               availableSlots={this.state.availableSlots}
               presentations={this.state.presentations}
               facultyColumnRatio={this.state.facultyColumnRatio}
             />
           )}
           <div className="description">
-            <Form>
-              <Form.Item
-                label="Ready to schedule presentation?"
-                {...ScheduleFormLayoutConstants.layoutWithColumn}
-              >
-                <Link href="/schedule">
-                  <a>
-                    <Button type="primary">
-                      Schedule presentation
-                    </Button>
-                  </a>
-                </Link>
-              </Form.Item>
-            </Form>
+            Ready to schedule presentation?&nbsp;&nbsp;&nbsp;
+            <Link href="/schedule">
+              <a>
+                <Button type="primary">
+                  Schedule presentation
+                </Button>
+              </a>
+            </Link>
           </div>
         </div>
         <style jsx>{`
@@ -217,6 +203,7 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
           }
           .description {
             padding: 32px 0;
+            line-height: 32px;
           }
         `}</style>
       </AppLayout>
