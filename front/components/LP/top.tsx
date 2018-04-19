@@ -14,13 +14,15 @@ export default class App extends React.Component<AppProps, any> {
           Developed to make scheduling senior design presentation&nbsp;easier.
         </div>
         <div className="action">
-          <Button
-            type="primary"
-            size="large"
-            style={{ marginBottom: '16px' }}
-          >
-            Check committee member availability
-          </Button>
+          <Link href="/calendar">
+            <Button
+              type="primary"
+              size="large"
+              style={{ marginBottom: '16px' }}
+            >
+              Check committee member availability
+            </Button>
+          </Link>
           <span className="dummy-block"></span>
           <Link href="/schedule">
             <a>

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import Link from 'next/link';
 
-import Top from '../components/LP/top';
-
 import AppLayout from '../components/AppLayout';
+import Top from '../components/LP/top';
+import Instruction from '../components/LP/instruction';
 
 interface Props {
 }
@@ -26,6 +26,7 @@ export default class Index extends React.Component<Props, IndexState> {
     return (
       <AppLayout>
         <Top />
+        <Instruction />
       </AppLayout>
     )
   }
