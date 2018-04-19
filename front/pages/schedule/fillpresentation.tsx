@@ -47,19 +47,19 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
 
     try {
       // Check user is authenticated or not
-      // await UserUtil.isStudentAuthenticated(context, _id);
+      await UserUtil.isStudentAuthenticated(context, _id);
       const groups = await Api.getGroups(`_id=${_id}`) as Group[];
 
-      // if (groups.length === 0) {
-      //   Api.redirect(context, '/schedule', {
-      //     err: 'Please select the valid group'
-      //   }, '/schedule');
-      //   return {};
-      // } else {
+      if (groups.length === 0) {
+        Api.redirect(context, '/schedule', {
+          err: 'Please select the valid group'
+        }, '/schedule');
+        return {};
+      } else {
         return {
           group: groups[0],
         }
-      // }
+      }
     } catch (err) {
       Api.redirect(context, '/schedule', {
         err: err.message
