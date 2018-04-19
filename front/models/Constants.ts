@@ -43,7 +43,7 @@ export const SchedulingCalendarConstants = {
   facultyColumnWidth: '200px',
 
   tileBackgroundColor: '#0070E0',
-  tileHeight: '18px',
+  tileHeight: '30px',
 }
 
 export const ScheduleFormLayoutConstants = {
