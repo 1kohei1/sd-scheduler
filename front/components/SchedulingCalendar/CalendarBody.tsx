@@ -38,7 +38,7 @@ export default class CalendarBody extends React.Component<CalendarBodyProps, any
         <style jsx>{`
           .ko-calendar-body {
             min-width: 100%;
-            overflow: scroll;
+            overflow: hidden;
             margin-bottom: 32px;
           }
         `}</style>

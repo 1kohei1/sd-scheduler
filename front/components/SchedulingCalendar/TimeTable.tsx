@@ -8,6 +8,7 @@ import AvailableSlot from '../../models/AvailableSlot';
 import Presentation from '../../models/Presentation';
 import TimeTableHeader from './TimeTableHeader';
 import FacultySchedule from './FacultySchedule';
+import { SchedulingCalendarConstants } from '../../models/Constants';
 
 export interface TimeTableProps {
   presentationDate: TimeSlot;
@@ -24,8 +25,16 @@ export default class TimeTable extends React.Component<TimeTableProps, any> {
 
     const hoursArray = DatetimeUtil.createHoursArray(startTime, endTime);
 
+    const { 
+      containerWidthNum,
+      containerLeftPaddingNum,
+      containerRightPaddingNum,
+      facultyColumnWidthNum
+    } = SchedulingCalendarConstants;
+    const timeTableWidth = `${containerWidthNum - containerLeftPaddingNum - containerRightPaddingNum - facultyColumnWidthNum}px`;
+
     return (
-      <div>
+      <div className="time-table">
         <TimeTableHeader
           hoursArray={hoursArray}
         />
@@ -56,6 +65,12 @@ export default class TimeTable extends React.Component<TimeTableProps, any> {
             isLastFaculty={i === this.props.faculties.length - 1}
           />
         })}
+        <style jsx>{`
+          .time-table {
+            min-width: ${timeTableWidth};
+            overflow: scroll;
+          }
+        `}</style>
       </div>
     );
   }

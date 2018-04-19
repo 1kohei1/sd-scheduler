@@ -26,11 +26,21 @@ export const DateConstants = {
 }
 
 export const SchedulingCalendarConstants = {
+  containerWidthNum: 800,
+  containerWidth: '800px',
+  containerLeftPaddingNum: 16,
+  containerLeftPadding: '16px',
+  containerRightPaddingNum: 16,
+  containerRightPadding: '16px',
+
   rowHeightNum: 60,
   rowHeight: '60px',
 
   columnWidthNum: 100,
   columnWidth: '100px',
+
+  facultyColumnWidthNum: 200,
+  facultyColumnWidth: '200px',
 
   tileBackgroundColor: '#0070E0',
   tileHeight: '18px',

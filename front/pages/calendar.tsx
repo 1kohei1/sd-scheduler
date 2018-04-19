@@ -9,7 +9,7 @@ import Faculty from '../models/Faculty';
 import AvailableSlot from '../models/AvailableSlot';
 import PresentationDate from '../models/PresentationDate';
 import Presentation from '../models/Presentation';
-import { DateConstants } from '../models/Constants';
+import { DateConstants, SchedulingCalendarConstants } from '../models/Constants';
 import TimeSlot from '../models/TimeSlot';
 import DatetimeUtil from '../utils/DatetimeUtil';
 import Api from '../utils/Api';
@@ -164,8 +164,9 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
         </div>
         <style jsx>{`
           .container {
-            max-width: 800px;
-            padding: 0 16px;
+            max-width: ${SchedulingCalendarConstants.containerWidth};
+            padding-left: ${SchedulingCalendarConstants.containerLeftPadding};
+            padding-right: ${SchedulingCalendarConstants.containerRightPadding};
             margin: auto;
             margin-top: 100px;
           }

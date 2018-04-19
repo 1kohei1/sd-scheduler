@@ -37,6 +37,7 @@ export default class FacultySchedule extends React.Component<FacultyScheduleProp
           .ko-faculty-schedule {
             position: relative;
             height: ${SchedulingCalendarConstants.rowHeight};
+            width: ${SchedulingCalendarConstants.columnWidthNum * this.props.hoursArray.length}px;
           }
         `}</style>
       </div>

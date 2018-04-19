@@ -15,7 +15,7 @@ export interface FacultyColumnProps {
 export default class FacultyColumn extends React.Component<FacultyColumnProps, any> {
   render() {
     return (
-      <div style={{ minWidth: '200px' }}>
+      <div className="faculty-column">
         <div className="row date">
           {this.props.presentationDateStr}
         </div>
@@ -25,6 +25,9 @@ export default class FacultyColumn extends React.Component<FacultyColumnProps, a
           </div>
         ))}
         <style jsx>{`
+          .faculty-column {
+            min-width: ${SchedulingCalendarConstants.facultyColumnWidth};
+          }
           .row {
             height: ${SchedulingCalendarConstants.rowHeight};
           }

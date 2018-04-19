@@ -32,7 +32,7 @@ export default class HourLines extends React.Component<HourLinesProps, any> {
           .hour {
             display: border-box;
             height: ${SchedulingCalendarConstants.rowHeightNum - heightOffset}px;
-            width: ${halfWidth};
+            min-width: ${halfWidth};
           }
           .hour-left {
             border-left: 1px solid #ccc;
