@@ -189,7 +189,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
   private confirmDialogContent() {
     return (
       <div>
-        The system will cancel the presentation and send the emails to sponsors and group members. Please leave message to them why you have to cancel this presentation.<br /><br />
+        The system will cancel the presentation and send the emails to sponsors and group members. Please leave message to them.<br /><br />
         <Form>
           <Form.Item
             help="Please enter the message"
