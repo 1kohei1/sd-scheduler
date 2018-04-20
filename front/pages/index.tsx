@@ -1,9 +1,13 @@
 import * as React from 'react';
 import Link from 'next/link';
+import { Divider } from 'antd';
 
 import AppLayout from '../components/AppLayout';
 import Top from '../components/LP/top';
 import Instruction from '../components/LP/instruction';
+import Reminder from '../components/LP/reminder';
+import Device from '../components/LP/device';
+import Footer from '../components/LP/footer';
 
 interface Props {
 }
@@ -27,6 +31,9 @@ export default class Index extends React.Component<Props, IndexState> {
       <AppLayout>
         <Top />
         <Instruction />
+        <Reminder />
+        <Device />
+        <Footer />
       </AppLayout>
     )
   }

@@ -87,16 +87,15 @@ export default class Instruction extends React.Component<InstructionProps, any> 
             margin: auto;
             max-width: 1040px;
             padding: 0 16px;
+            text-align: center;
           }
           .instruction .heading {
             font-size: 32px;
-            text-align: center;
             padding: 32px 0;
           }
           .instruction .title {
             font-size: 28px;
             font-weight: 300;
-            text-align: center;
           }
           .instruction-row {
             margin-bottom: 16px;

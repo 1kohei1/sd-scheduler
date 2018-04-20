@@ -53,6 +53,7 @@ export default class App extends React.Component<AppProps, any> {
             font-size: 20px;
             line-height: 40px;
             margin-bottom: 24px;
+            letter-spacing: 0.2px;
             color: #fff;
           }
           .top .dummy-block {
