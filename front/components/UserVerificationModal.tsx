@@ -47,6 +47,19 @@ export default class UserVerificationModal extends React.Component<UserVerificat
     })
   }
 
+  componentWillReceiveProps(nextProps: UserVerificationModalProps) {
+    if (nextProps.visible == false) {
+      this.setState({
+        errs: List<string>(),
+        saving: false,
+
+        email: '',
+        verificationCode: '',
+        verificationCodeSent: false,
+      });
+    }
+  }
+
   onChange(prop: 'email' | 'verificationCode', val: string) {
     const newState: any = {
       [prop]: val,
