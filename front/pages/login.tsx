@@ -80,6 +80,11 @@ class Login extends React.Component<LoginProps, LoginState> {
       <AppLayout>
         <FormLayout>
           <h1>Login</h1>
+          <Alert
+            type="warning"
+            style={{ marginBottom: '8px' }}
+            message="Login is only available for faculty"
+          />
           <Form onSubmit={this.handleSubmit}>
             {this.state.err && (
               <FormItem>
