@@ -1,6 +1,6 @@
 # SD scheduler
 
-UCF senior design final presentation must coordinate presentation time. There is no easy way to coordinate the schedule. This software provides easy way for both faculties and students to handle senior design final presentation scheduling.
+UCF senior design has to schedule the final presentation. There is no easy way to coordinate the schedule. This project is to provides easy way for both faculties and students to handle senior design final presentation scheduling.
 
 ## Problems
 
@@ -10,7 +10,7 @@ Students:
 
 Faculties:
 * Too cumbersome to tell if he/she is available on requested time
-* Has to mark them on the calendar
+* Has to handle scheduling by themselves
 
 ## Contribution
 
