@@ -27,13 +27,6 @@ module.exports = (server: Application) => {
     facultyController.updateFaculty,
   );
 
-  server.put(
-    '/api/faculties/:_id/admin',
-    APIUtil.isAuthenticated,
-    APIUtil.isSystemAdmin,
-    facultyController.updateFaculty,
-  )
-
   server.post(
     '/api/faculties/:_id/verify',
     APIUtil.isAuthenticated,

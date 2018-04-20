@@ -90,10 +90,6 @@ export default class Api {
     return await Api.makeRequest(RequestMethod.PUT, `/api/faculties/${_id}`, update);
   }
 
-  static async updateFacultyAdminState(_id: string, update: object = {}) {
-    return await Api.makeRequest(RequestMethod.PUT, `/api/faculties/${_id}/admin`, update);
-  }
-
   static async updateFacultyByToken(_id: string, token: string, update: object = {}) {
     return await Api.makeRequest(RequestMethod.PUT, `/api/faculties/${_id}/${token}`, update);
   }
@@ -142,53 +138,65 @@ export default class Api {
    * Presentation
    */
 
-   static async getPresentations(query: string = '') {
-     return await Api.makeRequest(RequestMethod.GET, `/api/presentations?${query}`);
-   }
+  static async getPresentations(query: string = '') {
+    return await Api.makeRequest(RequestMethod.GET, `/api/presentations?${query}`);
+  }
 
-   static async createPresentation(body: {[key: string]: any} = {}) {
-     body.checkFacultyAvailability = true;
-     return await Api.makeRequest(RequestMethod.POST, `/api/presentations`, body);
-   }
+  static async createPresentation(body: { [key: string]: any } = {}) {
+    body.checkFacultyAvailability = true;
+    return await Api.makeRequest(RequestMethod.POST, `/api/presentations`, body);
+  }
 
-   static async createPresentationByAdmin(body: {[key: string]: any} = {}) {
+  static async createPresentationByAdmin(body: { [key: string]: any } = {}) {
     body.checkFacultyAvailability = false;
-    return await Api.makeRequest(RequestMethod.POST, `/api/presentations/admin`, body);     
-   }
+    return await Api.makeRequest(RequestMethod.POST, `/api/presentations/admin`, body);
+  }
 
-   static async updatePresentation(_id: string, update: {[key: string]: any}) {
+  static async updatePresentation(_id: string, update: { [key: string]: any }) {
     update.checkFacultyAvailability = true;
-     return await Api.makeRequest(RequestMethod.PUT, `/api/presentations/${_id}`, update);
-   }
+    return await Api.makeRequest(RequestMethod.PUT, `/api/presentations/${_id}`, update);
+  }
 
-   static async updatePresentationByAdmin(_id: string, update: {[key: string]: any}) {
+  static async updatePresentationByAdmin(_id: string, update: { [key: string]: any }) {
     update.checkFacultyAvailability = false;
     return await Api.makeRequest(RequestMethod.PUT, `/api/presentations/admin/${_id}`, update);
-   }
+  }
 
-   static async cancelPresentation(_id: string, body: object) {
+  static async cancelPresentation(_id: string, body: object) {
     return await Api.makeRequest(RequestMethod.DELETE, `/api/presentations/${_id}`, body);
+  }
+
+  /**
+   * adminemails
+   */
+
+  static async getEmails(query: string = '') {
+    return await Api.makeRequest(RequestMethod.GET, `/api/adminemails?${query}`);
+  }
+
+  static async getTerms() {
+    return await Api.makeRequest(RequestMethod.GET, `/api/adminemails/terms`);
+  }
+
+  static async getPreview(body: object) {
+    return await Api.makeRequest(RequestMethod.POST, `/api/adminemails/preview`, body);
+  }
+
+  static async sendAdminemail(body: object) {
+    return await Api.makeRequest(RequestMethod.POST, `/api/adminemails`, body);
+  }
+
+  /**
+   * System admin
+   */
+
+   static async systemadminFacultyUpdate(_id: string, update: object = {}) {
+     return await Api.makeRequest(RequestMethod.PUT, `/api/systemadmin/faculties/${_id}`, update);
    }
 
-   /**
-    * adminemails
-    */
-
-    static async getEmails(query: string = '') {
-      return await Api.makeRequest(RequestMethod.GET, `/api/adminemails?${query}`);
-    }
-
-    static async getTerms() {
-      return await Api.makeRequest(RequestMethod.GET, `/api/adminemails/terms`);
-    }
-
-    static async getPreview(body: object) {
-      return await Api.makeRequest(RequestMethod.POST, `/api/adminemails/preview`, body);
-    }
-
-    static async sendAdminemail(body: object) {
-      return await Api.makeRequest(RequestMethod.POST, `/api/adminemails`, body);
-    }
+   static async systemadminGroupCreate(body: object = {}) {
+      return await Api.makeRequest(RequestMethod.POST, `/api/systemadmin/groups`, body);
+   }
 
   /**
    * Utility functions

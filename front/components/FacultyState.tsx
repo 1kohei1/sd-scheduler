@@ -107,7 +107,7 @@ export default class FacultyState extends React.Component<FacultyStateProps, Fac
 
       if (Object.keys(update).length > 0) {
         try {
-          const updatedFaculty = await Api.updateFacultyAdminState(faculty._id, update);
+          const updatedFaculty = await Api.systemadminFacultyUpdate(faculty._id, update);
           this.setState((prevState: FacultyStateState, props: FacultyStateProps) => {
             let newFaculties = List(prevState.faculties);
             const index = newFaculties.findIndex((f: Faculty) => f._id === fid);

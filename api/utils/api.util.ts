@@ -101,20 +101,20 @@ export default class APIUtil {
       // So get group from the database
       if (_id) {
         p = DBUtil.findPresentations({ _id }, '')
-        .then((presentations: Document[], ) => {
-          if (presentations.length === 0) {
-            return Promise.reject({
-              message: 'Specified presentation does not exist',
-            })
-          } else {
-            return Promise.resolve(presentations[0].get('group').toString());
-          }
-        })
+          .then((presentations: Document[], ) => {
+            if (presentations.length === 0) {
+              return Promise.reject({
+                message: 'Specified presentation does not exist',
+              })
+            } else {
+              return Promise.resolve(presentations[0].get('group').toString());
+            }
+          })
       }
       // If it is presentations API, but no specified id,
       // It's creating a new presentation. So body.group is the group of the presentation
       else {
-        p = Promise.resolve(req.body.group);  
+        p = Promise.resolve(req.body.group);
       }
     }
     // If it's not presentations API, it's group API. So just use params _id
