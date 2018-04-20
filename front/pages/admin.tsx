@@ -2,10 +2,10 @@ import * as React from 'react';
 
 import InitialProps from '../models/InitialProps';
 import AppLayout from '../components/AppLayout';
-import FormLayout from '../components/FormLayout';
 import UserUtil from '../utils/UserUtil';
 import Api from '../utils/Api';
 import FacultyState from '../components/FacultyState';
+import CreateGroup from '../components/CreateGroup';
 
 export interface AdminProps {
 }
@@ -28,10 +28,19 @@ export default class Admin extends React.Component<AdminProps, AdminState> {
       <AppLayout
         selectedMenu={['admin']}
       >
-        <FormLayout>
+        <div className="container">
           <h1>System administrator menu</h1>
           <FacultyState />
-        </FormLayout>
+          <CreateGroup />
+        </div>
+        <style jsx>{`
+          .container {
+            max-width: 800px;
+            margin: auto;
+            margin-top: 100px;
+            padding: 0 16px;
+          }
+        `}</style>
       </AppLayout>
     );
   }

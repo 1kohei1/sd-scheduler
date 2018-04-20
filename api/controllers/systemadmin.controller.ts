@@ -12,4 +12,11 @@ module.exports.createGroup = (req: Request, res: Response) => {
     }
   };
 
+  DBUtil.createGroup(req.body)
+    .then((newGroup: Document) => {
+      APIUtil.successResponse(info, newGroup, res);
+    })
+    .catch(err => {
+      APIUtil.errorResponse(info, err.message, {}, res);
+    })
 }
