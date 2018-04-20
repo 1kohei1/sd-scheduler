@@ -13,7 +13,7 @@ export default class Instruction extends React.Component<InstructionProps, any> 
         </div>
         <div className="box">
           <div className="title">Check committee member availability.</div>
-          <Row style={{ marginBottom: '16px' }}>
+          <Row className="instruction-row">
             <Col
               xs={{
                 span: 16,
@@ -23,14 +23,20 @@ export default class Instruction extends React.Component<InstructionProps, any> 
                 span: 14,
                 offset: 5,
               }}
-              span={12}
-              offset={6}
+              lg={{
+                span: 12,
+                offset: 6,
+              }}
+              xl={{
+                span: 10,
+                offset: 7,
+              }}
             >
               <img src="/static/prod-semester-calendar.png" style={{ width: '100%' }} />
             </Col>
           </Row>
-          <div className="title">Fill necessary information for your presentation.</div>
-          <Row style={{ marginBottom: '16px' }}>
+          <div className="title">Fill necessary information for your&nbsp;presentation.</div>
+          <Row className="instruction-row">
             <Col
               xs={{
                 span: 16,
@@ -40,14 +46,20 @@ export default class Instruction extends React.Component<InstructionProps, any> 
                 span: 14,
                 offset: 5,
               }}
-              span={12}
-              offset={6}
+              lg={{
+                span: 12,
+                offset: 6,
+              }}
+              xl={{
+                span: 10,
+                offset: 7,
+              }}
             >
               <img src="/static/prod-fill-information.png" style={{ width: '100%' }} />
             </Col>
           </Row>
-          <div className="title">Group member, committee members, and sponsor members get confirmation email when presentation is scheduled.</div>
-          <Row style={{ marginBottom: '16px' }}>
+          <div className="title">Receive confirmation email.</div>
+          <Row className="instruction-row">
             <Col
               xs={{
                 span: 16,
@@ -57,8 +69,14 @@ export default class Instruction extends React.Component<InstructionProps, any> 
                 span: 14,
                 offset: 5,
               }}
-              span={12}
-              offset={6}
+              lg={{
+                span: 12,
+                offset: 6,
+              }}
+              xl={{
+                span: 10,
+                offset: 7,
+              }}
             >
               <img src="/static/prod-email.png" style={{ width: '100%' }} />
             </Col>
@@ -80,6 +98,9 @@ export default class Instruction extends React.Component<InstructionProps, any> 
             font-weight: 300;
             text-align: center;
           }
+          .instruction-row {
+            margin-bottom: 16px;
+          }
           @media (max-width: 727px) {
             .instruction .heading {
               padding: 16px 0;
@@ -93,6 +114,13 @@ export default class Instruction extends React.Component<InstructionProps, any> 
           @media (max-width: 330px) {
             .instruction .heading {
               font-size: 24px;
+            }
+          }
+        `}</style>
+        <style>{`
+          @media (min-width: 992px) {
+            .instruction-row {
+              margin-bottom: 24px;
             }
           }
         `}</style>

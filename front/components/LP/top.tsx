@@ -31,7 +31,7 @@ export default class App extends React.Component<AppProps, any> {
                 ghost
                 style={{ marginBottom: '16px' }}
                 >
-                Schedule final presentation
+                Schedule presentation
               </Button>
             </a>
           </Link>
