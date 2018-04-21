@@ -5,8 +5,6 @@ import Faculty from '../models/Faculty';
 import { ScheduleFormLayoutConstants } from '../models/Constants';
 
 export interface CalendaroFormProps {
-  facultyColumnRatio: number;
-  onSlideChange: (val: number) => void;
   faculties: Faculty[];
   checkedFaculties: string[];
   onFacultyChange: (fid: string, checked: boolean) => void;
@@ -23,19 +21,6 @@ export default class CalendaroForm extends React.Component<CalendaroFormProps, a
           key="filter"
         >
           <Form>
-            <Form.Item
-              label="Faculty column width"
-              {...ScheduleFormLayoutConstants.layoutWithColumn}
-            >
-              <Slider
-                defaultValue={1}
-                min={0}
-                step={0.1}
-                max={2}
-                value={this.props.facultyColumnRatio}
-                onChange={this.props.onSlideChange}
-              />
-            </Form.Item>
             <Form.Item
               label="Presentation dates of"
               {...ScheduleFormLayoutConstants.layoutWithColumn}

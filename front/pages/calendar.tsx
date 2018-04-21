@@ -173,13 +173,20 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
           {this.state.loading ? <Loading /> : (
             <div>
               <CalendaroForm
-                facultyColumnRatio={this.state.facultyColumnRatio}
-                onSlideChange={this.onSlideChange}
                 faculties={this.state.faculties}
                 checkedFaculties={this.state.checkedFaculties}
                 onFacultyChange={this.onFacultyChange}
               />
               <p>You can scroll horizontally over the time table.</p>
+              <p>You can change the faculty column by moving the bottom slider:</p>
+              <Slider
+                  defaultValue={1}
+                  min={0}
+                  step={0.1}
+                  max={2}
+                  value={this.state.facultyColumnRatio}
+                  onChange={this.onSlideChange}
+                />
               <SchedulingCalendar
                 presentationDates={
                   this.state.presentationDates
