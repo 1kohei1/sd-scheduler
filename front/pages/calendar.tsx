@@ -58,7 +58,7 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
       presentationDates: [],
       presentations: [],
 
-      facultyColumnRatio: 1,
+      facultyColumnRatio: .8,
       checkedFaculties: [],
       colorsByAdmin: {},
     }
@@ -178,7 +178,7 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
                 onFacultyChange={this.onFacultyChange}
               />
               <p>You can scroll horizontally over the time table.</p>
-              <p>You can change the faculty column by moving the bottom slider:</p>
+              {/* <p>You can change the faculty column by moving the bottom slider:</p>
               <Slider
                   defaultValue={1}
                   min={0}
@@ -186,7 +186,7 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
                   max={2}
                   value={this.state.facultyColumnRatio}
                   onChange={this.onSlideChange}
-                />
+                /> */}
               <SchedulingCalendar
                 presentationDates={
                   this.state.presentationDates

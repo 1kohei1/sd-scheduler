@@ -24,6 +24,8 @@ export default class FacultyColumn extends React.Component<FacultyColumnProps, a
         <style jsx>{`
           .faculty-column {
             min-width: ${SchedulingCalendarConstants.facultyColumnWidthNum * this.props.facultyColumnRatio}px;
+            -webkit-box-shadow: 6px 0 6px -4px rgba(0,0,0,.15);
+            box-shadow: 6px 0 6px -4px rgba(0,0,0,.15);
           }
           .row {
             height: ${SchedulingCalendarConstants.rowHeight};
