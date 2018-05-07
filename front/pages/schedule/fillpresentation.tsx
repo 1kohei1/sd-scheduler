@@ -326,6 +326,17 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
   }
 
   onPresentationDatetimeChange(isostring: string) {
+    const fieldsValue: any = this.props.form.getFieldsValue();
+    if (fieldsValue.hasOwnProperty('faculties')) {
+      const faculties = fieldsValue.faculties;
+      for (const _id in faculties) {
+        const key = `faculties[${_id}].checked`;
+        const val = {
+          [key]: false,
+        };
+        this.props.form.setFieldsValue(val);
+      }
+    }
     if (isostring === '') {
       this.setState({
         availableFaculties: [],
