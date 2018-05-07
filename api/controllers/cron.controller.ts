@@ -56,9 +56,11 @@ module.exports.presentationReminder = (req: Request, res: Response) => {
       }[] = [];
 
       presentations.forEach((presentation: Document) => {
+        info.debugInfo.presentation_id = presentation.get('_id').toString();
+
         const group = presentation.get('group');
         const presentationDate = presentationDates
-          .find((presentationDate => presentationDate.get('admin').toString() === group.get('admin').toString()))
+          .find((presentationDate => presentationDate.get('admin').get('_id').toString() === group.get('adminFaculty').toString()));
 
         let locationName = 'undefined';
         if (presentationDate) {

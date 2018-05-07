@@ -18,6 +18,10 @@ const PresentationDateSchema = new Schema({
     }],
     default: [],
   },
+  location: {
+    type: String,
+    default: 'undefined',
+  },
   created_at: Date,
   updated_at: Date,
 });
