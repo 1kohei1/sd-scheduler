@@ -210,7 +210,7 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
                 size="large"
                 style={{ width: '100%', marginBottom: '32px' }}
               >
-                Schedule presentation
+                Go to schedule presentation page
               </Button>
             </a>
           </Link>
@@ -223,7 +223,6 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
             margin: auto;
             margin-top: 100px;
           }
-
         `}</style>
       </AppLayout>
     );

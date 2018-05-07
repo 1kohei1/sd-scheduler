@@ -105,19 +105,17 @@ export default class UserVerificationModal extends React.Component<UserVerificat
     return (
       <Modal
         visible={this.props.visible}
-        title={`Please verify you are the member of group ${group.groupNumber}`}
+        title={`Please verify you are the member of Group ${group.groupNumber}`}
         footer={null}
         onCancel={this.props.onClose}
       >
-        <div>Only group member can schedule the presentation.</div>
-        <div>Please enter your <b>KNIGHTS</b> email (associated with Webcourse) to receive the verification code.</div>
-        <div>The system stores the last code. So send verification code only one time.</div>
+        <div>Please enter your <b>KNIGHTS</b> email to receive the verification code.</div>
         {
           this.state.verificationCodeSent && (
             <Alert
               style={{ marginTop: '8px' }}
               type="success"
-              message="Successfully sent verification code"
+              message="Successfully sent verification code. Please wait up to a minute to receive a code."
             />
           )
         }
@@ -147,7 +145,7 @@ export default class UserVerificationModal extends React.Component<UserVerificat
               onClick={this.sendVerificationCode}
               loading={this.state.saving}
             >
-              Send verification code
+              {this.state.verificationCodeSent ? "Resend verification code" : "Send verification code"}
             </Button>
           </Form.Item>
           {this.state.verificationCodeSent && (

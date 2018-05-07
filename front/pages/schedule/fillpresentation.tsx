@@ -197,7 +197,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
         width: '520px',
         content: (
           <div>
-            All the people to be present at the presentation (group members, faculties, sponsors) will soon receive emails about your presentation datetime and location!
+            All the people to be present at the presentation (group members, faculties, sponsors) will soon receive an email about your presentation datetime and location!
           </div>
         ),
         okText: 'Navigate to the semester calendar',
@@ -649,19 +649,14 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
                 {...ScheduleFormLayoutConstants.layoutWithColumn}
                 label="Senior design faculty"
               >
-                <Checkbox
-                  checked={true}
-                  disabled={true}
-                >
-                  {
-                    this.state.allFaculties.filter((faculty: Faculty) => faculty._id === this.props.group.adminFaculty)
-                      .map((faculty: Faculty) => (
-                        <span key={faculty._id}>
-                          Dr. {faculty.firstName} {faculty.lastName}
-                        </span>
-                      ))
-                  }
-                </Checkbox>
+                {
+                  this.state.allFaculties.filter((faculty: Faculty) => faculty._id === this.props.group.adminFaculty)
+                    .map((faculty: Faculty) => (
+                      <span key={faculty._id}>
+                        Dr. {faculty.firstName} {faculty.lastName}
+                      </span>
+                    ))
+                }
               </Form.Item>
               {this.state.availableFaculties.length === 0 ? (
                 <Form.Item

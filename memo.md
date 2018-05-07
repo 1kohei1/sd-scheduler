@@ -79,6 +79,8 @@ TODO:
 - [x] Let students pick what date to schedule like picking SD 2 faculties
 - [ ] Send cancel email when group updates the presentation to different faculties
 - [ ] Create error response model and make it clear how the error reponse looks like (Need to handle network problem as well)
+- [ ] Add test (v2)
+- [ ] Replace the GET requests to Graph QL to decrease the server load
 
 Feature requests from Dr. Heinrich
 

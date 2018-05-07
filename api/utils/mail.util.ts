@@ -387,7 +387,7 @@ export class MailTemplate {
       <br />
       Sincerely,<br />
       <br />
-      Kohei<br />
+      SD Scheduler team<br />
     `);
   }
 
@@ -401,7 +401,7 @@ export class MailTemplate {
 
     Sincerely,
 
-    Kohei
+    SD Scheduler team
     `;
   }
 
@@ -415,7 +415,7 @@ export class MailTemplate {
     <br />
     Sincerely,<br />
     <br />
-    Kohei<br />
+    SD Scheduler team<br />
     `);
   }
 
@@ -428,7 +428,7 @@ export class MailTemplate {
 
     Sincerely,
 
-    Kohei
+    SD Scheduler team
     `
   }
 
@@ -441,7 +441,7 @@ export class MailTemplate {
     <br />
     Sincerely,<br />
     <br />
-    Kohei<br />
+    SD Scheduler team<br />
     `);
   }
 
@@ -454,7 +454,7 @@ export class MailTemplate {
 
     Sincerely,
 
-    Kohei
+    SD Scheduler team
     `
   }
 
@@ -467,7 +467,7 @@ export class MailTemplate {
     <br />
     Sincerely,<br />
     <br />
-    Kohei<br />
+    SD Scheduler team<br />
     `);
   }
 

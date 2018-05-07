@@ -107,11 +107,6 @@ class PasswordIndex extends React.Component<PasswordIndexProps, PasswordIndexSta
                 Send password reset email
               </Button>
             </Form.Item>
-            <div style={{ textAlign: 'center' }}>
-              <Link href="/about">
-                <a>What is SD Scheduler?</a>
-              </Link>
-            </div>
           </Form>
         </FormLayout>
       </AppLayout>
