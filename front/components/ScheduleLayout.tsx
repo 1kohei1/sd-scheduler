@@ -17,7 +17,7 @@ export default class ScheduleLayout extends React.Component<ScheduleLayoutProps,
         <div style={{ marginBottom: '32px' }}>
           <Steps current={current}>
             <Steps.Step title="Select your group" />
-            <Steps.Step title="Fill presentation information" />
+            <Steps.Step title="Fill in presentation information" />
           </Steps>
         </div>
         <div style={{ marginBottom: '32px' }}>

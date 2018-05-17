@@ -395,7 +395,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
   sponsorMembersTooltip() {
     return (
       <Tooltip
-        title="Sponsors who will join your presentation."
+        title="Any sponsors who will be joining your presentation."
       >
         Sponsor members <Icon type="question-circle-o" />
       </Tooltip>
@@ -405,7 +405,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
   availableFacultiesTooltip() {
     return (
       <Tooltip
-        title="Please check faculties you would like to invite to the presentation. If you don't see the professor who confirmed to join your presentation, please talk with your senior design faculty."
+        title="Please check the faculty members you would like to invite to the presentation. If you don't see a professor who confirmed to join your presentation, please talk with your senior design faculty."
       >
         EECS available committee <Icon type="question-circle-o" />
       </Tooltip>
@@ -415,7 +415,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
   otherDepartmentFacultiesTooltip() {
     return (
       <Tooltip
-        title="If you would like to invite faculties outside of EECS, please enter faculty information here."
+        title="If you would like to invite faculty members outside of EECS, please enter their faculty information here."
       >
         Other department faculties <Icon type="question-circle-o" />
       </Tooltip>
@@ -431,7 +431,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
         <ScheduleLayout
           current={1}
           groupNumber={group.groupNumber}
-          description={`Please fill the presentation detail for group ${group.groupNumber}.`}
+          description={`Please fill in the presentation details for group ${group.groupNumber}.`}
         >
           {this.state.loading ? <Loading /> : (
             <Form onSubmit={this.handleSubmit}>
