@@ -8,14 +8,14 @@ export default class Reminder extends React.Component<ReminderProps, any> {
     return (
       <div className="reminder">
         <div className="heading">
-          Reminder? We send them.
+          Need a reminder? We'll send them
         </div>
         <div className="title">
-          <div>Committee members</div>
-          <div>Group members</div>
-          <div>Sponsor members</div>
+          <div>Committee Members</div>
+          <div>Group Members</div>
+          <div>Sponsor Members</div>
           <div className="block"></div>
-          <div>receive a reminder a day before and an hour before.</div>
+          <div>Everyone will receive a reminder a day before and an hour before the presentation</div>
         </div>
         <style jsx>{`
           .reminder {

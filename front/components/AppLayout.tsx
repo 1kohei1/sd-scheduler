@@ -67,7 +67,7 @@ export default class AppLayout extends React.Component<AppLayoutProps, AppLayout
       return (
         <div style={{ color: 'white' }}>
           <Link href="/login">
-            <a><Button ghost>Faculty login</Button></a>
+            <a><Button ghost>Faculty Login</Button></a>
           </Link>
         </div>
       )

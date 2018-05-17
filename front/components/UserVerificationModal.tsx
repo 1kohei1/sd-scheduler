@@ -105,17 +105,17 @@ export default class UserVerificationModal extends React.Component<UserVerificat
     return (
       <Modal
         visible={this.props.visible}
-        title={`Please verify you are the member of Group ${group.groupNumber}`}
+        title={`Please verify that you are a member of Group ${group.groupNumber}`}
         footer={null}
         onCancel={this.props.onClose}
       >
-        <div>Please enter your <b>KNIGHTS</b> email to receive the verification code.</div>
+        <div>Please enter your <b>KNIGHTS</b> email to receive a verification code</div>
         {
           this.state.verificationCodeSent && (
             <Alert
               style={{ marginTop: '8px' }}
               type="success"
-              message="Successfully sent verification code. Please wait up to a minute to receive a code."
+              message="Successfully sent verification code. Please wait up to a minute to receive the code."
             />
           )
         }
@@ -131,7 +131,7 @@ export default class UserVerificationModal extends React.Component<UserVerificat
         }
         <Form>
           <Form.Item
-            label="What's your KNIGHTS email?"
+            label="Enter your KNIGHTS email"
           >
             <Input
               value={this.state.email}

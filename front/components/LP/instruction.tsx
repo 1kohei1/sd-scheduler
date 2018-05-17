@@ -9,10 +9,10 @@ export default class Instruction extends React.Component<InstructionProps, any> 
     return (
       <div className="instruction">
         <div className="heading">
-          Schedule senior design presentation&nbsp;in&nbsp;5&nbsp;minutes.
+          Schedule your senior design presentation&nbsp;in&nbsp;under&nbsp;5&nbsp;minutes
         </div>
         <div className="box">
-          <div className="title">Check committee member availability.</div>
+          <div className="title">Check committee members availability</div>
           <Row className="instruction-row">
             <Col
               xs={{
@@ -35,7 +35,7 @@ export default class Instruction extends React.Component<InstructionProps, any> 
               <img src="/static/prod-semester-calendar.png" style={{ width: '100%' }} />
             </Col>
           </Row>
-          <div className="title">Fill necessary information for your&nbsp;presentation.</div>
+          <div className="title">Fill in the necessary information for your&nbsp;presentation</div>
           <Row className="instruction-row">
             <Col
               xs={{
@@ -58,7 +58,7 @@ export default class Instruction extends React.Component<InstructionProps, any> 
               <img src="/static/prod-fill-information.png" style={{ width: '100%' }} />
             </Col>
           </Row>
-          <div className="title">Receive confirmation email.</div>
+          <div className="title">Receive a confirmation email</div>
           <Row className="instruction-row">
             <Col
               xs={{

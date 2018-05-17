@@ -11,7 +11,7 @@ export default class App extends React.Component<AppProps, any> {
       <div className="top">
         <h1 className="title">SD Scheduler</h1>
         <div className="description">
-          Schedule final presentation without&nbsp;stress.
+          Final presentation scheduling without&nbsp;the&nbsp;stress
         </div>
         <div className="action">
           <Link href="/calendar">
@@ -30,7 +30,7 @@ export default class App extends React.Component<AppProps, any> {
                 size="large"
                 ghost
                 style={{ marginBottom: '16px' }}
-                >
+              >
                 Schedule presentation
               </Button>
             </a>

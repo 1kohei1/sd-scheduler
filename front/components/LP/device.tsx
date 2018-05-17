@@ -8,7 +8,7 @@ export default class Device extends React.Component<DeviceProps, any> {
     return (
       <div className="device">
           <div className="heading">
-            Available anywhere.
+            Available anywhere!
           </div>
           <img src="/static/prod-device.png" style={{ width: '100%' }}/>
         <style jsx>{`

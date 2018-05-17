@@ -163,7 +163,7 @@ module.exports.sendCode = (req: Request, res: Response) => {
 
       if (index === -1) {
         return Promise.reject({
-          message: 'Specified email does not belong to the group',
+          message: 'The email specified does not belong to this group',
         })
       } else {
         // Generate 6 length digit characters. 

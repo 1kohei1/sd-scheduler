@@ -197,7 +197,7 @@ class FillPresentation extends React.Component<FillPresentationProps, FillPresen
         width: '520px',
         content: (
           <div>
-            All the people to be present at the presentation (group members, faculties, sponsors) will soon receive an email about your presentation datetime and location!
+            Everyone to be present at the presentation (group members, faculties, and sponsors included) will soon receive an email about your presentation date, time, and location!
           </div>
         ),
         okText: 'Navigate to the semester calendar',
