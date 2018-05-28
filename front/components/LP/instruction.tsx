@@ -9,7 +9,7 @@ export default class Instruction extends React.Component<InstructionProps, any> 
     return (
       <div className="instruction">
         <div className="heading">
-          Schedule your senior design presentation&nbsp;in&nbsp;under&nbsp;5&nbsp;minutes
+          How to schedule your senior design presentation&nbsp;in&nbsp;under&nbsp;5&nbsp;minutes
         </div>
         <div className="box">
           <div className="title">Check committee members availability</div>
