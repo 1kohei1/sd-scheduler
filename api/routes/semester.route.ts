@@ -9,6 +9,13 @@ module.exports = (server: Application) => {
     semesterController.findSemesters,
   );
 
+  server.post(
+    '/api/semesters',
+    APIUtil.isAuthenticated,
+    APIUtil.isAuthorized,
+    semesterController.createSemester,
+  );
+
   server.put(
     '/api/semesters/:_id',
     APIUtil.isAuthenticated,

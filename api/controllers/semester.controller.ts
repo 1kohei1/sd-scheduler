@@ -18,6 +18,24 @@ module.exports.findSemesters = (req: Request, res: Response) => {
     });
 }
 
+module.exports.createSemester = (req: Request, res: Response) => {
+  const info: any = {
+    key: APIUtil.key(req),
+    debugInfo: {
+      userId: req.user._id,
+      body: req.body,
+    }
+  }
+
+  DBUtil.createSemester(req.body)
+    .then(createdSemester => {
+      APIUtil.successResponse(info, createdSemester, res);
+    })
+    .catch(err => {
+      APIUtil.errorResponse(info, err.message, {}, res);
+    })
+}
+
 module.exports.updateSemester = (req: Request, res: Response) => {
   const info: any = {
     key: APIUtil.key(req),

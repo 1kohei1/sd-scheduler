@@ -24,6 +24,11 @@ export default class DBUtil {
     return Semester.findById(_id);
   }
 
+  static createSemester(body: any) {
+    const newSemester = new Semester(body);
+    return newSemester.save();
+  }
+
   static updateSemesterById(_id: string | number | object, update: Object) {
     return DBUtil.updateById(Semester, _id, update);
   }
