@@ -3,10 +3,10 @@ import { Menus } from '../models/Semester';
 
 export default class SemesterUtil {
   private static startYear = 2017;
-  private static currentYear() {
+  static currentYear() {
     return moment().year();
   }
-  private static currentSeason() {
+  static currentSeason() {
     const month = moment().month() + 1;
     if (1 <= month && month <= 5) {
       return 'spring';
