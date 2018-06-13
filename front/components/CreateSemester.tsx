@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Table, Divider, Button, message } from 'antd';
+import { Table, Alert, Divider, Button, message } from 'antd';
 import { List } from 'immutable';
 
 import { Semester } from '../models/Semester';
@@ -12,6 +12,7 @@ export interface CreateSemesterProps {
 
 interface CreateSemesterState {
   errs: List<string>;
+  loading: boolean;
   semesters: Semester[];
   newSemesterKey: string;
   newSemesterDisplayName: string;
@@ -26,6 +27,7 @@ export default class CreateSemester extends React.Component<CreateSemesterProps,
 
     this.state = {
       errs: List<string>(),
+      loading: false,
       semesters: [],
       newSemesterKey: SemesterUtil.defaultSemester(),
       newSemesterDisplayName: `${SemesterUtil.currentYear()} ${currentSeason}`,
@@ -68,7 +70,25 @@ export default class CreateSemester extends React.Component<CreateSemesterProps,
     }];
   }
 
-  onClick() {
+  async onClick() {
+    const body = {
+      key: this.state.newSemesterKey,
+      displayName: this.state.newSemesterDisplayName,
+    };
+    this.setState({
+      loading: true,
+    })
+
+    try {
+      const newSemester = await Api.createSemester(body);
+      message.success('Successfully created a semester');
+      this.setState({
+        semesters: this.state.semesters.concat(newSemester),
+        loading: false,
+      });
+    } catch (err) {
+      this.onErr(err);
+    }
 
   }
 
@@ -76,6 +96,13 @@ export default class CreateSemester extends React.Component<CreateSemesterProps,
     return (
       <div>
         <h3>Create a semester</h3>
+        {this.state.errs.map((err: string, index: number) => (
+          <Alert
+            key={index}
+            type="error"
+            message={err}
+          />
+        ))}
         <Table
           dataSource={this.state.semesters}
           columns={this.columns()}
@@ -87,6 +114,7 @@ export default class CreateSemester extends React.Component<CreateSemesterProps,
         <Button
           type="primary"
           onClick={this.onClick}
+          loading={this.state.loading}
         >
           Create a semester
         </Button>

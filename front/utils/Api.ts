@@ -50,6 +50,10 @@ export default class Api {
     return await Api.makeRequest(RequestMethod.PUT, `/api/semesters/${_id}`, update);
   }
 
+  static async createSemester(body: object = {}) {
+    return await Api.makeRequest(RequestMethod.POST, `/api/semesters`, body);
+  }
+
   /**
    * AvailableSlot
    */
