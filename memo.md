@@ -81,6 +81,8 @@ TODO:
 - [ ] Create error response model and make it clear how the error reponse looks like (Need to handle network problem as well)
 - [ ] Add test (v2)
 - [ ] Replace the GET requests to Graph QL to decrease the server load
+- [ ] Update the dashboard to work when switching between the semesters
+- [ ] Create a presentationDate for isAdmin faculties when the semester is created. 
 
 Feature requests from Dr. Heinrich
 
