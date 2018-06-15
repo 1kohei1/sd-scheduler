@@ -1,5 +1,7 @@
 import { Model, model, Schema, Document } from 'mongoose';
 
+import DBUtil from '../utils/db.util';
+
 const SemesterSchema = new Schema({
   key: {
     type: String,
@@ -19,7 +21,29 @@ SemesterSchema.pre('save', function(this: any, next) {
   }
   this.updated_at = new Date();
 
-  next();
+  // If it is creating a new semester, create a presentation date for senior design faculty
+  if (this.isNew) {
+    DBUtil.findFaculties({
+      isAdmin: true,
+    })
+      .then((sdFaculties: Document[]) => {
+        const promises = sdFaculties.map((sdFaculty: Document) => {
+          return DBUtil.createPresentationDate({
+            semester: this.get('_id').toString(),
+            admin: sdFaculty.get('_id').toString(),
+            dates: [],
+          });
+        });
+
+        return Promise.all(promises);
+      })
+      .then((presentationDates: Document[]) => {
+        next();
+      })
+      .catch(next);
+  } else {
+    next();
+  }
 });
 
 export default model('Semester', SemesterSchema);
