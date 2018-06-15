@@ -3,7 +3,6 @@ import * as crypto from 'crypto';
 const uniqueValidator = require('mongoose-unique-validator');
 
 import DBUtil from '../utils/db.util';
-import Mailer, { MailType } from '../utils/mail.util';
 
 const FacultySchema = new Schema({
   email: {
