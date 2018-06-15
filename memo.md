@@ -82,7 +82,7 @@ TODO:
 - [ ] Add test (v2)
 - [ ] Replace the GET requests to Graph QL to decrease the server load
 - [ ] Update the dashboard to work when switching between the semesters
-- [ ] Create a presentationDate for isAdmin faculties when the semester is created. 
+- [x] Create a presentationDate for isAdmin faculties when the semester is created. 
 
 Feature requests from Dr. Heinrich
 
@@ -97,7 +97,7 @@ Feature requests from Dr. Heinrich
 - [x] Redesign the schedule page
 - [ ] Navigate user to /schedule if the token is expired
 - [x] Instead of showing user email to the public, let user enter the email and verify it's correct, then send verification code
-- [ ] Create nice landing page
+- [x] Create nice landing page
 - [x] Update schedule page for UI tweak
 
 Check with Dr. Heinrich
