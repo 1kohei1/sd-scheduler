@@ -93,7 +93,8 @@ export default class Overview extends React.Component<OverviewProps, OverviewSta
       this.setState({
         presentationDatesEditing: false,
         locationEditing: false,
-        facultiesEditing: false
+        facultiesEditing: false,
+        semester: nextProps.semester,
       });
     }
   }

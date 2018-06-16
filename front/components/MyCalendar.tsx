@@ -25,6 +25,7 @@ export interface MyCalendarProps {
 interface MyCalendarState {
   loading: boolean;
   errors: List<string>;
+  semester: Semester;
   presentations: List<Presentation>;
   availableSlots: List<TimeSlot>;
   presentationDates: TimeSlot[];
@@ -41,6 +42,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
     this.state = {
       loading: true,
       errors: List<string>(),
+      semester: props.semester,
       presentations: List<Presentation>(),
       availableSlots: List<TimeSlot>(),
       presentationDates: [],
@@ -56,6 +58,21 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
   }
 
   componentDidMount() {
+    this.getData(true);
+  }
+
+  componentWillReceiveProps(nextProps: MyCalendarProps) {
+    if (this.state.semester !== nextProps.semester) {
+      this.setState({
+        semester: nextProps.semester,
+        loading: true,
+      }, () => {
+        this.getData(false);
+      });
+    }
+  }
+
+  getData(shouldCheckDialog: boolean) {
     Promise.all([
       this.getPresentationDates(),
       this.getAvailableSlot(),
@@ -66,7 +83,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
           loading: false,
         });
 
-        if (!CookieUtil.getHideDialog()) {
+        if (shouldCheckDialog && !CookieUtil.getHideDialog()) {
           // Let user see there is a calendar, then present a dialog to solve user problem
           setTimeout(() => {
             this.setState({
@@ -87,7 +104,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
 
   private async getPresentationDates() {
     try {
-      const presentationDates = await Api.getPresentationDates(`semester=${this.props.semester._id}`) as PresentationDate[];
+      const presentationDates = await Api.getPresentationDates(`semester=${this.state.semester._id}`) as PresentationDate[];
       const presentationSlots = DatetimeUtil.getPresentationSlots(presentationDates);
 
       this.setState({
@@ -101,7 +118,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
 
   private async getAvailableSlot() {
     try {
-      const semesterId = this.props.semester._id;
+      const semesterId = this.state.semester._id;
       const facultyId = this.props.user._id;
 
       const availableSlots = await Api.getAvailableSlots(`semester=${semesterId}&faculty=${facultyId}`) as AvailableSlot[];
@@ -137,7 +154,7 @@ export default class MyCalendar extends React.Component<MyCalendarProps, MyCalen
 
   private async getPresentations() {
     try {
-      const presentationQuery = `semester=${this.props.semester._id}&faculties[$in][]=${this.props.user._id}`;
+      const presentationQuery = `semester=${this.state.semester._id}&faculties[$in][]=${this.props.user._id}`;
       let presentations = await Api.getPresentations(presentationQuery);
       presentations = List(presentations);
 

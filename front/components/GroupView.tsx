@@ -23,6 +23,7 @@ export interface GroupViewProps {
 interface GroupViewState {
   errs: List<string>;
   loading: boolean;
+  semester: Semester;
   groups: Group[];
   schedulingModal: boolean;
   schedulingPresentation: Presentation | undefined;
@@ -36,6 +37,7 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
     this.state = {
       errs: List<string>(),
       loading: true,
+      semester: props.semester,
       groups: Array<Group>(),
       schedulingModal: false,
       schedulingPresentation: undefined,
@@ -57,13 +59,24 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
     this.getData();
   }
 
+  componentWillReceiveProps(nextProps: GroupViewProps) {
+    if (this.state.semester !== nextProps.semester) {
+      this.setState({
+        semester: nextProps.semester,
+        loading: true,
+      }, () => {
+        this.getData();
+      })
+    }
+  }
+
   async getData() {
     try {
-      let query = `semester=${this.props.semester._id}&adminFaculty=${this.props.user._id}`;
+      let query = `semester=${this.state.semester._id}&adminFaculty=${this.props.user._id}`;
       const groups = await Api.getGroups(query) as Group[];
 
       const groupQuery = groups.map(group => `group[$in]=${group._id}`);
-      query = `semester=${this.props.semester._id}&${groupQuery.join('&')}`;
+      query = `semester=${this.state.semester._id}&${groupQuery.join('&')}`;
 
       const presentations = await Api.getPresentations(query) as Presentation[];
 
@@ -140,7 +153,7 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
     let schedulingPresentation = this.state.presentations
       .find(presentation => presentation.group._id === group._id);
     if (!schedulingPresentation) {
-      schedulingPresentation = NewPresentation(this.props.semester._id, group);
+      schedulingPresentation = NewPresentation(this.state.semester._id, group);
       // Modal component determins updating existing presentation or creating new by looking at presentation._id
       // So set empty string to be evaluated false
       schedulingPresentation._id = '';
@@ -159,7 +172,7 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
       withCredentials: true,
       accept: '.xlsx',
       data: {
-        semester: this.props.semester._id,
+        semester: this.state.semester._id,
         adminFaculty: this.props.user._id,
       },
       onChange: (info: UploadChangeParam) => {
@@ -198,7 +211,7 @@ export default class GroupView extends React.Component<GroupViewProps, GroupView
         <SchedulePresentationModal
           visible={this.state.schedulingModal}
           user={this.props.user}
-          semesterId={this.props.semester._id}
+          semesterId={this.state.semester._id}
           schedulingPresentation={this.state.schedulingPresentation as Presentation}
           onClose={this.onClose}
         />
