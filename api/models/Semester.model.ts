@@ -25,6 +25,7 @@ SemesterSchema.pre('save', function(this: any, next) {
   if (this.isNew) {
     DBUtil.findFaculties({
       isAdmin: true,
+      isTestUser: false,
     })
       .then((sdFaculties: Document[]) => {
         const promises = sdFaculties.map((sdFaculty: Document) => {
