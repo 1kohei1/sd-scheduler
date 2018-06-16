@@ -110,8 +110,8 @@ PresentationSchema.pre('save', function (this: any, next) {
  */
 const presentationValidation = (doc: Document, group: Document, next: any) => {
 
-  let adminFaculty = group.get('adminFaculty');
-  let semester = doc.get('semester');
+  let adminFaculty: Types.ObjectId = group.get('adminFaculty');
+  let semester: Types.ObjectId = doc.get('semester');
 
   // Check condition 1
   new Promise((resolve, reject) => {
@@ -131,7 +131,7 @@ const presentationValidation = (doc: Document, group: Document, next: any) => {
       })
     })
     // Check condition 2
-    .then(presentationDates => {
+    .then((presentationDates: Document[]) => {
       if (presentationDates.length === 0) {
         return Promise.reject(new Error('Presentation date is not defined for this admin faculty'));
       } else {
@@ -170,32 +170,41 @@ const presentationValidation = (doc: Document, group: Document, next: any) => {
     })
     // Check condition 4
     .then((availableSlots: Document[]) => {
-      if (availableSlots.length !== doc.get('faculties').length) {
-        return Promise.reject(new Error('One of specified faculties is not available at specified time'));
-      }
       // This is the case when admin makes change
-      else if (!doc.get('checkFacultyAvailability')) {
+      if (!doc.get('checkFacultyAvailability')) {
         return DBUtil.findPresentations({
           semester,
         }).exec();
       }
       // This is the case that student group makes change
       else {
-        const isAllFacultiesAvailable = availableSlots
+        const requestedFacultyIds = doc.get('faculties').map(((fid: Types.ObjectId) => fid.toHexString()));
+        const availableFacultyIds = availableSlots
           .filter((availableSlot: Document) => {
-            // Simplify this operation
             return availableSlot.get('availableSlots')
               .filter((availableSlot: Document) => Util.doesCover(availableSlot, doc))
               .length > 0;
           })
-          .length === doc.get('faculties').length;
+          .map((availableSlot: Document) => availableSlot.get('faculty').toString());
 
-        if (isAllFacultiesAvailable) {
+        if (requestedFacultyIds.length === availableFacultyIds) {
           return DBUtil.findPresentations({
             semester,
           }).exec();
         } else {
-          return Promise.reject(new Error('Some specified faculties is not available on specified presentation time range'));
+          const unavailableFaculties = requestedFacultyIds
+            .filter((id: string) => availableFacultyIds.indexOf(id) === -1);
+          return DBUtil.findFaculties({
+            _id: {
+              $in: unavailableFaculties,
+            }
+          })
+            .then((faculties: Document[]) => {
+              const facultyNames = faculties.map((faculty: Document) => {
+                return `Dr. ${faculty.get('firstName')} ${faculty.get('lastName')}`;
+              });
+              return Promise.reject(new Error(`${facultyNames.join(', ')} are not available on specified presentation time range`));
+            });
         }
       }
     })
@@ -234,7 +243,7 @@ const presentationValidation = (doc: Document, group: Document, next: any) => {
 
       if (overlappingPresentations.length > 0) {
         const groupNumber = overlappingPresentations[0].get('group').get('groupNumber');
-        return Promise.reject(new Error(`Some faculties are already booked for specified time`))
+        return Promise.reject(new Error(`Some faculties are already booked for specified time. Please check the committee availablity page.`))
       } else {
         return Promise.resolve();
       }
