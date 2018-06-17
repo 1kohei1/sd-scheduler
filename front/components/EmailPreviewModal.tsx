@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Modal, Alert, Divider } from 'antd';
+import { Modal, Alert} from 'antd';
 
 import Api from '../utils/Api';
 

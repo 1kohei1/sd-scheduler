@@ -4,7 +4,6 @@ import { List } from 'immutable';
 
 import { Semester } from '../models/Semester';
 import SemesterUtil from '../utils/SemesterUtil';
-import Loading from './Loading';
 import Api from '../utils/Api';
 
 export interface CreateSemesterProps {

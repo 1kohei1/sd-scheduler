@@ -6,7 +6,6 @@ import { Form, Icon, Select, DatePicker, Card, Button, Alert, Input } from 'antd
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import PresentationDate, { PresentationDateDates } from '../models/PresentationDate';
-import TimeSlot from '../models/TimeSlot';
 import { DateConstants } from '../models/Constants';
 import DatetimeUtil from '../utils/DatetimeUtil';
 

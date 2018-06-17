@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Router from 'next/router';
 import { Menu } from 'antd';
 import Link from 'next/link'
 import { ClickParam } from 'antd/lib/menu';

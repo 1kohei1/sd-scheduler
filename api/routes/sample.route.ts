@@ -1,4 +1,4 @@
-import { Application, Request, Response } from 'express';
+import { Application } from 'express';
 const sampleController = require('../controllers/sample.controller');
 
 module.exports = (server: Application) => {

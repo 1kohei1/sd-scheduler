@@ -1,4 +1,4 @@
-import { Model, model, Schema } from 'mongoose';
+import { model, Schema } from 'mongoose';
 
 const AvailableSlotSchema = new Schema({
   faculty: {

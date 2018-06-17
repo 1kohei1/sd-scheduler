@@ -1,4 +1,4 @@
-import { Application, Request, Response } from 'express';
+import { Application } from 'express';
 const availableslotController = require('../controllers/availableslot.controller');
 
 import APIUtil from '../utils/api.util';

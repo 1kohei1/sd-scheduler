@@ -7,8 +7,6 @@ import { Layout, Button, Dropdown, Menu, Icon } from 'antd';
 
 import UserUtil from '../utils/UserUtil';
 import Faculty from '../models/Faculty';
-import { Menus } from '../models/Semester';
-import SemesterUtil from '../utils/SemesterUtil';
 
 // Loading animation
 Router.onRouteChangeStart = (url) => NProgress.start();

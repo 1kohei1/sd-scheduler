@@ -1,10 +1,8 @@
 import * as React from 'react';
-import { Moment } from 'moment';
 
 import Faculty from '../../models/Faculty';
 import TimeSlot from '../../models/TimeSlot';
 import Presentation from '../../models/Presentation';
-import DatetimeUtil from '../../utils/DatetimeUtil';
 import { SchedulingCalendarConstants, DateConstants } from '../../models/Constants';
 import HourLines from './HourLines';
 import AvailableSlots from './AvailableSlots';

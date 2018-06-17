@@ -1,6 +1,5 @@
-import { Application, Request, Response } from 'express';
+import { Application } from 'express';
 const userController = require('../controllers/user.controller');
-const passport = require('passport');
 
 import APIUtil from '../utils/api.util';
 

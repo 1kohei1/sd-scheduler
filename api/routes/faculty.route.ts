@@ -1,4 +1,4 @@
-import { Application, Request, Response } from 'express';
+import { Application } from 'express';
 const facultyController = require('../controllers/faculty.controller');
 
 import APIUtil from '../utils/api.util';

@@ -1,6 +1,5 @@
 import * as moment from 'moment-timezone';
-import { Model, model, Schema, Document, Types } from 'mongoose';
-import { ObjectID } from 'bson';
+import { model, Schema, Document, Types } from 'mongoose';
 
 import DBUtil from '../utils/db.util';
 import Util from '../utils/util';

@@ -1,12 +1,9 @@
 import * as React from 'react';
 import { List } from 'immutable';
-import ObjectID from 'bson-objectid';
-import * as moment from 'moment-timezone';
-import { Button, Icon, message, Alert, Popover, Modal, Form, Input, Checkbox } from 'antd';
+import { Button, message, Alert, Modal, Form, Input, Checkbox } from 'antd';
 
 import KoCalendar from './KoCalendar/KoCalendar';
 import Presentation from '../models/Presentation';
-import { DateConstants, KoCalendarConstants } from '../models/Constants';
 import { Semester } from '../models/Semester';
 import DatetimeUtil, { TimeSlotLikeObject } from '../utils/DatetimeUtil';
 import TimeSlot from '../models/TimeSlot';

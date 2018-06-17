@@ -1,18 +1,15 @@
 import * as React from 'react';
-import * as moment from 'moment-timezone';
 import { Set } from 'immutable';
 import { Layout } from 'antd';
 import { ClickParam } from 'antd/lib/menu';
-import ObjectID from 'bson-objectid';
 
 import InitialProps from '../models/InitialProps';
 import DashboardQuery from '../models/DashboardQuery';
-import { Semester, Menus } from '../models/Semester';
+import { Semester } from '../models/Semester';
 import AppLayout from '../components/AppLayout';
 import DashboardSider from '../components/DashboardSider';
 import Overview from '../components/Overview';
 import MyCalendar from '../components/MyCalendar';
-import { DateConstants } from '../models/Constants';
 import Api from '../utils/Api';
 import UserUtil from '../utils/UserUtil';
 import SemesterUtil from '../utils/SemesterUtil';

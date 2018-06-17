@@ -1,4 +1,4 @@
-import { Model, model, Schema, Document } from 'mongoose';
+import { model, Schema, Document } from 'mongoose';
 
 import Mailer, { MailType } from '../utils/mail.util';
 

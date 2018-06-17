@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Moment } from 'moment';
 
 import TimeSlot from '../../models/TimeSlot';
 import Faculty from '../../models/Faculty';

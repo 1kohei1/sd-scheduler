@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Row, Col, Form, Checkbox, Slider, Collapse } from 'antd';
+import { Row, Col, Form, Checkbox, Collapse } from 'antd';
 
 import Faculty from '../models/Faculty';
 import { ScheduleFormLayoutConstants } from '../models/Constants';

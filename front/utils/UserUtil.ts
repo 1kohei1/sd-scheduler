@@ -1,6 +1,3 @@
-import * as Cookie from 'js-cookie';
-import Router from 'next/router';
-
 import Api from './Api';
 import Faculty from '../models/Faculty';
 import InitialProps from '../models/InitialProps';

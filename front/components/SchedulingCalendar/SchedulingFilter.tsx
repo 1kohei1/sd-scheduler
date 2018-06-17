@@ -1,9 +1,7 @@
 import * as React from 'react';
-import Router from 'next/router';
 import { Form, Checkbox, Button } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
-import { Semester } from '../../models/Semester';
 import Faculty from '../../models/Faculty';
 import DividerWithLeftTitle from '../DividerWithLeftTitle';
 

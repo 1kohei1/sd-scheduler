@@ -1,10 +1,8 @@
 import * as React from 'react';
-import { Moment } from 'moment';
 
 import TimeSlot from '../../models/TimeSlot';
-import { DateConstants, SchedulingCalendarConstants } from '../../models/Constants';
+import { SchedulingCalendarConstants } from '../../models/Constants';
 import AvailableSlotTile from './AvailableSlotTile';
-import DatetimeUtil from '../../utils/DatetimeUtil';
 
 export interface AailableSlotsProps {
   hoursArray: number[];

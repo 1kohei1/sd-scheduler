@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Spin, Icon } from 'antd';
 
-
 export interface LoadingProps {
 }
 

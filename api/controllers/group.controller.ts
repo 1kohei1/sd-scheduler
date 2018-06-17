@@ -1,13 +1,10 @@
 import { Request, Response } from 'express';
 import { read, utils } from 'xlsx';
-import * as crypto from 'crypto';
 import { sign } from 'jsonwebtoken';
 import { Document } from 'mongoose';
 
 import DBUtil from '../utils/db.util';
 import APIUtil from '../utils/api.util';
-import Mailer, { MailType } from '../utils/mail.util';
-import SocketIOUtil from '../utils/socketio.util';
 
 // Cannot import the private namespace File. So copy what they use
 // Ref: https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/multer/index.d.ts

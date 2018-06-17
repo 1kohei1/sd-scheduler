@@ -1,4 +1,4 @@
-import { Application, Request, Response } from 'express';
+import { Application } from 'express';
 
 const systemadminController = require('../controllers/systemadmin.controller');
 const facultyController = require('../controllers/faculty.controller');

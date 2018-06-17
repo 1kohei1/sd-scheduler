@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { Document } from 'mongoose';
 import * as crypto from 'crypto';
 
 import APIUtil from '../utils/api.util';

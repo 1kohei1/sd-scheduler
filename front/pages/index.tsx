@@ -1,6 +1,4 @@
 import * as React from 'react';
-import Link from 'next/link';
-import { Divider } from 'antd';
 
 import AppLayout from '../components/AppLayout';
 import Top from '../components/LP/top';

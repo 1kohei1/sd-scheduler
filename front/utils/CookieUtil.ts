@@ -1,7 +1,5 @@
 import * as Cookie from 'js-cookie';
-import * as CookieParser from 'cookie';
 
-import InitialProps from '../models/InitialProps';
 import Faculty from '../models/Faculty';
 
 const USER_COOKIE_KEY = 'user';

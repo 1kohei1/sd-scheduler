@@ -5,7 +5,6 @@ import { Alert } from 'antd';
 import AppLayout from '../components/AppLayout';
 import FormLayout from '../components/FormLayout';
 import InitialProps from '../models/InitialProps';
-import UserUtil from '../utils/UserUtil';
 import Api from '../utils/Api';
 
 export interface VerifyProps {
@@ -17,7 +16,7 @@ interface VerifyState {
   message: string;
 }
 
-export default class Verify extends React.Component<VerifyProps, any> {
+export default class Verify extends React.Component<VerifyProps, VerifyState> {
   static async getInitialProps(context: InitialProps) {
     try {
       const faculties = await Api.getFaculties(`verifyToken=${context.query.token}`);

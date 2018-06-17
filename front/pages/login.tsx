@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Link from 'next/link';
-import { Form, Icon, Input, Button, Alert } from 'antd';
+import { Form, Input, Button, Alert } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import AppLayout from '../components/AppLayout';

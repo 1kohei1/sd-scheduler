@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import * as moment from 'moment-timezone';
-import { unitOfTime } from 'moment-timezone';
 import { Document } from 'mongoose';
 
 import Util from '../utils/util';

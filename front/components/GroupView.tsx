@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Link from 'next/link';
-import { Upload, Icon, Button, Table, Alert, message } from 'antd';
+import { Upload, Icon, Table, Alert } from 'antd';
 import { UploadChangeParam } from 'antd/lib/upload/interface';
 import { List } from 'immutable';
 

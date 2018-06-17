@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { List } from 'immutable';
 import Link from 'next/link';
-import { Form, Select, Button, Alert, Input } from 'antd';
+import { Form, Select, Button, Alert } from 'antd';
 
 import InitialProps from '../../models/InitialProps';
 import { Semester } from '../../models/Semester';

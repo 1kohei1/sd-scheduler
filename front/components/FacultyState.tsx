@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, Divider, Switch, Button, Table, message } from 'antd';
+import { Divider, Switch, Button, Table, message } from 'antd';
 import { List, Map } from 'immutable';
 
 import Api from '../utils/Api';

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Select, Alert, Upload, Icon, Button, Table, Divider, message } from 'antd';
+import { Select, Alert, Upload, Icon, Divider } from 'antd';
 import { List } from 'immutable';
 
 import Api from '../utils/Api';

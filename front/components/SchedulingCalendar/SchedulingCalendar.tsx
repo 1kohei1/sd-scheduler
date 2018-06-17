@@ -1,13 +1,10 @@
 import * as React from 'react';
-import { Moment } from 'moment';
 
 import Faculty from '../../models/Faculty';
 import AvailableSlot from '../../models/AvailableSlot';
 import Presentation from '../../models/Presentation';
-import FacultyColumn from './FacultyColumn';
 import CalendarBody from './CalendarBody';
 import DatetimeUtil from '../../utils/DatetimeUtil';
-import { DateConstants } from '../../models/Constants';
 import TimeSlot from '../../models/TimeSlot';
 import PresentationDate from '../../models/PresentationDate';
 

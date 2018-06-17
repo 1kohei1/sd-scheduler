@@ -4,7 +4,7 @@ import { List } from 'immutable';
 
 import { Semester } from '../models/Semester';
 import { DateConstants } from '../models/Constants';
-import DatetimeUtil, { TimeSlotLikeObject } from '../utils/DatetimeUtil';
+import DatetimeUtil from '../utils/DatetimeUtil';
 import PresentationDate, { PresentationDateDates } from '../models/PresentationDate';
 import Api from '../utils/Api';
 import PresentationDateInfo from './PresentationDateInfo';

@@ -1,8 +1,6 @@
 import { Server } from 'next';
 import { Application, Request, Response } from 'express';
 
-import APIUtil from '../api/utils/api.util';
-
 module.exports = (app: Server, server: Application) => {
   server.get(
     '/password/:token',

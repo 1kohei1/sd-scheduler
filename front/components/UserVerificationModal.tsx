@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { Modal, Select, Input, Button, Icon, Form, Alert } from 'antd';
+import { Modal, Input, Button, Form, Alert } from 'antd';
 import { List } from 'immutable';
 
 import Api from '../utils/Api';
 import CookieUtil from '../utils/CookieUtil';
 import Group from '../models/Group';
-import Person from '../models/Person';
 
 export interface UserVerificationModalProps {
   visible: boolean;

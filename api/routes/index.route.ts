@@ -1,4 +1,4 @@
-import { Application, Request, Response } from 'express';
+import { Application } from 'express';
 
 module.exports = (server: Application) => {
   const normalizedPath = require("path").join(__dirname);

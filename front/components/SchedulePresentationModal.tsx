@@ -4,7 +4,7 @@ import { List, Map } from 'immutable';
 
 import Api from '../utils/Api';
 import Presentation from '../models/Presentation';
-import PresentationDate, { PresentationDateDates } from '../models/PresentationDate';
+import PresentationDate from '../models/PresentationDate';
 import Faculty from '../models/Faculty';
 import Person, { NewPerson } from '../models/Person';
 import DatetimeUtil from '../utils/DatetimeUtil';

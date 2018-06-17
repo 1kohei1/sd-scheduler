@@ -2,8 +2,6 @@ import * as React from 'react';
 import { Row, Col, Form, Select, Input, Button, Icon, Alert, Checkbox, Tooltip, Modal } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 import { List, Map } from 'immutable';
-import Link from 'next/link'
-import ObjectID from 'bson-objectid';
 
 import InitialProps from '../../models/InitialProps';
 import Group from '../../models/Group';

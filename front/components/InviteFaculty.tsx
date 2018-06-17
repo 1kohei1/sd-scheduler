@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Icon, Card, Button, Alert, Input, message } from 'antd';
+import { Form, Card, Button, Alert, Input, message } from 'antd';
 import { WrappedFormUtils } from 'antd/lib/form/Form';
 
 import Api from '../utils/Api';

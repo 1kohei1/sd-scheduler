@@ -1,4 +1,4 @@
-import { Model, model, Schema, Document, Types } from 'mongoose';
+import { model, Schema, Document, Types } from 'mongoose';
 import * as moment from 'moment-timezone';
 
 import DBUtil from '../utils/db.util';

@@ -1,4 +1,3 @@
-import TimeSlot from './TimeSlot';
 import Faculty from './Faculty';
 
 export interface Semester {

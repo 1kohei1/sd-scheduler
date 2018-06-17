@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Row, Col, Button, Alert, Icon } from 'antd';
+import { Icon } from 'antd';
 
 import Presentation from '../models/Presentation';
 import DatetimeUtil from '../utils/DatetimeUtil';

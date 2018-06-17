@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { List } from 'immutable';
 import Link from 'next/link';
-import { Alert, Button, Slider } from 'antd';
+import { Button } from 'antd';
 const randomColor = require('randomcolor');
 
 import AppLayout from '../components/AppLayout';
@@ -10,9 +10,7 @@ import Faculty from '../models/Faculty';
 import AvailableSlot from '../models/AvailableSlot';
 import PresentationDate from '../models/PresentationDate';
 import Presentation from '../models/Presentation';
-import { DateConstants, SchedulingCalendarConstants, ScheduleFormLayoutConstants } from '../models/Constants';
-import TimeSlot from '../models/TimeSlot';
-import DatetimeUtil from '../utils/DatetimeUtil';
+import { SchedulingCalendarConstants } from '../models/Constants';
 import Api from '../utils/Api';
 import Loading from '../components/Loading';
 import SchedulingCalendar from '../components/SchedulingCalendar/SchedulingCalendar';
