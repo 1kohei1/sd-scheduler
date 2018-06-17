@@ -95,11 +95,13 @@ export default class Calendar extends React.Component<CalendarProps, CalendarSta
     try {
       const faculties = await Api.getFaculties('isActive=true');
       const colorsByAdmin: any = {};
+      const colorOptions = ['yellow', 'red', 'green'];
       faculties
         .filter((f: Faculty) => f.isAdmin)
-        .forEach((f: Faculty) => {
+        .forEach((f: Faculty, index: number) => {
           colorsByAdmin[f._id] = randomColor({
-            luminosity: 'light'
+            luminosity: 'light',
+            hue: colorOptions[index],
           });
         });
 

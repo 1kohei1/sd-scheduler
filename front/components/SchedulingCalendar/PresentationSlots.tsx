@@ -29,7 +29,7 @@ export default class PresentationSlots extends React.Component<PresentationSlots
             top: ${SchedulingCalendarConstants.tileHeight};
             height: ${SchedulingCalendarConstants.tileHeight};
             width: 100%;
-            z-index: 1;
+            z-index: 10;
           }
         `}</style>
       </div>
