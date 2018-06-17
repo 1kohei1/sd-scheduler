@@ -26,7 +26,6 @@ export default class PresentationSlots extends React.Component<PresentationSlots
           .presentationslots-wrapper {
             position: absolute;
             left: 0;
-            top: ${SchedulingCalendarConstants.tileHeight};
             height: ${SchedulingCalendarConstants.tileHeight};
             width: 100%;
             z-index: 10;
