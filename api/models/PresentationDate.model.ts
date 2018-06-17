@@ -1,5 +1,7 @@
-import { Model, model, Schema, Document } from 'mongoose';
+import { Model, model, Schema, Document, Types } from 'mongoose';
 import * as moment from 'moment-timezone';
+
+import DBUtil from '../utils/db.util';
 
 const PresentationDateSchema = new Schema({
   semester: {
@@ -32,8 +34,47 @@ PresentationDateSchema.pre('save', function (this: any, next) {
     return moment(a.start).valueOf() - moment(b.start).valueOf();
   });
 
-  next();
+  // PresentationDate is only updated by SD faculty or system admin.
+  // So update corresponding AvailableSlot with given dates
+  updateSDFacultyAvailableDate(this, next);
 });
+
+const updateSDFacultyAvailableDate = (doc: Document, next: any) => {
+  // Get available slot. If it doesn't exist, create one
+  DBUtil.findAvailableSlots({
+    semester: doc.get('semester'),
+    faculty: doc.get('admin')
+  })
+    .then((availableSlots: Document[]) => {
+      if (availableSlots.length === 0) {
+        return DBUtil.createAvailableSlots({
+          semester: doc.get('semester'),
+          faculty: doc.get('admin'),
+          dates: [],
+        });
+      } else {
+        return Promise.resolve(availableSlots[0]);
+      }
+    })
+    .then((availableSlot: Document) => {
+      const newAvailableSlots = doc.get('dates')
+        .map((date: Types.Embedded) => {
+          return {
+            start: date.get('start'),
+            end: date.get('end'),
+          }
+        });
+      return DBUtil.updateAvailalbleSlotById(
+        availableSlot.get('_id'), {
+          availableSlots: newAvailableSlots,
+        }
+      )
+    })
+    .then((updatedAvailableSlot: Document) => {
+      next();
+    })
+    .catch(next);
+}
 
 PresentationDateSchema.path('dates').validate((values: Document[]) => {
   let isValid = true;
