@@ -643,6 +643,9 @@ export class MailTemplate {
       key: 'TOP',
       link: `${Util.siteUrl()}/`,
     }, {
+      key: 'LOGIN',
+      link: `${Util.siteUrl()}/login`,
+    }, {
       key: 'PASSWORD',
       link: `${Util.siteUrl()}/password`,
     }, {
