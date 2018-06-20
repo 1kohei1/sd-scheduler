@@ -66,11 +66,12 @@ export default class UserVerificationModal extends React.Component<UserVerificat
     this.setState(newState);
   }
 
-  async sendVerificationCode() {
+  async sendVerificationCode(e: React.FormEvent<HTMLButtonElement>) {
     try {
       this.setState({
         saving: true,
       })
+      e.preventDefault();
       await Api.sendCode(this.props.group._id, {
         email: this.state.email,
       });
@@ -83,11 +84,12 @@ export default class UserVerificationModal extends React.Component<UserVerificat
     }
   }
 
-  async verifyCode() {
+  async verifyCode(e: React.FormEvent<HTMLButtonElement>) {
     try {
       this.setState({
         saving: true,
-      })
+      });
+      e.preventDefault();
       const token = await Api.verifyCode(this.props.group._id, {
         code: this.state.verificationCode,
       });
@@ -128,7 +130,7 @@ export default class UserVerificationModal extends React.Component<UserVerificat
             />
           ))
         }
-        <Form>
+        <Form onSubmit={this.state.verificationCodeSent ? this.verifyCode : this.sendVerificationCode}>
           <Form.Item
             label="What's your KNIGHTS email?"
           >
@@ -143,6 +145,7 @@ export default class UserVerificationModal extends React.Component<UserVerificat
               type={this.state.verificationCodeSent ? undefined : 'primary'}
               onClick={this.sendVerificationCode}
               loading={this.state.saving}
+              htmlType={this.state.verificationCodeSent ? "button" : "submit"}
             >
               {this.state.verificationCodeSent ? "Resend verification code" : "Send verification code"}
             </Button>
@@ -162,6 +165,7 @@ export default class UserVerificationModal extends React.Component<UserVerificat
                   type="primary"
                   loading={this.state.saving}
                   onClick={this.verifyCode}
+                  htmlType="submit"
                 >
                   Verify
                 </Button>
