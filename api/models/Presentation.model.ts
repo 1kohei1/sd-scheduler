@@ -186,7 +186,7 @@ const presentationValidation = (doc: Document, group: Document, next: any) => {
           })
           .map((availableSlot: Document) => availableSlot.get('faculty').toString());
 
-        if (requestedFacultyIds.length === availableFacultyIds) {
+        if (requestedFacultyIds.length === availableFacultyIds.length) {
           return DBUtil.findPresentations({
             semester,
           }).exec();
