@@ -105,6 +105,7 @@ export default class CreateSemester extends React.Component<CreateSemesterProps,
         <Table
           dataSource={this.state.semesters}
           columns={this.columns()}
+          pagination={false}
           rowKey="_id"
         />
         <p><b>New semester</b></p>

@@ -248,6 +248,7 @@ class CreateGroup extends React.Component<CreateGroupProps, CreateGroupState> {
               dataSource={this.state.groups}
               columns={this.columns()}
               loading={this.state.groupLoading}
+              pagination={false}
               rowKey="_id"
             />
             <Form.Item

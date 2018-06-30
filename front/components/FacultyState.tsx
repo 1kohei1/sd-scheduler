@@ -178,6 +178,7 @@ export default class FacultyState extends React.Component<FacultyStateProps, Fac
         <Table
           rowKey="_id"
           dataSource={this.state.faculties}
+          pagination={false}
           columns={this.columns()}
         />
         <Button
