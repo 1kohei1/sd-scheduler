@@ -243,7 +243,7 @@ export default class Schedule extends React.Component<ScheduleProps, ScheduleSta
                   disabled={!this.state.selectedGroupId}
                   onClick={this.onClick}
                 >
-                  Verify yourself &amp; schedule presentation
+                  Verify user &amp; group membership
                 </Button>
               </Form.Item>
             </Form>

@@ -15,7 +15,7 @@ export default class Reminder extends React.Component<ReminderProps, any> {
           <div>Group members</div>
           <div>Sponsor members</div>
           <div className="block"></div>
-          <div>receive a reminder a day before and an hour before.</div>
+          <div>Everyone will receive a reminder a day before and an hour before.</div>
         </div>
         <style jsx>{`
           .reminder {
