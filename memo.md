@@ -40,6 +40,14 @@ System Admin:
 - [x] Turn the faculty to admin (create PresentationDate and Location)
 - [x] Turn off the faculty not to admin (Delete PresentationDate and Location)
 
+TOP TODO:
+- [ ] Research where is a good deployment platform. Must have:
+  * Request analysis tool
+  * Dockernize deployment
+  * Available to use next
+  * On demand price plan
+- [ ] Solve mongodb connection issue
+
 TODO:
 
 - [x] Add validation to the overview date and Availability Form
