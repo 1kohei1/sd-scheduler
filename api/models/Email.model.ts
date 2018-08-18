@@ -40,12 +40,4 @@ EmailSchema.pre('save', function(this: any, next) {
   next();
 });
 
-EmailSchema.post('save', (doc: Document, next: any) => {
-  if (doc.get('result').rejected.length > 0 || doc.get('err')) {
-    console.log('Error: some problem with email');
-    console.log(doc.toJSON());
-  }
-  next();
-});
-
 export default model('Email', EmailSchema);

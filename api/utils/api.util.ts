@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { verify } from 'jsonwebtoken';
 import { Document } from 'mongoose';
+const fetch = require('isomorphic-unfetch');
 
 import DBUtil from './db.util';
 
@@ -173,7 +174,43 @@ export default class APIUtil {
     return `[${req.method}] ${req.url}`;
   }
 
-  static logError(info: APIInfo) {
+  static logError(info: APIInfo, shouldNotifySystemError: boolean = true) {
     console.log(`Error:${info.key}: ${JSON.stringify(info.debugInfo)}`);
+    if (shouldNotifySystemError) {
+      APIUtil.notifySystemError(info);
+    }
+  }
+
+  static async notifySystemError(info: APIInfo) {
+    const url = `https://maker.ifttt.com/trigger/sd_scheduler_system_alert/with/key/${process.env.IFTTT_API_KEY}`;
+    const body = {
+      value1: JSON.stringify(info),
+    }
+
+    try {
+      let res = await fetch(
+        url,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body),
+        }
+      )
+
+      if (res.status !== 200) {
+        // To avoid recursive call, pass false this time.
+        APIUtil.logError({
+          key: 'FAILURE_TO_REPORT_TO_IFTTT_1',
+          debugInfo: res,
+        }, false);
+      }
+    } catch (err) {
+      APIUtil.logError({
+        key: 'FAILURE_TO_REPORT_TO_IFTTT_2',
+        debugInfo: err,
+      }, false);
+    }
   }
 }

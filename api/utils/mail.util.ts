@@ -3,6 +3,7 @@ import { escape } from 'lodash';
 
 import Util from './util';
 import DBUtil from './db.util';
+import ApiUtil from './api.util';
 
 export enum MailType {
   invitation,
@@ -90,8 +91,13 @@ export default class Mailer {
       })
       .catch((err: any) => {
         newEmail.err = err;
+        // Log the email
+        ApiUtil.logError({
+          key: 'EMAIL_DELIVERY_FAILURE',
+          debugInfo: newEmail,
+        });
         DBUtil.createEmail(newEmail);
-      })
+      });
   }
 
   private static sendInvitation(option: MailOption) {
