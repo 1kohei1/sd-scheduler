@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import * as crypto from 'crypto';
 
-import APIUtil from '../utils/api.util';
+import APIUtil, { APIInfo } from '../utils/api.util';
 import DBUtil from '../utils/db.util';
 import Mailer, { MailType } from '../utils/mail.util';
 
 module.exports.findFaculty = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       query: req.query,
@@ -23,7 +23,7 @@ module.exports.findFaculty = (req: Request, res: Response) => {
 }
 
 module.exports.createFaculty = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       userId: req.user._id,
@@ -41,7 +41,7 @@ module.exports.createFaculty = (req: Request, res: Response) => {
 }
 
 module.exports.sendPasswordResetEmail = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       email: req.body.email,
@@ -90,7 +90,7 @@ module.exports.sendPasswordResetEmail = (req: Request, res: Response) => {
 }
 
 module.exports.updateFaculty = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       userId: req.user._id,
@@ -139,7 +139,7 @@ module.exports.updateFaculty = (req: Request, res: Response) => {
 }
 
 module.exports.verify = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       _id: req.params._id,
@@ -167,7 +167,7 @@ module.exports.verify = (req: Request, res: Response) => {
 }
 
 module.exports.updatePassword = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       _id: req.params._id,

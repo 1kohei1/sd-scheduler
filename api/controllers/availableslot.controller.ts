@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 
 import DBUtil from '../utils/db.util';
-import APIUtil from '../utils/api.util';
+import APIUtil, { APIInfo } from '../utils/api.util';
 
 module.exports.findAvailableSlots = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       query: req.query,
@@ -21,7 +21,7 @@ module.exports.findAvailableSlots = (req: Request, res: Response) => {
 }
 
 module.exports.createAvailableSlot = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       userId: req.user._id,
@@ -48,7 +48,7 @@ module.exports.createAvailableSlot = (req: Request, res: Response) => {
 }
 
 module.exports.updateAvailableSlot = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       userId: req.user._id,

@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 
-import APIUtil from '../utils/api.util';
+import APIUtil, { APIInfo } from '../utils/api.util';
 import DBUtil from '../utils/db.util';
 
 module.exports.findPresentationDates = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       query: req.query,
@@ -21,7 +21,7 @@ module.exports.findPresentationDates = (req: Request, res: Response) => {
 }
 
 module.exports.updatePresentationDate = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       _id: req.params._id,

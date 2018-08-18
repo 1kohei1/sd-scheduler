@@ -2,10 +2,10 @@ import { Request, Response } from 'express';
 import { Document } from 'mongoose';
 
 import DBUtil from '../utils/db.util';
-import APIUtil from '../utils/api.util';
+import APIUtil, { APIInfo } from '../utils/api.util';
 
 module.exports.findPresentations = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       query: req.query,
@@ -28,7 +28,7 @@ module.exports.findPresentations = (req: Request, res: Response) => {
 }
 
 module.exports.createPresentation = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       body: req.body,
@@ -45,7 +45,7 @@ module.exports.createPresentation = (req: Request, res: Response) => {
 }
 
 module.exports.updatePresentation = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       _id: req.params._id,
@@ -63,7 +63,7 @@ module.exports.updatePresentation = (req: Request, res: Response) => {
 }
 
 module.exports.deletePresentation = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       _id: req.params._id,

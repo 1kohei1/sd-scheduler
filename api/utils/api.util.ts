@@ -8,8 +8,13 @@ export interface RequestWithDecoded extends Request {
   decoded: any;
 }
 
+export interface APIInfo {
+  key: string;
+  debugInfo: any;
+}
+
 export default class APIUtil {
-  static successResponse(info: Object, data: any, res: Response) {
+  static successResponse(info: APIInfo, data: any, res: Response) {
     res.json({
       success: true,
       data
@@ -17,7 +22,7 @@ export default class APIUtil {
   }
 
   // errors are form property validation message
-  static errorResponse(info: any, message: string, errors: Object = {}, res: Response) {
+  static errorResponse(info: APIInfo, message: string, errors: Object = {}, res: Response) {
     info.debugInfo.message = message;
     this.logError(info);
     res.json({
@@ -28,7 +33,7 @@ export default class APIUtil {
   }
 
   static isAuthenticated(req: Request, res: Response, next: any) {
-    const info: any = {
+    const info: APIInfo = {
       key: APIUtil.key(req),
       debugInfo: {
       }
@@ -42,7 +47,7 @@ export default class APIUtil {
   }
 
   static isAuthorized(req: Request, res: Response, next: any) {
-    const info: any = {
+    const info: APIInfo = {
       key: APIUtil.key(req),
       debugInfo: {
       }
@@ -56,7 +61,7 @@ export default class APIUtil {
   }
 
   static verifyJWT(req: RequestWithDecoded, res: Response, next: any) {
-    const info: any = {
+    const info: APIInfo = {
       key: APIUtil.key(req),
       debugInfo: {
       }
@@ -84,7 +89,7 @@ export default class APIUtil {
   }
 
   static isAuthorizedJWT(req: RequestWithDecoded, res: Response, next: any) {
-    const info: any = {
+    const info: APIInfo = {
       key: APIUtil.key(req),
       debugInfo: {
       }
@@ -137,7 +142,7 @@ export default class APIUtil {
   }
 
   static isAuthenticatedCronRequest(req: Request, res: Response, next: any) {
-    const info: any = {
+    const info: APIInfo = {
       key: APIUtil.key(req),
       debugInfo: {
       }
@@ -151,7 +156,7 @@ export default class APIUtil {
   }
 
   static isSystemAdmin(req: Request, res: Response, next: any) {
-    const info: any = {
+    const info: APIInfo = {
       key: APIUtil.key(req),
       debugInfo: {
       }
@@ -168,7 +173,7 @@ export default class APIUtil {
     return `[${req.method}] ${req.url}`;
   }
 
-  static logError(info: any) {
+  static logError(info: APIInfo) {
     console.log(`Error:${info.key}: ${JSON.stringify(info.debugInfo)}`);
   }
 }

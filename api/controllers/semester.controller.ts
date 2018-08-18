@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 
 import DBUtil from '../utils/db.util';
-import APIUtil from '../utils/api.util';
+import APIUtil, { APIInfo } from '../utils/api.util';
 
 module.exports.findSemesters = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {}
   };
@@ -19,7 +19,7 @@ module.exports.findSemesters = (req: Request, res: Response) => {
 }
 
 module.exports.createSemester = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       userId: req.user._id,
@@ -37,7 +37,7 @@ module.exports.createSemester = (req: Request, res: Response) => {
 }
 
 module.exports.updateSemester = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       userId: req.user._id,

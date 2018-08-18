@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 const passport = require('passport');
 
-import APIUtil from '../utils/api.util';
+import APIUtil, { APIInfo } from '../utils/api.util';
 
 module.exports.getUser = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {}
   };
@@ -13,7 +13,7 @@ module.exports.getUser = (req: Request, res: Response) => {
 }
 
 module.exports.login = (req: Request, res: Response, next: any) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       email: req.body.email,
@@ -41,7 +41,7 @@ module.exports.login = (req: Request, res: Response, next: any) => {
 }
 
 module.exports.logout = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       userId: req.user._id

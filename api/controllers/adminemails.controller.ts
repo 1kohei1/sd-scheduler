@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 
 import DBUtil from '../utils/db.util';
-import APIUtil from '../utils/api.util';
+import APIUtil, { APIInfo } from '../utils/api.util';
 import Mailer, { MailTemplate, MailType } from '../utils/mail.util';
 
 module.exports.findEmails = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       userid: req.user._id,
@@ -23,7 +23,7 @@ module.exports.findEmails = (req: Request, res: Response) => {
 }
 
 module.exports.send = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       userid: req.user._id,
@@ -49,7 +49,7 @@ module.exports.send = (req: Request, res: Response) => {
 }
 
 module.exports.getTerms = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       userid: req.user._id,
@@ -60,7 +60,7 @@ module.exports.getTerms = (req: Request, res: Response) => {
 }
 
 module.exports.preview = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       userid: req.user._id,

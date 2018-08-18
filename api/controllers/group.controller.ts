@@ -4,7 +4,7 @@ import { sign } from 'jsonwebtoken';
 import { Document } from 'mongoose';
 
 import DBUtil from '../utils/db.util';
-import APIUtil from '../utils/api.util';
+import APIUtil, { APIInfo } from '../utils/api.util';
 
 // Cannot import the private namespace File. So copy what they use
 // Ref: https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/multer/index.d.ts
@@ -46,7 +46,7 @@ interface Member {
 }
 
 module.exports.findGroups = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       query: req.query,
@@ -69,7 +69,7 @@ module.exports.findGroups = (req: Request, res: Response) => {
 }
 
 module.exports.createGroup = (req: MyRequest, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       body: req.body,
@@ -123,7 +123,7 @@ module.exports.createGroup = (req: MyRequest, res: Response) => {
 }
 
 module.exports.isAuthenticated = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       _id: req.params._id,
@@ -135,7 +135,7 @@ module.exports.isAuthenticated = (req: Request, res: Response) => {
 }
 
 module.exports.sendCode = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       _id: req.params._id,
@@ -187,7 +187,7 @@ module.exports.sendCode = (req: Request, res: Response) => {
 }
 
 module.exports.verifyCode = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       _id: req.params._id,
@@ -239,7 +239,7 @@ module.exports.verifyCode = (req: Request, res: Response) => {
 }
 
 module.exports.updateGroup = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {
       _id: req.params._id,

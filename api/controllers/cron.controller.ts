@@ -4,11 +4,11 @@ import { Document } from 'mongoose';
 
 import Util from '../utils/util';
 import DBUtil from '../utils/db.util';
-import APIUtil from '../utils/api.util';
+import APIUtil, { APIInfo } from '../utils/api.util';
 import Mailer, { MailType } from '../utils/mail.util';
 
 module.exports.presentationReminder = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {},
   };
@@ -133,7 +133,7 @@ module.exports.presentationReminder = (req: Request, res: Response) => {
 }
 
 module.exports.remindToSchedule = (req: Request, res: Response) => {
-  const info: any = {
+  const info: APIInfo = {
     key: APIUtil.key(req),
     debugInfo: {},
   };
